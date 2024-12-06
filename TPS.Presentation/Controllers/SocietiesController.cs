@@ -28,6 +28,7 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
+
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(SocietyDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -35,6 +36,7 @@ public class SocietiesController : ApiController
     {
         throw new NotImplementedException();
     }
+
 
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
@@ -52,11 +54,14 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
+
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        throw new NotImplementedException();
+        var command = DeleteSociety.Command.Create(id);
+        var task = _sender.Send(command);
+        return await FromResult(task);
     }
 }

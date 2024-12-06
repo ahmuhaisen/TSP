@@ -49,4 +49,32 @@ public abstract class ApiController : ControllerBase
             return BadRequest(errorEnvelope);
         }
     }
+    protected async Task<IActionResult> FromResult(Task<Result> task)
+    {
+        if (task == null)
+            return BadRequest(ResponseEnvelope.Failure(Error.InternalServerError("The provided task is null.")));
+
+        try
+        {
+            var result = await task;
+
+            if (result.IsSuccess)
+            {
+                var envelope = ResponseEnvelope.Success(true);
+                return Ok(envelope);
+            }
+
+            var errorEnvelope = ResponseEnvelope.Failure(result.Error);
+            return result.Error.Code switch
+            {
+                ErrorCode.NotFound => NotFound(errorEnvelope),
+                _ => BadRequest(errorEnvelope)
+            };
+        }
+        catch (Exception ex)
+        {
+            var errorEnvelope = ResponseEnvelope.Failure(Error.InternalServerError(ex.Message));
+            return BadRequest(errorEnvelope);
+        }
+    }
 }
