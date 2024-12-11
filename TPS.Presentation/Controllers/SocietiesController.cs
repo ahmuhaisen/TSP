@@ -32,9 +32,11 @@ public class SocietiesController : ApiController
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(SocietyDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
-        throw new NotImplementedException();
+        var query = GetSocietyById.Query.Create(id);
+        var task = _sender.Send(query);
+        return await FromResult(task);
     }
 
 
