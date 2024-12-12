@@ -37,9 +37,27 @@ public class GetSocietyById
 
         public async Task<Result<SocietyDTO>> Handle(Query request, CancellationToken cancellationToken)
         {
-            {
-            }
-
+            //var dataDao = await _context.Societies.FirstOrDefaultAsync(s => s.ID == request.Id);
+            //if (dataDao == null)
+            //{
+            //    return Result.Failure<SocietyDTO>(
+            //        Error.NotFound(nameof(Society),
+            //        request.Id.ToString())
+            //    );
+            //}
+            //// i think we need a mapper hehe
+            //var dataDto = new SocietyDTO
+            //{
+            //    Name = dataDao.Name,
+            //    Description = dataDao.Description,
+            //    LogoId = dataDao.LogoID,
+            //    CreationDate = dataDao.CreationDate,
+            //    ThemeColor = dataDao.ThemeColor
+                
+                
+            //};
+            //return Result.Success(dataDto);
+            throw new NotImplementedException();
         }
     }
 }
