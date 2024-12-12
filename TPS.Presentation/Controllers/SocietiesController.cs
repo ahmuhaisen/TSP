@@ -45,7 +45,9 @@ public class SocietiesController : ApiController
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public Task<IActionResult> GetSocietyMembers(Guid societyId)
     {
-        throw new NotImplementedException();
+        var query = GetSocietyById.Query.Create(id);
+        var task = _sender.Send(query);
+        return await FromResult(task);
     }
 
     [HttpPost]
