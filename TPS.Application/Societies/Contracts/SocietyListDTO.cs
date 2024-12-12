@@ -1,6 +1,6 @@
 ﻿namespace TPS.Application.Societies.Contracts;
 
-public class SocietyDTO
+public class SocietyListDTO
 {
     public Guid Id { get; set; }
     public required string Name { get; set; }
@@ -8,13 +8,4 @@ public class SocietyDTO
     public required string LogoId { get; set; }
     public DateOnly CreationDate { get; set; }
     public string? ThemeColor { get; set; }
-
-    public int NumberOfMembers { get; set; }
-    public required FacultyMemberBasicDTO Advisor { get; set; }
-}
-
-public class FacultyMemberBasicDTO
-{
-    public Guid Id { get; set; }
-    public required string FullName { get; set; }
 }

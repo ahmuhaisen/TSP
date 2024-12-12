@@ -4,6 +4,8 @@ using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using TPS.Infrastructure.Data;
 using TPS.Presentation.Validation;
+using TSP.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddDefaultIdentity<ApplicationUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentityCore<FacultyMember>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentityCore<Student>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+//builder.Services.AddIdentityApiEndpoints<FacultyMember>();
+//builder.Services.AddIdentityApiEndpoints<Student>();
 
 builder.Services.AddMediatR(options =>
 {
@@ -55,6 +66,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

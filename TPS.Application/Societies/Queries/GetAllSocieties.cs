@@ -8,7 +8,7 @@ namespace TPS.Application.Societies.Queries;
 
 public class GetAllSocieties
 {
-    public sealed class Query : IQuery<Result<List<SocietyDTO>>>
+    public sealed class Query : IQuery<Result<List<SocietyListDTO>>>
     {
         public string? SearchTerm { get; set; }
 
@@ -20,7 +20,7 @@ public class GetAllSocieties
         public static Query Create(string? searchTerm) => new Query(searchTerm);
     }
 
-    public sealed class Handler : IQueryHandler<Query, Result<List<SocietyDTO>>>
+    public sealed class Handler : IQueryHandler<Query, Result<List<SocietyListDTO>>>
     {
         private ApplicationDbContext _context { get; }
 
@@ -29,19 +29,20 @@ public class GetAllSocieties
             _context = context;
         }
         
-        public async Task<Result<List<SocietyDTO>>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<List<SocietyListDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var allSocietiesQuery = _context.Societies.AsQueryable();
 
             if (!string.IsNullOrEmpty(request.SearchTerm))
                 allSocietiesQuery = allSocietiesQuery.Where(s => s.Name.Contains(request.SearchTerm));
 
-            var data = await allSocietiesQuery.Select(s => new SocietyDTO
+            var data = await allSocietiesQuery.Select(s => new SocietyListDTO
             {
+                Id = s.Id,
                 Name = s.Name,
                 Description = s.Description,
                 CreationDate = s.CreationDate,
-                LogoID = s.LogoID,
+                LogoId = s.LogoId,
                 ThemeColor = s.ThemeColor
             }).ToListAsync();
 

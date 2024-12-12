@@ -2,5 +2,5 @@
 
 public abstract class Entity
 {
-    public abstract Guid ID { get; set; }
+    public Guid Id { get; set; }
 }

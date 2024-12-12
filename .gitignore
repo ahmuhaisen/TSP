@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/TPS.Presentation/Controllers/TestsController.cs
+/TPS.Infrastructure/DataGenerators/Fakers.cs

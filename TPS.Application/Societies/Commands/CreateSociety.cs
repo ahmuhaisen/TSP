@@ -41,14 +41,14 @@ public class CreateSociety
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
             if (await _context.Societies.AnyAsync(s => s.Name.Equals(request.Name)))
-                return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society), request.Name));
+                return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
 
             var society = new Society
             {
-                ID = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                LogoID = request.LogoID,
+                LogoId = request.LogoID,
                 CreationDate = request.CreationDate,
                 ThemeColor = request.ThemeColor
             };
@@ -59,7 +59,7 @@ public class CreateSociety
             if (saveResult <= 0)
                 return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society.Name), society.Name));
 
-            return Result.Success(society.ID);
+            return Result.Success(society.Id);
         }
     }
 }

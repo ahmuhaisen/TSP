@@ -17,7 +17,7 @@ public class SocietiesController : ApiController
 
 
     [HttpGet]
-    [ProducesResponseType(typeof(List<SocietyDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Get([FromQuery] string? searchTerm)
     {
@@ -28,15 +28,25 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
-
-    [HttpGet("{id}")]
-    [ProducesResponseType(typeof(SocietyDTO), StatusCodes.Status200OK)]
+    [HttpGet("{societyId}")]
+    [ProducesResponseType(typeof(SocietyListDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid societyId)
+    {
+        var query = GetSocietyById.Query.Create(societyId);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+
+    [HttpGet("{societyId}/members")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public Task<IActionResult> GetSocietyMembers(Guid societyId)
     {
         throw new NotImplementedException();
     }
-
 
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
@@ -54,13 +64,36 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
+    [HttpPost("{societyId}/members")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public Task<IActionResult> PostMember(Guid societyId)
+    {
+        throw new NotImplementedException();
+    }
 
-    [HttpDelete("{id}")]
+    [HttpPost("{societyId}/advisor")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public Task<IActionResult> PostAdvisor(Guid societyId)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPut("{societyId}")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Delete(Guid id)
+    public Task<IActionResult> Put(Guid societyId)
     {
-        var command = DeleteSociety.Command.Create(id);
+        throw new NotImplementedException();
+    }
+
+    [HttpDelete("{societyId}")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Delete(Guid societyId)
+    {
+        var command = DeleteSociety.Command.Create(societyId);
         var task = _sender.Send(command);
         return await FromResult(task);
     }
