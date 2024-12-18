@@ -37,27 +37,32 @@ public class GetSocietyById
 
         public async Task<Result<SocietyDTO>> Handle(Query request, CancellationToken cancellationToken)
         {
-            //var dataDao = await _context.Societies.FirstOrDefaultAsync(s => s.ID == request.Id);
-            //if (dataDao == null)
-            //{
-            //    return Result.Failure<SocietyDTO>(
-            //        Error.NotFound(nameof(Society),
-            //        request.Id.ToString())
-            //    );
-            //}
-            //// i think we need a mapper hehe
-            //var dataDto = new SocietyDTO
-            //{
-            //    Name = dataDao.Name,
-            //    Description = dataDao.Description,
-            //    LogoId = dataDao.LogoID,
-            //    CreationDate = dataDao.CreationDate,
-            //    ThemeColor = dataDao.ThemeColor
-                
-                
-            //};
-            //return Result.Success(dataDto);
-            throw new NotImplementedException();
+            if (!_context.Societies.Any(s => s.Id == request.Id))
+                return Result.Failure<SocietyDTO>(Error.NotFound(nameof(Society), request.Id.ToString()));
+            
+            var data = await _context.Societies
+                .Include(s => s.SocietiesMembers)
+                .Include(s => s.Advisor)
+                .AsNoTracking()
+                .Where(s => s.Id == request.Id)
+                .Select(s => new SocietyDTO
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Description = s.Description,
+                    LogoId = s.LogoId,
+                    ThemeColor = s.ThemeColor,
+                    CreationDate = s.CreationDate,
+                    NumberOfMembers = s.SocietiesMembers.Count(),
+                    Advisor = new FacultyMemberBasicDTO 
+                    { 
+                        Id = s.Advisor.Id,
+                        FullName = $"{s.Advisor.FirstName} {s.Advisor.LastName}",
+                    }
+                })
+                .SingleAsync(cancellationToken);
+            
+            return Result.Success(data);
         }
     }
 }
