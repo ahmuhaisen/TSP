@@ -10,5 +10,9 @@ public class StudentConfig : IEntityTypeConfiguration<Student>
     {
         builder.ToTable("Students")
                .HasBaseType<ApplicationUser>();
+
+        builder.Property(s => s.UniversityNumber)
+               .HasMaxLength(8)
+               .IsRequired();
     }
 }

@@ -10,15 +10,14 @@ public class FacultyMemberConfig : IEntityTypeConfiguration<FacultyMember>
     {
         builder.ToTable("FacultyMembers")
                .HasBaseType<ApplicationUser>();
+
+        builder.Property(fm => fm.EmployeeNumber)
+               .HasMaxLength(20)
+               .IsRequired();
         
         builder.HasOne(fm => fm.Rank)
                .WithMany()
                .HasForeignKey(fm => fm.RankId)
-               .IsRequired();
-
-        builder.HasOne(fm => fm.Department)
-               .WithMany()
-               .HasForeignKey(fm => fm.DepartmentId)
                .IsRequired();
     }
 }
