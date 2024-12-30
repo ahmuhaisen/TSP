@@ -12,8 +12,8 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241207170620_initial")]
-    partial class initial
+    [Migration("20241230143418_renameRankTable")]
+    partial class renameRankTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -173,6 +173,9 @@ namespace TPS.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -182,13 +185,18 @@ namespace TPS.Infrastructure.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -213,6 +221,10 @@ namespace TPS.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ProfileImageId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -224,6 +236,8 @@ namespace TPS.Infrastructure.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -256,7 +270,12 @@ namespace TPS.Infrastructure.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
+                    b.Property<int>("SchoolId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Departments");
 
@@ -265,29 +284,33 @@ namespace TPS.Infrastructure.Migrations
                         {
                             Id = 1,
                             Abbreviation = "CS",
-                            Name = "Computer Science"
+                            Name = "Computer Science",
+                            SchoolId = 1
                         },
                         new
                         {
                             Id = 2,
                             Abbreviation = "CIS",
-                            Name = "Computer Information Systems"
+                            Name = "Computer Information Systems",
+                            SchoolId = 1
                         },
                         new
                         {
                             Id = 3,
                             Abbreviation = "IT",
-                            Name = "Information Technology"
+                            Name = "Information Technology",
+                            SchoolId = 1
                         },
                         new
                         {
                             Id = 4,
                             Abbreviation = "AI",
-                            Name = "Artificial Intelligence"
+                            Name = "Artificial Intelligence",
+                            SchoolId = 1
                         });
                 });
 
-            modelBuilder.Entity("TSP.Domain.Entities.Position", b =>
+            modelBuilder.Entity("TSP.Domain.Entities.Rank", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -297,48 +320,166 @@ namespace TPS.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Positions");
+                    b.ToTable("Ranks");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Title = "Professor"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Title = "Associate Professor"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Title = "Assistant Professor"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Title = "Teacher"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Title = "Department Chair"
-                        },
-                        new
-                        {
-                            Id = 6,
                             Title = "Dean"
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 2,
                             Title = "Dean Assistant"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Title = "Department Chair"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Title = "Professor"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Title = "Associate Professor"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Title = "Assistant Professor"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Title = "Teacher"
+                        });
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.School", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("LocationString")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("School");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "King Abdullah II School of Information Technology"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "School of Engineering"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "School of Science"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "School of Agriculture"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "School of Medicine"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "School of Dentistry"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "School of Pharmacy"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "School of Nursing"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "School of Rehabilitation Sciences"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "School of Arts"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "School of Business"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "School of Sharia"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Name = "School of Educational Sciences"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Name = "School of Law"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Name = "School of Physical Education"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Name = "School of Arts and Design"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Name = "School of International Studies"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Name = "School of Foreign Languages"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Name = "School of Archaeology and Tourism"
                         });
                 });
 
@@ -350,7 +491,10 @@ namespace TPS.Infrastructure.Migrations
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("MemberSince")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateOnly>("JoinDate")
                         .HasColumnType("date");
 
                     b.HasKey("SocietyId", "StudentId");
@@ -374,17 +518,18 @@ namespace TPS.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("LogoId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(70)
-                        .HasColumnType("nvarchar(70)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ThemeColor")
                         .HasMaxLength(7)
@@ -401,19 +546,15 @@ namespace TPS.Infrastructure.Migrations
                 {
                     b.HasBaseType("TSP.Domain.Entities.ApplicationUser");
 
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("EmployeeNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("PositionId")
+                    b.Property<int>("RankId")
                         .HasColumnType("int");
 
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("PositionId");
+                    b.HasIndex("RankId");
 
                     b.ToTable("FacultyMembers", (string)null);
                 });
@@ -422,13 +563,10 @@ namespace TPS.Infrastructure.Migrations
                 {
                     b.HasBaseType("TSP.Domain.Entities.ApplicationUser");
 
-                    b.Property<string>("Major")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UniversityNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
 
                     b.ToTable("Students", (string)null);
                 });
@@ -484,6 +622,26 @@ namespace TPS.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TSP.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("TSP.Domain.Entities.Department", "Department")
+                        .WithMany("Users")
+                        .HasForeignKey("DepartmentId");
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.Department", b =>
+                {
+                    b.HasOne("TSP.Domain.Entities.School", "School")
+                        .WithMany("Departments")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("School");
+                });
+
             modelBuilder.Entity("TSP.Domain.Entities.SocietiesMembers", b =>
                 {
                     b.HasOne("TSP.Domain.Entities.Society", "Society")
@@ -516,27 +674,19 @@ namespace TPS.Infrastructure.Migrations
 
             modelBuilder.Entity("TSP.Domain.Entities.FacultyMember", b =>
                 {
-                    b.HasOne("TSP.Domain.Entities.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("TSP.Domain.Entities.ApplicationUser", null)
                         .WithOne()
                         .HasForeignKey("TSP.Domain.Entities.FacultyMember", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TSP.Domain.Entities.Position", "Position")
+                    b.HasOne("TSP.Domain.Entities.Rank", "Rank")
                         .WithMany()
-                        .HasForeignKey("PositionId")
+                        .HasForeignKey("RankId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Department");
-
-                    b.Navigation("Position");
+                    b.Navigation("Rank");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.Student", b =>
@@ -546,6 +696,16 @@ namespace TPS.Infrastructure.Migrations
                         .HasForeignKey("TSP.Domain.Entities.Student", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.Department", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.School", b =>
+                {
+                    b.Navigation("Departments");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.Society", b =>

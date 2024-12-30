@@ -5,9 +5,9 @@ namespace TSP.Domain.Entities;
 
 public class Society : Entity
 {
-    public required string Name { get; set; }
-    public required string Description { get; set; }
-    public required string LogoId { get; set; }
+    public string Name { get; set; } = null!;
+    public string Description { get; set; } = null!;
+    public string LogoId { get; set; } = null!;
     public DateOnly CreationDate { get; set; }
     public string? ThemeColor { get; set; }
 

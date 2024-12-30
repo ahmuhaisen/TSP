@@ -8,5 +8,6 @@ public class SocietiesMembers
     public Guid StudentId { get; set; }
     public Student Student { get; set; } = null!;
 
-    public DateOnly MemberSince { get; set; }
+    public DateOnly JoinDate { get; set; }
+    public bool IsActive { get; set; }
 }

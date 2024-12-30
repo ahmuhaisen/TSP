@@ -9,14 +9,15 @@ public class SocietyConfig : IEntityTypeConfiguration<Society>
     public void Configure(EntityTypeBuilder<Society> builder)
     {
         builder.Property(s => s.Name)
-               .HasMaxLength(70)
+               .HasMaxLength(100)
                .IsRequired();
 
         builder.Property(s => s.Description)
-               .HasMaxLength(200)
+               .HasMaxLength(250)
                .IsRequired();
 
         builder.Property(s => s.LogoId)
+               .HasMaxLength(100)
                .IsRequired();
 
         builder.Property(s => s.CreationDate)

@@ -9,20 +9,25 @@ public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
         builder.Property(fm => fm.FirstName)
-               .HasMaxLength(20)
+               .HasMaxLength(30)
                .IsRequired();
 
         builder.Property(fm => fm.LastName)
-               .HasMaxLength(20)
+               .HasMaxLength(30)
                .IsRequired();
 
         builder.Property(a => a.Gender)
                .HasConversion<string>()
-               .HasMaxLength(20)
+               .HasMaxLength(6)
                .IsRequired();
 
         builder.Property(a => a.ProfileImageId)
-               .HasMaxLength(50)
+               .HasMaxLength(100)
+               .IsRequired(false);
+
+        builder.HasOne(a => a.Department)
+               .WithMany(d => d.Users)
+               .HasForeignKey(a => a.DepartmentId)
                .IsRequired(false);
     }
 }

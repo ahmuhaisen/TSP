@@ -17,10 +17,10 @@ public class DepartmentConfig : IEntityTypeConfiguration<Department>
                .IsRequired();
 
         builder.HasData(
-            new Department { Id = 1, Name = "Computer Science", Abbreviation = "CS" },
-            new Department { Id = 2, Name = "Computer Information Systems", Abbreviation = "CIS" },
-            new Department { Id = 3, Name = "Information Technology", Abbreviation = "IT" },
-            new Department { Id = 4, Name = "Artificial Intelligence", Abbreviation = "AI" }
+            new Department { Id = 1, Name = "Computer Science", Abbreviation = "CS", SchoolId = 1 },
+            new Department { Id = 2, Name = "Computer Information Systems", Abbreviation = "CIS", SchoolId = 1 },
+            new Department { Id = 3, Name = "Information Technology", Abbreviation = "IT", SchoolId = 1 },
+            new Department { Id = 4, Name = "Artificial Intelligence", Abbreviation = "AI", SchoolId = 1 }
         );
     }
 }

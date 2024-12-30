@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TPS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,57 +28,30 @@ namespace TPS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Departments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    Abbreviation = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Departments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Positions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Positions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "School",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LocationString = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_School", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,6 +73,62 @@ namespace TPS.Infrastructure.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Departments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Abbreviation = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
+                    SchoolId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Departments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Departments_School_SchoolId",
+                        column: x => x.SchoolId,
+                        principalTable: "School",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    ProfileImageId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -188,12 +217,36 @@ namespace TPS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FacultyMembers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmployeeNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    RankId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FacultyMembers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FacultyMembers_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FacultyMembers_Positions_RankId",
+                        column: x => x.RankId,
+                        principalTable: "Positions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Students",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Major = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UniversityNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UniversityNumber = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -207,45 +260,13 @@ namespace TPS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FacultyMembers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EmployeeNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PositionId = table.Column<int>(type: "int", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FacultyMembers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FacultyMembers_AspNetUsers_Id",
-                        column: x => x.Id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_FacultyMembers_Departments_DepartmentId",
-                        column: x => x.DepartmentId,
-                        principalTable: "Departments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_FacultyMembers_Positions_PositionId",
-                        column: x => x.PositionId,
-                        principalTable: "Positions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Societies",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    LogoId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    LogoId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreationDate = table.Column<DateOnly>(type: "date", nullable: false),
                     ThemeColor = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: true),
                     AdvisorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
@@ -267,7 +288,8 @@ namespace TPS.Infrastructure.Migrations
                 {
                     SocietyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MemberSince = table.Column<DateOnly>(type: "date", nullable: false)
+                    JoinDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -285,28 +307,54 @@ namespace TPS.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Departments",
-                columns: new[] { "Id", "Abbreviation", "Name" },
-                values: new object[,]
-                {
-                    { 1, "CS", "Computer Science" },
-                    { 2, "CIS", "Computer Information Systems" },
-                    { 3, "IT", "Information Technology" },
-                    { 4, "AI", "Artificial Intelligence" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Positions",
                 columns: new[] { "Id", "Title" },
                 values: new object[,]
                 {
-                    { 1, "Professor" },
-                    { 2, "Associate Professor" },
-                    { 3, "Assistant Professor" },
-                    { 4, "Teacher" },
-                    { 5, "Department Chair" },
-                    { 6, "Dean" },
-                    { 7, "Dean Assistant" }
+                    { 1, "Dean" },
+                    { 2, "Dean Assistant" },
+                    { 3, "Department Chair" },
+                    { 4, "Professor" },
+                    { 5, "Associate Professor" },
+                    { 6, "Assistant Professor" },
+                    { 7, "Teacher" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "School",
+                columns: new[] { "Id", "LocationString", "Name" },
+                values: new object[,]
+                {
+                    { 1, null, "King Abdullah II School of Information Technology" },
+                    { 2, null, "School of Engineering" },
+                    { 3, null, "School of Science" },
+                    { 4, null, "School of Agriculture" },
+                    { 5, null, "School of Medicine" },
+                    { 6, null, "School of Dentistry" },
+                    { 7, null, "School of Pharmacy" },
+                    { 8, null, "School of Nursing" },
+                    { 9, null, "School of Rehabilitation Sciences" },
+                    { 10, null, "School of Arts" },
+                    { 11, null, "School of Business" },
+                    { 12, null, "School of Sharia" },
+                    { 13, null, "School of Educational Sciences" },
+                    { 14, null, "School of Law" },
+                    { 15, null, "School of Physical Education" },
+                    { 16, null, "School of Arts and Design" },
+                    { 17, null, "School of International Studies" },
+                    { 18, null, "School of Foreign Languages" },
+                    { 19, null, "School of Archaeology and Tourism" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Departments",
+                columns: new[] { "Id", "Abbreviation", "Name", "SchoolId" },
+                values: new object[,]
+                {
+                    { 1, "CS", "Computer Science", 1 },
+                    { 2, "CIS", "Computer Information Systems", 1 },
+                    { 3, "IT", "Information Technology", 1 },
+                    { 4, "AI", "Artificial Intelligence", 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -342,6 +390,11 @@ namespace TPS.Infrastructure.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_DepartmentId",
+                table: "AspNetUsers",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -349,14 +402,14 @@ namespace TPS.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FacultyMembers_DepartmentId",
-                table: "FacultyMembers",
-                column: "DepartmentId");
+                name: "IX_Departments_SchoolId",
+                table: "Departments",
+                column: "SchoolId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FacultyMembers_PositionId",
+                name: "IX_FacultyMembers_RankId",
                 table: "FacultyMembers",
-                column: "PositionId");
+                column: "RankId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Societies_AdvisorId",
@@ -406,10 +459,13 @@ namespace TPS.Infrastructure.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "Positions");
+
+            migrationBuilder.DropTable(
                 name: "Departments");
 
             migrationBuilder.DropTable(
-                name: "Positions");
+                name: "School");
         }
     }
 }
