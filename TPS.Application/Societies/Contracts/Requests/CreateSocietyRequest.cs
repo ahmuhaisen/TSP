@@ -6,7 +6,7 @@ public class CreateSocietyRequest
 {
     public required string Name { get; set; }
     public required string Description { get; set; }
-    public required string LogoID { get; set; }
+    public required string LogoId { get; set; }
     public DateOnly CreationDate { get; set; }
     public string? ThemeColor { get; set; }
 }
@@ -25,7 +25,7 @@ public class CreateSocietyRequestValidator : AbstractValidator<CreateSocietyRequ
                .NotEmpty()
                .MaximumLength(200);
 
-        RuleFor(r => r.LogoID)
+        RuleFor(r => r.LogoId)
                .NotNull()
                .NotEmpty();
 

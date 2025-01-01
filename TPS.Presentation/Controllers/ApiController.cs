@@ -23,7 +23,7 @@ public abstract class ApiController : ControllerBase
 
     protected async Task<IActionResult> FromResult<TData>(Task<Result<TData>> task)
     {
-        if (task == null)
+        if (task is null)
             return BadRequest(ResponseEnvelope.Failure(Error.InternalServerError("The provided task is null.")));
 
         try
@@ -49,9 +49,10 @@ public abstract class ApiController : ControllerBase
             return BadRequest(errorEnvelope);
         }
     }
+    
     protected async Task<IActionResult> FromResult(Task<Result> task)
     {
-        if (task == null)
+        if (task is null)
             return BadRequest(ResponseEnvelope.Failure(Error.InternalServerError("The provided task is null.")));
 
         try

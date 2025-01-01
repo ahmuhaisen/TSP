@@ -55,7 +55,7 @@ public class SocietiesController : ApiController
     {
         var command = CreateSociety.Command.Create(request.Name,
                                                    request.Description,
-                                                   request.LogoID,
+                                                   request.LogoId,
                                                    request.CreationDate,
                                                    request.ThemeColor);
 
