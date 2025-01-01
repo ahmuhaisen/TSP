@@ -1,5 +1,5 @@
-<main class="main">
-  <div class="content">
+<main class="h-screen flex justify-center items-center bg-[#0f0f11]">
+  <div class="h-fit flex flex-col gap-y-5 items-center">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 982 239" fill="none" class="angular-logo">
       <g clip-path="url(#a)">
         <path fill="url(#b)"
@@ -25,10 +25,14 @@
         </clipPath>
       </defs>
     </svg>
-    <h1>{{ title }}</h1>
-    <p>Empowering Connections, Enriching Communities 🔥</p>
-    <p>CD - TEST | COMPLETED FINAL</p>
+    <div class="text-center space-y-2 text-[#f0f0f0]">
+      <h1 class="text-3xl font-bold text-[#f0f0f0]">{{ title }}</h1>
+      <p>Empowering Connections, Enriching Communities 🔥</p>
+      <p>CD - TEST | FINAL | COMPLETED</p>
+    </div>
+    <button nz-button nzType="primary" class="mt-2" (click)="createMessage()">Test NgZorro</button>
   </div>
+
 </main>
 
 
