@@ -45,7 +45,7 @@ public class SocietiesController : ApiController
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public Task<IActionResult> GetSocietyMembers(Guid societyId)
     {
-        return Task.FromResult<IActionResult>(Ok("Not Implemented"));
+        return Task.FromResult<IActionResult>(Ok("Not Implemented 2"));
     }
 
     [HttpPost]
