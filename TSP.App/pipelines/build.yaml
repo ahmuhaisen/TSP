@@ -11,13 +11,12 @@ steps:
     entrypoint: 'npm'
     args: ['run', 'build']
     dir: 'TSP.App'
-  
-  - name: 'docker.io/firebase/firebase-tools'
-    args: ['use', '${_FIREBASE_PROJECT_ID}', '--token', '${_FIREBASE_TOKEN}']
-  
-  - name: 'docker.io/firebase/firebase-tools'
-    args: ['deploy', '--token', '${_FIREBASE_TOKEN}', '--only', 'hosting:the-societies-portal']
 
+  - name: 'gcr.io/cloud-builders/firebase'
+    args: ['use', '${_FIREBASE_PROJECT_ID}', '--token', '${_FIREBASE_TOKEN}']
+    
+  - name: 'gcr.io/cloud-builders/firebase'
+    args: ['deploy', '--token', '${_FIREBASE_TOKEN}', '--only', 'hosting:the-societies-portal']
 timeout: 1200s
 
 options:
