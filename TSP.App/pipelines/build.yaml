@@ -9,9 +9,9 @@ steps:
     entrypoint: 'npm'
     args: ['run', 'build']
     dir: 'TSP.App'
-  - name: 'gcr.io/cloud-builders/firebase'
+  - name: 'gcr.io/cloud-builders/firebase:11.16.1'
     args: ['use', '${_FIREBASE_PROJECT_ID}', '--token', '${_FIREBASE_TOKEN}']
-  - name: 'gcr.io/cloud-builders/firebase'
+  - name: 'gcr.io/cloud-builders/firebase:11.16.1'
     args: ['deploy', '--token', '${_FIREBASE_TOKEN}', '--only', 'hosting:the-societies-portal']
 timeout: 1200s
 
