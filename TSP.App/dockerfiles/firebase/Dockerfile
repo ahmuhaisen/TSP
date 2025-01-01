@@ -1,4 +1,4 @@
-FROM node:18.00
+FROM node:22.11.0
 
 RUN npm install -g firebase-tools
 
