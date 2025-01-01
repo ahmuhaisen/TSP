@@ -1,10 +1,10 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/${_FIREBASE_PROJECT_ID}/firebase', '../dockerfiles/firebase']
-  - name: 'node:22.11'
+    args: ['build', '-t', 'gcr.io/${_FIREBASE_PROJECT_ID}/firebase', './TSP.App/dockerfiles/firebase']
+  - name: 'node:16.10'
     entrypoint: 'npm'
     args: ['install']
-  - name: 'node:22.11'
+  - name: 'node:16.10'
     entrypoint: 'npm'
     args: ['run', 'build']
   - name: 'gcr.io/${_FIREBASE_PROJECT_ID}/firebase'
@@ -13,7 +13,7 @@ steps:
     args: ['target:apply', 'hosting', 'the-societies-portal', 'the-societies-portal', '--token', '${_FIREBASE_TOKEN}']
   - name: 'gcr.io/${_FIREBASE_PROJECT_ID}/firebase'
     args: ['deploy', '--token', '${_FIREBASE_TOKEN}', '--only', 'hosting:the-societies-portal']
-timeout: 1200s
+timeout: 1500s
 
 options:
   logging: CLOUD_LOGGING_ONLY
