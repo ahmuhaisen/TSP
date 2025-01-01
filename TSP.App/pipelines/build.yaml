@@ -12,10 +12,10 @@ steps:
     args: ['run', 'build']
     dir: 'TSP.App'
   
-  - name: 'docker.io/firebase/firebase-tools:latest'
+  - name: 'docker.io/firebase/firebase-tools'
     args: ['use', '${_FIREBASE_PROJECT_ID}', '--token', '${_FIREBASE_TOKEN}']
   
-  - name: 'docker.io/firebase/firebase-tools:latest'
+  - name: 'docker.io/firebase/firebase-tools'
     args: ['deploy', '--token', '${_FIREBASE_TOKEN}', '--only', 'hosting:the-societies-portal']
 
 timeout: 1200s
