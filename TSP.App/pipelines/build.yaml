@@ -14,9 +14,11 @@ steps:
 
   - name: 'gcr.io/${_FIREBASE_PROJECT_ID}/firebase-tools'
     args: ['use', '${_FIREBASE_PROJECT_ID}', '--token', '${_FIREBASE_TOKEN}']
-    
+    dir: 'TSP.App'
+
   - name: 'gcr.io/${_FIREBASE_PROJECT_ID}/firebase-tools'
     args: ['deploy', '--token', '${_FIREBASE_TOKEN}', '--only', 'hosting:the-societies-portal']
+    dir: 'TSP.App'
 
 timeout: 1200s
 
