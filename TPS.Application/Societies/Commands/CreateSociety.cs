@@ -43,7 +43,8 @@ public sealed class CreateSociety
                 Description = request.Description,
                 LogoId = request.LogoId,
                 CreationDate = request.CreationDate,
-                ThemeColor = request.ThemeColor
+                ThemeColor = request.ThemeColor,
+                AdvisorId = Guid.Parse("8B431911-5256-411E-A4C7-11649C5F516D")
             };
 
             await context.Societies.AddAsync(society, cancellationToken);

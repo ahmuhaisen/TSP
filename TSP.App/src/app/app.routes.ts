@@ -1,10 +1,13 @@
 import { Routes } from '@angular/router';
-import { ComingSoonComponent } from './pages/coming-soon/coming-soon.component';
 
 export const routes: Routes = [
     {
+        path: 'system-admin-area',
+        loadChildren: () => import('./pages/system-admin-area/system-admin-area.routes').then(m => m.routes)
+    },
+    {
         path: 'coming-soon',
-        loadComponent: () => import('./pages/coming-soon/coming-soon.component').then(m => m.ComingSoonComponent)
+        loadComponent: () => import('./components/coming-soon.component').then(m => m.ComingSoonComponent)
     },
     {
         path: '',
@@ -13,6 +16,6 @@ export const routes: Routes = [
     },
     {
         path: '**',
-        redirectTo: 'coming-soon'
+        loadComponent: () => import('./components/not-found.component').then(m => m.NotFoundComponent)
     }
 ];
