@@ -16,16 +16,16 @@ import { interval, Subscription } from 'rxjs';
 
       <div class="py-4">
         <div class="flex flex-wrap gap-4 justify-center items-center text-[#f0f0f0]">
-          <div class="border-2 rounded-lg bg-slate-50/25 px-4 py-2 text-center w-20 sm:w-24">
+          <div class="border-2 rounded-lg bg-slate-50/25 px-4 py-2 text-center w-fit">
             <div class="font-bold font-mono text-2xl sm:text-3xl">{{ countdown.days }}d</div>
           </div>
-          <div class="border-2 rounded-lg bg-slate-50/25 px-4 py-2 text-center w-20 sm:w-24">
+          <div class="border-2 rounded-lg bg-slate-50/25 px-4 py-2 text-center w-fit">
             <div class="font-bold font-mono text-2xl sm:text-3xl">{{ countdown.hours }}h</div>
           </div>
-          <div class="border-2 rounded-lg bg-slate-50/25 px-4 py-2 text-center w-20 sm:w-24">
+          <div class="border-2 rounded-lg bg-slate-50/25 px-4 py-2 text-center w-fit">
             <div class="font-bold font-mono text-2xl sm:text-3xl">{{ countdown.minutes }}m</div>
           </div>
-          <div class="border-2 rounded-lg bg-slate-50/25 px-4 py-2 text-center w-20 sm:w-24">
+          <div class="border-2 rounded-lg bg-slate-50/25 px-4 py-2 text-center w-fit">
             <div class="font-bold font-mono text-2xl sm:text-3xl">{{ countdown.seconds }}s</div>
           </div>
         </div>
