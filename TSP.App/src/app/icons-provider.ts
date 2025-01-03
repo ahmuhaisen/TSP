@@ -5,7 +5,15 @@ import {
   DashboardOutline,
   ArrowLeftOutline,
   SearchOutline,
-  HomeOutline
+  HomeOutline,
+  PieChartOutline,
+  ProductOutline,
+  ProjectOutline,
+  ProfileFill,
+  LogoutOutline,
+  UserOutline,
+  SettingFill,
+  EyeOutline
 } from '@ant-design/icons-angular/icons';
 
 export const icons = [
@@ -16,4 +24,12 @@ export const icons = [
   ArrowLeftOutline,
   SearchOutline,
   HomeOutline,
+  PieChartOutline,
+  ProductOutline,
+  ProjectOutline,
+  UserOutline,
+  ProfileFill,
+  LogoutOutline,
+  SettingFill,
+  EyeOutline
 ];

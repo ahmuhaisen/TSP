@@ -1,0 +1,38 @@
+
+
+    <nz-breadcrumb class="text-xs">
+        <nz-breadcrumb-item>
+            <nz-icon nzType="home" />
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            <a>
+                <nz-icon nzType="user" />
+                <span>System Admin Area</span>
+            </a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>Home</nz-breadcrumb-item>
+    </nz-breadcrumb>
+
+    <h1 class="text-xl font-extrabold text-gray-700 mt-1 mb-3">Home</h1>
+    <div class="bg-slate-100 rounded-lg py-3 h-52">
+        @if(isLoading) {
+        <div class="flex justify-center items-center h-full">
+            <nz-spin nzSimple />
+        </div>
+        }@else {
+        @for(society of societies; track $index) {
+        <div class="p-2 bg-slate-200 rounded-lg">
+            <p>
+                <span class="text-white px-2 py-1 rounded-lg mr-2"
+                    [ngStyle]="{ 'background-color': society.themeColor }">{{$index + 1}}</span>
+                <span class="font-bold">{{society.name}}</span>
+            </p>
+        </div>
+        }@empty {
+        <div class="flex justify-center items-center h-full">
+            <nz-empty />
+        </div>
+        }
+        }
+
+    </div>

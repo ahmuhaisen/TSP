@@ -3,7 +3,8 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
     {
         path: 'system-admin-area',
-        loadChildren: () => import('./pages/system-admin-area/system-admin-area.routes').then(m => m.routes)
+        loadComponent: () => import('./areas/system-admin-area/system-admin-area.component').then(m => m.SystemAdminAreaComponent),
+        loadChildren: () => import('./areas/system-admin-area/system-admin-area.routes').then(m => m.routes)
     },
     {
         path: 'coming-soon',

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { Society } from '../../../pages/system-admin-area/api-interfaces/society.types';
+import { Society } from '../../../areas/system-admin-area/api-interfaces/society.types';
 import { DbService } from '../db.service';
 
 @Injectable({
