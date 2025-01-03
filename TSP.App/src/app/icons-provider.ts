@@ -15,7 +15,10 @@ import {
   SettingFill,
   EyeOutline,
   DashOutline,
-  BarsOutline
+  BarsOutline,
+  CalendarOutline,
+  EnvironmentOutline,
+  UsergroupAddOutline
 } from '@ant-design/icons-angular/icons';
 
 export const icons = [
@@ -35,5 +38,8 @@ export const icons = [
   SettingFill,
   EyeOutline,
   DashOutline,
-  BarsOutline
+  BarsOutline,
+  CalendarOutline,
+  EnvironmentOutline,
+  UsergroupAddOutline
 ];

@@ -5,9 +5,14 @@
     <nz-breadcrumb-item>Home</nz-breadcrumb-item>
 </nz-breadcrumb>
 
-<h1 class="text-xl font-extrabold text-gray-700 mt-2">
-    <nz-icon nzType="home" class="mr-2" />Home
-</h1>
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="home" class="mr-2" />Home
+    </h1>
+    <button nz-button nzType="default" nzShape="circle" (click)="open()">
+        <nz-icon nzType="search" />
+    </button>
+</div>
 
 <nz-skeleton class="mt-4" [nzAvatar]="true" [nzLoading]="isLoading" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
 
@@ -70,6 +75,125 @@
         </div>
     </div>
 </div>
+
+<nz-divider />
+
+<div class="grid gap-5 grid-cols-1 lg:grid-cols-2">
+    <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
+        <div class="flex justify-between pb-4">
+            <p class="flex items-center font-bold text-lg">
+                <nz-icon nzType="project" class="mr-2" />
+                Recent Events
+            </p>
+            <a class="text-primary-light text-xs" [routerLink]="'/admin-area/events'">View all</a>
+        </div>
+
+        <div class="grid gap-y-1.5">
+            @for(event of events; track $index){
+            <a [routerLink]="'/admin-area/events/' + event.id"
+                class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
+                <div class="w-16 p-2 shrink-0">
+                    <img [src]="event.imageUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                </div>
+                <div class="p-2 w-full sm:w-auto">
+                    <p class="font-semibold text-sm truncate">{{ event.title }}</p>
+                    <span class="text-gray-600 text-xs block truncate">{{ event.society }}</span>
+                    <p class="text-gray-500 mt-2 text-xs flex flex-wrap sm:flex-nowrap items-center gap-1">
+                        <span class="flex items-center">
+                            <nz-icon nzType="calendar" class="mr-1"></nz-icon>
+                            {{ event.date | date: 'MMM d, h:mm a'}}
+                        </span>
+                        <span class="hidden sm:inline">|</span>
+                        <span class="flex items-center">
+                            <nz-icon nzType="environment" class="mr-1"></nz-icon>
+                            {{ event.location }}
+                        </span>
+                    </p>
+                </div>
+            </a>
+            }
+
+        </div>
+
+    </div>
+
+
+    <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
+        <div class="flex justify-between pb-4">
+            <p class="flex items-center font-bold text-lg">
+                <nz-icon nzType="usergroup-add" class="mr-2" />
+                Recently joined members
+            </p>
+        </div>
+        <div class="grid gap-y-1.5">
+            @for(user of users; track $index){
+            <a
+                class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
+                <div class="w-16 p-2 shrink-0">
+                    <img [src]="'https://robohash.org/' + user.id + '?bgset=bg2'"
+                        class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                </div>
+                <div class="p-2 w-full sm:w-auto">
+                    <p class="font-semibold text-sm truncate">{{ user.name }}</p>
+                    <span class="text-gray-600 text-xs block truncate">{{ user.department }}</span>
+                    <p class="text-gray-500 mt-2 text-xs flex flex-wrap sm:flex-nowrap items-center gap-1">
+                        <span class="flex items-center">
+                            <nz-icon nzType="calendar" class="mr-1"></nz-icon>
+                            Joined on {{ user.joinDate | date: 'MMM d, yyyy'}}
+                        </span>
+                        <span class="hidden sm:inline">|</span>
+                        <span class="flex items-center">
+                            Member of {{ user.societies[0] | truncate: 20 }}
+                            @if (user.societies.length > 1) {
+                            <span class="ml-1 font-medium" nz-button nz-popover nzTrigger="click"
+                                [nzPopoverTitle]="user.name + '\'s societies'" [nzPopoverContent]="contentTemplate">
+                                +{{ user.societies.length - 1 }} more
+                            </span>
+                            <ng-template #contentTemplate>
+                                <ul>
+                                    @for (society of user.societies.slice(1); track $index) {
+                                    <li>
+                                        {{ society }}
+                                    </li>
+                                    }
+                                </ul>
+                            </ng-template>
+                            }
+                        </span>
+                    </p>
+                </div>
+            </a>
+
+            }
+
+        </div>
+    </div>
+</div>
+
+<nz-divider />
+
+<nz-drawer [nzClosable]="false" [nzVisible]="visible" [nzPlacement]="placement"
+    nzTitle="Search for members, societies, or events!" (nzOnClose)="close()">
+    <ng-container *nzDrawerContent>
+        <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
+            <input type="text" nz-input placeholder="e.g. ACM JU Student Chapter" />
+        </nz-input-group>
+        <ng-template #suffixButton>
+            <button nz-button nzType="primary" nzSize="large" [nzLoading]="isSearchLoading" nzSearch (click)="doSearch()">Search</button>
+        </ng-template>
+
+        <div class="bg-gray-100 rounded-lg py-3 mt-4 h-48">
+            <div class="flex justify-center items-center h-full">
+                @if(isSearchLoading){
+                    <nz-spin />
+                }@else {
+                    <nz-empty nzNotFoundContent="No results found." nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"/>
+                }
+            </div>
+        </div>
+    </ng-container>
+</nz-drawer>
+
 
 <div class="bg-slate-100 rounded-lg py-3 mt-4 h-52">
     <div class="flex justify-center items-center h-full">
