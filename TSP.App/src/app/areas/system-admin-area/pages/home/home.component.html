@@ -1,38 +1,78 @@
+<nz-breadcrumb class="text-xs">
+    <nz-breadcrumb-item>
+        Admin Area
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>Home</nz-breadcrumb-item>
+</nz-breadcrumb>
 
+<h1 class="text-xl font-extrabold text-gray-700 mt-2">
+    <nz-icon nzType="home" class="mr-2" />Home
+</h1>
 
-    <nz-breadcrumb class="text-xs">
-        <nz-breadcrumb-item>
-            <nz-icon nzType="home" />
-        </nz-breadcrumb-item>
-        <nz-breadcrumb-item>
-            <a>
-                <nz-icon nzType="user" />
-                <span>System Admin Area</span>
-            </a>
-        </nz-breadcrumb-item>
-        <nz-breadcrumb-item>Home</nz-breadcrumb-item>
-    </nz-breadcrumb>
+<nz-skeleton class="mt-4" [nzAvatar]="true" [nzLoading]="isLoading" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
 
-    <h1 class="text-xl font-extrabold text-gray-700 mt-1 mb-3">Home</h1>
-    <div class="bg-slate-100 rounded-lg py-3 h-52">
-        @if(isLoading) {
-        <div class="flex justify-center items-center h-full">
-            <nz-spin nzSimple />
+<section *ngIf="!isLoading" class="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
+    <div class="flex gap-3 items-center">
+        <img class="w-11 h-11 rounded-full" src="https://robohash.org/s.sarhan@ju.edu.jo?bgset=bg2" alt="profile image">
+        <div>
+            <h2 class="text-lg font-bold text-gray-700">Welcome, Prof. Sami!</h2>
+            <p class="text-sm text-gray-600">Here's a quick overview of the system.</p>
         </div>
-        }@else {
-        @for(society of societies; track $index) {
-        <div class="p-2 bg-slate-200 rounded-lg">
-            <p>
-                <span class="text-white px-2 py-1 rounded-lg mr-2"
-                    [ngStyle]="{ 'background-color': society.themeColor }">{{$index + 1}}</span>
-                <span class="font-bold">{{society.name}}</span>
-            </p>
-        </div>
-        }@empty {
-        <div class="flex justify-center items-center h-full">
-            <nz-empty />
-        </div>
-        }
-        }
-
     </div>
+    <div class="flex gap-2 justify-center sm:justify-end">
+        <a nz-button nz-popover nzType="primary" nzPopoverContent="See all societies you advise.">
+            <nz-icon nzType="product" />Your societies
+        </a>
+    </div>
+</section>
+
+<nz-divider />
+
+<div *ngIf="isLoading" class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-4">
+    <nz-skeleton *ngFor="let i of [1, 2, 3, 4]" [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 1 }" />
+</div>
+
+<div *ngIf="!isLoading" class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-4">
+    <div class="flex items-center bg-white border rounded overflow-hidden shadow">
+        <div class="p-4 bg-green-400">
+            <nz-icon nzType="user" class="text-4xl w-12 h-12 flex items-center justify-center text-white" />
+        </div>
+        <div class="px-4 text-gray-700">
+            <h3 class="text-sm tracking-wider">Total Members</h3>
+            <p class="text-3xl">768</p>
+        </div>
+    </div>
+    <div class="flex items-center bg-white border rounded overflow-hidden shadow">
+        <div class="p-4 bg-blue-400">
+            <nz-icon nzType="product" class="text-4xl w-12 h-12 flex items-center justify-center text-white" />
+        </div>
+        <div class="px-4 text-gray-700">
+            <h3 class="text-sm tracking-wider">Total Societies</h3>
+            <p class="text-3xl">13</p>
+        </div>
+    </div>
+    <div class="flex items-center bg-white border rounded overflow-hidden shadow">
+        <div class="p-4 bg-indigo-400">
+            <nz-icon nzType="project" class="text-4xl w-12 h-12 flex items-center justify-center text-white" />
+        </div>
+        <div class="px-4 text-gray-700">
+            <h3 class="text-sm tracking-wider">Completed Events</h3>
+            <p class="text-3xl">56</p>
+        </div>
+    </div>
+    <div class="flex items-center bg-white border rounded overflow-hidden shadow">
+        <div class="p-4 bg-red-400">
+            <nz-icon nzType="bars" class="text-4xl w-12 h-12 flex items-center justify-center text-white" />
+        </div>
+        <div class="px-4 text-gray-700">
+            <h3 class="text-sm tracking-wider">Total Attendees</h3>
+            <p class="text-3xl">N/A</p>
+        </div>
+    </div>
+</div>
+
+<div class="bg-slate-100 rounded-lg py-3 mt-4 h-52">
+    <div class="flex justify-center items-center h-full">
+        <nz-empty />
+    </div>
+</div>

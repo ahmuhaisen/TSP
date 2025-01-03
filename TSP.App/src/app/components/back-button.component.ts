@@ -12,8 +12,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     NzIconModule
   ],
   template: `
-    <a nz-button nzType="default" nzSize="large" class="mr-2" (click)="goBack($event)">
-      <nz-icon nzType="arrow-left"></nz-icon> Go back
+    <a nz-button nzType="default" nzSize="large" (click)="goBack($event)">
+      <nz-icon nzType="arrow-left" /> Go back
     </a>
   `
 })

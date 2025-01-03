@@ -1,42 +1,40 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { NgStyle } from '@angular/common';
-import { SocietiesService } from '../../../../common/services/admin/societies.service';
-import { Society } from '../../api-interfaces/society.types';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   imports: [
-    NgStyle,
+    NgIf,
+    NgFor,
     NzEmptyModule,
     NzSpinModule,
     NzBreadCrumbModule,
-    NzIconModule
+    NzIconModule,
+    NzButtonModule,
+    NzDividerModule,
+    NzPopoverModule,
+    NzSkeletonModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  societiesService = inject(SocietiesService);
-
-  societies: Society[] = [];
   isLoading = false;
 
   ngOnInit() {
     this.isLoading = true;
-    this.societiesService.all().subscribe({
-      next: (response) => {
-        this.societies = response;
-      },
-      error: (error) => {
-        this.isLoading = false;
-      },
-      complete: () => {
-        this.isLoading = false;
-      }
-    });
+
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 3000);
   }
 }
