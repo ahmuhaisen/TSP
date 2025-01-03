@@ -32,7 +32,7 @@
             <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                 @for(item of navbarItems; track $index){
                 <li>
-                    <a [routerLink]="'./' + item.targetPagePath" routerLinkActive="active"
+                    <a [routerLink]="'./' + item.targetPagePath" routerLinkActive="active" (click)="toggleMenu()"
                         class="block py-2 pl-3 pr-4 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-dark lg:p-0"
                         aria-current="page">
                         <nz-icon *ngIf="item.iconName" [nzType]="item.iconName" class="mr-1"></nz-icon>

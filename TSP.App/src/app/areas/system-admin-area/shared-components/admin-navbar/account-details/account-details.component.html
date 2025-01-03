@@ -14,13 +14,13 @@
         <span class="block text-sm text-gray-500 truncate">s.sarhan&#64;ju.edu.jo</span>
     </div>
     <ul class="py-1 text-gray-500 " aria-labelledby="dropdown">
-        <li>
+        <li (click)="toggleAccountDetailsDropdown()">
             <a routerLink="./my-account" class="block py-2 px-4 text-sm hover:bg-gray-100">
                 <nz-icon nzType="user" nzTheme="outline" class="mr-1" />
                 My profile
             </a>
         </li>
-        <li>
+        <li (click)="toggleAccountDetailsDropdown()">
             <a routerLink="./my-account/settings" class="block py-2 px-4 text-sm hover:bg-gray-100">
                 <nz-icon nzType="logout" nzTheme="outline" class="mr-1" />
                 Account settings
@@ -28,7 +28,7 @@
         </li>
     </ul>
     <ul class="py-1 text-gray-500" aria-labelledby="dropdown">
-        <li>
+        <li (click)="toggleAccountDetailsDropdown()">
             <a routerLink="./sign-out" class="block py-2 px-4 text-sm hover:bg-gray-100">
                 <nz-icon nzType="setting" nzTheme="outline" class="mr-1" />
                 Sign out
