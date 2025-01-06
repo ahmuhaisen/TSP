@@ -8,17 +8,20 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDrawerModule, NzDrawerPlacement } from 'ng-zorro-antd/drawer';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
 import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { presetColors } from 'ng-zorro-antd/core/color';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
   selector: 'app-home',
   imports: [
     NgIf,
     NgFor,
+    NgClass,
     DatePipe,
     TruncatePipe,
     RouterLink,
@@ -30,7 +33,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
     NzDividerModule,
     NzPopoverModule,
     NzSkeletonModule,
-    NzDrawerModule,
+    NzDrawerModule, NzTagModule,
     FormsModule, NzButtonModule, NzInputModule
   ],
   templateUrl: './home.component.html',
@@ -55,6 +58,8 @@ export class HomeComponent {
       date: '2024-07-01 9:00 AM',
       location: 'KASIT Auditorium',
       imageUrl: 'https://robohash.org/event1?bgset=bg2',
+      isAdvised: true,
+      isFinished: true,
     },
     {
       id: '5ij-6kl-7mn-8op',
@@ -63,6 +68,8 @@ export class HomeComponent {
       date: '2024-07-15 10:00 AM',
       location: 'ProgressSoft Lab, KASIT',
       imageUrl: 'https://robohash.org/event2?bgset=bg1',
+      isAdvised: true,
+      isFinished: false,
     },
     {
       id: '9qr-0st-1uv-2wx',
@@ -71,6 +78,8 @@ export class HomeComponent {
       date: '2024-08-01 3:30 PM',
       location: 'Hall 101, KASIT',
       imageUrl: 'https://robohash.org/event3?bgset=bg2',
+      isAdvised: false,
+      isFinished: false,
     },
     {
       id: '3yz-4ab-5cd-6ef',
@@ -79,6 +88,8 @@ export class HomeComponent {
       date: '2024-08-15 12:00 PM',
       location: 'Lab 203, KASIT',
       imageUrl: 'https://robohash.org/event4?bgset=bg1',
+      isAdvised: false,
+      isFinished: false,
     },
   ];
 
@@ -95,7 +106,7 @@ export class HomeComponent {
       id: '1ab-2cd-3ef-4gh',
       name: 'Ahmad Muhaisen',
       department: 'Computer Science',
-      imageUrl: 'https://robohash.org/Ahmad@ju.edu.jo?bgset=bg1',
+      imageUrl: 'https://robohash.org/ahmad@ju.edu.jo?bgset=bg2',
       joinDate: '2024-11-20',
       societies: ['ACM University of Jordan Student Chapter', 'IEEE CS JU']
     },
@@ -117,6 +128,40 @@ export class HomeComponent {
     }
   ]
 
+  announcements = [
+    {
+      id: '1ab-2cd-3ef-4gh',
+      title: 'Postponement of the JUCPC competition',
+      content: 'Due to the current situation, the JUCPC competition will be postponed to a later date.',
+      sender: 'ACM University of Jordan Student Chapter',
+      date: '2024-07-01 9:00 AM',
+      type: 'Postponement'
+    },
+    {
+      id: '5ij-6kl-7mn-8op',
+      title: 'Hackathon 2024',
+      content: 'The Hackathon 2024 will be held on 15th of July, 2024 at ProgressSoft Lab, KASIT.',
+      sender: 'HackerSpace JU',
+      date: '2024-07-15 10:00 AM',
+      type: 'Announcement'
+    },
+    {
+      id: '9qr-0st-1uv-2wx',
+      title: 'Tech Talk: Linux in 2024',
+      content: 'The Tech Talk: Linux in 2024 will be held on 1st of August, 2024 at Hall 101, KASIT.',
+      sender: 'Linux Society JU',
+      date: '2024-08-01 3:30 PM',
+      type: 'Announcement'
+    },
+    {
+      id: '3yz-4ab-5cd-6ef',
+      title: 'Catch the Flag competition',
+      content: 'The Catch the Flag competition will be held on 15th of August, 2024 at Lab 203, KASIT.',
+      sender: 'Hackerspace JU',
+      date: '2024-08-15 12:00 PM',
+      type: 'Cancellation'
+    }
+  ]
   // Drawer
   visible = false;
   placement: NzDrawerPlacement = 'bottom';

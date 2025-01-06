@@ -1,0 +1,226 @@
+<nz-breadcrumb class="text-xs">
+    <nz-breadcrumb-item>
+        Admin Area
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>Events</nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+        Junior to Solver 6.0
+    </nz-breadcrumb-item>
+</nz-breadcrumb>
+
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="project" class="mr-2" />Event Details
+    </h1>
+    <button nz-button nzType="default" nzShape="circle">
+        <nz-icon nzType="search" />
+    </button>
+</div>
+
+<div class="w-full mt-5 flex flex-col md:flex-row justify-between items-start md:items-center">
+    <div>
+        <h2 class="text-lg font-bold text-gray-700">Junior to Solver 6.0</h2>
+        <p class="text-sm text-gray-600">Seminar</p>
+    </div>
+    <div class="mt-3 md:mt-0">
+        <button nz-button nzType="primary" (click)="showEventRequestModal()">
+            <nz-icon nzType="reconciliation" nzTheme="outline" />
+            View event request
+        </button>
+    </div>
+</div>
+
+<nz-divider />
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid gap-y-1.5">
+        <p class="text-xs text-gray-500 flex items-center">
+            <nz-icon nzType="environment" class="mr-1" />
+            Location
+        </p>
+        <p class="text-sm font-semibold text-gray-700">KASIT Auditorium</p>
+    </div>
+
+    <div class="grid gap-y-1.5">
+        <p class="text-xs text-gray-500 flex items-center">
+            <nz-icon nzType="calendar" class="mr-1" />
+            Date and Time
+        </p>
+        <p class="text-sm font-semibold text-gray-700">Sunday, June 20, 2024</p>
+    </div>
+
+    <div class="grid gap-y-1.5">
+        <p class="text-xs text-gray-500 flex items-center">
+            <nz-icon nzType="clock-circle" class="mr-1" />
+            Time
+        </p>
+        <p class="text-sm font-semibold text-gray-700">12:30 PM to 2:30 PM</p>
+    </div>
+
+    <div class="grid gap-y-1.5">
+        <p class="text-xs text-gray-500 flex items-center">
+            <nz-icon nzType="star" class="mr-1" />
+            Status
+        </p>
+        <p class="text-sm font-semibold text-gray-700">Upcoming</p>
+    </div>
+</div>
+
+<nz-divider />
+
+<div class="w-full mt-5 grid grid-cols-1 lg:grid-cols-4 gap-4">
+    <div class="h-80 bg-white border rounded px-4 py-2 overflow-hidden col-span-1 lg:col-span-3">
+        <nz-tabset nzType="line" [nzAnimated]="false">
+            <nz-tab [nzTitle]="titleTemplateT1">
+                <ng-template #titleTemplateT1>
+                    <nz-icon nzType="info-circle" />
+                    Description
+                </ng-template>
+                It's time to learn about many cool, fun, and exciting things in our major and our college as well 🙆
+                In an event titled Junior to Solver 🤓
+                We will introduce you to us, Acm, and talk more about our majors and expand a little on Problem Solving,
+                and talk about its benefits and importance to the job market in the presence of our distinguished guests
+                😍
+                Meet us on Sunday from 12 - 1 in the Ahmed Al-Louzi Auditorium at King Abdullah II College of
+                Information Technology.
+                In addition to a competition in the lab after the event to live the atmosphere of competitions 🔥
+                There will be sweet prizes, don't miss them`
+            </nz-tab>
+            <nz-tab [nzTitle]="titleTemplateT2">
+                <ng-template #titleTemplateT2>
+                    <nz-icon nzType="team" />
+                    Participants
+                </ng-template>
+                <nz-empty />
+            </nz-tab>
+            <nz-tab [nzTitle]="titleTemplateT3">
+                <ng-template #titleTemplateT3>
+                    <nz-icon nzType="user" />
+                    Event manager
+                </ng-template>
+                <div class="flex flex-col lg:flex-row justify-between">
+                    <div class="flex gap-3 items-center">
+                        <img class="w-10 h-10 rounded-full" src="https://robohash.org/suhaib@ju.edu.jo?bgset=bg2"
+                            alt="profile image">
+                        <div>
+                            <h2 class="text-sm font-bold text-gray-700">Suhaib Saleh</h2>
+                            <p class="text-xs text-gray-600">
+                                suhaib021zzzz&#64;ju.edu.jo
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-3 lg:mt-0">
+                        <a href="/students/12kjd-12asa-176s" nz-button nzType="primary" nzGhost>
+                            <nz-icon nzType="user" />
+                            View profile
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4 font-semibold">
+                    <div class="text-md">
+                        <nz-icon nzType="bank" class="mr-1" />
+                        Computer Science
+                        <p class="text-xs text-gray-600 font-normal">department</p>
+                    </div>
+                    <div class="text-md">
+                        <nz-icon nzType="star" class="mr-1" />
+                        President
+                        <p class="text-xs text-gray-600 font-normal">of ACM Since 2021</p>
+                    </div>
+                    <div class="text-md">
+                        <nz-icon nzType="team" class="mr-1" />
+                        Member
+                        <p class="text-xs text-gray-600 font-normal">of Waves JU +2 more</p>
+                    </div>
+                </div>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+
+    <div class="h-fit p-4 bg-white border rounded overflow-hidden col-span-1">
+        <h3 class="text-lg font-semibold text-gray-700 flex items-center">
+            <nz-icon nzType="setting" class="mr-2" />
+            Organizers
+        </h3>
+
+        <nz-divider class="my-2" />
+
+        <div class="mt-4">
+            <div class="flex justify-center">
+                <img class="w-16 h-16 rounded-full ring-1 ring-gray-200" src="https://robohash.org/acm@ju.edu.jo"
+                    alt="organizers">
+            </div>
+            <div class="text-center">
+                <p class="text-gray-800 font-medium mt-2">ACM University of Jordan Student Chapter</p>
+                <p class="text-[12px] text-gray-600">
+                    A Chapter of the Association for Computing Machinery, interested in
+                    computer...
+                </p>
+            </div>
+            <div class="text-center mt-5">
+                <div class="text-xs text-gray-500">Advisor</div>
+                <p class="text-xs text-gray-700 flex items-center justify-center mt-1">
+                    <nz-avatar nzSize="small" nzSrc="https://robohash.org/sami@ju.edu.jo?bgset=bg2" />
+                    <span class="ml-1">Prof. Sami Sarhan</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<nz-modal nzTitle="Junior to Solver 6.0 | Event request" nzCentered [(nzVisible)]="isEventRequestModalVisible"
+    nzFooter=" " (nzOnCancel)="handleEventRequestModalCancel()">
+
+    <ng-container *nzModalContent>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="">
+                <p class="text-gray-600">Requested at:</p>
+                <p class="text-gray-700 font-semibold">1/12/2024 12:00 AM</p>
+            </div>
+            <div class="">
+                <p class="text-gray-600">Requested by:</p>
+                <p class="text-gray-700 font-semibold">
+                    Suhaib Saleh
+                    <a href="mailto:suhaib@ju.edu.jo.com" class="text-blue-400 text-xs font-normal">
+                        <nz-icon nzType="mail" />
+                    </a>
+                </p>
+            </div>
+            <div class="">
+                <p class="text-gray-600">Event start date:</p>
+                <p class="text-gray-700 font-semibold">22/12/2024 12:30 PM</p>
+            </div>
+            <div class="">
+                <p class="text-gray-600">Event end date:</p>
+                <p class="text-gray-700 font-semibold">23/12/2024 1:30 PM</p>
+            </div>
+            <div class="col-span-2">
+                <p class="text-gray-600">Authorized to approve:</p>
+                <p class="text-gray-700 font-semibold">
+                    Dean, Prof. Basel Ali Mahafzah
+                    <a href="mailto:suhaib@ju.edu.jo.com" class="text-blue-400 text-xs font-normal">
+                        <nz-icon nzType="mail" />
+                    </a>
+                </p>
+                <p class="text-gray-700 font-semibold">
+                    Dean Assistant, Dr. Abdelbaset Jamal Assaf
+                    <a href="mailto:suhaib@ju.edu.jo.com" class="text-blue-400 text-xs font-normal">
+                        <nz-icon nzType="mail" />
+                    </a>
+                </p>
+            </div>
+            <div class="">
+                <p class="text-gray-600">
+                    Attendees form:
+                    <nz-tag class="ml-1 text-[9px]" [nzColor]="false ? 'success' : 'error'">
+                        <nz-icon [nzType]="false ? 'check-circle' : 'close-circle'" />
+                        {{ false ? 'Enabled' : 'Disabled' }}
+                    </nz-tag>
+                </p>
+            </div>
+        </div>
+    </ng-container>
+
+</nz-modal>

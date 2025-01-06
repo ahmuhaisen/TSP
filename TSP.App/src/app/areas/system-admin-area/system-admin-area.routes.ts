@@ -11,6 +11,15 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
     },
     {
+        path: 'societies',
+        loadComponent: () => import('./pages/societies/societies.component').then(m => m.SocietiesComponent)
+    },
+    {
+        path: 'events',
+        loadComponent: () => import('./pages/events/events.component').then(m => m.EventsComponent),
+        loadChildren: () => import('./pages/events/events.routes').then(m => m.routes)
+    },
+    {
         path: '**',
         loadComponent: () => import('../../components/not-found.component').then(m => m.NotFoundComponent)
     }

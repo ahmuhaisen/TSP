@@ -18,7 +18,13 @@ import {
   BarsOutline,
   CalendarOutline,
   EnvironmentOutline,
-  UsergroupAddOutline
+  UsergroupAddOutline,
+  CheckOutline,
+  ClockCircleOutline,
+  StarOutline,
+  BankOutline,
+  SoundOutline,
+  ReconciliationOutline
 } from '@ant-design/icons-angular/icons';
 
 export const icons = [
@@ -41,5 +47,11 @@ export const icons = [
   BarsOutline,
   CalendarOutline,
   EnvironmentOutline,
-  UsergroupAddOutline
+  UsergroupAddOutline,
+  CheckOutline,
+  ClockCircleOutline,
+  StarOutline,
+  BankOutline,
+  SoundOutline,
+  ReconciliationOutline
 ];

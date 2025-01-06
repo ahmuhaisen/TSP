@@ -26,7 +26,7 @@
     </div>
     <div class="flex gap-2 justify-center sm:justify-end">
         <a nz-button nz-popover nzType="primary" nzPopoverContent="See all societies you advise.">
-            <nz-icon nzType="product" />Your societies
+            <nz-icon nzType="product" />Your Advised Societies
         </a>
     </div>
 </section>
@@ -80,7 +80,7 @@
 
 <div class="grid gap-5 grid-cols-1 lg:grid-cols-2">
     <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
-        <div class="flex justify-between pb-4">
+        <div class="flex justify-between items-center pb-4">
             <p class="flex items-center font-bold text-lg">
                 <nz-icon nzType="project" class="mr-2" />
                 Recent Events
@@ -95,8 +95,25 @@
                 <div class="w-16 p-2 shrink-0">
                     <img [src]="event.imageUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
                 </div>
-                <div class="p-2 w-full sm:w-auto">
-                    <p class="font-semibold text-sm truncate">{{ event.title }}</p>
+                <div class="p-2 w-full">
+                    <div class="w-full flex items-center justify-between flex-wrap sm:flex-nowrap">
+                        <span class="font-semibold text-sm">
+                            {{ event.title }}
+                        </span>
+                        <div>
+                            <nz-tag class="ml-1 text-[8px]" [nzColor]="event.isFinished ? 'success' : 'processing'">
+                                <nz-icon [nzType]="event.isFinished ? 'check-circle' : 'clock-circle'" />
+                                <span class="hidden sm:inline">{{ event.isFinished ? 'Finished' : 'Ongoing'
+                                    }}</span>
+                            </nz-tag>
+                            @if(event.isAdvised){
+                            <nz-tag class="text-[8px]" [nzColor]="'gold'">
+                                <nz-icon [nzType]="'star'" />
+                                <span class="hidden sm:inline">Society you advise</span>
+                            </nz-tag>
+                            }
+                        </div>
+                    </div>
                     <span class="text-gray-600 text-xs block truncate">{{ event.society }}</span>
                     <p class="text-gray-500 mt-2 text-xs flex flex-wrap sm:flex-nowrap items-center gap-1">
                         <span class="flex items-center">
@@ -114,7 +131,6 @@
             }
 
         </div>
-
     </div>
 
 
@@ -130,8 +146,7 @@
             <a
                 class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
                 <div class="w-16 p-2 shrink-0">
-                    <img [src]="'https://robohash.org/' + user.id + '?bgset=bg2'"
-                        class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                    <img [src]="user.imageUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
                 </div>
                 <div class="p-2 w-full sm:w-auto">
                     <p class="font-semibold text-sm truncate">{{ user.name }}</p>
@@ -172,22 +187,74 @@
 
 <nz-divider />
 
-<nz-drawer [nzClosable]="false" [nzVisible]="visible" [nzPlacement]="placement"
+<div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
+    <div class="flex justify-between items-center pb-4">
+        <p class="flex items-center font-bold text-lg">
+            <nz-icon nzType="sound" class="mr-2" />
+            Announcements
+        </p>
+        <a class="text-primary-light text-xs" [routerLink]="'/admin-area/announcements'">View all</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-7 gap-3">
+        @for(ann of announcements; track $index) {
+        <a class="relative flex flex-col sm:flex-row lg:flex-col items-start hover:shadow p-2 rounded-lg shadow-sm">
+            <div class="order-1 sm:ml-6 xl:ml-0">
+                <h3 class="my-1 text-slate-900 font-semibold">
+                    <span class="block text-sm leading-6" [ngClass]="{
+                        'text-red-500': ann.type === 'Cancellation',
+                        'text-yellow-500': ann.type === 'Postponement',
+                        'text-blue-500': ann.type === 'Announcement'
+                    }">{{ ann.sender | truncate: 30 }}</span>
+                    {{ ann.title }}
+                </h3>
+                <div class="prose prose-slate mb-3 prose-sm text-slate-600">
+                    <p>
+                        {{ ann.content | truncate: 70 }}
+                        <a class="text-primary-dark">Read more</a>
+                    </p>
+                </div>
+            </div>
+            <div class="relative w-full h-36 rounded-lg bg-gradient-to-tr" [ngClass]="{
+                'from-blue-500 to-blue-400 text-blue-500': ann.type === 'Announcement',
+                'from-red-500 to-red-400 text-red-500': ann.type === 'Cancellation',
+                'from-yellow-500 to-yellow-400 text-yellow-500': ann.type === 'Postponement'
+            }">
+                <div class="absolute top-2 left-2 bg-white text-[10px] px-2 py-0.5 rounded-lg">
+                    {{ ann.date | date: 'MMM d, yyyy' }}
+                </div>
+                <div
+                    class="w-full h-full flex flex-col items-center justify-center text-white text-xl md:text-sm lg:text-xl font-semibold">
+                    {{ ann.type }}
+                </div>
+            </div>
+
+        </a>
+
+
+        }
+    </div>
+
+</div>
+
+<nz-drawer [nzClosable]="true" [nzVisible]="visible" [nzPlacement]="placement"
     nzTitle="Search for members, societies, or events!" (nzOnClose)="close()">
     <ng-container *nzDrawerContent>
         <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
             <input type="text" nz-input placeholder="e.g. ACM JU Student Chapter" />
         </nz-input-group>
         <ng-template #suffixButton>
-            <button nz-button nzType="primary" nzSize="large" [nzLoading]="isSearchLoading" nzSearch (click)="doSearch()">Search</button>
+            <button nz-button nzType="primary" nzSize="large" [nzLoading]="isSearchLoading" nzSearch
+                (click)="doSearch()">Search</button>
         </ng-template>
 
         <div class="bg-gray-100 rounded-lg py-3 mt-4 h-48">
             <div class="flex justify-center items-center h-full">
                 @if(isSearchLoading){
-                    <nz-spin />
+                <nz-spin />
                 }@else {
-                    <nz-empty nzNotFoundContent="No results found." nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"/>
+                <nz-empty nzNotFoundContent="No results found."
+                    nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" />
                 }
             </div>
         </div>
@@ -195,8 +262,8 @@
 </nz-drawer>
 
 
-<div class="bg-slate-100 rounded-lg py-3 mt-4 h-52">
+<!-- <div class="bg-slate-100 rounded-lg py-3 mt-4 h-52">
     <div class="flex justify-center items-center h-full">
         <nz-empty />
     </div>
-</div>
+</div> -->
