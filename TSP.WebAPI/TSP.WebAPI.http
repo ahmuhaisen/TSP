@@ -1,0 +1,6 @@
+@TSP.WebAPI_HostAddress = http://localhost:5058
+
+GET {{TSP.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
