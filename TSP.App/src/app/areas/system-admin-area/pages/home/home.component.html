@@ -198,7 +198,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-7 gap-3">
         @for(ann of announcements; track $index) {
-        <a class="relative flex flex-col sm:flex-row lg:flex-col items-start hover:shadow p-2 rounded-lg shadow-sm">
+        <a href="/announcements/{{ ann.id }}" class="relative flex flex-col sm:flex-row lg:flex-col items-start hover:shadow p-2 rounded-lg shadow-sm">
             <div class="order-1 sm:ml-6 xl:ml-0">
                 <h3 class="my-1 text-slate-900 font-semibold">
                     <span class="block text-sm leading-6" [ngClass]="{
@@ -237,6 +237,9 @@
 
 </div>
 
+<nz-divider />
+
+
 <nz-drawer [nzClosable]="true" [nzVisible]="visible" [nzPlacement]="placement"
     nzTitle="Search for members, societies, or events!" (nzOnClose)="close()">
     <ng-container *nzDrawerContent>
@@ -260,10 +263,3 @@
         </div>
     </ng-container>
 </nz-drawer>
-
-
-<!-- <div class="bg-slate-100 rounded-lg py-3 mt-4 h-52">
-    <div class="flex justify-center items-center h-full">
-        <nz-empty />
-    </div>
-</div> -->
