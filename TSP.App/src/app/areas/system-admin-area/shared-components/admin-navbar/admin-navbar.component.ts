@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AccountDetailsComponent } from "./account-details/account-details.component";
 import { NotificationsComponent } from "./notifications/notifications.component";
+import { NzProgressModule } from 'ng-zorro-antd/progress';
 
 @Component({
   selector: 'app-admin-navbar',
@@ -13,7 +14,8 @@ import { NotificationsComponent } from "./notifications/notifications.component"
     NgIf,
     NzIconModule,
     AccountDetailsComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    NzProgressModule
 ],
   templateUrl: './admin-navbar.component.html',
   styleUrl: './admin-navbar.component.css'

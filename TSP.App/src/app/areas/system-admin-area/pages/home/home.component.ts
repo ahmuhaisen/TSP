@@ -13,7 +13,6 @@ import { RouterLink } from '@angular/router';
 import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
 import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzNotificationComponent, NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({

@@ -1,6 +1,6 @@
 @TSP.WebAPI_HostAddress = http://localhost:5058
 
-GET {{TSP.WebAPI_HostAddress}}/weatherforecast/
+GET {{TSP.WebAPI_HostAddress}}/api/societies/6d742936-bfb4-45c0-8ebd-22c4d48196b8/advisor
 Accept: application/json
 
 ###
