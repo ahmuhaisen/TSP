@@ -6,7 +6,7 @@ using TPS.Application.Societies.Contracts.Requests;
 using TPS.Application.Societies.Contracts;
 using TPS.Application.Societies.Queries;
 
-namespace TPS.Presentation.Controllers;
+namespace TPS.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

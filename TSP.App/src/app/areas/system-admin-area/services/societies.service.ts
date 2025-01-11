@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
-import { Society } from '../../../areas/system-admin-area/api-interfaces/society.types';
-import { DbService } from '../db.service';
+import { Society } from '../api-interfaces/society.types';
+import { DbService } from '../../../common/services/db.service';
 
 @Injectable({
   providedIn: 'root'

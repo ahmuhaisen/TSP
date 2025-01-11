@@ -8,6 +8,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
 
 @Component({
   selector: 'app-event-details',
@@ -20,7 +21,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzTabsModule,
     NzModalModule,
     NzEmptyModule,
-    NzTagModule
+    NzTagModule,
+    NzStepsModule
   ],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css'

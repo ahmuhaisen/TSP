@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TPS.Application;
 using TPS.Infrastructure.Data;
-using TPS.Presentation.Validation;
+using TPS.WebAPI.Validation;
 using TSP.Domain.Entities;
 
-namespace TPS.Presentation;
+namespace TPS.WebAPI;
 
 public static class DependencyInjection
 {

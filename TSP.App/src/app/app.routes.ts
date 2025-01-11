@@ -12,7 +12,7 @@ export const routes: Routes = [
     },
     {
         path: '',
-        redirectTo: 'coming-soon',
+        redirectTo: 'admin-area',
         pathMatch: 'full'
     },
     {

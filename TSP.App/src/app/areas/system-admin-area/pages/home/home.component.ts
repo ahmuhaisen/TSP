@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
@@ -13,7 +13,6 @@ import { RouterLink } from '@angular/router';
 import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
 import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { presetColors } from 'ng-zorro-antd/core/color';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
@@ -34,7 +33,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzPopoverModule,
     NzSkeletonModule,
     NzDrawerModule, NzTagModule,
-    FormsModule, NzButtonModule, NzInputModule
+    FormsModule, NzButtonModule, NzInputModule,
+    
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
@@ -42,6 +42,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 export class HomeComponent {
   isLoading = false;
   isSearchLoading = false;
+
   ngOnInit() {
     this.isLoading = true;
 
@@ -180,4 +181,6 @@ export class HomeComponent {
       this.isSearchLoading = false;
     }, 1000);
   }
+
+
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TSP.Domain.Shared;
 
-namespace TPS.Presentation.Controllers;
+namespace TPS.WebAPI.Controllers;
 
 public abstract class ApiController : ControllerBase
 {

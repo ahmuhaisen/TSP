@@ -3,6 +3,10 @@
 
         <app-admin-navbar />
 
+        @if(progressbarService.getProgressBarStatus()){
+            <app-progressbar-loader />
+        }
+
         <main class="max-w-screen-xl px-4 my-5 mx-auto">
             <router-outlet />
         </main>
