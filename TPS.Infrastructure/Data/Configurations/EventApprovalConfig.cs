@@ -15,11 +15,14 @@ namespace TPS.Infrastructure.Data.Configurations
             builder.HasOne(s => s.Event)
                 .WithMany()
                 .HasForeignKey(d => d.EventId)
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.HasOne(s=>s.FacultyMember)
                 .WithMany()
                 .HasForeignKey(d=>d.FacultyMemberId)
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
