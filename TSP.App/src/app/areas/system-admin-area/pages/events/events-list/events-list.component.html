@@ -1,0 +1,36 @@
+<nz-breadcrumb class="text-xs">
+    <nz-breadcrumb-item>
+        Admin Area
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>Events</nz-breadcrumb-item>
+</nz-breadcrumb>
+
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="project" class="mr-2" />Events
+    </h1>
+    <button nz-button nzType="default" nzShape="circle">
+        <nz-icon nzType="search" />
+    </button>
+</div>
+
+<nz-divider />
+
+<div class="flex items-center justify-start text-lg font-semibold text-gray-700">
+    <nz-icon nzType="reconciliation" class="mr-2" />
+    <div>
+        <p>Events Requests</p>
+        <p class="text-xs text-gray-400 font-normal">Requests from societies you advise are listed here</p>
+    </div>
+</div>
+
+<app-requests-table />
+
+<nz-divider />
+
+<p class="text-lg font-semibold text-gray-700">
+    <nz-icon nzType="calendar" class="mr-2" />
+    Events Schedule
+</p>
+
+<app-events-schedule />

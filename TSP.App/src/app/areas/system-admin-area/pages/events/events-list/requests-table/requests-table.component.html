@@ -1,0 +1,77 @@
+<nz-table #requestsTable class="mt-5 overflow-x-auto" [nzData]="listOfDisplayData" nzPaginationType="small"
+    [nzPageSize]="5" [nzLoading]="false" nzBordered="true" [nzScroll]="{ x: '400px' }" nzSize="small">
+    <thead>
+        <tr>
+            <th nzWidth="40px"></th>
+            @for (column of requestsTableColumns; track column) {
+            @if(column.name == 'Name'){
+            <th nzCustomFilter>
+                Name
+                <nz-filter-trigger [(nzVisible)]="visible" [nzActive]="searchValue.length > 0" [nzDropdownMenu]="menu">
+                    <nz-icon nzType="search" />
+                </nz-filter-trigger>
+            </th>
+            }@else {
+            <th [nzShowSort]="!!column.sortFn" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+                [nzSortDirections]="column.sortDirections" [nzShowFilter]="!!column.listOfFilter.length"
+                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                [nzFilterFn]="column.filterFn">
+                {{ column.name }}
+            </th>
+            }
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for(data of requestsTable.data; track data) {
+        <tr>
+            <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.society }}</td>
+            <td>{{ data.date | date: 'MMM d, y, h:mm a' }}</td>
+            <td>{{ data.location }}</td>
+            <td>
+                <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+            </td>
+            <td>
+                <button nz-button nzType="default" nzSize="small" nzShape="round" nz-tooltip nzTooltipTitle="Event Details">
+                    <a routerLink="./{{ data.id }}"><nz-icon nzType="eye" /></a>
+                </button>
+                <nz-divider nzType="vertical" />
+                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round"
+                        nz-tooltip [nzTooltipTitle]="data.status == 'Pending' ? 'Accept' : ''"
+                        [disabled]="data.status != 'Pending'"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Are you sure accept the request for: {{ data.name }}?"
+                        nzPopconfirmPlacement="top"
+                        nzOkText="Yes"
+                        (nzOnConfirm)="confirmAcceptRequest()"
+                        (nzOnCancel)="cancelAcceptRequest()"
+                >
+                    <nz-icon nzType="check" />
+                </button>
+                <nz-divider nzType="vertical" />
+                <button nz-button nzSize="small" nzShape="round" nzDanger
+                    [disabled]="data.status != 'Pending'"
+                    nz-tooltip [nzTooltipTitle]="data.status == 'Pending' ? 'Reject' : ''"
+                >
+                    <nz-icon nzType="close" />
+                </button>
+            </td>
+        </tr>
+        <tr [nzExpand]="expandSet.has(data.id)">
+            <span>{{ data.description || 'No description' }}</span>
+        </tr>
+        }
+    </tbody>
+</nz-table>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
+            <button nz-button nzSize="small" (click)="reset()">Reset</button>
+        </div>
+    </div>
+</nz-dropdown-menu>
