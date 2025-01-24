@@ -1,15 +1,10 @@
 import { Component } from '@angular/core';
-import { NzBreadCrumbComponent, NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-societies',
   imports: [
-    NzBreadCrumbModule,
-    NzButtonModule,
-    NzIconModule,
-    
+    RouterOutlet,
   ],
   templateUrl: './societies.component.html',
   styleUrl: './societies.component.css'

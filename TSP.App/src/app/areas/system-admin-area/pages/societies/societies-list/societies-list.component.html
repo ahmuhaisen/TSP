@@ -1,0 +1,83 @@
+<nz-breadcrumb class="text-xs">
+    <nz-breadcrumb-item>
+        Admin Area
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>Societies</nz-breadcrumb-item>
+</nz-breadcrumb>
+
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="product" class="mr-2" />Societies
+    </h1>
+    <button nz-button nzType="default" nzShape="circle">
+        <nz-icon nzType="search" />
+    </button>
+</div>
+
+<nz-divider />
+
+<div class="flex items-center justify-between">
+    <div class="flex items-center justify-start text-lg font-semibold text-gray-700">
+        <nz-icon nzType="appstore" class="mr-2" />
+        <div>
+            <p>Societies you advise</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 mt-5">
+    @for(society of advisedSocieties; track society.id) {
+    <div
+        class="relative flex flex-col mt-6 max-h-72 text-gray-700 shadow rounded-lg border-b-2 border-secondary bg-clip-border">
+        <div
+            class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden text-white  bg-clip-border rounded-2xl shadow">
+            <img [src]="society.logoUrl" class="object-contain w-full h-full" alt="profile-image" />
+        </div>
+        <div class="p-6 flex-grow">
+            <h5
+                class="block mb-2 font-sans text-sm antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+                {{ society.name }}
+            </h5>
+            <p class="block font-sans text-xs antialiased font-light leading-relaxed text-inherit">
+                {{ society.description | truncate: 90 }}
+            </p>
+        </div>
+        <div class="p-6 pt-0">
+            <button nz-button nzType="primary" class="bg-secondary hover:bg-secondary/85 focus:bg-secondary/95 rounded-lg border-0">
+                <nz-icon nzType="setting" />
+                Manage
+            </button>
+        </div>
+    </div>
+
+    }
+</div>
+
+<nz-divider />
+
+<div class="flex items-center justify-between">
+    <div class="flex items-center justify-start text-lg font-semibold text-gray-700">
+        <nz-icon nzType="appstore" class="mr-2" />
+        <div>
+            <p>Other Societies</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+    @for(society of otherSocieties; track society.id) {
+        <div class="w-full ">
+            <a [routerLink]="'/admin-area/societies/' + society.id" class="flex flex-wrap sm:flex-nowrap items-center py-2 cursor-pointer shadow rounded-lg border-b-2 border-primary-light">
+                <div class="w-16 p-2 shrink-0">
+                    <img [src]="society.logoUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                </div>
+                <div>
+                    <p class="font-semibold text-xs">{{ society.name  | truncate: 35 }}</p>
+                    <span class="text-gray-600 text-xs block">{{ society.description | truncate: 40 }}</span>
+                </div>
+            </a>
+        </div>
+    }
+</div>
+

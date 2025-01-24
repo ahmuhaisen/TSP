@@ -12,7 +12,8 @@ export const routes: Routes = [
     },
     {
         path: 'societies',
-        loadComponent: () => import('./pages/societies/societies.component').then(m => m.SocietiesComponent)
+        loadComponent: () => import('./pages/societies/societies.component').then(m => m.SocietiesComponent),
+        loadChildren: () => import('./pages/societies/societies.routes').then(m => m.routes)
     },
     {
         path: 'events',

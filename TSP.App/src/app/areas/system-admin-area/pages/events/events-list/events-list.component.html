@@ -16,12 +16,17 @@
 
 <nz-divider />
 
-<div class="flex items-center justify-start text-lg font-semibold text-gray-700">
-    <nz-icon nzType="reconciliation" class="mr-2" />
-    <div>
-        <p>Events Requests</p>
-        <p class="text-xs text-gray-400 font-normal">Requests from societies you advise are listed here</p>
+<div class="flex items-center justify-between">
+    <div class="flex items-center justify-start text-lg font-semibold text-gray-700">
+        <nz-icon nzType="reconciliation" class="mr-2" />
+        <div>
+            <p>Events Requests</p>
+            <p class="text-xs text-gray-400 font-normal">Requests from societies you advise are listed here</p>
+        </div>
     </div>
+    <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="Export Requests">
+        <nz-icon nzType="download" nzTheme="outline" />
+    </button>
 </div>
 
 <app-requests-table />

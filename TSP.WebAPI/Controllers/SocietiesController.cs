@@ -15,7 +15,6 @@ public class SocietiesController : ApiController
     public SocietiesController(ISender sender) : base(sender)
     {}
 
-
     [HttpGet]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]

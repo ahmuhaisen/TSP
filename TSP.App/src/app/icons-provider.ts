@@ -25,7 +25,8 @@ import {
   BankOutline,
   SoundOutline,
   ReconciliationOutline,
-  HistoryOutline
+  HistoryOutline,
+  AppstoreOutline
 } from '@ant-design/icons-angular/icons';
 
 export const icons = [
@@ -55,5 +56,6 @@ export const icons = [
   BankOutline,
   SoundOutline,
   ReconciliationOutline,
-  HistoryOutline
+  HistoryOutline,
+  AppstoreOutline
 ];

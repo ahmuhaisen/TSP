@@ -5,6 +5,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { RequestsTableComponent } from "./requests-table/requests-table.component";
 import { EventsScheduleComponent } from "./events-schedule/events-schedule.component";
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 
 @Component({
@@ -14,6 +16,8 @@ import { EventsScheduleComponent } from "./events-schedule/events-schedule.compo
     NzButtonModule,
     NzIconModule,
     NzDividerModule,
+    NzToolTipModule,
+    NzDropDownModule,
     RequestsTableComponent,
     EventsScheduleComponent
 ],
