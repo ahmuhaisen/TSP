@@ -1,0 +1,41 @@
+<nz-table #committeeTable nzSize="small" nzShowPagination="false" [nzData]="committee" nzBordered="true" [nzScroll]="{ x: '500px' }" class="mt-4">
+    <thead>
+        <tr>
+            <th nzWidth="70px"></th>
+            <th>
+                Student Name
+            </th>
+            <th>
+                Position
+            </th>
+            <th>
+                Start Date
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @for(data of committeeTable.data; track data) {
+        <tr>
+            <td class="flex items-center justify-center">
+                <img class="w-7 h-7 rounded-full ring-1 ring-gray-200"
+                    [src]="data.imageUrl" alt="organizers" />
+            </td>
+            <td>
+                <p class="text-xs">
+                    {{ data.name }}
+                </p>
+            </td>
+            <td>
+                <p class="text-xs">
+                    {{ data.position }}
+                </p>
+            </td>
+            <td>
+                <p class="text-xs">
+                    {{ data.startDate | date: 'mediumDate' }}
+                </p>
+            </td>
+        </tr>
+        }
+    </tbody>
+</nz-table>
