@@ -1,0 +1,80 @@
+<nz-alert nzType="info" nzCloseable class="mb-4"
+          nzMessage="Please note that the selected student should be a member of the society. If the student is not a member, please add the student to the society first."
+></nz-alert>
+    
+<form nz-form [formGroup]="addCommitteeMemberForm!" class="grid grid-cols-1 gap-y-1">
+    <!-- Student -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Student</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="studentErrorTpl" class="w-3/4">
+            <nz-select formControlName="studentId" nzAllowClear="true" nzPlaceHolder="Select a student" nzShowSearch nzServerSearch (nzOnSearch)="onSearchMembers($event)">
+                @if (!isMembersLoading) {
+                @for (member of displayedMembers; track member.id) {
+                <nz-option [nzValue]="member.id" [nzLabel]="member.name"></nz-option>
+                }
+                } @else {
+                <nz-option nzDisabled nzCustomContent>
+                    <nz-icon nzType="loading" class="loading-icon" />
+                    Loading members...
+                </nz-option>
+                }
+            </nz-select>
+            <ng-template #studentErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please select a member!
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Position -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Position</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="positionErrorTpl" class="w-3/4">
+            <nz-select formControlName="position"
+            nzAllowClear
+            nzPlaceHolder="Select a position"
+            nzShowSearch
+            [nzServerSearch]="true"
+            (nzOnSearch)="onSearchPositions($event)"
+            (ngModelChange)="onSelectPosition($event)">
+                @if (!isPositionsLoading) {
+                @for (p of displayedPositions; track $index) {
+                <nz-option [nzValue]="p.name" [nzLabel]="p.name"></nz-option>
+                }
+                } @else {
+                <nz-option nzDisabled nzCustomContent>
+                    <nz-icon nzType="loading" class="loading-icon" />
+                    Loading positions...
+                </nz-option>
+                }
+            </nz-select>
+            <ng-template #positionErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please select a position!
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Start Date -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Start Date</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="dateErrorTpl" class="w-3/4">
+            <nz-date-picker formControlName="startDate"></nz-date-picker>
+            <ng-template #dateErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please enter the start date!
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+
+
+</form>

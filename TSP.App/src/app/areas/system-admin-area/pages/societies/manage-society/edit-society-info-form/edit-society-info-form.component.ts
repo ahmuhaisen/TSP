@@ -1,10 +1,8 @@
 import { Component, inject, input } from '@angular/core';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
   Validators
 } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -18,29 +16,28 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzColorPickerComponent } from 'ng-zorro-antd/color-picker';
 import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit-society-info-form',
   imports: [
     NzBreadCrumbModule,
-      NzButtonModule,
-      NzIconModule,
-      NzDividerModule,
-      ReactiveFormsModule,
-      NzFormModule,
-      NzInputModule,
-      NzDatePickerModule,
-      NzColorPickerComponent,
-      NzUploadModule,
-      NzSelectModule
+    NzButtonModule,
+    NzIconModule,
+    NzDividerModule,
+    ReactiveFormsModule,
+    NzFormModule,
+    NzInputModule,
+    NzDatePickerModule,
+    NzColorPickerComponent,
+    NzUploadModule,
+    NzSelectModule
   ],
   templateUrl: './edit-society-info-form.component.html',
   styleUrl: './edit-society-info-form.component.css'
 })
 export class EditSocietyInfoFormComponent {
 
-  society = input<{id: string, name: string, description: string, creationDate: Date, themeColor: string, logo: string, advisorId: number}>();
+  society = input<{ id: string, name: string, description: string, creationDate: Date, themeColor: string, logo: string, advisorId: number }>();
 
   formBuilder = inject(FormBuilder);
   messageService = inject(NzMessageService);
@@ -57,7 +54,7 @@ export class EditSocietyInfoFormComponent {
       advisorId: [null, [Validators.required]]
     });
 
-    if(this.society()) {
+    if (this.society()) {
       this.setFormValues();
     }
   }
@@ -73,7 +70,7 @@ export class EditSocietyInfoFormComponent {
     { id: 6, name: 'Basma Shqairat' }
   ];
 
-  displayedFacultyMembers = this.facultyMembers.slice(0, 5);
+  displayedFacultyMembers = [...this.facultyMembers];
 
   setFormValues() {
     this.createSocietyForm!.get('name')?.setValue(this.society()!.name);
@@ -95,7 +92,7 @@ export class EditSocietyInfoFormComponent {
       reader.readAsDataURL(file.originFileObj as Blob);
       reader.onload = () => {
         const base64 = reader.result as string;
-        if(this.isValidImageType(base64)) {
+        if (this.isValidImageType(base64)) {
           this.createSocietyForm!.get('logo')?.setValue(base64);
         } else {
           this.messageService.error('Please upload a valid image file.');

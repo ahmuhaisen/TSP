@@ -59,5 +59,6 @@ export const icons = [
   ReconciliationOutline,
   HistoryOutline,
   AppstoreOutline,
-  ApiOutline
+  ApiOutline,
+  
 ];

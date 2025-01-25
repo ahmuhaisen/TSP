@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -13,6 +13,8 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { EditMemberFormComponent } from "./edit-member-form/edit-member-form.component";
 
 interface Member {
   id: string;
@@ -37,7 +39,6 @@ interface ColumnItem {
   selector: 'app-members-table',
   imports: [
     FormsModule,
-    RouterLink,
     DatePipe,
     NzBreadCrumbModule,
     NzButtonModule,
@@ -48,18 +49,24 @@ interface ColumnItem {
     NzInputModule,
     NzDropdownMenuComponent,
     NzPopconfirmModule,
-    NzToolTipModule
-  ],
+    NzToolTipModule,
+    NzModalModule,
+    EditMemberFormComponent
+],
   templateUrl: './members-table.component.html',
   styleUrl: './members-table.component.css'
 })
 export class MembersTableComponent {
-searchValue = '';
+  isEditMemberPopupVisible = false;
+  isEditMemberLoading = false;
+  memberToEdit: Member | null = null;
+
+  searchValue = '';
   visible = false;
   expandSet = new Set<number>();
-  constructor(private nzMessageService: NzMessageService) {}
 
-  
+  nzMessageService = inject(NzMessageService);
+
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
       this.expandSet.add(id);
@@ -75,7 +82,6 @@ searchValue = '';
       return aValue.localeCompare(bValue);
     };
   }
-
 
   private static dateSortFn(a: Member, b: Member): number {
     return new Date(a.memberSince).getTime() - new Date(b.memberSince).getTime();
@@ -94,10 +100,10 @@ searchValue = '';
       sortOrder: null,
       sortFn: MembersTableComponent.localeSortFn<Member>('name'),
       sortDirections: ['ascend', 'descend', null],
-      filterMultiple: false, // Single search term at a time
-      listOfFilter: [], // No predefined values, input-based filtering
+      filterMultiple: false,
+      listOfFilter: [],
       filterFn: (search: string, item: Member) =>
-        item.name.toLowerCase().includes(search.toLowerCase()), // Case-insensitive filter
+        item.name.toLowerCase().includes(search.toLowerCase()),
     },
     {
       name: 'Section / Position',
@@ -162,7 +168,7 @@ searchValue = '';
     {
       id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
       name: 'Noor Aldeen',
-      position: 'magazine',    
+      position: 'magazine',
       memberSince: '2024-01-01 11:30 AM',
       imageUrl: 'https://randomuser.me/api/portraits/lego/2.jpg'
     },
@@ -197,7 +203,7 @@ searchValue = '';
     {
       id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
       name: 'Noor Aldeen',
-      position: 'magazine',    
+      position: 'magazine',
       memberSince: '2024-01-01 11:30 AM',
       imageUrl: 'https://randomuser.me/api/portraits/lego/2.jpg'
     },
@@ -232,7 +238,7 @@ searchValue = '';
     {
       id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
       name: 'Noor Aldeen',
-      position: 'magazine',    
+      position: 'magazine',
       memberSince: '2024-01-01 11:30 AM',
       imageUrl: 'https://randomuser.me/api/portraits/lego/2.jpg'
     }
@@ -252,5 +258,26 @@ searchValue = '';
 
   removeMember(id: string): void {
     this.nzMessageService.success(`Removed member with ID: ${id} from the society.`);
+  }
+
+  openEditMemberPopup(id: string): void {
+    this.isEditMemberPopupVisible = true;
+    this.memberToEdit = this.allMembers.find(member => member.id === id) || null;
+    this.nzMessageService.info(`Edit member with ID: ${id}.`);
+  }
+
+  handleCancelEditMember(): void {
+    this.isEditMemberPopupVisible = false;
+    this.memberToEdit = null;
+  }
+
+  handleOkEditMember(): void {
+    this.isEditMemberLoading = true;
+    setTimeout(() => {
+      this.isEditMemberPopupVisible = false;
+      this.isEditMemberLoading = false;
+      this.memberToEdit = null;
+      this.nzMessageService.success('Member edited successfully.');
+    }, 1000);
   }
 }

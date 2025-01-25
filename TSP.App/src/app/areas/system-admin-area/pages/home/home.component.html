@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="flex gap-2 justify-center sm:justify-end">
-        <a nz-button nz-popover nzType="primary" nzPopoverContent="See all societies you advise.">
+        <a routerLink="../societies" nz-button nz-popover nzType="primary" nzPopoverContent="See all societies you advise.">
             <nz-icon nzType="product" />Your Advised Societies
         </a>
     </div>
@@ -184,60 +184,6 @@
         </div>
     </div>
 </div>
-
-<nz-divider />
-
-<div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
-    <div class="flex justify-between items-center pb-4">
-        <p class="flex items-center font-bold text-lg">
-            <nz-icon nzType="sound" class="mr-2" />
-            Announcements
-        </p>
-        <a class="text-primary-light text-xs" [routerLink]="'/admin-area/announcements'">View all</a>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-7 gap-3">
-        @for(ann of announcements; track $index) {
-        <a href="/announcements/{{ ann.id }}" class="relative flex flex-col sm:flex-row lg:flex-col items-start hover:shadow p-2 rounded-lg shadow-sm">
-            <div class="order-1 sm:ml-6 xl:ml-0">
-                <h3 class="my-1 text-slate-900 font-semibold">
-                    <span class="block text-sm leading-6" [ngClass]="{
-                        'text-red-500': ann.type === 'Cancellation',
-                        'text-yellow-500': ann.type === 'Postponement',
-                        'text-blue-500': ann.type === 'Announcement'
-                    }">{{ ann.sender | truncate: 30 }}</span>
-                    {{ ann.title }}
-                </h3>
-                <div class="prose prose-slate mb-3 prose-sm text-slate-600">
-                    <p>
-                        {{ ann.content | truncate: 70 }}
-                        <a class="text-primary-dark">Read more</a>
-                    </p>
-                </div>
-            </div>
-            <div class="relative w-full h-36 rounded-lg bg-gradient-to-tr" [ngClass]="{
-                'from-blue-500 to-blue-400 text-blue-500': ann.type === 'Announcement',
-                'from-red-500 to-red-400 text-red-500': ann.type === 'Cancellation',
-                'from-yellow-500 to-yellow-400 text-yellow-500': ann.type === 'Postponement'
-            }">
-                <div class="absolute top-2 left-2 bg-white text-[10px] px-2 py-0.5 rounded-lg">
-                    {{ ann.date | date: 'MMM d, yyyy' }}
-                </div>
-                <div
-                    class="w-full h-full flex flex-col items-center justify-center text-white text-xl md:text-sm lg:text-xl font-semibold">
-                    {{ ann.type }}
-                </div>
-            </div>
-
-        </a>
-
-
-        }
-    </div>
-
-</div>
-
-<nz-divider />
 
 
 <nz-drawer [nzClosable]="true" [nzVisible]="visible" [nzPlacement]="placement"

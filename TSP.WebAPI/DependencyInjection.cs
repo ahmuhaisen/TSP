@@ -31,9 +31,19 @@ public static class DependencyInjection
     public static IServiceCollection AddEntityFrameworkStore(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlServer(
+                configuration.GetConnectionString("DefaultConnection"),
+                sqlServerAction =>
+                {
+                    sqlServerAction.EnableRetryOnFailure(3);
+                    sqlServerAction.CommandTimeout(30);
+                });
+
+            // Only in development environment
+            optionsBuilder.EnableDetailedErrors();
+            optionsBuilder.EnableSensitiveDataLogging();
         });
 
         return services;

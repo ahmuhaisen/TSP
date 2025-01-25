@@ -11,6 +11,7 @@ import { CommitteeTableComponent } from "./committee-table/committee-table.compo
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { EditSocietyInfoFormComponent } from "./edit-society-info-form/edit-society-info-form.component";
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { AddCommitteeMemberFormComponent } from "./add-committee-member-form/add-committee-member-form.component";
 
 @Component({
   selector: 'app-manage-society',
@@ -23,7 +24,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     MembersTableComponent,
     CommitteeTableComponent,
     NzModalModule,
-    EditSocietyInfoFormComponent
+    EditSocietyInfoFormComponent,
+    AddCommitteeMemberFormComponent
 ],
   templateUrl: './manage-society.component.html',
   styleUrl: './manage-society.component.css'
@@ -39,12 +41,41 @@ export class ManageSocietyComponent {
     advisorId: 1
   }
 
+  committee = [
+    {
+      id: '23fs-sdf',
+      name: 'Suhaib Saleh',
+      position: 'President',
+      imageUrl: 'https://randomuser.me/api/portraits/lego/1.jpg',
+      startDate: '2024-01-01',
+    },
+    {
+      id: '23fs-sdf',
+      name: 'Amer Khaleel',
+      position: 'Vice President',
+      imageUrl: 'https://randomuser.me/api/portraits/lego/2.jpg',
+      startDate: '2024-01-01',
+    },
+    {
+      id: '23fs-sdf',
+      name: 'Noor Aldeen',
+      position: 'Treasure',
+      imageUrl: 'https://randomuser.me/api/portraits/lego/3.jpg',
+      startDate: '2024-01-01',
+    }
+  ];
+
   messageService = inject(NzMessageService)
 
   isEditSocietyInfoPopupVisible = false;
   isEditSocietyInfoLoading = false;
 
+  isAddCommitteePopupVisible = false;
+  isAddCommitteeLoading = false;
+
+
   @ViewChild(EditSocietyInfoFormComponent) editSocietyInfoFormComponent?: EditSocietyInfoFormComponent;
+  @ViewChild(AddCommitteeMemberFormComponent) addCommitteeMemberForm?: AddCommitteeMemberFormComponent;
 
   openEditSocietyInfoPopup() {
     this.isEditSocietyInfoPopupVisible = true;
@@ -71,6 +102,22 @@ export class ManageSocietyComponent {
       this.isEditSocietyInfoPopupVisible = false;
       this.messageService.success('Society info updated successfully.');
     }, 1000);
+  }
 
+  openAddCommitteePopup() {
+    this.isAddCommitteePopupVisible = true;
+  }
+
+  handleCancelAddCommittee() {
+    this.isAddCommitteePopupVisible = false;
+  }
+
+  handleOkAddCommittee() {
+    if(!this.addCommitteeMemberForm!.isFormValid()) {
+      this.addCommitteeMemberForm!.messageService.error('Please fill in all required fields.');
+      return;
+    }
+
+    console.table(this.addCommitteeMemberForm!.getFormValue());
   }
 }

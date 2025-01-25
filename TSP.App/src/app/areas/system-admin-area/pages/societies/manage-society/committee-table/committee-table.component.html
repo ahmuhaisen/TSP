@@ -1,4 +1,4 @@
-<nz-table #committeeTable nzSize="small" nzShowPagination="false" [nzData]="committee" nzBordered="true" [nzScroll]="{ x: '500px' }" class="mt-4">
+<nz-table #committeeTable nzSize="small" nzShowPagination="false" [nzData]="committee()" nzBordered="true" [nzScroll]="{ x: '500px' }" class="mt-4">
     <thead>
         <tr>
             <th nzWidth="70px"></th>
@@ -10,6 +10,9 @@
             </th>
             <th>
                 Start Date
+            </th>
+            <th>
+                Actions
             </th>
         </tr>
     </thead>
@@ -35,7 +38,29 @@
                     {{ data.startDate | date: 'mediumDate' }}
                 </p>
             </td>
+            <td>
+                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
+                    <nz-icon nzType="edit" />
+                </button>
+                <nz-divider nzType="vertical" />
+                <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
+                    [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.name + ') from the committee?'"
+                    nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeCommitteeMember(data.id)">
+                    <nz-icon nzType="delete" />
+                </button>
+            </td>
         </tr>
         }
     </tbody>
 </nz-table>
+
+<!-- Edit Committee Member Popup -->
+<nz-modal [(nzVisible)]="isEditCommitteePopupVisible"
+        nzTitle="Edit Committee Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
+        [nzOkLoading]="isEditCommitteePopupLoading" nzOkText="Save"
+        (nzOnCancel)="handleCancelEditCommitteeMember()" (nzOnOk)="handleOkEditCommitteeMember()"
+    >
+    <ng-container *nzModalContent>
+        edit committee member form
+    </ng-container>
+</nz-modal>

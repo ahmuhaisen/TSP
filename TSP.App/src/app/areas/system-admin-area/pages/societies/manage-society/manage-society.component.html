@@ -84,13 +84,13 @@
         </div>
     </div>
     <div>
-        <button nz-button nzType="default" nzShape="circle">
-            <nz-icon nzType="edit" nzTheme="outline" />
+        <button nz-button nzType="default" nzShape="circle" (click)="openAddCommitteePopup()">
+            <nz-icon nzType="plus" nzTheme="outline" />
         </button>
     </div>
 </div>
 
-<app-committee-table />
+<app-committee-table [committee]="committee" />
 
 <nz-divider />
 
@@ -124,5 +124,16 @@
         >
     <ng-container *nzModalContent>
         <app-edit-society-info-form [society]="society"/>
+    </ng-container>
+</nz-modal>
+
+<!-- Add Committee Member Popup -->
+<nz-modal [(nzVisible)]="isAddCommitteePopupVisible"
+        nzTitle="Add Committee Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
+        [nzOkLoading]="isEditSocietyInfoLoading" nzOkText="Save"
+        (nzOnCancel)="handleCancelAddCommittee()" (nzOnOk)="handleOkAddCommittee()"
+    >
+    <ng-container *nzModalContent>
+        <app-add-committee-member-form [existingCommitteeMembers]="committee"/>
     </ng-container>
 </nz-modal>

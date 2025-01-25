@@ -20,7 +20,6 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
   imports: [
     NgIf,
     NgFor,
-    NgClass,
     DatePipe,
     TruncatePipe,
     RouterLink,
@@ -33,8 +32,9 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzPopoverModule,
     NzSkeletonModule,
     NzDrawerModule, NzTagModule,
-    FormsModule, NzButtonModule, NzInputModule,
-    
+    FormsModule,
+    NzButtonModule,
+    NzInputModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'

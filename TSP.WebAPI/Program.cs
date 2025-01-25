@@ -1,3 +1,5 @@
+using TPS.Application.Abstractions;
+using TPS.Application.Services;
 using TPS.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,9 @@ builder.Services.AddApiControllers()
     .AddMediatR()
     .AddFluentValidation()
     .AddSwagger();
+
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 
@@ -26,6 +31,8 @@ app.UseCors(builder =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseAuthentication();
 

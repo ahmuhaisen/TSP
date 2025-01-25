@@ -32,7 +32,7 @@
             <td>{{ data.position }}</td>
             <td>{{ data.memberSince | date: 'MMM d, y, h:mm a' }}</td>
             <td>
-                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" >
+                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
                     <nz-icon nzType="edit" />
                 </button>
                 <nz-divider nzType="vertical" />
@@ -57,3 +57,14 @@
         </div>
     </div>
 </nz-dropdown-menu>
+
+<!-- Edit Member Popup -->
+<nz-modal [(nzVisible)]="isEditMemberPopupVisible"
+        nzTitle="Edit Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
+        [nzOkLoading]="isEditMemberLoading" nzOkText="Save"
+        (nzOnCancel)="handleCancelEditMember()" (nzOnOk)="handleOkEditMember()"
+    >
+    <ng-container *nzModalContent>
+        <app-edit-member-form [member]="memberToEdit!"/>
+    </ng-container>
+</nz-modal>
