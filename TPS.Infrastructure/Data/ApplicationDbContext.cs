@@ -7,6 +7,7 @@ namespace TPS.Infrastructure.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
+
     public DbSet<Student> Students { get; set; }
     public DbSet<FacultyMember> FacultyMembers { get; set; }
     public DbSet<Rank> Ranks { get; set; }
