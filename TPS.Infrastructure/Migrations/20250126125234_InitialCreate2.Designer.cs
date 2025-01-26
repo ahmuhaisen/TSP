@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TPS.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250126125234_InitialCreate2")]
+    partial class InitialCreate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -595,10 +598,6 @@ namespace TPS.Infrastructure.Migrations
 
                     b.Property<DateOnly>("JoinDate")
                         .HasColumnType("date");
-
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SocietyId", "StudentId");
 

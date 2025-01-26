@@ -15,25 +15,5 @@ public class AdvisorController : ApiController
 {
     public AdvisorController(ISender sender) : base(sender)
     {}
-    [HttpGet("/getAdvisorSocieties")]
-    [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> getAdvisorSocieties([FromQuery] Guid advisorIds)
-    {
-        var query = GetAdvisorSocieties.Query.Create(advisorIds);
-
-        var task = _sender.Send(query);
-
-        return await FromResult(task);
-    }
-    public async Task<IActionResult> getOtherSocieties([FromQuery] Guid advisorIds)
-    {
-        var query = GetOtherSocieties.Query.Create(advisorIds);
-
-        var task = _sender.Send(query);
-
-        return await FromResult(task);
-    }
-
 
 }
