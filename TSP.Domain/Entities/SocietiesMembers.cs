@@ -7,7 +7,8 @@ public class SocietiesMembers
 
     public Guid StudentId { get; set; }
     public Student Student { get; set; } = null!;
-
+    public required string Position { get; set; }
     public DateOnly JoinDate { get; set; }
     public bool IsActive { get; set; }
+    public bool IsCommittee { get; set; }
 }

@@ -20,5 +20,9 @@ internal class SocietiesMembersConfig : IEntityTypeConfiguration<SocietiesMember
                .WithMany(s => s.SocietiesMembers)
                .HasForeignKey(sm => sm.StudentId)
                .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Property(sm => sm.IsCommittee)
+               .HasDefaultValue(false);
+
     }
 }
