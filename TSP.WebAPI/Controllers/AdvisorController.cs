@@ -26,5 +26,14 @@ public class AdvisorController : ApiController
 
         return await FromResult(task);
     }
+    public async Task<IActionResult> getOtherSocieties([FromQuery] Guid advisorIds)
+    {
+        var query = GetOtherSocieties.Query.Create(advisorIds);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+
 
 }

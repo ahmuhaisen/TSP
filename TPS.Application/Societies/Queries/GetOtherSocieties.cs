@@ -12,7 +12,7 @@ using TSP.Domain.Shared;
 
 namespace TPS.Application.Societies.Queries;
 
-public class GetAdvisorSocieties
+public class GetOtherSocieties 
 { 
     public sealed class Query : IQuery<Result<List<SocietyListDTO>>>
     {
@@ -47,14 +47,12 @@ public class GetAdvisorSocieties
             var facultyMemberSocieties = await allSocietiesQuery
                 .Include(s => s.Advisor)
                 .AsNoTracking()
-                .Where(s => s.AdvisorId == request.AdvisorId)
+                .Where(s => s.AdvisorId != request.AdvisorId)
                 .Select(s => new SocietyListDTO
                 {
                          Id = s.Id,
                          Name = s.Name,
-                         Description = s.Description,
                          LogoId = s.LogoId,
-                         ThemeColor = s.ThemeColor,
                          CreationDate = s.CreationDate,                    
                          
                 })
