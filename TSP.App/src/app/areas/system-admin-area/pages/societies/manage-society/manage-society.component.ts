@@ -12,6 +12,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { EditSocietyInfoFormComponent } from "./edit-society-info-form/edit-society-info-form.component";
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { AddCommitteeMemberFormComponent } from "./add-committee-member-form/add-committee-member-form.component";
+import { AddMemberFormComponent } from "./add-member-form/add-member-form.component";
 
 @Component({
   selector: 'app-manage-society',
@@ -25,7 +26,8 @@ import { AddCommitteeMemberFormComponent } from "./add-committee-member-form/add
     CommitteeTableComponent,
     NzModalModule,
     EditSocietyInfoFormComponent,
-    AddCommitteeMemberFormComponent
+    AddCommitteeMemberFormComponent,
+    AddMemberFormComponent
 ],
   templateUrl: './manage-society.component.html',
   styleUrl: './manage-society.component.css'
@@ -113,6 +115,25 @@ export class ManageSocietyComponent {
   }
 
   handleOkAddCommittee() {
+    if(!this.addCommitteeMemberForm!.isFormValid()) {
+      this.addCommitteeMemberForm!.messageService.error('Please fill in all required fields.');
+      return;
+    }
+
+    console.table(this.addCommitteeMemberForm!.getFormValue());
+  }
+
+  isAddMemberPopupVisible = false;
+
+  openAddMemberPopup() {
+    this.isAddCommitteePopupVisible = true;
+  }
+
+  handleCancelAddMember() {
+    this.isAddCommitteePopupVisible = false;
+  }
+
+  handleOkAddMember() {
     if(!this.addCommitteeMemberForm!.isFormValid()) {
       this.addCommitteeMemberForm!.messageService.error('Please fill in all required fields.');
       return;

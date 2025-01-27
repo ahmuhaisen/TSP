@@ -42,7 +42,7 @@ import { committeePositions } from '../../../../../../common/constants/committee
 export class CommitteeTableComponent {
   isEditCommitteePopupVisible = false;
   isEditCommitteePopupLoading = false;
-  memberToEdit :any = null;
+  memberToEdit: any = null;
 
   committee = input.required<any[]>();
 
@@ -57,14 +57,14 @@ export class CommitteeTableComponent {
 
 
   ngOnInit() {
-      this.editCommitteeMemberForm = this.formBuilder.group({
-        name: ['', [Validators.required]],
-        position: ['', [Validators.required]],
-        startDate: [new Date(), [Validators.required]],
-      });
-  
-      this.positions = this.positions.filter(p => !this.isTakenPosition(p.name));
-    }
+    this.editCommitteeMemberForm = this.formBuilder.group({
+      name: ['', [Validators.required]],
+      position: ['', [Validators.required]],
+      startDate: [new Date(), [Validators.required]],
+    });
+
+    this.positions = this.positions.filter(p => !this.isTakenPosition(p.name));
+  }
 
   openEditMemberPopup(id: string) {
     this.memberToEdit = this.committee()!.find(m => m.id === id);

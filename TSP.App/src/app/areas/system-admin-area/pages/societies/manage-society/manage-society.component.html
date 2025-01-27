@@ -110,7 +110,7 @@
         <button nz-button nzType="default" nzShape="circle">
             <nz-icon nzType="download" nzTheme="outline" />
         </button>
-        <button nz-button nzType="primary" nzShape="circle" (click)="openAddCommitteePopup()">
+        <button nz-button nzType="primary" nzShape="circle" (click)="openAddMemberPopup()">
             <nz-icon nzType="plus" nzTheme="outline" />
         </button>
     </div>
@@ -138,5 +138,16 @@
     >
     <ng-container *nzModalContent>
         <app-add-committee-member-form [existingCommitteeMembers]="committee"/>
+    </ng-container>
+</nz-modal>
+
+<!-- Add Member Popup -->
+<nz-modal [(nzVisible)]="isAddMemberPopupVisible"
+        nzTitle="Add Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
+        [nzOkLoading]="isEditSocietyInfoLoading" nzOkText="Save"
+        (nzOnCancel)="handleCancelAddMember()" (nzOnOk)="handleOkAddMember()"
+    >
+    <ng-container *nzModalContent>
+        <app-add-member-form  />
     </ng-container>
 </nz-modal>

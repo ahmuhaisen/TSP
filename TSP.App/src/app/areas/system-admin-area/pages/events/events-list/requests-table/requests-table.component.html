@@ -1,5 +1,5 @@
-<nz-table #requestsTable class="mt-5" [nzData]="listOfDisplayData" nzPaginationType="small"
-    [nzPageSize]="5" [nzLoading]="false" nzBordered="true" [nzScroll]="{ x: '1000px' }" nzSize="small">
+<nz-table #requestsTable class="mt-5" [nzData]="listOfDisplayData" nzPaginationType="small" [nzPageSize]="5"
+    [nzLoading]="false" nzBordered="true" [nzScroll]="{ x: '1000px' }" nzSize="small">
     <thead>
         <tr>
             <th nzWidth="40px"></th>
@@ -34,27 +34,21 @@
                 <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
             </td>
             <td>
-                <button nz-button nzType="default" nzSize="small" nzShape="round" nz-tooltip nzTooltipTitle="Event Details">
+                <button nz-button nzType="default" nzSize="small" nzShape="round" nz-tooltip
+                    nzTooltipTitle="Event Details">
                     <a routerLink="./{{ data.id }}"><nz-icon nzType="eye" /></a>
                 </button>
                 <nz-divider nzType="vertical" />
-                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round"
-                        nz-tooltip [nzTooltipTitle]="data.status == 'Pending' ? 'Accept' : ''"
-                        [disabled]="data.status != 'Pending'"
-                        nz-popconfirm
-                        nzPopconfirmTitle="Are you sure accept the request for: {{ data.name }}?"
-                        nzPopconfirmPlacement="top"
-                        nzOkText="Yes"
-                        (nzOnConfirm)="confirmAcceptRequest()"
-                        (nzOnCancel)="cancelAcceptRequest()"
-                >
+                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" nz-tooltip
+                    [nzTooltipTitle]="data.status == 'Pending' ? 'Accept' : ''" [disabled]="data.status != 'Pending'"
+                    nz-popconfirm nzPopconfirmTitle="Are you sure accept the request for: {{ data.name }}?"
+                    nzPopconfirmPlacement="top" nzOkText="Yes" (nzOnConfirm)="confirmAcceptRequest()"
+                    (nzOnCancel)="cancelAcceptRequest()">
                     <nz-icon nzType="check" />
                 </button>
                 <nz-divider nzType="vertical" />
-                <button nz-button nzSize="small" nzShape="round" nzDanger
-                    [disabled]="data.status != 'Pending'"
-                    nz-tooltip [nzTooltipTitle]="data.status == 'Pending' ? 'Reject' : ''"
-                >
+                <button nz-button nzSize="small" nzShape="round" nzDanger [disabled]="data.status != 'Pending'"
+                    nz-tooltip [nzTooltipTitle]="data.status == 'Pending' ? 'Reject' : ''" (click)="openRejectPopup()">
                     <nz-icon nzType="close" />
                 </button>
             </td>
@@ -75,3 +69,23 @@
         </div>
     </div>
 </nz-dropdown-menu>
+
+
+<!-- Add Member Popup -->
+<nz-modal [(nzVisible)]="isRejectPopupVisible" nzTitle="Reject Event Request" nzCentered [nzClosable]="false"
+    [nzMaskClosable]="false" nzOkText="Reject" (nzOnCancel)="handleCancelReject()" (nzOnOk)="handleOkReject()">
+    <ng-container *nzModalContent>
+        <nz-alert nzType="error" class="mb-6"
+            nzMessage="Request for (Junior to Solver 6.0), Are you sure you want to reject this request?"></nz-alert>
+
+        <form nz-form [formGroup]="rejectForm">
+            <nz-form-item class="flex items-start">
+                <nz-form-label class="w-auto text-left">Reason (Remark)</nz-form-label>
+                <nz-form-control [nzSpan]="12" class="w-auto">
+                    <textarea nz-input formControlName="reason" rows="4">
+                    </textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>

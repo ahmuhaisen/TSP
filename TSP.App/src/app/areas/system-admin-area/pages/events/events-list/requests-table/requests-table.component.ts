@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -13,6 +13,9 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 
 interface Request {
@@ -39,8 +42,11 @@ interface ColumnItem {
   selector: 'app-requests-table',
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     RouterLink,
     DatePipe,
+    NzFormModule,
+    NzInputModule,
     NzBreadCrumbModule,
     NzButtonModule,
     NzIconModule,
@@ -50,7 +56,9 @@ interface ColumnItem {
     NzInputModule,
     NzDropdownMenuComponent,
     NzPopconfirmModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzModalModule,
+    NzAlertModule
   ],
   templateUrl: './requests-table.component.html',
   styles: `
@@ -79,6 +87,7 @@ export class RequestsTableComponent {
   expandSet = new Set<number>();
   constructor(private nzMessageService: NzMessageService) {}
 
+  isRejectPopupVisible = false;
   
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
@@ -171,6 +180,9 @@ export class RequestsTableComponent {
     },
   ];
 
+  rejectForm = new FormGroup({
+    reason: new FormControl('', [Validators.maxLength(200)])
+  });
 
   eventsRequests: Request[] = [
     {
@@ -258,5 +270,17 @@ export class RequestsTableComponent {
 
   confirmAcceptRequest(): void {
     this.nzMessageService.success('Event accepted successfully.');
+  }
+
+  openRejectPopup() {
+    this.isRejectPopupVisible = true;
+  }
+
+  handleCancelReject() {
+    this.isRejectPopupVisible = false;
+  }
+
+  handleOkReject() {
+    this.isRejectPopupVisible = false;
   }
 }
