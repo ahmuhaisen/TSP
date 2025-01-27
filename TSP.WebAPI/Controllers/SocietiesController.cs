@@ -96,7 +96,7 @@ public class SocietiesController : ApiController
         var task = _sender.Send(command);
         return await FromResult(task);
     }
-    [HttpGet("/getAdvisorSocieties")]
+    [HttpGet("AdvisorSocieties")]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getAdvisorSocieties([FromQuery] Guid advisorIds)
@@ -107,7 +107,7 @@ public class SocietiesController : ApiController
 
         return await FromResult(task);
     }
-    [HttpGet("/getOtherSocieties")]
+    [HttpGet("OtherSocieties")]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getOtherSocieties([FromQuery] Guid advisorIds)

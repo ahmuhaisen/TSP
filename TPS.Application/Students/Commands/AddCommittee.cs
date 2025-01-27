@@ -60,7 +60,7 @@ public class AddCommittee
             }
             else
             {
-                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()))
+                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()));
             }
 
         }
