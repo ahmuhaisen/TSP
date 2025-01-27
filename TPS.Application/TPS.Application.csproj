@@ -17,7 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Students\Commands\" />
+    <Folder Include="Advisors\Commands\" />
+    <Folder Include="Advisors\Contracts\" />
     <Folder Include="Students\Contracts\Requests\" />
   </ItemGroup>
 
