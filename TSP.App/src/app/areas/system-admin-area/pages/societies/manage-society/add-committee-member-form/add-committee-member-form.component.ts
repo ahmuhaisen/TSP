@@ -9,6 +9,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { committeePositions } from '../../../../../../common/constants/committee-positions.constant';
 
 @Component({
   selector: 'app-add-committee-member-form',
@@ -37,12 +38,7 @@ export class AddCommitteeMemberFormComponent {
 
   addCommitteeMemberForm: FormGroup | undefined;
 
-  positions = [
-    { name: 'President' },
-    { name: 'Vice President' },
-    { name: 'Secretary' },
-    { name: 'Treasurer' },
-  ];
+  positions = committeePositions;
 
   displayedPositions = [...this.positions];
 

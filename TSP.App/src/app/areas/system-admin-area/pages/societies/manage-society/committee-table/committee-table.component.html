@@ -61,6 +61,56 @@
         (nzOnCancel)="handleCancelEditCommitteeMember()" (nzOnOk)="handleOkEditCommitteeMember()"
     >
     <ng-container *nzModalContent>
-        edit committee member form
+        <form nz-form [formGroup]="editCommitteeMemberForm!" class="grid grid-cols-1 gap-y-1">
+            <!-- Name -->
+            <nz-form-item class="flex items-start">
+                <nz-form-label class="w-1/4 text-left">Student name</nz-form-label>
+                <nz-form-control [nzSpan]="12" class="w-3/4">
+                    <input nz-input formControlName="name" [disabled]="true" />
+                </nz-form-control>
+            </nz-form-item>
+
+            <!-- Position -->
+            <nz-form-item class="flex items-start">
+                <nz-form-label nzRequired class="w-1/4 text-left">Position</nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="positionErrorTpl" class="w-3/4">
+                    <nz-select formControlName="position"
+                    nzAllowClear
+                    nzPlaceHolder="Select a position"
+                    nzShowSearch
+                    [nzServerSearch]="true"
+                    (nzOnSearch)="onSearchPositions($event)"
+                    (ngModelChange)="onSelectPosition($event)">
+                        @for (p of displayedPositions; track $index) {
+                        <nz-option [nzValue]="p.name" [nzLabel]="p.name"></nz-option>
+                        }
+                    </nz-select>
+                    <ng-template #positionErrorTpl let-control>
+                        @if(control.errors?.['required']){
+                        <ng-container>
+                            Please select a position!
+                        </ng-container>
+                        }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+
+            <!-- Start Date -->
+            <nz-form-item class="flex items-start">
+                <nz-form-label nzRequired class="w-1/4 text-left">Start Date</nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="dateErrorTpl" class="w-3/4">
+                    <nz-date-picker formControlName="startDate"></nz-date-picker>
+                    <ng-template #dateErrorTpl let-control>
+                        @if(control.errors?.['required']){
+                        <ng-container>
+                            Please enter the start date!
+                        </ng-container>
+                        }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+
+
+        </form>
     </ng-container>
 </nz-modal>

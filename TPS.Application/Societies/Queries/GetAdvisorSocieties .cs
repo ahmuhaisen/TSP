@@ -39,11 +39,13 @@ public class GetAdvisorSocieties
         {
             var member = await _context.FacultyMembers.FirstOrDefaultAsync(s => s.Id == request.AdvisorId);
             
-            var allSocietiesQuery = _context.Societies.AsQueryable();
             if (member is null)
             {
                 return Result.Failure<List<SocietyListDTO>>(Error.NotFound(nameof(FacultyMember), request.AdvisorId.ToString()));
             }
+
+            var allSocietiesQuery = _context.Societies;
+            
             var facultyMemberSocieties = await allSocietiesQuery
                 .Include(s => s.Advisor)
                 .AsNoTracking()
