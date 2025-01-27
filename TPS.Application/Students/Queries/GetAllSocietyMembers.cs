@@ -6,19 +6,21 @@ using TPS.Application.Students.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
-public class GetCommitteeMembers
+public class GetAllSocietyMembers
 {
     
     public sealed class Query : IQuery<Result<List<MembersListDTO>>>
     {
         public Guid SocitieyId { get; set; }
+        public bool IsCommittee {  get; set; }
 
-        private Query(Guid Id)
+        private Query(Guid Id,bool isCommittee)
         {
             SocitieyId = Id;
+            IsCommittee = isCommittee;  
         }
 
-        public static Query Create(Guid SocitieyId) => new Query(SocitieyId);
+        public static Query Create(Guid SocitieyId, bool isCommittee) => new Query(SocitieyId,isCommittee);
     }
 
     public sealed class Handler : IQueryHandler<Query, Result<List<MembersListDTO>>>
@@ -43,7 +45,7 @@ public class GetCommitteeMembers
                 .Include(s => s.Society)
                 .Include(s=> s.Student)
                 .AsNoTracking()
-                .Where(s=>s.SocietyId == request.SocitieyId&& s.IsActive&&s.IsCommittee)
+                .Where(s=>s.SocietyId == request.SocitieyId&&s.IsCommittee==request.IsCommittee)
                 .Select(
                  s=>new MembersListDTO
                  {
