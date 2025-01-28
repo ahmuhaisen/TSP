@@ -1,14 +1,22 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TPS.Application;
+using TPS.Application.Abstractions;
+using TPS.Application.Services;
 using TPS.Infrastructure.Data;
-using TPS.WebAPI.Validation;
 using TSP.Domain.Entities;
+using TSP.Domain.Shared.Options;
+using TSP.WebAPI;
+using TSP.WebAPI.Controllers;
+using TSP.WebAPI.Validation;
 
-namespace TPS.WebAPI;
+namespace TSP.WebAPI;
 
 public static class DependencyInjection
 {
@@ -49,17 +57,39 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddIdentity(this IServiceCollection services)
+    public static IServiceCollection AddIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDefaultIdentity<ApplicationUser>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+        services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+        })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
 
-        services.AddIdentityCore<FacultyMember>().AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
-        services.AddIdentityCore<Student>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+        // Configure JWT Authentication
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = configuration["Jwt:Issuer"],
+                ValidAudience = configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+            };
+        });
 
-        //builder.Services.AddIdentityApiEndpoints<FacultyMember>();
-        //builder.Services.AddIdentityApiEndpoints<Student>();
+        services.AddScoped<ITokenService, TokenService>();
+
+        services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
 
         return services;
     }
@@ -76,19 +106,19 @@ public static class DependencyInjection
 
     public static IServiceCollection AddFluentValidation(this IServiceCollection services)
     {
-        #pragma warning disable CS0618
+#pragma warning disable CS0618
         services.AddFluentValidation(config =>
         {
             config.RegisterValidatorsFromAssemblyContaining<ApplicationAssemblyReference>();
         });
-        #pragma warning restore CS0618
+#pragma warning restore CS0618
 
         services.AddFluentValidationAutoValidation()
             .AddFluentValidationClientsideAdapters();
 
         return services;
     }
-    
+
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();

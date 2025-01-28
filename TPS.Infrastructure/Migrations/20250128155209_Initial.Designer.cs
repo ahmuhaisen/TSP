@@ -12,8 +12,8 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250126125234_InitialCreate2")]
-    partial class InitialCreate2
+    [Migration("20250128155209_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -598,6 +598,10 @@ namespace TPS.Infrastructure.Migrations
 
                     b.Property<DateOnly>("JoinDate")
                         .HasColumnType("date");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SocietyId", "StudentId");
 

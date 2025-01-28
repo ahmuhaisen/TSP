@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TSP.Domain.Shared;
 
-namespace TPS.WebAPI.Controllers;
+namespace TSP.WebAPI.Controllers;
 
 public abstract class ApiController : ControllerBase
 {
@@ -49,7 +49,7 @@ public abstract class ApiController : ControllerBase
             return BadRequest(errorEnvelope);
         }
     }
-    
+
     protected async Task<IActionResult> FromResult(Task<Result> task)
     {
         if (task is null)

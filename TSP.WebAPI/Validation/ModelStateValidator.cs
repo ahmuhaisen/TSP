@@ -2,7 +2,7 @@
 using System.Net;
 using TSP.Domain.Shared;
 
-namespace TPS.WebAPI.Validation;
+namespace TSP.WebAPI.Validation;
 
 public static class ModelStateValidator
 {

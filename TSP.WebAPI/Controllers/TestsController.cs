@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions;
 using TPS.Infrastructure.Data;
-using TPS.Infrastructure.Testing;
+using TPS.Infrastructure.DataGenerators;
 
-namespace TPS.WebAPI.Controllers;
+namespace TSP.WebAPI.Controllers;
 
 
 [ApiController]
@@ -14,7 +13,7 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
     [HttpPost("GenerateFakeData")]
     public async Task<IActionResult> GenerateFakeData()
     {
-        var data = new FacultyMemberFaker().Generate(10);
+        var data = new SocietyFaker().Generate(10);
 
         foreach (var row in data)
         {

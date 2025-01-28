@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using TSP.Domain.Entities;
 
-namespace TPS.Infrastructure.Testing;
+namespace TPS.Infrastructure.DataGenerators;
 
 public class StudentFaker : Faker<Student>
 {
@@ -144,7 +144,7 @@ public class SocietiesMembersFaker : Faker<SocietiesMembers>
             Guid.Parse("C259756E-E6C1-4958-9CF3-61171E545E14"),
             Guid.Parse("C4B4397F-3F6F-49C2-8354-62FFF73D1D96")
         };
-    
+
     public SocietiesMembersFaker()
     {
         RuleFor(sm => sm.SocietyId, f => f.PickRandom(societyIds));

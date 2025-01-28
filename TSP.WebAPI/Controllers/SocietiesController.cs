@@ -6,14 +6,14 @@ using TPS.Application.Societies.Contracts.Requests;
 using TPS.Application.Societies.Contracts;
 using TPS.Application.Societies.Queries;
 
-namespace TPS.WebAPI.Controllers;
+namespace TSP.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class SocietiesController : ApiController
 {
     public SocietiesController(ISender sender) : base(sender)
-    {}
+    { }
 
     [HttpGet]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
