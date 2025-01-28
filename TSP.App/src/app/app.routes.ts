@@ -7,6 +7,11 @@ export const routes: Routes = [
         loadChildren: () => import('./areas/system-admin-area/system-admin-area.routes').then(m => m.routes)
     },
     {
+        path: 'authentication',
+        loadComponent: () => import('./areas/authentication/authentication.component').then(m => m.AuthenticationComponent),
+        loadChildren: () => import('./areas/authentication/authentication.routes').then(m => m.routes)
+    },
+    {
         path: 'coming-soon',
         loadComponent: () => import('./components/coming-soon.component').then(m => m.ComingSoonComponent)
     },

@@ -1,0 +1,36 @@
+<div class="mb-8 text-xs text-center">
+    <p class="focus:outline-none text-2xl font-extrabold leading-6 text-gray-800">
+        Login to your account
+    </p>
+    <p class="focus:outline-none mt-4 font-medium leading-none text-gray-600">
+        Don't have an account?
+        <a class="font-medium text-gray-700 cursor-pointer">
+            Sign up here
+        </a>
+    </p>
+</div>
+
+<div class="mb-8 text-center">
+    <nz-segmented [nzOptions]="userTypes" (nzValueChange)="handleUserTypeChange($event)"></nz-segmented>
+</div>
+
+<form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="submitForm()">
+    <nz-form-item>
+        <nz-form-control nzErrorTip="Please enter a valid email!">
+            <nz-input-group nzPrefixIcon="mail" nzSize="large">
+                <input type="text" nz-input formControlName="email" placeholder="Email" />
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-control nzErrorTip="Please enter your Password!">
+            <nz-input-group nzPrefixIcon="lock" nzSize="large">
+                <input type="password" nz-input formControlName="password" placeholder="Password" />
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+    <button nz-button class="my-2 w-full" [nzSize]="'large'" [nzType]="'primary'">Log in</button>
+    <div class="text-center text-xs">
+        <a>Forgot password</a>
+    </div>
+</form>
