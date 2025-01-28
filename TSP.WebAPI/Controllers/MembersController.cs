@@ -18,7 +18,7 @@ public class MembersController : ApiController
     public MembersController(ISender sender) : base(sender)
     {}
 
-    [HttpGet("GetAllSocietyMembers")]
+    [HttpGet("AllSocietyMembers")]
     [ProducesResponseType(typeof(List<MembersListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getCommitteeMembers([FromQuery] Guid societyId,[FromQuery]bool isCommittee)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
@@ -12,7 +13,7 @@ public sealed class CreateSociety
     {
         public string Name { get; private init; } = null!;
         public string Description { get; private init; } = null!;
-        public string LogoId { get; private init; } = null!;
+        public string Logo { get; private init; } = null!;
         public DateOnly CreationDate { get; private init; }
         public string? ThemeColor { get; private init; }
         public Guid AdvisorId { get; private init; }
@@ -22,7 +23,7 @@ public sealed class CreateSociety
             {
                 Name = name.Trim(),
                 Description = description.Trim(),
-                LogoId = logoId,
+                Logo = logoId,
                 CreationDate = creationDate,
                 ThemeColor = themeColor,
                 AdvisorId = AdvisorId
@@ -30,19 +31,28 @@ public sealed class CreateSociety
         }
     }
 
-    public sealed class Handler(ApplicationDbContext context) : ICommandHandler<Command, Result<Guid>>
+    public sealed class Handler(ApplicationDbContext context,IFileManagerService _FileManager) : ICommandHandler<Command, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
             if (await context.Societies.AnyAsync(s => s.Name.Equals(request.Name), cancellationToken: cancellationToken))
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
+            
+            
+            string logoId=await _FileManager.SaveImage(request.Logo, nameof(Society));
+
+            if(logoId==string.Empty)
+            {
+                return Result.Failure<Guid>(Error.ValueInvalid($"Invalid Image"));
+            }
+
 
             var society = new Society
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                LogoId = request.LogoId,
+                LogoId = logoId,
                 CreationDate = request.CreationDate,
                 ThemeColor = request.ThemeColor,
                 AdvisorId = request.AdvisorId

@@ -13,6 +13,10 @@ builder.Services.AddApiControllers()
 
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.Configure<GitOptions>(builder.Configuration.GetSection("GitImages"));
+builder.Services.AddTransient<IDBManagerService, GitHubService>();
+builder.Services.AddTransient<IFileManagerService, FileManager>();
+
 
 var app = builder.Build();
 
