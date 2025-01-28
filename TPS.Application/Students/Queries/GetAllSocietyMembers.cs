@@ -42,10 +42,10 @@ public class GetAllSocietyMembers
             }
             var societiesMembers =  _context.SocietiesMembers.AsQueryable();
             var data = await societiesMembers
-                .Include(s => s.Society)
-                .Include(s=> s.Student)
                 .AsNoTracking()
-                .Where(s=>s.SocietyId == request.SocitieyId&&s.IsCommittee==request.IsCommittee)
+                .Where(
+                s=>s.SocietyId == request.SocitieyId&&
+                s.IsCommittee==request.IsCommittee)
                 .Select(
                  s=>new MembersListDTO
                  {

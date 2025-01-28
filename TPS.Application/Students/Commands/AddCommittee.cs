@@ -14,13 +14,15 @@ public class AddCommittee
     public sealed class Command : ICommand<Result<Guid>>
     {
         public Guid StudentId { get; set; }
+        public Guid SocietyId { get; set; }
         public required string StudentPosition {  get; set; }
         public DateOnly StudentDate { get; set; }
-        public static Command Create(Guid id,string position,DateOnly date)
+        public static Command Create(Guid id, Guid SocietyId,string position,DateOnly date)
         {
             return new Command
             {
                 StudentId = id,
+                SocietyId = SocietyId,
                 StudentPosition = position,
                 StudentDate = date
             };
@@ -38,9 +40,10 @@ public class AddCommittee
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
             var data = await _context.SocietiesMembers
-                .Include(x => x.Student)
-                .Include(x => x.Society)
-                .FirstOrDefaultAsync(s => s.StudentId == request.StudentId);
+                .FirstOrDefaultAsync(
+                s => s.StudentId == request.StudentId&&
+                s.SocietyId==request.SocietyId);
+
             if (data is null)
             {
                 return Result.Failure<Guid>(Error.GuidInvalid(request.StudentId));

@@ -15,8 +15,8 @@ public sealed class CreateSociety
         public string LogoId { get; private init; } = null!;
         public DateOnly CreationDate { get; private init; }
         public string? ThemeColor { get; private init; }
-
-        public static Command Create(string name, string description, string logoId, DateOnly creationDate, string? themeColor)
+        public Guid AdvisorId { get; private init; }
+        public static Command Create(string name, string description, string logoId, DateOnly creationDate, string? themeColor, Guid AdvisorId)
         {
             return new Command
             {
@@ -24,7 +24,8 @@ public sealed class CreateSociety
                 Description = description.Trim(),
                 LogoId = logoId,
                 CreationDate = creationDate,
-                ThemeColor = themeColor
+                ThemeColor = themeColor,
+                AdvisorId = AdvisorId
             };
         }
     }
@@ -44,7 +45,7 @@ public sealed class CreateSociety
                 LogoId = request.LogoId,
                 CreationDate = request.CreationDate,
                 ThemeColor = request.ThemeColor,
-                AdvisorId = Guid.Parse("8B431911-5256-411E-A4C7-11649C5F516D")
+                AdvisorId = request.AdvisorId
             };
 
             await context.Societies.AddAsync(society, cancellationToken);

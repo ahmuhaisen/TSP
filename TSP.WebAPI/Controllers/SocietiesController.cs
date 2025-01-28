@@ -13,7 +13,7 @@ namespace TPS.WebAPI.Controllers;
 public class SocietiesController : ApiController
 {
     public SocietiesController(ISender sender) : base(sender)
-    {}
+    { }
 
     [HttpGet]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
@@ -39,6 +39,7 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
+
     [HttpGet("{societyId}/members")]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -47,7 +48,7 @@ public class SocietiesController : ApiController
         return Task.FromResult<IActionResult>(Ok("Not Implemented 2"));
     }
 
-    [HttpPost]
+    [HttpPost("Society")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post(CreateSocietyRequest request)
@@ -56,7 +57,8 @@ public class SocietiesController : ApiController
                                                    request.Description,
                                                    request.LogoId,
                                                    request.CreationDate,
-                                                   request.ThemeColor);
+                                                   request.ThemeColor,
+                                                   request.AdvisorId);
 
         var task = _sender.Send(command);
 

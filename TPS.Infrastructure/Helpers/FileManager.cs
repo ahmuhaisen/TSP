@@ -1,121 +1,214 @@
-﻿
-//public class FileManager
-//{
-//    public const string ServicesImagesPath = "/Images/Services";
-//    public const string MenusImagesPath = "/Images/Menus";
-//    public const string ItemsImagesPath = "/Images/Items";
-//    public const string OptionsImagesPath = "/Images/Options";
-//    public const string ValidImageFormats = "jpg,jpeg,png,webp";
-//    public const int MaxImageSizeInMB = 2;
+﻿using System;
+using System.IO;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
-//    private readonly IPathProvider _pathProvider;
+public class FileManager
+{
+    public const string ServicesImagesPath = "Images/Services";
+    public const string MenusImagesPath = "Images/Menus";
+    public const string ItemsImagesPath = "Images/Items";
+    public const string OptionsImagesPath = "Images/Options";
+    public const string ValidImageFormats = "jpg,jpeg,png,webp";
+    public const int MaxImageSizeInMB = 2;
 
-//    public FileManager(IPathProvider pathProvider)
-//    {
-//        _pathProvider = pathProvider;
-//    }
+    private const string GitHubRepoOwner = "your-github-username";
+    private const string GitHubRepoName = "your-repo-name";
+    private const string GitHubBranch = "main";
+    private const string GitHubToken = "your-personal-access-token";
 
-//    public string SaveImage(string base64Image, string directoryPath)
-//    {
-//        byte[] imageBytes = Convert.FromBase64String(base64Image);
+    private readonly HttpClient _httpClient;
 
-//        string fileName = Guid.NewGuid().ToString() + ".png";
+    public FileManager()
+    {
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("FileManagerApp");
+        _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", GitHubToken);
+    }
 
-//        string wwwRootPath = _pathProvider.GetWebRootPath();
-//        string folderPath = wwwRootPath + "/" + directoryPath;
+    public async Task<string> SaveImage(string base64Image, string directoryPath)
+    {
+        // Decode the base64 image
+        byte[] imageBytes = Convert.FromBase64String(base64Image);
+        string fileName = Guid.NewGuid().ToString() + ".png";
+        string filePath = $"{directoryPath}/{fileName}";
 
-//        Directory.CreateDirectory(folderPath);
+        // Convert image bytes to base64 for GitHub API
+        string base64Content = Convert.ToBase64String(imageBytes);
 
-//        string filePath = folderPath + "/" + fileName;
+        // Create the GitHub API request body
+        var requestBody = new
+        {
+            message = $"Add image {fileName}",
+            content = base64Content,
+            branch = GitHubBranch
+        };
 
-//        File.WriteAllBytes(filePath, imageBytes);
+        // Serialize the request body using System.Text.Json
+        string jsonRequestBody = JsonSerializer.Serialize(requestBody);
+        var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
 
-//        return fileName;
-//    }
+        // Send the request to GitHub API
+        string apiUrl = $"https://api.github.com/repos/{GitHubRepoOwner}/{GitHubRepoName}/contents/{filePath}";
+        var response = await _httpClient.PutAsync(apiUrl, content);
 
-//    public string SaveImage2(string base64Image, string directoryPath)
-//    {
-//        string content = base64Image.Substring(base64Image.IndexOf(',') + 1);
-//        byte[] imageBytes = Convert.FromBase64String(content);
+        if (response.IsSuccessStatusCode)
+        {
+            // Parse the response to get the file URL
+            var responseContent = await response.Content.ReadAsStringAsync();
+            using JsonDocument doc = JsonDocument.Parse(responseContent);
+            JsonElement root = doc.RootElement;
+            string downloadUrl = root.GetProperty("content").GetProperty("download_url").GetString();
+            return downloadUrl;
+        }
+        else
+        {
+            throw new Exception($"Failed to upload image to GitHub: {response.ReasonPhrase}");
+        }
+    }
 
-//        string imageID = generateImageID(base64Image);
+    public async Task<string> SaveImage2(string base64Image, string directoryPath)
+    {
+        // Extract the base64 content (remove the data URL prefix)
+        string content = base64Image.Substring(base64Image.IndexOf(',') + 1);
+        byte[] imageBytes = Convert.FromBase64String(content);
 
-//        string wwwRootPath = _pathProvider.GetWebRootPath();
-//        string folderPath = wwwRootPath + "/" + directoryPath;
+        // Generate a unique image ID
+        string imageID = generateImageID(base64Image);
+        string filePath = $"{directoryPath}/{imageID}";
 
-//        Directory.CreateDirectory(folderPath);
+        // Convert image bytes to base64 for GitHub API
+        string base64Content = Convert.ToBase64String(imageBytes);
 
-//        string filePath = folderPath + "/" + imageID;
+        // Create the GitHub API request body
+        var requestBody = new
+        {
+            message = $"Add image {imageID}",
+            content = base64Content,
+            branch = GitHubBranch
+        };
 
-//        File.WriteAllBytes(filePath, imageBytes);
+        // Serialize the request body using System.Text.Json
+        string jsonRequestBody = JsonSerializer.Serialize(requestBody);
+        var content = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
 
-//        return imageID;
-//    }
+        // Send the request to GitHub API
+        string apiUrl = $"https://api.github.com/repos/{GitHubRepoOwner}/{GitHubRepoName}/contents/{filePath}";
+        var response = await _httpClient.PutAsync(apiUrl, content);
 
-//    public string? UpdateImage(string? existingImageId, string? newBase64Image, string path)
-//    {
-//        if (string.IsNullOrEmpty(newBase64Image) && !string.IsNullOrEmpty(existingImageId))
-//        {
-//            DeleteImage(existingImageId, path);
-//            return null;
-//        }
+        if (response.IsSuccessStatusCode)
+        {
+            // Parse the response to get the file URL
+            var responseContent = await response.Content.ReadAsStringAsync();
+            using JsonDocument doc = JsonDocument.Parse(responseContent);
+            JsonElement root = doc.RootElement;
+            string downloadUrl = root.GetProperty("content").GetProperty("download_url").GetString();
+            return downloadUrl;
+        }
+        else
+        {
+            throw new Exception($"Failed to upload image to GitHub: {response.ReasonPhrase}");
+        }
+    }
 
-//        if (!string.IsNullOrEmpty(newBase64Image))
-//        {
-//            if (!string.IsNullOrEmpty(existingImageId))
-//            {
-//                DeleteImage(existingImageId, path);
-//            }
+    public async Task<string?> UpdateImage(string? existingImageId, string? newBase64Image, string path)
+    {
+        if (string.IsNullOrEmpty(newBase64Image) && !string.IsNullOrEmpty(existingImageId))
+        {
+            await DeleteImage(existingImageId, path);
+            return null;
+        }
 
-//            var newImageID = SaveImage2(newBase64Image, path);
-//            return newImageID;
-//        }
+        if (!string.IsNullOrEmpty(newBase64Image))
+        {
+            if (!string.IsNullOrEmpty(existingImageId))
+            {
+                await DeleteImage(existingImageId, path);
+            }
 
-//        return null;
-//    }
+            var newImageID = await SaveImage2(newBase64Image, path);
+            return newImageID;
+        }
 
-//    public void DeleteImage(string imageId, string directoryPath)
-//    {
-//        string wwwRootPath = _pathProvider.GetWebRootPath();
-//        string imagePath = wwwRootPath + directoryPath + "/" + imageId;
+        return null;
+    }
 
-//        if (File.Exists(imagePath))
-//            File.Delete(imagePath);
-//    }
+    public async Task DeleteImage(string imageId, string directoryPath)
+    {
+        string filePath = $"{directoryPath}/{imageId}";
 
-//    public static bool IsValidBase64ImageString(string base64String)
-//    {
-//        if (!base64String.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
-//            return false;
+        // Get the current file SHA (required for deletion)
+        string apiUrl = $"https://api.github.com/repos/{GitHubRepoOwner}/{GitHubRepoName}/contents/{filePath}";
+        var response = await _httpClient.GetAsync(apiUrl);
 
-//        int separatorIndex = base64String.IndexOf(';');
-//        if (separatorIndex < 0 || !base64String.Substring(5, separatorIndex - 5).StartsWith("image/"))
-//            return false;
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            using JsonDocument doc = JsonDocument.Parse(responseContent);
+            JsonElement root = doc.RootElement;
+            string sha = root.GetProperty("sha").GetString();
 
-//        return true;
-//    }
+            // Create the GitHub API request body for deletion
+            var requestBody = new
+            {
+                message = $"Delete image {imageId}",
+                sha = sha,
+                branch = GitHubBranch
+            };
 
-//    public static bool IsValidImageType(string base64Image)
-//    {
-//        string imageType = getImageType(base64Image);
+            // Serialize the request body using System.Text.Json
+            string jsonRequestBody = JsonSerializer.Serialize(requestBody);
+            var deleteContent = new StringContent(jsonRequestBody, Encoding.UTF8, "application/json");
 
-//        if (!ValidImageFormats.Split(',').Contains(imageType))
-//            return false;
+            // Send the delete request to GitHub API
+            var deleteResponse = await _httpClient.DeleteAsync(apiUrl, deleteContent);
 
-//        return true;
-//    }
+            if (!deleteResponse.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to delete image from GitHub: {deleteResponse.ReasonPhrase}");
+            }
+        }
+        else
+        {
+            throw new Exception($"Failed to fetch file SHA for deletion: {response.ReasonPhrase}");
+        }
+    }
 
-//    private static string getImageType(string base64Image)
-//    {
-//        int separatorIndex = base64Image.IndexOf(';');
-//        return base64Image.Substring(5, separatorIndex - 5).Split('/')[1];
-//    }
+    public static bool IsValidBase64ImageString(string base64String)
+    {
+        if (!base64String.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+            return false;
 
-//    private static string generateImageID(string base64Image)
-//    {
-//        string name = Guid.NewGuid().ToString();
-//        string type = getImageType(base64Image);
+        int separatorIndex = base64String.IndexOf(';');
+        if (separatorIndex < 0 || !base64String.Substring(5, separatorIndex - 5).StartsWith("image/"))
+            return false;
 
-//        return $"{name}.{type}";
-//    }
-//}
+        return true;
+    }
+
+    public static bool IsValidImageType(string base64Image)
+    {
+        string imageType = getImageType(base64Image);
+
+        if (!ValidImageFormats.Split(',').Contains(imageType))
+            return false;
+
+        return true;
+    }
+
+    private static string getImageType(string base64Image)
+    {
+        int separatorIndex = base64Image.IndexOf(';');
+        return base64Image.Substring(5, separatorIndex - 5).Split('/')[1];
+    }
+
+    private static string generateImageID(string base64Image)
+    {
+        string name = Guid.NewGuid().ToString();
+        string type = getImageType(base64Image);
+
+        return $"{name}.{type}";
+    }
+}
