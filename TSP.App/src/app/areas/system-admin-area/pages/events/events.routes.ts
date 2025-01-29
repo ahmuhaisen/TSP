@@ -7,7 +7,8 @@ export const routes: Routes = [
     },
     {
         path: ':id',
-        loadComponent: () => import('./event-details/event-details.component').then(m => m.EventDetailsComponent)
+        loadComponent: () => import('./event-details/event-details.component').then(m => m.EventDetailsComponent),
+        data: { breadcrumb: { alias: 'eventName' } }
     },
     {
         path: '**',

@@ -1,6 +1,5 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
-import { NzAvatarComponent } from 'ng-zorro-antd/avatar';
+import { BreadcrumbService } from 'xng-breadcrumb';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -27,7 +26,7 @@ import { AddMemberFormComponent } from "./add-member-form/add-member-form.compon
     NzModalModule,
     EditSocietyInfoFormComponent,
     AddCommitteeMemberFormComponent,
-    AddMemberFormComponent
+    AddMemberFormComponent,
 ],
   templateUrl: './manage-society.component.html',
   styleUrl: './manage-society.component.css'
@@ -67,7 +66,8 @@ export class ManageSocietyComponent {
     }
   ];
 
-  messageService = inject(NzMessageService)
+  messageService = inject(NzMessageService);
+  breadcrumbService = inject(BreadcrumbService);
 
   isEditSocietyInfoPopupVisible = false;
   isEditSocietyInfoLoading = false;
@@ -75,9 +75,12 @@ export class ManageSocietyComponent {
   isAddCommitteePopupVisible = false;
   isAddCommitteeLoading = false;
 
-
   @ViewChild(EditSocietyInfoFormComponent) editSocietyInfoFormComponent?: EditSocietyInfoFormComponent;
   @ViewChild(AddCommitteeMemberFormComponent) addCommitteeMemberForm?: AddCommitteeMemberFormComponent;
+
+  ngOnInit() {
+    this.breadcrumbService.set('@societyName', this.society.name);
+  }
 
   openEditSocietyInfoPopup() {
     this.isEditSocietyInfoPopupVisible = true;

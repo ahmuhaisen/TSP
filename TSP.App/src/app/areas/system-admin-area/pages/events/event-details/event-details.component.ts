@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -9,6 +9,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
   selector: 'app-event-details',
@@ -28,6 +29,9 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
   styleUrl: './event-details.component.css'
 })
 export class EventDetailsComponent {
+
+  breadcrumbService = inject(BreadcrumbService);
+
   tabs = [
     {
       name: 'Description',
@@ -53,6 +57,10 @@ export class EventDetailsComponent {
   ];
 
   isEventRequestModalVisible = false;
+
+  ngOnInit() {
+    this.breadcrumbService.set('@eventName', 'Junior to Solver 6.0');
+  }
 
   showEventRequestModal(): void {
     this.isEventRequestModalVisible = true;

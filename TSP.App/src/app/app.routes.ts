@@ -4,7 +4,8 @@ export const routes: Routes = [
     {
         path: 'admin-area',
         loadComponent: () => import('./areas/system-admin-area/system-admin-area.component').then(m => m.SystemAdminAreaComponent),
-        loadChildren: () => import('./areas/system-admin-area/system-admin-area.routes').then(m => m.routes)
+        loadChildren: () => import('./areas/system-admin-area/system-admin-area.routes').then(m => m.routes),
+        data: { breadcrumb: 'Admin Area' }
     },
     {
         path: 'authentication',
@@ -22,6 +23,7 @@ export const routes: Routes = [
     },
     {
         path: '**',
-        loadComponent: () => import('./components/not-found.component').then(m => m.NotFoundComponent)
+        loadComponent: () => import('./components/not-found.component').then(m => m.NotFoundComponent),
+        data: { breadcrumb: { skip: true } }
     }
 ];
