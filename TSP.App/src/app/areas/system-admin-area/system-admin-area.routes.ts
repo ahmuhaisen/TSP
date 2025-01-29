@@ -21,6 +21,11 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/events/events.routes').then(m => m.routes)
     },
     {
+        path: 'users',
+        loadComponent: () => import('./pages/users/users.component').then(m => m.UsersComponent),
+        loadChildren: () => import('./pages/users/users.routes').then(m => m.routes)
+    },
+    {
         path: '**',
         loadComponent: () => import('../../components/not-found.component').then(m => m.NotFoundComponent)
     }
