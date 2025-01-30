@@ -22,7 +22,9 @@ namespace TSP.Domain.Entities
         public Guid SocietyId { get; set; }
         public Society Society { get; set; } = null!;
         public Guid StudentId { get; set; }
-        public Student Student { get; set; }=null!;
+        public Student Student { get; set; } = null!;
 
+        public bool IsAttendeesFormEnabled { get; set; } = false;
+        public ICollection<Attendee> Attendees { get; set; } = new List<Attendee>();
     }
 }

@@ -52,6 +52,11 @@ public class Error
     {
         return new Error(errorText, ErrorCode.InternalServer);
     }
+
+    public static Error CustomError(string message)
+    {
+        return new Error(message, ErrorCode.Custom);
+    }
 }
 
 
@@ -67,5 +72,6 @@ public enum ErrorCode
     AccessDenied,
     GuidInvalid,
     FormatInvalid,
-    InternalServer
+    InternalServer,
+    Custom
 }
