@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Attendees.Commands;
 using TPS.Application.Attendees.Contracts;
@@ -9,6 +10,7 @@ using TSP.Domain.Shared;
 namespace TSP.WebAPI.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class AttendeesController : ApiController
 {
@@ -28,6 +30,7 @@ public class AttendeesController : ApiController
     }
 
     [HttpPost]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateAttendee(CreateEventAttendeeRequest request)

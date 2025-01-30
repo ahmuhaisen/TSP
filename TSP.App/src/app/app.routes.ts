@@ -13,6 +13,11 @@ export const routes: Routes = [
         loadChildren: () => import('./areas/authentication/authentication.routes').then(m => m.routes)
     },
     {
+        path: 'public-forms',
+        loadComponent: () => import('./areas/public-forms/public-forms.component').then(m => m.PublicFormsComponent),
+        loadChildren: () => import('./areas/public-forms/public-forms.routes').then(m => m.routes),
+    },
+    {
         path: 'coming-soon',
         loadComponent: () => import('./components/coming-soon.component').then(m => m.ComingSoonComponent)
     },
