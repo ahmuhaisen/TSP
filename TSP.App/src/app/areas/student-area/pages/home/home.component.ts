@@ -1,56 +1,27 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { NzPopoverModule } from 'ng-zorro-antd/popover';
-import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
-import { NzIconModule } from 'ng-zorro-antd/icon';
+import { DatePipe } from '@angular/common';
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzDrawerModule, NzDrawerPlacement } from 'ng-zorro-antd/drawer';
-import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
-import { FormsModule } from '@angular/forms';
-import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
 
 @Component({
   selector: 'app-home',
   imports: [
-    NgIf,
-    NgFor,
+    RouterLink,
     DatePipe,
     TruncatePipe,
-    RouterLink,
-    NzEmptyModule,
-    NzSpinModule,
-    NzBreadCrumbModule,
     NzIconModule,
     NzButtonModule,
     NzDividerModule,
-    NzPopoverModule,
-    NzSkeletonModule,
-    NzDrawerModule, NzTagModule,
-    FormsModule,
-    NzButtonModule,
-    NzInputModule,
+    NzTagModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  isLoading = false;
-  isSearchLoading = false;
-
-  ngOnInit() {
-    this.isLoading = true;
-
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 500);
-  }
-
   events = [
     {
       id: '1ab-2cd-3ef-4gh',
@@ -59,7 +30,7 @@ export class HomeComponent {
       date: '2024-07-01 9:00 AM',
       location: 'KASIT Auditorium',
       imageUrl: 'https://robohash.org/event1?bgset=bg2',
-      isAdvised: true,
+      isMember: true,
       isFinished: true,
     },
     {
@@ -69,7 +40,7 @@ export class HomeComponent {
       date: '2024-07-15 10:00 AM',
       location: 'ProgressSoft Lab, KASIT',
       imageUrl: 'https://robohash.org/event2?bgset=bg1',
-      isAdvised: true,
+      isMember: true,
       isFinished: false,
     },
     {
@@ -79,7 +50,7 @@ export class HomeComponent {
       date: '2024-08-01 3:30 PM',
       location: 'Hall 101, KASIT',
       imageUrl: 'https://robohash.org/event3?bgset=bg2',
-      isAdvised: false,
+      isMember: false,
       isFinished: false,
     },
     {
@@ -89,7 +60,7 @@ export class HomeComponent {
       date: '2024-08-15 12:00 PM',
       location: 'Lab 203, KASIT',
       imageUrl: 'https://robohash.org/event4?bgset=bg1',
-      isAdvised: false,
+      isMember: false,
       isFinished: false,
     },
   ];
@@ -128,26 +99,4 @@ export class HomeComponent {
       societies: ['Linux Society JU']
     }
   ]
-
-
-  // Drawer
-  visible = false;
-  placement: NzDrawerPlacement = 'bottom';
-  open(): void {
-    this.visible = true;
-  }
-
-  close(): void {
-    this.visible = false;
-  }
-
-  doSearch() {
-    this.isSearchLoading = true;
-
-    setTimeout(() => {
-      this.isSearchLoading = false;
-    }, 1000);
-  }
-
-
 }

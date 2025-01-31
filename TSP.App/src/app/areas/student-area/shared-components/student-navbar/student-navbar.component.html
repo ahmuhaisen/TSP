@@ -5,15 +5,13 @@
             <p class="text-xl font-semibold text-gray-700">
                 TSP
             </p>
-            <span class="bg-blue-100 text-blue-800 text-[8px] font-medium mx-2 px-1.5 py-0.5 rounded-full">
-                Faculty Member
-            </span>
+            <span class="bg-orange-100 text-orange-800 text-[8px] font-medium mx-2 px-1.5 py-0.5 rounded-full">Student</span>
         </a>
         <div class="flex items-center lg:order-2 relative">
             <!-- Notifications -->
             <app-notifications />
             <!-- My Account -->
-            <app-account-details />
+            <app-account-details [user]="user"/>
             <button (click)="toggleMenu()"
                 class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
                 aria-controls="mobile-menu-2" aria-expanded="false">
@@ -40,7 +38,7 @@
                     <a [routerLink]="'./' + item.targetPagePath" routerLinkActive="active" (click)="toggleMenu()"
                         class="block py-2 pl-3 pr-4 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-dark lg:p-0"
                         aria-current="page">
-                        <nz-icon *ngIf="item.iconName" [nzType]="item.iconName" class="mr-1"></nz-icon>
+                        <nz-icon *ngIf="item.iconName" [nzType]="item.iconName!" class="mr-1"></nz-icon>
                         {{ item.name }}
                     </a>
                 </li>

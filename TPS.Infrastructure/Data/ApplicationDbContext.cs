@@ -11,11 +11,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<Student> Students { get; set; }
     public DbSet<FacultyMember> FacultyMembers { get; set; }
     public DbSet<Rank> Ranks { get; set; }
+    public DbSet<School> Schools { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<Society> Societies { get; set; }
     public DbSet<SocietiesMembers> SocietiesMembers  { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<EventApproval> EventsApproval { get; set; }
+    public DbSet<Attendee> Attendees { get; set; }
+
     public ApplicationDbContext(DbContextOptions options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
