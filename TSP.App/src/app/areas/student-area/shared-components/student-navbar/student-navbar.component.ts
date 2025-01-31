@@ -2,7 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { INavbarItem } from '../../../../common/types/navbar.types';
 import { NotificationsComponent } from "../../../../components/notifications/notifications.component";
 import { AccountDetailsComponent } from "../../../../components/account-details/account-details.component";
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NgIf } from '@angular/common';
 import { IUserBasicDetails } from '../../../../common/types/user.types';
@@ -12,6 +12,7 @@ import { IUserBasicDetails } from '../../../../common/types/user.types';
   imports: [
     NgIf,
     RouterLink,
+    RouterLinkActive,
     NzIconModule,
     NotificationsComponent,
     AccountDetailsComponent

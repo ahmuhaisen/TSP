@@ -12,7 +12,6 @@ import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
   imports: [
     RouterLink,
     DatePipe,
-    TruncatePipe,
     NzIconModule,
     NzButtonModule,
     NzDividerModule,

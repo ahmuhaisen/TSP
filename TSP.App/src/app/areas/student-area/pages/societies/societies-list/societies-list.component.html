@@ -1,0 +1,109 @@
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="product" class="mr-2" />Societies
+    </h1>
+    <div>
+        <a routerLink="./create" nz-button nzType="primary">
+            <nz-icon nzType="team" />
+            Be a member of a society
+        </a>
+    </div>
+</div>
+
+<nz-divider />
+
+<div class="flex items-center justify-between">
+    <div class="flex items-center justify-start text-lg font-semibold text-gray-700">
+        <nz-icon nzType="appstore" class="mr-2" />
+        <div>
+            <p>Societies you belong to</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 mt-5">
+    @for(society of belongingSocieties; track society.id) {
+    <div
+        class="relative flex flex-col mt-6 max-h-72 text-gray-700 shadow rounded-lg border-b-2 bg-clip-border"
+        [ngClass]="society.isManager ? 'border-secondary' : 'border-primary-light'">
+        <div
+            class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden bg-white bg-clip-border rounded-2xl shadow-md">
+            <img [src]="society.logoUrl" class="object-contain w-full h-full" alt="profile-image" />
+        </div>
+        <div class="p-6 flex-grow">
+            <h5
+                class="block mb-2 font-sans text-sm antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+                {{ society.name }}
+            </h5>
+            <p class="block font-sans text-xs antialiased font-light leading-relaxed text-inherit">
+                {{ society.description | truncate: 90 }}
+            </p>
+        </div>
+        <div class="p-6 pt-0">
+            @if(society.isManager){
+                <button [routerLink]="'/admin-area/societies/' + society.id + '/manage'"
+                    nz-button nzType="primary"
+                    class="bg-secondary hover:bg-secondary/85 focus:bg-secondary/95 rounded-lg border-0"
+                >
+                <nz-icon nzType="setting" />
+                Manage
+            </button>
+            }@else {
+                <button [routerLink]="'/societies/' + society.id"
+                        nz-button nzType="primary"
+                        class="rounded-lg border-0"
+                >
+                    <nz-icon nzType="eye" />
+                    Visit
+                </button>
+
+                <button [routerLink]="'/societies/' + society.id"
+                        nz-button nzType="primary" nzDanger="true"
+                        class="rounded-lg border-0 ml-1"
+                >
+                    <nz-icon nzType="logout" />
+                    Leave
+                </button>
+            }
+        </div>
+    </div>
+
+    }@empty {
+        <div class="col-span-4 w-full flex justify-center items-center">
+            <nz-empty
+            class="w-full flex flex-col justify-center items-center h-52"
+            nzNotFoundContent="You are not a member of any societies yet."
+            nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+            />
+        </div>
+    }
+</div>
+
+<nz-divider />
+
+<div class="flex items-center justify-between">
+    <div class="flex items-center justify-start text-lg font-semibold text-gray-700">
+        <nz-icon nzType="appstore" class="mr-2" />
+        <div>
+            <p>Other Societies</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+    @for(society of otherSocieties; track society.id) {
+        <div class="w-full ">
+            <a [routerLink]="'/admin-area/societies/' + society.id" class="flex flex-wrap sm:flex-nowrap items-center py-2 cursor-pointer shadow rounded-lg border-b-2 border-primary-light">
+                <div class="w-16 p-2 shrink-0">
+                    <img [src]="society.logoUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                </div>
+                <div>
+                    <p class="font-semibold text-xs">{{ society.name  | truncate: 35 }}</p>
+                    <span class="text-gray-600 text-xs block">{{ society.description | truncate: 40 }}</span>
+                </div>
+            </a>
+        </div>
+    }
+</div>
+
