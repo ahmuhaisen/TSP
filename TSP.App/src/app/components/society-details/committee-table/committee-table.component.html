@@ -11,9 +11,11 @@
             <th>
                 Start Date
             </th>
+            @if(!isViewOnly()){
             <th>
                 Actions
             </th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -38,17 +40,19 @@
                     {{ data.startDate | date: 'mediumDate' }}
                 </p>
             </td>
-            <td>
-                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
-                    <nz-icon nzType="edit" />
-                </button>
-                <nz-divider nzType="vertical" />
-                <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
-                    [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.name + ') from the committee?'"
-                    nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeCommitteeMember(data.id)">
-                    <nz-icon nzType="delete" />
-                </button>
-            </td>
+            @if(!isViewOnly()){
+                <td>
+                    <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
+                        <nz-icon nzType="edit" />
+                    </button>
+                    <nz-divider nzType="vertical" />
+                    <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
+                        [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.name + ') from the committee?'"
+                        nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeCommitteeMember(data.id)">
+                        <nz-icon nzType="delete" />
+                    </button>
+                </td>
+            }
         </tr>
         }
     </tbody>

@@ -25,7 +25,7 @@
     @for(society of belongingSocieties; track society.id) {
     <div
         class="relative flex flex-col mt-6 max-h-72 text-gray-700 shadow rounded-lg border-b-2 bg-clip-border"
-        [ngClass]="society.isManager ? 'border-secondary' : 'border-primary-light'">
+        [ngClass]="society.isCommittee ? 'border-secondary' : 'border-primary-light'">
         <div
             class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden bg-white bg-clip-border rounded-2xl shadow-md">
             <img [src]="society.logoUrl" class="object-contain w-full h-full" alt="profile-image" />
@@ -40,26 +40,25 @@
             </p>
         </div>
         <div class="p-6 pt-0">
-            @if(society.isManager){
-                <button [routerLink]="'/admin-area/societies/' + society.id + '/manage'"
+            @if(society.isCommittee){
+                <a [routerLink]="'./1234' + society.id + '/manage'"
                     nz-button nzType="primary"
                     class="bg-secondary hover:bg-secondary/85 focus:bg-secondary/95 rounded-lg border-0"
                 >
                 <nz-icon nzType="setting" />
                 Manage
-            </button>
+            </a>
             }@else {
-                <button [routerLink]="'/societies/' + society.id"
+                <a [routerLink]="'./1234' + society.id"
                         nz-button nzType="primary"
                         class="rounded-lg border-0"
                 >
                     <nz-icon nzType="eye" />
                     Visit
-                </button>
+                </a>
 
-                <button [routerLink]="'/societies/' + society.id"
-                        nz-button nzType="primary" nzDanger="true"
-                        class="rounded-lg border-0 ml-1"
+                <button nz-button nzType="primary" nzDanger="true"
+                        class="rounded-lg border-0 ml-1" (click)="leaveSociety(society)"
                 >
                     <nz-icon nzType="logout" />
                     Leave
@@ -107,3 +106,16 @@
     }
 </div>
 
+
+<!-- Leave Society Popup -->
+<nz-modal [(nzVisible)]="isLeaveSocietyPopupVisible"
+        [nzTitle]="'Leave ' + societyToLeave.name + '?'" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
+        [nzOkLoading]="isLeaveSocietyLoading" nzOkText="Yes"
+        (nzOnCancel)="handleCancelLeaveSociety()" (nzOnOk)="handleOkLeaveSociety()"
+    >
+    <ng-container *nzModalContent>
+        
+        <p>Are you sure you want to leave <b>{{ societyToLeave.name }}</b>?</p>
+        
+    </ng-container>
+</nz-modal>

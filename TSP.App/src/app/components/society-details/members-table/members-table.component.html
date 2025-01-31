@@ -20,6 +20,9 @@
             </th>
             }
             }
+            @if(!isViewOnly()){
+            <th>Actions</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -30,20 +33,21 @@
             </td>
             <td>{{ data.name }}</td>
             <td>{{ data.position }}</td>
-            <td>{{ data.memberSince | date: 'MMM d, y, h:mm a' }}</td>
-            <td>
-                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
-                    <nz-icon nzType="edit" />
-                </button>
-                <nz-divider nzType="vertical" />
-                <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
-                    [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.name + ') from this society?'"
-                    nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeMember(data.id)">
-                    <nz-icon nzType="api" />
-                </button>
-            </td>
+            <td>{{ data.memberSince | date: 'mediumDate' }}</td>
+            @if(!isViewOnly()){
+                <td>
+                    <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
+                        <nz-icon nzType="edit" />
+                    </button>
+                    <nz-divider nzType="vertical" />
+                    <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
+                        [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.name + ') from this society?'"
+                        nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeMember(data.id)">
+                        <nz-icon nzType="api" />
+                    </button>
+                </td>
+            }
         </tr>
-
         }
     </tbody>
 </nz-table>
@@ -58,13 +62,15 @@
     </div>
 </nz-dropdown-menu>
 
-<!-- Edit Member Popup -->
-<nz-modal [(nzVisible)]="isEditMemberPopupVisible"
-        nzTitle="Edit Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isEditMemberLoading" nzOkText="Save"
-        (nzOnCancel)="handleCancelEditMember()" (nzOnOk)="handleOkEditMember()"
+@if(!isViewOnly()){
+    <!-- Edit Member Popup -->
+    <nz-modal [(nzVisible)]="isEditMemberPopupVisible"
+    nzTitle="Edit Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
+    [nzOkLoading]="isEditMemberLoading" nzOkText="Save"
+    (nzOnCancel)="handleCancelEditMember()" (nzOnOk)="handleOkEditMember()"
     >
     <ng-container *nzModalContent>
-        <app-edit-member-form [member]="memberToEdit!"/>
+    <app-edit-member-form [member]="memberToEdit!"/>
     </ng-container>
-</nz-modal>
+    </nz-modal>
+}

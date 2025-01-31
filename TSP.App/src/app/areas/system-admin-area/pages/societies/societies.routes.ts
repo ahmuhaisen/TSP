@@ -11,8 +11,13 @@ export const routes: Routes = [
         data: { breadcrumb: 'Create' }
     },
     {
+        path: ':id',
+        loadComponent: () => import('./society-details/society-details.component').then(m => m.SocietyDetailsComponent),
+        data: { breadcrumb: { alias: 'societyName' } }
+    },
+    {
         path: ':id/manage',
-        loadComponent: () => import('./manage-society/manage-society.component').then(m => m.ManageSocietyComponent),
+        loadComponent: () => import('./society-details/society-details.component').then(m => m.SocietyDetailsComponent),
         data: { breadcrumb: { alias: 'societyName' } }
     },
     {

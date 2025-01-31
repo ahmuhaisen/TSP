@@ -9,7 +9,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
-import { committeePositions } from '../../../../../../common/constants/committee-positions.constant';
+import { committeePositions } from '../../../common/constants/committee-positions.constant';
 
 @Component({
   selector: 'app-add-committee-member-form',
@@ -25,7 +25,6 @@ import { committeePositions } from '../../../../../../common/constants/committee
     NzAlertModule
   ],
   templateUrl: './add-committee-member-form.component.html',
-  styleUrl: './add-committee-member-form.component.css'
 })
 export class AddCommitteeMemberFormComponent {
   existingCommitteeMembers = input.required<any[]>();

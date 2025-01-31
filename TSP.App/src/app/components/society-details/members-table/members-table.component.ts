@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -57,6 +57,9 @@ interface ColumnItem {
   styleUrl: './members-table.component.css'
 })
 export class MembersTableComponent {
+  
+  isViewOnly = input<boolean>(false);
+
   isEditMemberPopupVisible = false;
   isEditMemberLoading = false;
   memberToEdit: Member | null = null;
@@ -123,15 +126,6 @@ export class MembersTableComponent {
       listOfFilter: [],
       filterFn: (list: string[], item: Member) =>
         list.some(date => new Date(item.memberSince).toDateString() === new Date(date).toDateString())
-    },
-    {
-      name: 'Actions',
-      sortOrder: null,
-      sortFn: null,
-      sortDirections: [],
-      filterMultiple: false,
-      listOfFilter: [],
-      filterFn: null
     },
   ];
 

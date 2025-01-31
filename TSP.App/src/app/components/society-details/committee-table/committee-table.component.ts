@@ -15,7 +15,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
-import { committeePositions } from '../../../../../../common/constants/committee-positions.constant';
+import { committeePositions } from '../../../common/constants/committee-positions.constant';
 
 @Component({
   selector: 'app-committee-table',
@@ -37,9 +37,11 @@ import { committeePositions } from '../../../../../../common/constants/committee
     ReactiveFormsModule,
   ],
   templateUrl: './committee-table.component.html',
-  styleUrl: './committee-table.component.css'
 })
 export class CommitteeTableComponent {
+
+  isViewOnly = input<boolean>(false);
+
   isEditCommitteePopupVisible = false;
   isEditCommitteePopupLoading = false;
   memberToEdit: any = null;

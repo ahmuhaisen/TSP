@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, input, ViewChild } from '@angular/core';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -12,9 +12,10 @@ import { EditSocietyInfoFormComponent } from "./edit-society-info-form/edit-soci
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { AddCommitteeMemberFormComponent } from "./add-committee-member-form/add-committee-member-form.component";
 import { AddMemberFormComponent } from "./add-member-form/add-member-form.component";
+import { PageMode } from '../../common/types/presentaion.types';
 
 @Component({
-  selector: 'app-manage-society',
+  selector: 'app-gen-society-details',
   imports: [
     NzBreadCrumbModule,
     NzButtonModule,
@@ -27,11 +28,15 @@ import { AddMemberFormComponent } from "./add-member-form/add-member-form.compon
     EditSocietyInfoFormComponent,
     AddCommitteeMemberFormComponent,
     AddMemberFormComponent,
-],
-  templateUrl: './manage-society.component.html',
-  styleUrl: './manage-society.component.css'
+  ],
+  templateUrl: './gen-society-details.component.html',
+  styleUrl: './gen-society-details.component.css'
 })
-export class ManageSocietyComponent {
+export class GenSocietyDetailsComponent {
+
+  pageMode = input<PageMode>('VIEW_ONLY');
+  societyId = input.required<string>();
+
   society = {
     id: '32-afd43',
     name: 'ACM JU',
@@ -80,6 +85,7 @@ export class ManageSocietyComponent {
 
   ngOnInit() {
     this.breadcrumbService.set('@societyName', this.society.name);
+    console.log('pageMode:', this.pageMode(), 'societyId:', this.societyId());
   }
 
   openEditSocietyInfoPopup() {
@@ -92,7 +98,7 @@ export class ManageSocietyComponent {
   }
 
   handleOkEditSociety() {
-    if(this.editSocietyInfoFormComponent!.createSocietyForm!.invalid){
+    if (this.editSocietyInfoFormComponent!.createSocietyForm!.invalid) {
       this.editSocietyInfoFormComponent!.messageService.error('Please fill in all required fields.');
       this.editSocietyInfoFormComponent!.createSocietyForm?.markAllAsTouched();
       return;
@@ -118,7 +124,7 @@ export class ManageSocietyComponent {
   }
 
   handleOkAddCommittee() {
-    if(!this.addCommitteeMemberForm!.isFormValid()) {
+    if (!this.addCommitteeMemberForm!.isFormValid()) {
       this.addCommitteeMemberForm!.messageService.error('Please fill in all required fields.');
       return;
     }
@@ -137,7 +143,7 @@ export class ManageSocietyComponent {
   }
 
   handleOkAddMember() {
-    if(!this.addCommitteeMemberForm!.isFormValid()) {
+    if (!this.addCommitteeMemberForm!.isFormValid()) {
       this.addCommitteeMemberForm!.messageService.error('Please fill in all required fields.');
       return;
     }

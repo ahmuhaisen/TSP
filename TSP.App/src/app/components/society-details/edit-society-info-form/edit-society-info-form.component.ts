@@ -33,7 +33,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     NzSelectModule
   ],
   templateUrl: './edit-society-info-form.component.html',
-  styleUrl: './edit-society-info-form.component.css'
 })
 export class EditSocietyInfoFormComponent {
 

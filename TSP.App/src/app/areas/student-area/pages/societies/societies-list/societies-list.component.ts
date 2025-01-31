@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -6,6 +6,8 @@ import { TruncatePipe } from '../../../../../common/pipes/truncate.pipe';
 import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
 import { NgClass } from '@angular/common';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-societies-list',
@@ -16,19 +18,22 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
     NzIconModule,
     NzDividerModule,
     NzButtonModule,
-    NzEmptyModule
+    NzEmptyModule,
+    NzModalModule
   ],
   templateUrl: './societies-list.component.html',
   styleUrl: './societies-list.component.css'
 })
 export class SocietiesListComponent {
+  messageService = inject(NzMessageService);
+
   belongingSocieties = [
     {
       id: '1ab-2cd-3ef-4gh',
       name: 'ACM University of Jordan Student Chapter',
       description: 'A Chapter of the Association for Computing Machinery, interested in computer science and programming.',
       logoUrl: 'https://robohash.org/society1',
-      isManager: true,
+      isCommittee: true,
       position: 'President'
     },
     {
@@ -36,7 +41,7 @@ export class SocietiesListComponent {
       name: 'Linux Society JU',
       description: 'Linux Society of Jordan',
       logoUrl: 'https://robohash.org/society2',
-      isManager: false,
+      isCommittee: false,
       position: 'Media'
     },
     {
@@ -44,12 +49,11 @@ export class SocietiesListComponent {
       name: 'Waves JU',
       description: 'Waves Society of Jordan, a student chapter interested in robotics.',
       logoUrl: 'https://robohash.org/society3',
-      isManager: false,
+      isCommittee: false,
       position: 'Technical Team'
     },
   ];
 
-  
   otherSocieties = [
     {
       id: '5ij-6kl-7mn-8op',
@@ -81,7 +85,36 @@ export class SocietiesListComponent {
     }
   ];
 
-  constructor() { 
-    //this.belongingSocieties = [];
+  societyToLeave = this.belongingSocieties[0];
+  isLeaveSocietyPopupVisible = false;
+  isLeaveSocietyLoading = false;
+
+  leaveSociety(society: MemberAssociatedSociety) {
+    this.societyToLeave = society;
+    this.isLeaveSocietyPopupVisible = true;
   }
+
+  handleCancelLeaveSociety() {
+    this.isLeaveSocietyPopupVisible = false;
+    this.isLeaveSocietyLoading = false;
+  }
+
+  handleOkLeaveSociety() {
+    this.isLeaveSocietyLoading = true;
+    
+    setTimeout(() => {
+      this.isLeaveSocietyPopupVisible = false;
+      this.isLeaveSocietyLoading = false;
+      this.messageService.success('You have left ' + this.societyToLeave.name + ' successfully.');
+    }, 1000);
+  }
+}
+
+export interface MemberAssociatedSociety {
+  id: string;
+  name: string;
+  description: string;
+  logoUrl: string;
+  position: string;
+  isCommittee: boolean;
 }
