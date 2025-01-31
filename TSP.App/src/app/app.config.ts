@@ -6,11 +6,13 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { errorInterceptor } from './config/http-interceptor';
+import { JwtModule } from '@auth0/angular-jwt';
 
 
 registerLocaleData(en);
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,7 +22,13 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
     provideHttpClient(
-      withInterceptors([errorInterceptor])
-    )
+      withInterceptors([errorInterceptor]),
+      withInterceptorsFromDi()
+    ),
+    importProvidersFrom([
+      JwtModule.forRoot({
+        config: {},
+    }),
+    ])
   ]
 };

@@ -26,7 +26,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("FacultyMember/Register")]
     public async Task<IActionResult> RegisterFacultyMember([FromBody] FacultyRegisterRequest request)
     {
-        var faculty = new FacultyMember
+        var facultyMember = new FacultyMember
         {
             UserName = request.Email,
             Email = request.Email,
@@ -38,11 +38,11 @@ public class AuthenticationController : ControllerBase
             RankId = request.RankId
         };
 
-        var result = await _userManager.CreateAsync(faculty, request.Password);
+        var result = await _userManager.CreateAsync(facultyMember, request.Password);
 
         if (result.Succeeded)
         {
-            await _userManager.AddToRoleAsync(faculty, "Faculty");
+            await _userManager.AddToRoleAsync(facultyMember, "Faculty");
             return Ok();
         }
 

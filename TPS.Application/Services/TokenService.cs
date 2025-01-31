@@ -36,7 +36,7 @@ public class TokenService : ITokenService
         var roles = await _userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        claims.Add(new Claim("UserType", user.GetType().Name));
+        claims.Add(new Claim("utp", user.GetType().Name));
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_jwtOptions.Value.Key));
