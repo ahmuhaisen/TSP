@@ -5,6 +5,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AccountDetailsComponent } from "./account-details/account-details.component";
 import { NotificationsComponent } from "./notifications/notifications.component";
 import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { INavbarItem } from '../../../../common/types/navbar.types';
 
 @Component({
   selector: 'app-admin-navbar',
@@ -49,8 +50,4 @@ export class AdminNavbarComponent {
   }
 }
 
-export interface INavbarItem {
-  name: string;
-  targetPagePath: string;
-  iconName?: string;
-}
+

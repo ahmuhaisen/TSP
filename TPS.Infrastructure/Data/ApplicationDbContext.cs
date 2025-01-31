@@ -11,6 +11,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<Student> Students { get; set; }
     public DbSet<FacultyMember> FacultyMembers { get; set; }
     public DbSet<Rank> Ranks { get; set; }
+    public DbSet<School> Schools { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<Society> Societies { get; set; }
     public DbSet<SocietiesMembers> SocietiesMembers  { get; set; }

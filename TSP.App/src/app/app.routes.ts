@@ -8,6 +8,12 @@ export const routes: Routes = [
         data: { breadcrumb: 'Admin Area' }
     },
     {
+        path: 'student-area',
+        loadComponent: () => import('./areas/student-area/student-area.component').then(m => m.StudentAreaComponent),
+        loadChildren: () => import('./areas/student-area/student-area.routes').then(m => m.routes),
+        data: { breadcrumb: 'Student Area' }
+    },
+    {
         path: 'authentication',
         loadComponent: () => import('./areas/authentication/authentication.component').then(m => m.AuthenticationComponent),
         loadChildren: () => import('./areas/authentication/authentication.routes').then(m => m.routes)

@@ -38,6 +38,10 @@ public class CreateEventAttendee
 
             _context.Add(attendee);
 
+            var saveResult = _context.SaveChanges();
+            if (saveResult <= 0)
+                return Task.FromResult(Result.Failure(Error.InternalServerError("Error: error while creating the entity")));
+
             return Task.FromResult(Result.Success());
         }
 
@@ -75,8 +79,8 @@ public class CreateEventAttendee
         private bool isExistedAttendee(string email, string universityNumber, Guid eventId)
         {
             return _context.Attendees.Any(a =>
-                a.Email.Equals(email, StringComparison.OrdinalIgnoreCase) &&
-                a.UniversityNumber.Equals(universityNumber, StringComparison.OrdinalIgnoreCase) &&
+                a.Email.Equals(email) &&
+                a.UniversityNumber.Equals(universityNumber) &&
                 a.EventId == eventId
             );
         }

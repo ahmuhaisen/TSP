@@ -19,103 +19,119 @@
 </div>
 
 
-<div class="w-full h-[880px] md:h-[60vh] lg:h-[63vh] bg-primary-dark relative">
+<div class="w-full h-[1100px] md:h-[30vh] lg:h-[63vh] bg-primary-dark relative">
 
-    <div
-        class="absolute -top-[3%] md:-top-[10%] left-1/2 -translate-x-1/2 gap-4 grid grid-cols-1 md:grid-cols-3 h-fit w-full md:w-[90%] lg:w-4/5 overflow-hidden">
-
-        <div class="h-full bg-white p-4 col-span-2 rounded">
-            <p class="flex items-center gap-2 text-xl text-gray-700 font-semibold">
-                <nz-icon nzType="product" />
-                Register
-            </p>
-
-            <form nz-form [formGroup]="form" (ngSubmit)="submitForm()" class="mt-4">
-                <nz-form-item>
-                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="fullName">Full name</nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid E-mail!">
-                        <input nz-input formControlName="fullName" id="fullName" />
-                    </nz-form-control>
-                </nz-form-item>
-                <nz-form-item>
-                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">E-mail</nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid E-mail!">
-                        <input nz-input formControlName="email" id="email" />
-                    </nz-form-control>
-                </nz-form-item>
-                <nz-form-item>
-                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="uniNumber">University number</nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid university number!">
-                        <input nz-input formControlName="uniNumber" id="uniNumber" />
-                    </nz-form-control>
-                </nz-form-item>
-                <nz-form-item>
-                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="department">School & Major</nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not department id!">
-                        <nz-cascader [nzOptions]="nzOptions" formControlName="department"></nz-cascader>
-                    </nz-form-control>
-                </nz-form-item>
-                <nz-form-item>
-                    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="notes">Notes</nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="">
-                        <textarea nz-input formControlName="notes" id="notes" >
-                        </textarea>
-                    </nz-form-control>
-                </nz-form-item>
-
-                <nz-form-item>
-                    <nz-form-control [nzSpan]="14" [nzOffset]="6">
-                        <button nz-button nzType="primary" type="submit">Register</button>
-                    </nz-form-control>
-                </nz-form-item>
-            </form>
-        </div>
-
-        <div class="w-100 h-fit bg-white p-4 rounded">
-            <div>
-                <div>
-                    <p class="text-lg font-semibold text-gray-700">
-                        Junior to Solver 6.0
-                    </p>
-                    <p>
-                        Seminar
-                    </p>
-                    <p class="mt-2 text-xs text-gray-600">
-                        It's time to learn about many cool, fun, and exciting things in our major and our college as well 🙆 In an event titled Junior to Solver 🤓...
-                    </p>
+    <div class="absolute -top-[3%] md:-top-[10%] left-1/2 -translate-x-1/2 md:gap-4 grid grid-cols-1 md:grid-cols-3 h-fit w-full md:w-[90%] lg:w-4/5 overflow-hidden">
+        @if(isFormEnabled){
+            <div class="h-full bg-white p-4 col-span-2 md:rounded">
+                <p class="flex items-center gap-2 text-xl text-gray-700 font-semibold">
+                    <nz-icon nzType="product" />
+                    Register
+                </p>
+                @if(!isRegisterSucceeded){
+                <form nz-form [formGroup]="form" (ngSubmit)="submitForm()" class="mt-4">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="fullName">Full name</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid E-mail!">
+                            <input nz-input formControlName="fullName" id="fullName" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">E-mail</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid E-mail!">
+                            <input nz-input formControlName="email" id="email" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="uniNumber">University number</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not valid university number!">
+                            <input nz-input formControlName="uniNumber" id="uniNumber" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="department">School & Major</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="The input is not department id!">
+                            <nz-cascader [nzOptions]="nzOptions" formControlName="department"></nz-cascader>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="notes">Notes</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="">
+                            <textarea nz-input formControlName="notes" id="notes">
+                                </textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+    
+                    <nz-form-item>
+                        <nz-form-control [nzSpan]="14" [nzOffset]="6">
+                            <button [nzLoading]="isSubmitting" [disabled]="!form.valid" nz-button nzType="primary" type="submit">Register</button>
+                        </nz-form-control>
+                    </nz-form-item>
+                </form>
+            }
+            @else{
+                <div class="flex flex-col items-center justify-center gap-4 h-full">
+                    <nz-result  nzStatus="success"
+                                nzTitle="You have successfully registered for the event">
+                    </nz-result>
                 </div>
-                <nz-divider />
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-                    <div class="bg-gray-100 p-4 rounded">
-                        <p class="text-xs text-gray-500 flex items-center mb-1">
-                            <nz-icon nzType="environment" class="mr-1" />
-                            Location
-                        </p>
-                        <p class="text-xs font-semibold text-gray-700">KASIT Auditorium</p>
-                    </div>
-                    <div class="bg-gray-100 p-4 rounded">
-                        <p class="text-xs text-gray-500 flex items-center mb-1">
-                            <nz-icon nzType="calendar" class="mr-1" />
-                            Date
-                        </p>
-                        <p class="text-xs font-semibold text-gray-700">Sunday, June 20, 2024</p>
-                    </div>
-                    <div class="bg-gray-100 p-4 rounded lg:col-span-2">
-                        <p class="text-xs text-gray-500 flex items-center mb-1">
-                            <nz-icon nzType="clock-circle" class="mr-1" />
-                            Time
-                        </p>
-                        <p class="text-xs font-semibold text-gray-700">12:30 PM to 2:30 PM</p>
-                    </div>
-                </div>
-                
-
+            }
             </div>
-
-        </div>
+            <div class="w-100 h-fit bg-white p-4 md:rounded">
+                <div>
+                    <div>
+                        <p class="text-lg font-semibold text-gray-700">
+                            Junior to Solver 6.0
+                        </p>
+                        <p>
+                            Seminar
+                        </p>
+                        <p class="mt-2 text-xs text-gray-600">
+                            It's time to learn about many cool, fun, and exciting things in our major and our college as
+                            well 🙆 In an event titled Junior to Solver 🤓...
+                        </p>
+                    </div>
+                    <nz-divider />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+                        <div class="bg-gray-100 p-4 rounded">
+                            <p class="text-xs text-gray-500 flex items-center mb-1">
+                                <nz-icon nzType="environment" class="mr-1" />
+                                Location
+                            </p>
+                            <p class="text-xs font-semibold text-gray-700">KASIT Auditorium</p>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded">
+                            <p class="text-xs text-gray-500 flex items-center mb-1">
+                                <nz-icon nzType="calendar" class="mr-1" />
+                                Date
+                            </p>
+                            <p class="text-xs font-semibold text-gray-700">Sunday, June 20, 2024</p>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded lg:col-span-2">
+                            <p class="text-xs text-gray-500 flex items-center mb-1">
+                                <nz-icon nzType="clock-circle" class="mr-1" />
+                                Time
+                            </p>
+                            <p class="text-xs font-semibold text-gray-700">12:30 PM to 2:30 PM</p>
+                        </div>
+                    </div>
+    
+    
+                </div>
+    
+            </div>
+        }
+        @else {
+            <div class="h-full bg-white p-4 col-span-3 md:rounded">
+                <div class="flex flex-col items-center justify-center gap-4 h-full">
+                    <nz-result  nzStatus="warning"
+                                nzTitle="Event not found or form is not enabled">
+                    </nz-result>
+                </div>
+            </div>
+        }
 
     </div>
-
 
 </div>
 

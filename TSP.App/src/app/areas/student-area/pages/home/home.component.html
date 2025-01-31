@@ -1,0 +1,132 @@
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="home" class="mr-2" />Home
+    </h1>
+    <button nz-button nzType="default" nzShape="circle">
+        <nz-icon nzType="search" />
+    </button>
+</div>
+
+<section class="mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
+    <div class="flex gap-3 items-center">
+        <img class="w-11 h-11 rounded-full" src="https://robohash.org/suhaib0211111@ju.edu.jo?bgset=bg2" alt="profile image">
+        <div>
+            <h2 class="text-lg font-bold text-gray-700">Welcome, Suhaib!</h2>
+            <p class="text-sm text-gray-600">Here's a quick overview of your societies.</p>
+        </div>
+    </div>
+    <div class="flex gap-2 justify-center sm:justify-end">
+        <a routerLink="../societies" nz-button nz-popover nzType="primary" nzPopoverContent="See all societies you advise.">
+            <nz-icon nzType="product" />Your Societies
+        </a>
+    </div>
+</section>
+
+
+<nz-divider />
+
+
+<div class="grid gap-5 grid-cols-1 lg:grid-cols-2">
+    <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
+        <div class="flex justify-between items-center pb-4">
+            <p class="flex items-center font-bold text-lg">
+                <nz-icon nzType="project" class="mr-2" />
+                Upcoming Events
+            </p>
+            <a class="text-primary-light text-xs" [routerLink]="'/admin-area/events'">View all</a>
+        </div>
+
+        <div class="grid gap-y-1.5">
+            @for(event of events; track $index){
+            <a [routerLink]="'/admin-area/events/' + event.id"
+                class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
+                <div class="w-16 p-2 shrink-0">
+                    <img [src]="event.imageUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                </div>
+                <div class="p-2 w-full">
+                    <div class="w-full flex items-center justify-between flex-wrap sm:flex-nowrap">
+                        <span class="font-semibold text-sm">
+                            {{ event.title }}
+                        </span>
+                        <div>
+                            @if(event.isMember){
+                                <nz-tag class="text-[8px]" [nzColor]="'gold'">
+                                    <nz-icon [nzType]="'star'" />
+                                    <span class="hidden sm:inline">Society you belong to</span>
+                                </nz-tag>
+                            }
+                        </div>
+                    </div>
+                    <span class="text-gray-600 text-xs block truncate">{{ event.society }}</span>
+                    <p class="text-gray-500 mt-2 text-[12px] flex flex-wrap sm:flex-nowrap items-center gap-1">
+                        <span class="flex items-center">
+                            <nz-icon nzType="calendar" class="mr-1"></nz-icon>
+                            {{ event.date | date: 'MMM d, h:mm a'}}
+                        </span>
+                        <span class="hidden sm:inline">|</span>
+                        <span class="flex items-center">
+                            <nz-icon nzType="environment" class="mr-1"></nz-icon>
+                            {{ event.location }}
+                        </span>
+                    </p>
+                </div>
+            </a>
+            }
+
+        </div>
+    </div>
+
+
+    <div class="w-Full h-fit p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
+        <div class="flex justify-between pb-4">
+            <p class="flex items-center font-bold text-lg">
+                <nz-icon nzType="user" class="mr-2" />
+                Your activity
+            </p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+
+            <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
+                <div class="flex justify-between items-center pb-1">
+                    <p class="text-xs text-gray-500 flex items-center mb-1">
+                        <nz-icon nzType="product" class="mr-1" />
+                        Membership
+                    </p>
+                </div>
+                <p class="text-base font-semibold text-gray-700">3 societies</p>
+            </div>
+
+            <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
+                <div class="flex justify-between items-center pb-1">
+                    <p class="text-xs text-gray-500 flex items-center mb-1">
+                        <nz-icon nzType="project" class="mr-1" />
+                        Attendance
+                    </p>
+                </div>
+                <p class="text-base font-semibold text-gray-700">9 events</p>
+            </div>
+
+            <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
+                <div class="flex justify-between items-center pb-1">
+                    <p class="text-xs text-gray-500 flex items-center mb-1">
+                        <nz-icon nzType="user" class="mr-1" />
+                        Activity
+                    </p>
+                </div>
+                <p class="text-base font-semibold text-gray-700">N/A</p>
+            </div>
+
+            <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
+                <div class="flex justify-between items-center pb-1">
+                    <p class="text-xs text-gray-500 flex items-center mb-1">
+                        <nz-icon nzType="user" class="mr-1" />
+                        Activity
+                    </p>
+                </div>
+                <p class="text-base font-semibold text-gray-700">N/A</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
