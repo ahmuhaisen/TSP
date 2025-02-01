@@ -17,13 +17,13 @@ public sealed class CreateSociety
         public DateOnly CreationDate { get; private init; }
         public string? ThemeColor { get; private init; }
         public Guid AdvisorId { get; private init; }
-        public static Command Create(string name, string description, string logoId, DateOnly creationDate, string? themeColor, Guid AdvisorId)
+        public static Command Create(string name, string description, string logo, DateOnly creationDate, string? themeColor, Guid AdvisorId)
         {
             return new Command
             {
                 Name = name.Trim(),
                 Description = description.Trim(),
-                Logo = logoId,
+                Logo = logo,
                 CreationDate = creationDate,
                 ThemeColor = themeColor,
                 AdvisorId = AdvisorId
@@ -39,20 +39,25 @@ public sealed class CreateSociety
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
             
             
-            string logoId=await _FileManager.SaveImage(request.Logo, nameof(Society));
+            var result=await _FileManager.uploadFile(nameof(Society), request.Logo);
 
-            if(logoId==string.Empty)
+            if(result.IsFailure)
             {
-                return Result.Failure<Guid>(Error.ValueInvalid($"Invalid Image"));
+                return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
             }
-
+            string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString()??"";
+            if (string.IsNullOrEmpty(LogoId)) {
+                return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
+            }
+            
+           
 
             var society = new Society
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                LogoId = logoId,
+                LogoId = LogoId,
                 CreationDate = request.CreationDate,
                 ThemeColor = request.ThemeColor,
                 AdvisorId = request.AdvisorId

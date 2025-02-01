@@ -4,142 +4,167 @@ using System.Text;
 using System.Reflection.Metadata.Ecma335;
 using Microsoft.Extensions.Options;
 using static System.Net.WebRequestMethods;
+using Azure;
+using TSP.Domain.Shared;
 
 namespace TPS.Application.Services;
 
-public class GitHubService : IDBManagerService
+public class GitHubService : IFileManagerService
 {
     private readonly IOptions<GitOptions> options;
+    private readonly HttpClient _httpClient;
+    private const string ValidImageFormats = "jpg,jpeg,png,webp";
     public required string URL {  get; set; }
-    public GitHubService(IOptions<GitOptions> options)
+    public GitHubService(HttpClient httpClient,IOptions<GitOptions> options)
     {
         this.options = options;
+        _httpClient = httpClient;
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.Value.Token);
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", "CSharp-App");
         this.URL = $"https://api.github.com/repos/{options.Value.UserName}/{options.Value.Repo}/contents/";
     }
-    private string generateCommitMessage(string message)
-    {
-        return message;
-    }
 
-    public async Task<string> UploadFileToGitHub(string filePath, string base64Content)
-    {
 
-        this.URL += filePath;
+    public async Task<Result<string>> uploadFile(string filePath, string base64Content)
+    {
+        if (!IsValidBase64ImageString(base64Content))
+        {
+            return Result.Failure<string>(Error.ValueInvalid("Not valid Base64 image"));
+        }
+        if (!IsValidImageType(base64Content))
+        {
+            return Result.Failure<string>(Error.ValueInvalid("Not valid image type"));
+        }
+        base64Content = base64Content.Split(',')[1];
+        string imageId = Guid.NewGuid().ToString();
+        string fileName = filePath + "/" + imageId;
+     
+        string currentUrl = this.URL+ fileName;
 
         var requestBody = new
         {
-            message = this.generateCommitMessage(nameof(UploadFileToGitHub)+": "+filePath),
+            message = $"Upload file: {fileName}",
             content = base64Content
         };
 
-        var jsonContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+        var jsonContent = new StringContent(
+            JsonSerializer.Serialize(requestBody),
+            Encoding.UTF8, "application/json");
 
-        using (var httpClient = new HttpClient())
-        {
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.Value.Token);
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "CSharp-App");
+     
+        var response = await _httpClient.PutAsync(currentUrl, jsonContent);
 
-            var response = await httpClient.PutAsync(this.URL, jsonContent);
-
-            if (response.IsSuccessStatusCode)
+        if (response.IsSuccessStatusCode)
             {
-                return string.Empty;
+                return Result.Success<string>(imageId);
             }
             else
             {
                 string error = await response.Content.ReadAsStringAsync();
-                return $"GitHub API error: {response.StatusCode} - {error}";
-                throw new Exception($"GitHub API error: {response.StatusCode} - {error}");
+                return Result.Failure<string>(Error.InternalServerError(error));
             }
-        }
+        
     }
-}
-public class FileManager: IFileManagerService
-{
-    public const string ServicesImagesPath = "/Images/Services";
-    public const string MenusImagesPath = "/Images/Menus";
-    public const string ItemsImagesPath = "/Images/Items";
-    public const string OptionsImagesPath = "/Images/Options";
-    public const string ValidImageFormats = "jpg,jpeg,png,webp";
-    public const int MaxImageSizeInMB = 2;
-    private readonly IDBManagerService _FileManagerService;
-    public FileManager(IDBManagerService fileManagerService)
+    public async Task<Result<string>> getFile(string path)
     {
-        _FileManagerService = fileManagerService;
+        string targetUrl = this.URL + path;
+        var response = await _httpClient.GetAsync(targetUrl);
 
+        if (!response.IsSuccessStatusCode)
+        {
+            string error = await response.Content.ReadAsStringAsync();
+            return Result.Failure<string>(Error.InternalServerError(""));
+        }
+
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        using var jsonDoc = JsonDocument.Parse(jsonResponse);
+        var base64Content = jsonDoc.RootElement.GetProperty("content").GetString()??string.Empty;
+        return Result.Success(base64Content);
+   
     }
-
-    public async Task<string> SaveImage(string base64Image, string folder)
+    public async Task<Result<string>> deleteFile(string filePath)
     {
-        if (!IsValidBase64ImageString(base64Image))
+        string sha = await getSha(filePath);
+        string targetPath = this.URL + filePath;
+
+        if (string.IsNullOrEmpty(sha))
         {
-            return string.Empty;
-        }
-        if (!IsValidImageType(base64Image))
-        {
-            return string.Empty;
-        }
-        base64Image = base64Image.Split(',')[1];
-        string imageId = Guid.NewGuid().ToString();
-        string fileName = folder+"/"+imageId;
-        string result =await _FileManagerService.UploadFileToGitHub(fileName, base64Image);
-        if(!string.IsNullOrEmpty(result))
-        {
-            return string.Empty;
+            return Result.Failure<string>(Error.ValueInvalid("SHA does not exist"));
         }
 
-        return imageId;
+        var requestBody = new
+        {
+            message = $"Delete file: {filePath}",
+            sha = sha
+        };
+
+        var jsonContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+
+        var request = new HttpRequestMessage(HttpMethod.Delete, targetPath)
+        {
+            Content = jsonContent
+        };
+
+        var response = await _httpClient.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return Result.Success<string>($"{filePath}");
+        }
+        else
+        {
+            string error = await response.Content.ReadAsStringAsync();
+           return Result.Failure<string>(Error.InternalServerError($"{sha}, {targetPath}"));
+
+        }
+    }
+    public async Task<Result<string>> updateFile(string path, string base64Content)
+    {
+        if (!IsValidBase64ImageString(base64Content))
+        {
+            return Result.Failure<string>(Error.ValueInvalid("Not valid Base64 image"));
+        }
+        if (!IsValidImageType(base64Content))
+        {
+            return Result.Failure<string>(Error.ValueInvalid("Not valid image type"));
+        }
+        string currentUrl = this.URL + path;
+        var requestBody = new
+        {
+            message = $"Upload file: {path}",
+            content = base64Content,
+            sha = getSha(path)
+        };
+        var jsonContent = new StringContent(
+           JsonSerializer.Serialize(requestBody),
+           Encoding.UTF8, "application/json");
+        var result = await _httpClient.PutAsync(currentUrl, jsonContent);
+        if (result.IsSuccessStatusCode)
+        {
+            return Result.Success<string>("");
+        }
+        else
+        {
+            string error = await result.Content.ReadAsStringAsync();
+            return Result.Failure<string>(Error.InternalServerError(error));
+        }
     }
 
-    //public string SaveImage2(string base64Image, string directoryPath)
-    //{
-    //    string content = base64Image.Substring(base64Image.IndexOf(',') + 1);
-    //    byte[] imageBytes = Convert.FromBase64String(content);
 
-    //    string imageID = generateImageID(base64Image);
+    private async Task<string>getSha(string filePath)
+    {
+        string targetPath  = this.URL + filePath;
+        string getUrl = $"{URL}/{filePath}";
+        var response = await _httpClient.GetAsync(getUrl);
 
-    //    string wwwRootPath = _pathProvider.GetWebRootPath();
-    //    string folderPath = wwwRootPath + "/" + directoryPath;
+        if (!response.IsSuccessStatusCode) 
+            return string.Empty;
 
-    //    Directory.CreateDirectory(folderPath);
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(jsonResponse);
+        return doc.RootElement.GetProperty("sha").GetString()??string.Empty;
 
-    //    string filePath = folderPath + "/" + imageID;
-
-    //    File.WriteAllBytes(filePath, imageBytes);
-
-    //    return imageID;
-    //}
-
-    //public string? UpdateImage(string? existingImageId, string? newBase64Image, string path)
-    //{
-    //    if (string.IsNullOrEmpty(newBase64Image) && !string.IsNullOrEmpty(existingImageId))
-    //    {
-    //        DeleteImage(existingImageId, path);
-    //        return null;
-    //    }
-
-    //    if (!string.IsNullOrEmpty(newBase64Image))
-    //    {
-    //        if (!string.IsNullOrEmpty(existingImageId))
-    //        {
-    //            DeleteImage(existingImageId, path);
-    //        }
-
-    //        var newImageID = SaveImage2(newBase64Image, path);
-    //        return newImageID;
-    //    }
-
-    //    return null;
-    //}
-
-    //public void DeleteImage(string imageId, string directoryPath)
-    //{
-    //    string wwwRootPath = _pathProvider.GetWebRootPath();
-    //    string imagePath = wwwRootPath + directoryPath + "/" + imageId;
-
-    //    if (File.Exists(imagePath))
-    //        File.Delete(imagePath);
-    //}
+    }
 
     private bool IsValidBase64ImageString(string base64String)
     {
@@ -153,7 +178,7 @@ public class FileManager: IFileManagerService
         return true;
     }
 
-    public static bool IsValidImageType(string base64Image)
+    private static bool IsValidImageType(string base64Image)
     {
         string imageType = getImageType(base64Image);
 
@@ -169,15 +194,8 @@ public class FileManager: IFileManagerService
         return base64Image.Substring(5, separatorIndex - 5).Split('/')[1];
     }
 
-    private static string generateImageID(string base64Image)
-    {
-        string name = Guid.NewGuid().ToString();
-        string type = getImageType(base64Image);
 
-        return $"{name}.{type}";
-    }
 }
-
 public class GitOptions
 {
     public string Token { get; set; }

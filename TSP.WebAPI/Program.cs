@@ -10,12 +10,11 @@ builder.Services.AddApiControllers()
     .AddMediatR()
     .AddFluentValidation()
     .AddSwagger();
-
+builder.Services.AddHttpClient<GitHubService>();
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.Configure<GitOptions>(builder.Configuration.GetSection("GitImages"));
-builder.Services.AddTransient<IDBManagerService, GitHubService>();
-builder.Services.AddTransient<IFileManagerService, FileManager>();
+builder.Services.AddTransient<IFileManagerService, GitHubService>();
 
 
 var app = builder.Build();

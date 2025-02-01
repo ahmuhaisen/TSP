@@ -28,10 +28,11 @@ public sealed class DeleteSociety
     public sealed class Handler : ICommandHandler<Command, Result>
     {
         private ApplicationDbContext _context { get; }
-
-        public Handler(ApplicationDbContext context)
+        private readonly IFileManagerService _fileManagerService;
+        public Handler(ApplicationDbContext context,IFileManagerService fileManagerService)
         {
             _context = context;
+            _fileManagerService = fileManagerService;
         }
 
         async Task<Result> IRequestHandler<Command, Result>.Handle(Command request, CancellationToken cancellationToken)
@@ -40,11 +41,14 @@ public sealed class DeleteSociety
             {
                 return Result.Failure(Error.NotFound(nameof(Society), request.Id.ToString()));
             }
+            var result = await _context.Societies.FirstAsync(s => s.Id == request.Id);
+            var deleteImageResult = await _fileManagerService.deleteFile(nameof(Society) + "/" + result.LogoId);
+            if(deleteImageResult.IsFailure)
+            {
+                return Result.Failure(Error.InternalServerError($"{deleteImageResult.Error.Message}"));
+            }
 
-            _context.Societies.Remove(
-                await _context.Societies.FirstAsync(s => s.Id == request.Id)
-            );
-
+            _context.Societies.Remove(result);
             var saveResult = _context.SaveChanges();
             if (saveResult <= 0)
             {

@@ -55,7 +55,7 @@ public class SocietiesController : ApiController
     {
         var command = CreateSociety.Command.Create(request.Name,
                                                    request.Description,
-                                                   request.LogoId,
+                                                   request.LogoBase64,
                                                    request.CreationDate,
                                                    request.ThemeColor,
                                                    request.AdvisorId);
@@ -81,12 +81,20 @@ public class SocietiesController : ApiController
         throw new NotImplementedException();
     }
 
-    [HttpPut("{societyId}")]
+    [HttpPut("Society")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> Put(Guid societyId)
+    public async Task<IActionResult> Put(UpdateSocietyRequest request)
     {
-        throw new NotImplementedException();
+        var command = UpdateSociety.Command.Create(request.Name,
+                                                   request.Description,
+                                                   request.LogoBase64,
+                                                   request.ThemeColor,
+                                                   request.Id);
+        var task = _sender.Send(command);
+
+        return await FromResult(task);
+
     }
 
     [HttpDelete("{societyId}")]
