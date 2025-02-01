@@ -20,7 +20,7 @@ namespace TSP.WebAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<EventListDTO>),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseEnvelope),StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetEvents([FromQuery] Guid advisorId)
+        public async Task<IActionResult> Events([FromQuery] Guid advisorId)
         {
             var query = GetHomeEvents.Query.Create(advisorId);
             var task = _sender.Send(query);
@@ -28,11 +28,22 @@ namespace TSP.WebAPI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<MembersListDTO>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(List<MembersListDTO>), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetRecentlyJoinedMembers([FromQuery] string? searchTerm)
+        [ProducesResponseType(typeof(List<RecentlyJoinedDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RecentlyJoinedMembers([FromQuery] string? searchTerm)
         {
             var query = GetRecentlyJoined.Query.Create(searchTerm);
+
+            var task = _sender.Send(query);
+
+            return await FromResult(task);
+        }
+        [HttpGet]
+        [ProducesResponseType(typeof(HomeStatisticsDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> HomeStatistics([FromQuery] string? searchTerm)
+        {
+            var query = GetHomeStatistics.Query.Create(searchTerm);
 
             var task = _sender.Send(query);
 
