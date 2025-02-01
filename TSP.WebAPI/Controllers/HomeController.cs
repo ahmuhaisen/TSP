@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using TPS.Application.Home.Contracts;
 using TPS.Application.Home.Queries;
 using TPS.Application.Students.Contracts;
@@ -26,9 +27,16 @@ namespace TSP.WebAPI.Controllers
             return await FromResult(task);
         }
 
-        //[HttpGet]
-        //[ProducesResponseType(typeof(List<MembersListDTO>),StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(List<MembersListDTO>),StatusCodes.Status400BadRequest)]
-        //public async Task<IActionResult>GetMembers
+        [HttpGet]
+        [ProducesResponseType(typeof(List<MembersListDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<MembersListDTO>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetRecentlyJoinedMembers([FromQuery] string? searchTerm)
+        {
+            var query = GetRecentlyJoined.Query.Create(searchTerm);
+
+            var task = _sender.Send(query);
+
+            return await FromResult(task);
+        }
     }
 }

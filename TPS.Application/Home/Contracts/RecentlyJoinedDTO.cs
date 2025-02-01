@@ -8,9 +8,12 @@ namespace TPS.Application.Home.Contracts
 {
     public class RecentlyJoinedDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        public string? ProfileImageId { get; set; }
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
-        public required string DepartmentName { get; set; }
+        public string? DepartmentName { get; set; }
+        public DateOnly JoinDate { get; set; }
+        public required string SocietyName { get; set; }
     }
 }
