@@ -9,7 +9,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     NzIconModule
   ],
   template: `
-  <div class="w-Full mt-6 p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
+  <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">
     <div class="flex justify-between items-center mb-4">
         <p class="flex items-center font-bold text-lg">
           @if(header().icon){

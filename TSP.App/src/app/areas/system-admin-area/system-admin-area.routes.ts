@@ -24,6 +24,11 @@ export const routes: Routes = [
         data: { breadcrumb: 'Events' }
     },
     {
+        path: 'statistics',
+        loadComponent: () => import('./pages/statistics/statistics.component').then(m => m.StatisticsComponent),
+        data: { breadcrumb: 'Statistics & Reports' }
+    },
+    {
         path: 'users',
         loadComponent: () => import('./pages/users/users.component').then(m => m.UsersComponent),
         loadChildren: () => import('./pages/users/users.routes').then(m => m.routes),

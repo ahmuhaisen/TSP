@@ -9,6 +9,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { errorInterceptor } from './config/http-interceptor';
 import { JwtModule } from '@auth0/angular-jwt';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 
 registerLocaleData(en);
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideNzI18n(en_US),
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
+    provideCharts(withDefaultRegisterables()), // TODO: Consider including a minimal configuration
     provideHttpClient(
       withInterceptors([errorInterceptor]),
       withInterceptorsFromDi()
