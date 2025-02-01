@@ -19,9 +19,9 @@ namespace TSP.WebAPI.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(List<EventListDTO>),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseEnvelope),StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetEvents([FromQuery] string? searchTerm)
+        public async Task<IActionResult> GetEvents([FromQuery] Guid advisorId)
         {
-            var query = GetAllEvents.Query.Create(searchTerm);
+            var query = GetHomeEvents.Query.Create(advisorId);
             var task = _sender.Send(query);
             return await FromResult(task);
         }
