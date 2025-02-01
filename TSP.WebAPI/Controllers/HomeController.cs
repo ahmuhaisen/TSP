@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TPS.Application.Events.Contracts;
-using TPS.Application.Events.Queries;
+using TPS.Application.Home.Contracts;
+using TPS.Application.Home.Queries;
 using TPS.Application.Students.Contracts;
 using TSP.Domain.Shared;
 

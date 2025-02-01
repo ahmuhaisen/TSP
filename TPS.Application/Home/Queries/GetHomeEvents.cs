@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TPS.Application.Abstractions.Messaging;
-using TPS.Application.Events.Contracts;
+using TPS.Application.Home.Contracts;
 using TPS.Application.Societies.Contracts;
 using TPS.Application.Societies.Queries;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
 
-namespace TPS.Application.Events.Queries
+namespace TPS.Application.Home.Queries
 {
     public class GetHomeEvents
     {
@@ -50,13 +50,13 @@ namespace TPS.Application.Events.Queries
                     .Select(s => new EventListDTO
                     {
                         Id = s.Id,
-                        Name = s.Event.Name,
+                        EventName = s.Event.Name,
+                        SocietyName = s.Event.Society.Name,
+                        LogoId = s.Event.Society.LogoId,
                         LocationString = s.Event.LocationString,
-                        Description = s.Event.Description,
                         StartTime = s.Event.StartTime,
-                        EndTime = s.Event.EndTime,
-                        RequestTime = s.Event.StartTime,
-                        type = s.Event.type
+                        isAdvised = true,
+                        isFinished = true
                     })
                     .FirstOrDefaultAsync();
                 if (finishedEvent != null)
@@ -68,20 +68,19 @@ namespace TPS.Application.Events.Queries
                 var upcomingEvent = await allEventsQuery
                     .Include(s => s.Event)
                     .Where(s => s.IsApproved == true
-                            && s.FacultyMemberId == request.AdvisorId
                             && s.Event.StartTime > today)
                     .OrderBy(s => s.Event.StartTime)
                     .Take(no)
                     .Select(s => new EventListDTO
                     {
                         Id = s.Id,
-                        Name = s.Event.Name,
+                        EventName = s.Event.Name,
+                        SocietyName = s.Event.Society.Name,
+                        LogoId = s.Event.Society.LogoId,
                         LocationString = s.Event.LocationString,
-                        Description = s.Event.Description,
                         StartTime = s.Event.StartTime,
-                        EndTime = s.Event.EndTime,
-                        RequestTime = s.Event.StartTime,
-                        type = s.Event.type
+                        isAdvised = s.FacultyMemberId == request.AdvisorId ? true : false,
+                        isFinished = false
                     })
                     .ToListAsync();
                 return Result.Success(resultEvents);
