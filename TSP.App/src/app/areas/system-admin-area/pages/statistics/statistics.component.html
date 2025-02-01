@@ -1,0 +1,94 @@
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="pie-chart" class="mr-2" />Statistics & Reports
+    </h1>
+</div>
+
+<nz-divider />
+
+
+<div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+    <app-container-block [header]="{
+        title: 'Members Per Society',
+        icon: 'product',
+        link: null
+    }">
+        <canvas baseChart class="max-h-64"
+        [type]="'pie'"
+        [datasets]="pieChartDatasets"
+        [labels]="pieChartLabels"
+        [options]="pieChartOptions"
+        [plugins]="pieChartPlugins"
+        [legend]="pieChartLegend">
+        </canvas>
+      
+    </app-container-block>
+
+    <app-container-block class="col-span-2" [header]="{
+        title: 'Total Events Per Month',
+        icon: 'project',
+        link: null
+    }">
+       <canvas baseChart class="max-h-64"
+       [type]="'line'"
+       [datasets]="lineChartDatasets"
+       [labels]="lineChartLabels"
+       [options]="lineChartOptions"
+       [plugins]="lineChartPlugins"
+       [legend]="lineChartLegend">
+       </canvas>
+    </app-container-block>
+
+    <app-container-block class="col-span-2" [header]="{
+        title: 'Most Attended Events',
+        icon: 'project',
+        link: null
+    }">
+       <canvas baseChart class="max-h-64"
+       [data]="barChartData"
+       [options]="barChartOptions"
+       [plugins]="barChartPlugins"
+       [legend]="barChartLegend"
+       [type]="'bar'">
+       </canvas>
+
+    </app-container-block>
+
+    <app-container-block [header]="{
+        title: 'Most Active Societies',
+        icon: 'star',
+        link: null
+    }">
+       <div class="grid grid-cols-1 gap-2">
+           @for(society of otherSocieties; track society.id) {
+               <div class="w-full h-fit">
+                   <a [routerLink]="'/admin-area/societies/' + society.id" class="h-fit flex items-center py-1 cursor-pointer rounded-lg shadow">
+                       <div class="w-14 p-2 shrink-0">
+                           <img [src]="society.logoUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="society image">
+                        </div>
+                        <div>
+                            <span [ngClass]="{
+                                'bg-red-100 text-red-800': $index == 0,
+                                'bg-blue-100 text-blue-800': $index == 1,
+                                'bg-green-100 text-green-800': $index == 2
+                            }"
+                             class="text-[8px] font-medium px-1.5 py-0.5 rounded-sm">
+                                #{{ $index + 1 }}
+                            </span>
+                            <p class="font-semibold text-xs mt-2">
+                                
+                                {{ society.name }}
+                            </p>
+                            <div class="flex gap-2 my-2">
+                                <span class="bg-gray-100 text-gray-800 text-[10px] px-1.5 py-0.5 rounded-full">{{ society.NoOfMembers }} Members</span>
+                                <span class="bg-gray-100 text-gray-800 text-[10px] px-1.5 py-0.5 rounded-full">{{ society.NoOfEvents }} Events</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+            
+       <p class="mt-4 text-[10px] text-gray-500 cursor-default select-none">* Top 3 societies by number of members and events</p>
+    </app-container-block>
+</div>
