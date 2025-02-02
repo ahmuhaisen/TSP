@@ -16,8 +16,8 @@ namespace TSP.WebAPI.Controllers
         public HomeController(ISender sender) : base(sender)
         {
         }
-
-        [HttpGet]
+ //api/home
+        [HttpGet("recentEvents")]
         [ProducesResponseType(typeof(List<EventListDTO>),StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseEnvelope),StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Events([FromQuery] Guid advisorId)
@@ -27,7 +27,7 @@ namespace TSP.WebAPI.Controllers
             return await FromResult(task);
         }
 
-        [HttpGet]
+        [HttpGet("recentlyJoinedMembers")]
         [ProducesResponseType(typeof(List<RecentlyJoinedDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RecentlyJoinedMembers([FromQuery] string? searchTerm)
@@ -38,7 +38,7 @@ namespace TSP.WebAPI.Controllers
 
             return await FromResult(task);
         }
-        [HttpGet]
+        [HttpGet("homeStatistics")]
         [ProducesResponseType(typeof(HomeStatisticsDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> HomeStatistics([FromQuery] string? searchTerm)
