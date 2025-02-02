@@ -47,7 +47,6 @@ public class GetAdvisorSocieties
             var allSocietiesQuery = _context.Societies;
             
             var facultyMemberSocieties = await allSocietiesQuery
-                .Include(s => s.Advisor)
                 .AsNoTracking()
                 .Where(s => s.AdvisorId == request.AdvisorId)
                 .Select(s => new SocietyListDTO

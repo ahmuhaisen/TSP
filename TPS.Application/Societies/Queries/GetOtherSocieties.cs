@@ -45,7 +45,6 @@ public class GetOtherSocieties
                 return Result.Failure<List<SocietyListDTO>>(Error.NotFound(nameof(FacultyMember), request.AdvisorId.ToString()));
             }
             var facultyMemberSocieties = await allSocietiesQuery
-                .Include(s => s.Advisor)
                 .AsNoTracking()
                 .Where(s => s.AdvisorId != request.AdvisorId)
                 .Select(s => new SocietyListDTO

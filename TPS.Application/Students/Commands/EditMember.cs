@@ -11,21 +11,24 @@ using TSP.Domain.Shared;
 
 namespace TPS.Application.Students.Commands;
 
-public class DeleteMember
+public class EditMember
 {
     public sealed class Command : ICommand<Result<Guid>>
     {
         public Guid StudentId { get; set; }
         public Guid SocietyId { get; set; }
-        public static Command Create(Guid id, Guid SocietyId)
+        public required string Position { get; set; }
+        public static Command Create(Guid id, Guid SocietyId,string Position)
         {
             return new Command
             {
                 StudentId = id,
-                SocietyId = SocietyId
+                SocietyId = SocietyId,
+                Position = Position
             };
         }
     }
+
 
     public sealed class Handler : ICommandHandler<Command, Result<Guid>>
     {
@@ -37,26 +40,27 @@ public class DeleteMember
         }
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
+            if (await _context.Societies.FirstOrDefaultAsync(s=>s.Id==request.SocietyId) is null)
+            {
+                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), request.StudentId.ToString()));
+
+            }
             var data = await _context.SocietiesMembers
-                .FirstOrDefaultAsync(
-                s => s.StudentId == request.StudentId&&
-                s.SocietyId == request.SocietyId
-                );
+                .Include(x=>x.Society)
+                .FirstOrDefaultAsync(s=>s.StudentId == request.StudentId
+                &&s.SocietyId==request.SocietyId);
+
             if (data is null)
             {
-                return Result.Failure<Guid>(Error.GuidInvalid(request.StudentId));
+                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), request.StudentId.ToString()));
             }
-           
-            _context.SocietiesMembers.Remove(data);
+
+            data.Position = request.Position;
             var check = await _context.SaveChangesAsync();
-            if (check > 0)
-            {
-                return Result.Success(data.StudentId);
+            if (check <= 0) {
+                return Result.Failure<Guid>(Error.InternalServerError(request.StudentId.ToString()));
             }
-            else
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()));
-            }
+            return Result.Success(data.StudentId);
         }
     }
 }

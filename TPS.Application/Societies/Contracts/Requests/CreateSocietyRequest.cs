@@ -4,12 +4,22 @@ namespace TPS.Application.Societies.Contracts.Requests;
 
 public class CreateSocietyRequest
 {
+    public Guid AdvisorId { get; set; }
     public required string Name { get; set; }
     public required string Description { get; set; }
-    public required string LogoId { get; set; }
+    public required string LogoBase64 { get; set; }
     public DateOnly CreationDate { get; set; }
     public string? ThemeColor { get; set; }
 }
+public class UpdateSocietyRequest
+{
+    public Guid Id { get; set; }
+    public required string Name { get; set; }
+    public required string Description { get; set; }
+    public required string LogoBase64 { get; set; }
+    public string? ThemeColor { get; set; }
+}
+
 
 public class CreateSocietyRequestValidator : AbstractValidator<CreateSocietyRequest>
 {
@@ -25,7 +35,7 @@ public class CreateSocietyRequestValidator : AbstractValidator<CreateSocietyRequ
                .NotEmpty()
                .MaximumLength(200);
 
-        RuleFor(r => r.LogoId)
+        RuleFor(r => r.LogoBase64)
                .NotNull()
                .NotEmpty();
 
@@ -36,5 +46,6 @@ public class CreateSocietyRequestValidator : AbstractValidator<CreateSocietyRequ
         RuleFor(r => r.ThemeColor)
                .Matches(@"^#[0-9A-Fa-f]{6}$")
                .When(r => !string.IsNullOrEmpty(r.ThemeColor));
+        RuleFor(r => r.AdvisorId);
     }
 }

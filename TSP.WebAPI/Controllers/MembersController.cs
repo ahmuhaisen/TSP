@@ -18,7 +18,7 @@ public class MembersController : ApiController
     public MembersController(ISender sender) : base(sender)
     { }
 
-    [HttpGet("CommitteeMembers")]
+    [HttpGet("AllSocietyMembers")]
     [ProducesResponseType(typeof(List<MembersListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getCommitteeMembers([FromQuery] Guid societyId, [FromQuery] bool isCommittee)
@@ -30,12 +30,24 @@ public class MembersController : ApiController
         return await FromResult(task);
     }
 
-    [HttpPut("AddCommittee")]
+     [HttpPut("Committee")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> addCommittee(Guid StudentId, string Position, DateOnly StudentDate)
+    public async Task<IActionResult> addCommittee(Guid StudentId,Guid SocietyId, string Position, DateOnly StudentDate)
     {
-        var query = AddCommittee.Command.Create(StudentId, Position, StudentDate);
+        var query = AddCommittee.Command.Create(StudentId, SocietyId, Position,StudentDate);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+
+    [HttpDelete("Committee")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> deleteCommittee(Guid StudentId, Guid SocietyId)
+    {
+        var query = DeleteCommittee.Command.Create(StudentId, SocietyId);
 
         var task = _sender.Send(query);
 

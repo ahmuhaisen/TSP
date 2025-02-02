@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
@@ -12,39 +13,54 @@ public sealed class CreateSociety
     {
         public string Name { get; private init; } = null!;
         public string Description { get; private init; } = null!;
-        public string LogoId { get; private init; } = null!;
+        public string Logo { get; private init; } = null!;
         public DateOnly CreationDate { get; private init; }
         public string? ThemeColor { get; private init; }
-
-        public static Command Create(string name, string description, string logoId, DateOnly creationDate, string? themeColor)
+        public Guid AdvisorId { get; private init; }
+        public static Command Create(string name, string description, string logo, DateOnly creationDate, string? themeColor, Guid AdvisorId)
         {
             return new Command
             {
                 Name = name.Trim(),
                 Description = description.Trim(),
-                LogoId = logoId,
+                Logo = logo,
                 CreationDate = creationDate,
-                ThemeColor = themeColor
+                ThemeColor = themeColor,
+                AdvisorId = AdvisorId
             };
         }
     }
 
-    public sealed class Handler(ApplicationDbContext context) : ICommandHandler<Command, Result<Guid>>
+    public sealed class Handler(ApplicationDbContext context,IFileManagerService _FileManager) : ICommandHandler<Command, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
             if (await context.Societies.AnyAsync(s => s.Name.Equals(request.Name), cancellationToken: cancellationToken))
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
+            
+            
+            var result=await _FileManager.uploadFile(nameof(Society), request.Logo);
+
+            if(result.IsFailure)
+            {
+                return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
+            }
+            string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString()??"";
+            if (string.IsNullOrEmpty(LogoId)) {
+                return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
+            }
+            
+           
 
             var society = new Society
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                LogoId = request.LogoId,
+                LogoId = LogoId,
                 CreationDate = request.CreationDate,
                 ThemeColor = request.ThemeColor,
-                AdvisorId = Guid.Parse("8B431911-5256-411E-A4C7-11649C5F516D")
+                AdvisorId = request.AdvisorId
             };
 
             await context.Societies.AddAsync(society, cancellationToken);

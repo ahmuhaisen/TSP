@@ -39,6 +39,7 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
+
     [HttpGet("{societyId}/members")]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -47,16 +48,17 @@ public class SocietiesController : ApiController
         return Task.FromResult<IActionResult>(Ok("Not Implemented 2"));
     }
 
-    [HttpPost]
+    [HttpPost("Society")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post(CreateSocietyRequest request)
     {
         var command = CreateSociety.Command.Create(request.Name,
                                                    request.Description,
-                                                   request.LogoId,
+                                                   request.LogoBase64,
                                                    request.CreationDate,
-                                                   request.ThemeColor);
+                                                   request.ThemeColor,
+                                                   request.AdvisorId);
 
         var task = _sender.Send(command);
 
@@ -79,12 +81,20 @@ public class SocietiesController : ApiController
         throw new NotImplementedException();
     }
 
-    [HttpPut("{societyId}")]
+    [HttpPut("Society")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> Put(Guid societyId)
+    public async Task<IActionResult> Put(UpdateSocietyRequest request)
     {
-        throw new NotImplementedException();
+        var command = UpdateSociety.Command.Create(request.Name,
+                                                   request.Description,
+                                                   request.LogoBase64,
+                                                   request.ThemeColor,
+                                                   request.Id);
+        var task = _sender.Send(command);
+
+        return await FromResult(task);
+
     }
 
     [HttpDelete("{societyId}")]
