@@ -7,14 +7,21 @@ export const routes: Routes = [
     },
     {
         path: 'create',
-        loadComponent: () => import('./create-society/create-society.component').then(m => m.CreateSocietyComponent)
+        loadComponent: () => import('./create-society/create-society.component').then(m => m.CreateSocietyComponent),
+        data: { breadcrumb: 'Create' }
+    },
+    {
+        path: ':id',
+        loadComponent: () => import('./society-details/society-details.component').then(m => m.SocietyDetailsComponent),
+        data: { breadcrumb: { alias: 'societyName' } }
     },
     {
         path: ':id/manage',
-        loadComponent: () => import('./manage-society/manage-society.component').then(m => m.ManageSocietyComponent)
+        loadComponent: () => import('./society-details/society-details.component').then(m => m.SocietyDetailsComponent),
+        data: { breadcrumb: { alias: 'societyName' } }
     },
     {
         path: '**',
-        redirectTo: ''
+        redirectTo: '',
     }
 ]

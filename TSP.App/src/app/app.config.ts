@@ -6,11 +6,14 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { errorInterceptor } from './config/http-interceptor';
+import { JwtModule } from '@auth0/angular-jwt';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 
 registerLocaleData(en);
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,8 +22,15 @@ export const appConfig: ApplicationConfig = {
     provideNzI18n(en_US),
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
+    provideCharts(withDefaultRegisterables()), // TODO: Consider including a minimal configuration
     provideHttpClient(
-      withInterceptors([errorInterceptor])
-    )
+      withInterceptors([errorInterceptor]),
+      withInterceptorsFromDi()
+    ),
+    importProvidersFrom([
+      JwtModule.forRoot({
+        config: {},
+    }),
+    ])
   ]
 };

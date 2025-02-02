@@ -5,7 +5,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Router } from '@angular/router';
-import { EditSocietyInfoFormComponent } from "../manage-society/edit-society-info-form/edit-society-info-form.component";
+import { EditSocietyInfoFormComponent } from '../../../../../components/society-details/edit-society-info-form/edit-society-info-form.component';
 
 @Component({
   selector: 'app-create-society',
@@ -14,7 +14,7 @@ import { EditSocietyInfoFormComponent } from "../manage-society/edit-society-inf
     NzButtonModule,
     NzIconModule,
     NzDividerModule,
-    EditSocietyInfoFormComponent
+    EditSocietyInfoFormComponent,
 ],
   templateUrl: './create-society.component.html',
   styleUrl: './create-society.component.css'

@@ -129,40 +129,7 @@ export class HomeComponent {
     }
   ]
 
-  announcements = [
-    {
-      id: '1ab-2cd-3ef-4gh',
-      title: 'Postponement of the JUCPC competition',
-      content: 'Due to the current situation, the JUCPC competition will be postponed to a later date.',
-      sender: 'ACM University of Jordan Student Chapter',
-      date: '2024-07-01 9:00 AM',
-      type: 'Postponement'
-    },
-    {
-      id: '5ij-6kl-7mn-8op',
-      title: 'Hackathon 2024',
-      content: 'The Hackathon 2024 will be held on 15th of July, 2024 at ProgressSoft Lab, KASIT.',
-      sender: 'HackerSpace JU',
-      date: '2024-07-15 10:00 AM',
-      type: 'Announcement'
-    },
-    {
-      id: '9qr-0st-1uv-2wx',
-      title: 'Tech Talk: Linux in 2024',
-      content: 'The Tech Talk: Linux in 2024 will be held on 1st of August, 2024 at Hall 101, KASIT.',
-      sender: 'Linux Society JU',
-      date: '2024-08-01 3:30 PM',
-      type: 'Announcement'
-    },
-    {
-      id: '3yz-4ab-5cd-6ef',
-      title: 'Catch the Flag competition',
-      content: 'The Catch the Flag competition will be held on 15th of August, 2024 at Lab 203, KASIT.',
-      sender: 'Hackerspace JU',
-      date: '2024-08-15 12:00 PM',
-      type: 'Cancellation'
-    }
-  ]
+
   // Drawer
   visible = false;
   placement: NzDrawerPlacement = 'bottom';

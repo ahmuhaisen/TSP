@@ -1,12 +1,14 @@
+using Microsoft.AspNetCore.Identity;
 using TPS.Application.Abstractions;
 using TPS.Application.Services;
-using TPS.WebAPI;
+using TSP.Domain.Entities;
+using TSP.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiControllers()
     .AddEntityFrameworkStore(builder.Configuration)
-    .AddIdentity()
+    .AddIdentity(builder.Configuration)
     .AddMediatR()
     .AddFluentValidation()
     .AddSwagger();
@@ -19,6 +21,19 @@ builder.Services.AddTransient<IFileManagerService, GitHubService>();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+    string[] roles = { "Student", "Faculty" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new ApplicationRole { Name = role });
+        }
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {

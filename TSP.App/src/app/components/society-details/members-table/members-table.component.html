@@ -1,0 +1,76 @@
+<nz-table #requestsTable class="mt-5" [nzData]="listOfDisplayData" nzPaginationType="small" [nzPageSize]="10"
+    [nzLoading]="false" nzBordered="true" [nzScroll]="{ x: '800px' }" nzSize="small">
+    <thead>
+        <tr>
+            <th nzWidth="70px"></th>
+            @for (column of MembersTableColumns; track column) {
+            @if(column.name == 'Name'){
+            <th nzCustomFilter>
+                Name
+                <nz-filter-trigger [(nzVisible)]="visible" [nzActive]="searchValue.length > 0" [nzDropdownMenu]="menu">
+                    <nz-icon nzType="search" />
+                </nz-filter-trigger>
+            </th>
+            }@else {
+            <th [nzShowSort]="!!column.sortFn" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+                [nzSortDirections]="column.sortDirections" [nzShowFilter]="!!column.listOfFilter.length"
+                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                [nzFilterFn]="column.filterFn">
+                {{ column.name }}
+            </th>
+            }
+            }
+            @if(!isViewOnly()){
+            <th>Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for(data of requestsTable.data; track data) {
+        <tr>
+            <td class="flex items-center justify-center">
+                <img class="w-7 h-7 rounded-full ring-1 ring-gray-200" [src]="data.imageUrl" alt="organizers" />
+            </td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.position }}</td>
+            <td>{{ data.memberSince | date: 'mediumDate' }}</td>
+            @if(!isViewOnly()){
+                <td>
+                    <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
+                        <nz-icon nzType="edit" />
+                    </button>
+                    <nz-divider nzType="vertical" />
+                    <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
+                        [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.name + ') from this society?'"
+                        nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeMember(data.id)">
+                        <nz-icon nzType="api" />
+                    </button>
+                </td>
+            }
+        </tr>
+        }
+    </tbody>
+</nz-table>
+
+<nz-dropdown-menu #menu="nzDropdownMenu">
+    <div class="ant-table-filter-dropdown">
+        <div class="search-box">
+            <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" />
+            <button nz-button nzSize="small" nzType="primary" (click)="search()" class="search-button">Search</button>
+            <button nz-button nzSize="small" (click)="reset()">Reset</button>
+        </div>
+    </div>
+</nz-dropdown-menu>
+
+@if(!isViewOnly()){
+    <!-- Edit Member Popup -->
+    <nz-modal [(nzVisible)]="isEditMemberPopupVisible"
+    nzTitle="Edit Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
+    [nzOkLoading]="isEditMemberLoading" nzOkText="Save"
+    (nzOnCancel)="handleCancelEditMember()" (nzOnOk)="handleOkEditMember()"
+    >
+    <ng-container *nzModalContent>
+    <app-edit-member-form [member]="memberToEdit!"/>
+    </ng-container>
+    </nz-modal>
+}

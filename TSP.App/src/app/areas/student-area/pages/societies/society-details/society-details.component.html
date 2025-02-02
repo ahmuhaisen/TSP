@@ -1,0 +1,12 @@
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="product" class="mr-2" />
+        {{ pageMode() !== 'VIEW_ONLY' ? 'Manage Society' : 'Society Details' }}
+    </h1>
+    <div>
+    </div>
+</div>
+
+<nz-divider />
+
+<app-gen-society-details [pageMode]="pageMode()" [societyId]="societyId()" />

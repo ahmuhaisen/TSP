@@ -9,19 +9,19 @@ using TPS.Application.Students.Contracts;
 using System.Runtime.InteropServices;
 using TPS.Application.Students.Commands;
 
-namespace TPS.WebAPI.Controllers;
+namespace TSP.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class MembersController : ApiController
 {
     public MembersController(ISender sender) : base(sender)
-    {}
+    { }
 
     [HttpGet("AllSocietyMembers")]
     [ProducesResponseType(typeof(List<MembersListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> getCommitteeMembers([FromQuery] Guid societyId,[FromQuery]bool isCommittee)
+    public async Task<IActionResult> getCommitteeMembers([FromQuery] Guid societyId, [FromQuery] bool isCommittee)
     {
         var query = GetAllSocietyMembers.Query.Create(societyId, isCommittee);
 
@@ -30,7 +30,7 @@ public class MembersController : ApiController
         return await FromResult(task);
     }
 
-    [HttpPut("Committee")]
+     [HttpPut("Committee")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> addCommittee(Guid StudentId,Guid SocietyId, string Position, DateOnly StudentDate)

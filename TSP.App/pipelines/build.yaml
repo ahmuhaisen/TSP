@@ -4,7 +4,7 @@ steps:
   
   - name: 'node:22.11'
     entrypoint: 'npm'
-    args: ['install']
+    args: ['install', '--legacy-peer-deps']
     dir: 'TSP.App'
 
   - name: 'node:22.11'

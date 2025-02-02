@@ -7,15 +7,17 @@ using TPS.Application.Societies.Contracts;
 using TPS.Application.Societies.Queries;
 using TSP.Domain.Entities;
 using TPS.Application.Advisors.Queries;
+using Microsoft.AspNetCore.Authorization;
 
-namespace TPS.WebAPI.Controllers;
+namespace TSP.WebAPI.Controllers;
+
 
 [ApiController]
 [Route("api/[controller]")]
 public class AdvisorController : ApiController
 {
     public AdvisorController(ISender sender) : base(sender)
-    {}
+    { }
     [HttpGet("AdvisorSocieties")]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -38,6 +40,7 @@ public class AdvisorController : ApiController
 
         return await FromResult(task);
     }
+    [Authorize(Roles = "Faculty")]
     [HttpGet("AllAdvisors")]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]

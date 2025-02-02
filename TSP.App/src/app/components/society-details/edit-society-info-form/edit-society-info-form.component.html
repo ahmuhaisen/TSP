@@ -1,0 +1,104 @@
+<form nz-form [formGroup]="createSocietyForm!" class="grid grid-cols-1 gap-y-1">
+    <!-- Society name -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Society name</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback class="w-3/4" [nzErrorTip]="userErrorTpl">
+            <input nz-input formControlName="name" placeholder="e.g. The Eggs🥚 Society" />
+            <ng-template #userErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please enter the society name!
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Description -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Description</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="descriptionErrorTpl" class="w-3/4">
+            <nz-textarea-count [nzMaxCharacterCount]="200">
+                <textarea formControlName="description" nz-input rows="3"
+                    placeholder="e.g. The society is dedicated to..."></textarea>
+            </nz-textarea-count>
+            <ng-template #descriptionErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please enter the society name!
+                </ng-container>
+                }
+                @if(control.errors?.['maxlength']){
+                <ng-container>
+                    Description cannot exceed 200 characters
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Creation date -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Creation Date</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="dateErrorTpl" class="w-3/4">
+            <nz-date-picker formControlName="creationDate"></nz-date-picker>
+            <ng-template #dateErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please enter the creation date!
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Theme Color picker -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label class="w-1/4 text-left">Theme Color</nz-form-label>
+        <nz-form-control [nzSpan]="12" class="w-3/4">
+            <nz-color-picker nzFormat="hex" formControlName="themeColor"></nz-color-picker>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Logo -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Logo</nz-form-label>
+        <nz-form-control [nzSpan]="12" class="w-3/4">
+            <nz-upload nzListType="picture" [nzMultiple]="false" [nzShowUploadList]="true"
+                (nzChange)="handleImageUpload($event)">
+                <button nz-button>
+                    <span>
+                        <nz-icon nzType="upload" />
+                        Upload
+                    </span>
+                </button>
+            </nz-upload>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Advisor -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Advisor</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="advisorErrorTpl" class="w-3/4">
+            <nz-select formControlName="advisorId" nzAllowClear="true" nzPlaceHolder="Select an advisor" nzShowSearch nzServerSearch (nzOnSearch)="onSearchFacultyMembers($event)">
+                @if (!isFacultyMembersLoading) {
+                @for (member of displayedFacultyMembers; track member.id) {
+                <nz-option [nzValue]="member.id" [nzLabel]="member.name"></nz-option>
+                }
+                } @else {
+                <nz-option nzDisabled nzCustomContent>
+                    <nz-icon nzType="loading" class="loading-icon" />
+                    Loading Faculty members...
+                </nz-option>
+                }
+            </nz-select>
+            <ng-template #advisorErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please select an advisor!
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+</form>
