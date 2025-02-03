@@ -1,15 +1,15 @@
-using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using TPS.Application.Schools.Queries;
+using Microsoft.AspNetCore.Mvc;
+using TPS.Application.Areas.Shared.Schools.Queries;
 
 namespace TSP.WebAPI.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route($"api/[controller]")]
 public class SchoolsController : ApiController
 {
     public SchoolsController(ISender sender) : base(sender)
-    {}
+    { }
 
 
     [HttpGet]

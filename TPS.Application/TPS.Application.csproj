@@ -16,9 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Advisors\Commands\" />
-    <Folder Include="Advisors\Contracts\" />
-    <Folder Include="Students\Contracts\Requests\" />
+    <Folder Include="Areas\AdminArea\Advisors\Commands\" />
+    <Folder Include="Areas\AdminArea\Advisors\Contracts\" />
+    <Folder Include="Areas\StudentArea\" />
+    <Folder Include="Areas\AdminArea\Students\Contracts\Requests\" />
   </ItemGroup>
 
 </Project>

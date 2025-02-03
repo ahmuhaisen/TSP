@@ -1,21 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Abstractions;
-using TPS.Application.Common.Contracts.Authentication;
+using TPS.Application.Areas.Authentication;
 using TSP.Domain.Entities;
 
 namespace TSP.WebAPI.Controllers;
 
-[Route("api/[Controller]")]
+[Route($"api/[controller]")]
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly ITokenService _tokenService;
+    private readonly IJwtTokenService _tokenService;
 
     public AuthenticationController(
         UserManager<ApplicationUser> userManager,
-        ITokenService tokenService)
+        IJwtTokenService tokenService)
     {
         _userManager = userManager;
         _tokenService = tokenService;

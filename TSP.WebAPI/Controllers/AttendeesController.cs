@@ -1,21 +1,21 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TPS.Application.Attendees.Commands;
-using TPS.Application.Attendees.Contracts;
-using TPS.Application.Attendees.Contracts.Requests;
-using TPS.Application.Attendees.Queries;
+using TPS.Application.Areas.Attendees.Commands;
+using TPS.Application.Areas.Attendees.Contracts;
+using TPS.Application.Areas.Attendees.Contracts.Requests;
+using TPS.Application.Areas.Attendees.Queries;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/[controller]")]
+[Route($"api/[controller]")]
 public class AttendeesController : ApiController
 {
     public AttendeesController(ISender sender) : base(sender)
-    {}
+    { }
 
     [HttpGet]
     [ProducesResponseType<List<AttendeeBasicDetailsDTO>>(StatusCodes.Status200OK)]

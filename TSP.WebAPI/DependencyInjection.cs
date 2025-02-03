@@ -1,11 +1,12 @@
-using System.Text;
-using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
+using System.Text.Json.Serialization;
 using TPS.Application;
 using TPS.Application.Abstractions;
 using TPS.Application.Services;
@@ -13,7 +14,6 @@ using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared.Options;
 using TSP.WebAPI;
-using TSP.WebAPI.Controllers;
 using TSP.WebAPI.Validation;
 
 namespace TSP.WebAPI;
@@ -87,7 +87,7 @@ public static class DependencyInjection
             };
         });
 
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
 
@@ -122,8 +122,9 @@ public static class DependencyInjection
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
         services.AddFluentValidationRulesToSwagger();
+
+        services.AddSwaggerGen();
 
         return services;
     }
