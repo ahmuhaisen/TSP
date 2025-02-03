@@ -8,7 +8,7 @@ namespace TSP.WebAPI.Controllers;
 
 [ApiController]
 [Route($"api/[controller]")]
-public class TestsController(ApplicationDbContext _context, IEmailService emailService, IFileManagerService gitHubService) : ControllerBase
+public class TestsController(ApplicationDbContext _context, IEmailService emailService, IGitHubService gitHubService) : ControllerBase
 {
     [HttpPost("GenerateFakeData")]
     public async Task<IActionResult> GenerateFakeData()

@@ -1,6 +1,6 @@
 ﻿using TSP.Domain.Shared;
 
-public interface IFileManagerService
+public interface IGitHubService
 {
     public Task<Result<string>> uploadFile(string filePath, string base64Content);
     public Task<Result<string>> getFile(string path);

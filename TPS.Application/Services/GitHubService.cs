@@ -7,7 +7,7 @@ using TSP.Domain.Shared.Options;
 
 namespace TPS.Application.Services;
 
-public class GitHubService : IFileManagerService
+public class GitHubService : IGitHubService
 {
     private readonly IOptions<GitOptions> _options;
     private readonly HttpClient _httpClient;

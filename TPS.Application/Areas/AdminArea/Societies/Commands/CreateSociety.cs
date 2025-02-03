@@ -30,7 +30,7 @@ public sealed class CreateSociety
         }
     }
 
-    public sealed class Handler(ApplicationDbContext context, IFileManagerService _FileManager) : ICommandHandler<Command, Result<Guid>>
+    public sealed class Handler(ApplicationDbContext context, IGitHubService _FileManager) : ICommandHandler<Command, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {

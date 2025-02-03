@@ -1,26 +1,16 @@
 using Microsoft.AspNetCore.Identity;
-using TPS.Application.Abstractions;
-using TPS.Application.Services;
 using TSP.Domain.Entities;
-using TSP.Domain.Shared.Options;
 using TSP.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiControllers()
     .AddEntityFrameworkStore(builder.Configuration)
+    .AddApplicationServicesWithOptions(builder.Configuration)
     .AddIdentity(builder.Configuration)
     .AddFluentValidation()
     .AddMediatR()
     .AddSwagger();
-
-// TODO: Put these in the DependencyInjection.cs
-builder.Services.AddTransient<IEmailService, EmailService>();
-builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
-
-builder.Services.AddHttpClient<GitHubService>();
-builder.Services.AddTransient<IFileManagerService, GitHubService>();
-builder.Services.Configure<GitOptions>(builder.Configuration.GetSection("GitImages"));
 
 var app = builder.Build();
 

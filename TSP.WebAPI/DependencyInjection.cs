@@ -128,4 +128,16 @@ public static class DependencyInjection
 
         return services;
     }
+
+    public static IServiceCollection AddApplicationServicesWithOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddTransient<IEmailService, EmailService>();
+        services.Configure<EmailOptions>(configuration.GetSection("Email"));
+
+        services.AddHttpClient<GitHubService>();
+        services.AddTransient<IGitHubService, GitHubService>();
+        services.Configure<GitOptions>(configuration.GetSection("GitImages"));
+
+        return services;
+    }
 }

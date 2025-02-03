@@ -22,8 +22,8 @@ public sealed class DeleteSociety
     public sealed class Handler : ICommandHandler<Command, Result>
     {
         private ApplicationDbContext _context { get; }
-        private readonly IFileManagerService _fileManagerService;
-        public Handler(ApplicationDbContext context, IFileManagerService fileManagerService)
+        private readonly IGitHubService _fileManagerService;
+        public Handler(ApplicationDbContext context, IGitHubService fileManagerService)
         {
             _context = context;
             _fileManagerService = fileManagerService;
