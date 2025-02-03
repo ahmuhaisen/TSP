@@ -13,7 +13,7 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
     [HttpPost("GenerateFakeData")]
     public async Task<IActionResult> GenerateFakeData()
     {
-        var data = new StudentFaker().Generate(10);
+        var data = new FacultyMemberFaker().Generate(10);
 
         foreach (var row in data)
         {

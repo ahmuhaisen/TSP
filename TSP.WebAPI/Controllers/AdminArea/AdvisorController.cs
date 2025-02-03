@@ -38,7 +38,7 @@ public class AdvisorController : ApiController
 
         return await FromResult(task);
     }
-    [Authorize(Roles = "Faculty")]
+
     [HttpGet("AllAdvisors")]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]

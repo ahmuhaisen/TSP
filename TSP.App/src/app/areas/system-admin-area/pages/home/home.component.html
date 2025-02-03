@@ -37,7 +37,7 @@
         </div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Total Members</h3>
-            <p class="text-3xl">768</p>
+            <p class="text-3xl">{{ homeStatistics?.totalMembers }}</p>
         </div>
     </div>
     <div class="flex items-center bg-white border rounded overflow-hidden shadow">
@@ -46,7 +46,7 @@
         </div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Total Societies</h3>
-            <p class="text-3xl">13</p>
+            <p class="text-3xl">{{ homeStatistics?.totalSocieties }}</p>
         </div>
     </div>
     <div class="flex items-center bg-white border rounded overflow-hidden shadow">
@@ -55,7 +55,7 @@
         </div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Completed Events</h3>
-            <p class="text-3xl">56</p>
+            <p class="text-3xl">{{ homeStatistics?.totalCompletedEvents }}</p>
         </div>
     </div>
     <div class="flex items-center bg-white border rounded overflow-hidden shadow">
@@ -82,16 +82,16 @@
         </div>
 
         <div class="grid gap-y-1.5">
-            @for(event of events; track $index){
+            @for(event of recentEvents; track $index){
             <a [routerLink]="'/admin-area/events/' + event.id"
                 class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
                 <div class="w-16 p-2 shrink-0">
-                    <img [src]="event.imageUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                    <img [src]="event.logoId" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
                 </div>
                 <div class="p-2 w-full">
                     <div class="w-full flex items-center justify-between flex-wrap sm:flex-nowrap">
                         <span class="font-semibold text-sm">
-                            {{ event.title }}
+                            {{ event.eventName }}
                         </span>
                         <div>
                             <nz-tag class="ml-1 text-[8px]" [nzColor]="event.isFinished ? 'success' : 'processing'">
@@ -107,20 +107,22 @@
                             }
                         </div>
                     </div>
-                    <span class="text-gray-600 text-xs block truncate">{{ event.society }}</span>
+                    <span class="text-gray-600 text-xs block truncate">{{ event.societyName }}</span>
                     <p class="text-gray-500 mt-2 text-[12px] flex flex-wrap sm:flex-nowrap items-center gap-1">
                         <span class="flex items-center">
                             <nz-icon nzType="calendar" class="mr-1"></nz-icon>
-                            {{ event.date | date: 'MMM d, h:mm a'}}
+                            {{ event.startTime | date: 'MMM d, h:mm a'}}
                         </span>
                         <span class="hidden sm:inline">|</span>
                         <span class="flex items-center">
                             <nz-icon nzType="environment" class="mr-1"></nz-icon>
-                            {{ event.location }}
+                            {{ event.locationString }}
                         </span>
                     </p>
                 </div>
             </a>
+            }@empty {
+                <nz-empty [nzNotFoundContent]="'No recent events found.'"/>
             }
 
         </div>
@@ -135,42 +137,26 @@
             </p>
         </div>
         <div class="grid gap-y-1.5">
-            @for(user of users; track $index){
+            @for(user of recentlyJoinedMembers; track $index){
             <a [routerLink]="'/admin-area/users/' + user.id"
                 class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
                 <div class="w-16 p-2 shrink-0">
-                    <img [src]="user.imageUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                    <!-- <img [src]="user.profileImageId" class="w-12 h-12" alt="profile image"> -->
+                    <nz-avatar class="w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center" [nzSrc]="user.profileImageId" [nzText]="user.firstName.substring(0, 2).toUpperCase()"></nz-avatar>
                 </div>
                 <div class="p-2 w-full sm:w-auto">
-                    <p class="font-semibold text-sm truncate">{{ user.name }}</p>
-                    <span class="text-gray-600 text-xs block truncate">{{ user.department }}</span>
+                    <p class="font-semibold text-sm truncate">{{ user.firstName }} {{ user.lastName }}</p>
+                    <span class="text-gray-600 text-xs block truncate">{{ user.departmentName }}</span>
                     <p class="text-gray-500 mt-2  text-[12px] flex flex-wrap sm:flex-nowrap items-center gap-1">
                         <span class="flex items-center">
                             <nz-icon nzType="calendar" class="mr-1"></nz-icon>
-                            Joined on {{ user.joinDate | date: 'MMM d, yyyy'}}
-                        </span>
-                        <span class="hidden sm:inline">|</span>
-                        <span class="flex items-center">
-                            Member of {{ user.societies[0] | truncate: 20 }}
-                            @if (user.societies.length > 1) {
-                            <span class="ml-1 font-medium" nz-button nz-popover nzTrigger="click"
-                                [nzPopoverTitle]="user.name + '\'s societies'" [nzPopoverContent]="contentTemplate">
-                                +{{ user.societies.length - 1 }} more
-                            </span>
-                            <ng-template #contentTemplate>
-                                <ul>
-                                    @for (society of user.societies.slice(1); track $index) {
-                                    <li>
-                                        {{ society }}
-                                    </li>
-                                    }
-                                </ul>
-                            </ng-template>
-                            }
+                            Joined {{ user.societyName }} on {{ user.joinDate | date: 'MMM d, yyyy'}}
                         </span>
                     </p>
                 </div>
             </a>
+            }@empty {
+                <nz-empty [nzNotFoundContent]="'No recently joined members found.'"/>
             }
 
         </div>
