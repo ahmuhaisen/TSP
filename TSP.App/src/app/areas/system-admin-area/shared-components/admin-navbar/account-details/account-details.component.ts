@@ -1,13 +1,16 @@
 import { NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { AuthService, User } from '../../../../../common/services/auth.service';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 @Component({
   selector: 'app-account-details',
   imports: [
     NgIf,
     NzIconModule,
+    NzAvatarModule,
     RouterLink
   ],
   templateUrl: './account-details.component.html',
@@ -15,8 +18,19 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 })
 export class AccountDetailsComponent {
   isAccountDetailsDropdownOpen = false;
+  userInfo = signal<User | null>(null);
+
+  authService = inject(AuthService);
+
+  ngOnInit() {
+    this.userInfo.set(this.authService.currentUser());
+  }
 
   toggleAccountDetailsDropdown(): void {
     this.isAccountDetailsDropdownOpen = !this.isAccountDetailsDropdownOpen;
+  }
+
+  logout(){
+    this.authService.logout();
   }
 }

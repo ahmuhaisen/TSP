@@ -1,4 +1,4 @@
-﻿namespace TPS.Application.Areas.Authentication;
+﻿namespace TPS.Application.Areas.Authentication.Contracts;
 
 // Shared DTOs
 public class LoginRequest

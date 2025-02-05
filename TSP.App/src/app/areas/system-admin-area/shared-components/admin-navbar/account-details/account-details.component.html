@@ -1,35 +1,28 @@
 <!-- My Account -->
 <button type="button" (click)="toggleAccountDetailsDropdown()"
-    class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 hover:ring-1 hover:ring-primary-dark-2 hover:ring-offset-1 focus:ring-4 focus:ring-gray-100" id="user-menu-button"
+    class="flex mx-3 text-sm rounded-full md:mr-0 hover:ring-1 hover:ring-primary-dark-2 hover:ring-offset-1 focus:ring-4 focus:ring-gray-100" id="user-menu-button"
     aria-expanded="false">
     <span class="sr-only">Open user menu</span>
-    <img class="w-8 h-8 rounded-full" src="https://robohash.org/s.sarhan@ju.edu.jo?bgset=bg1"
-        alt="user photo">
+    <nz-avatar class="w-8 h-8 rounded-full flex items-center justify-center" [nzSrc]="userInfo()?.profileImageId" [nzText]="userInfo()?.name!.substring(0, 2).toUpperCase()" [nzShape]="'circle'" nzSize="small"></nz-avatar>
 </button>
 <!-- Dropdown menu -->
 <div *ngIf="isAccountDetailsDropdownOpen"
     class="z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow" id="dropdown">
     <div class="py-3 px-4">
-        <span class="block text-sm font-semibold text-gray-900">Prof. Sami Sarhan</span>
-        <span class="block text-sm text-gray-500 truncate">s.sarhan&#64;ju.edu.jo</span>
+        <span class="block text-sm font-semibold text-gray-900">{{ userInfo()?.name }}</span>
+        <span class="block text-sm text-gray-500 truncate">{{ userInfo()?.email }}</span>
     </div>
     <ul class="py-1 text-gray-500 " aria-labelledby="dropdown">
         <li (click)="toggleAccountDetailsDropdown()">
-            <a routerLink="./my-account" class="block py-2 px-4 text-sm hover:bg-gray-100">
+            <a routerLink="./profiles/{{ userInfo()?.id }}" class="block py-2 px-4 text-sm hover:bg-gray-100">
                 <nz-icon nzType="user" nzTheme="outline" class="mr-1" />
                 My profile
-            </a>
-        </li>
-        <li (click)="toggleAccountDetailsDropdown()">
-            <a routerLink="./my-account/settings" class="block py-2 px-4 text-sm hover:bg-gray-100">
-                <nz-icon nzType="setting" nzTheme="outline" class="mr-1" />
-                Account settings
             </a>
         </li>
     </ul>
     <ul class="py-1 text-gray-500" aria-labelledby="dropdown">
         <li (click)="toggleAccountDetailsDropdown()">
-            <a routerLink="/authentication" class="block py-2 px-4 text-sm hover:bg-gray-100">
+            <a (click)="logout()" class="block py-2 px-4 text-sm hover:bg-gray-100">
                 <nz-icon nzType="logout" nzTheme="outline" class="mr-1" />
                 Sign out
             </a>

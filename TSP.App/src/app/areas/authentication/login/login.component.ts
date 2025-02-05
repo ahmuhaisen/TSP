@@ -44,7 +44,6 @@ export class LoginComponent {
   }
 
   handleUserTypeChange(e: string | number): void {
-    console.log(e);
     this.selectedUserType = e === 'FacultyMember' ? 'FacultyMember' : 'Student';
   }
 }

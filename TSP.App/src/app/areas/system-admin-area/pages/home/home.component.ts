@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
@@ -16,6 +16,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { HomeService } from '../../services/home.service';
 import { HomeStatistics, RecentEvent, RecentlyJoinedMember } from '../../api-interfaces/home.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { AuthService, User } from '../../../../common/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -45,12 +46,14 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 export class HomeComponent {
   isLoading = false;
   isSearchLoading = false;
+  userInfo = signal<User | null>(null);
 
   recentEvents: RecentEvent[] = [];
   recentlyJoinedMembers: RecentlyJoinedMember[] = [];
   homeStatistics: HomeStatistics | null = null;
 
   homeService = inject(HomeService);
+  authService = inject(AuthService);
 
   ngOnInit() {
     this.isLoading = true;
@@ -58,6 +61,8 @@ export class HomeComponent {
     this.homeService.recentEvents().subscribe(res => this.recentEvents = res);
     this.homeService.recentlyJoinedMembers().subscribe(res => this.recentlyJoinedMembers = res);
     this.homeService.homeStatistics().subscribe(res => this.homeStatistics = res);
+
+    this.userInfo.set(this.authService.currentUser());
 
     this.isLoading = false;
   }

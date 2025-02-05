@@ -30,13 +30,12 @@ public class JwtTokenService : IJwtTokenService
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             new Claim(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
-            new Claim("uid", user.Id.ToString())
+            new Claim("uid", user.Id.ToString()),
+            new Claim("pid", user.ProfileImageId ?? string.Empty),
         };
 
         var roles = await _userManager.GetRolesAsync(user);
-        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-        claims.Add(new Claim("utp", user.GetType().Name));
+        claims.AddRange(roles.Select(role => new Claim("rle", role)));
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_jwtOptions.Value.Key));

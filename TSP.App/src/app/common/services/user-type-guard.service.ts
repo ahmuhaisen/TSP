@@ -20,7 +20,7 @@ export class UserTypeGuardService implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot): boolean {
 
-        const expectedUserType = route.data['expectedUserType'];
+        const expectedUserRole = route.data['expectedUserRole'];
         const token = this.localStorageService.getItem('token');
 
         if (!token) {
@@ -32,12 +32,18 @@ export class UserTypeGuardService implements CanActivate {
 
         if (
             !this.authService.isAuthenticated()
-            || tokenPayload.utp !== expectedUserType
+            || tokenPayload.rle !== expectedUserRole
         ) {
             this.navigateToLogin();
             return false;
         }
 
+        this.authService.setCurrentUser({
+            id: tokenPayload.uid,
+            fullName: tokenPayload.name,
+            email: tokenPayload.email,
+            profileImageId: tokenPayload.pid
+        })
         return true;
     }
 
@@ -46,6 +52,11 @@ export class UserTypeGuardService implements CanActivate {
     }
 }
 
-interface CustomTokenPayload extends JwtPayload {
+export interface CustomTokenPayload extends JwtPayload {
+    name: string;
+    email: string;
     utp: string;
+    rle: string;
+    uid: string;
+    pid?: string;
 }

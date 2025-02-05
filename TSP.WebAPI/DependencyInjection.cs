@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using TPS.Application;
 using TPS.Application.Abstractions;
+using TPS.Application.Areas.Authentication;
 using TPS.Application.Services;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
@@ -90,6 +91,8 @@ public static class DependencyInjection
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
+
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         return services;
     }

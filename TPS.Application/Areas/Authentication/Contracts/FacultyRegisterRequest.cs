@@ -1,6 +1,6 @@
 ﻿using TSP.Domain.Entities;
 
-namespace TPS.Application.Areas.Authentication;
+namespace TPS.Application.Areas.Authentication.Contracts;
 
 // Faculty DTOs
 public class FacultyRegisterRequest
