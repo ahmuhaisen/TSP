@@ -3,7 +3,7 @@
     class="flex mx-3 text-sm rounded-full md:mr-0 hover:ring-1 hover:ring-primary-dark-2 hover:ring-offset-1 focus:ring-4 focus:ring-gray-100" id="user-menu-button"
     aria-expanded="false">
     <span class="sr-only">Open user menu</span>
-    <nz-avatar class="w-8 h-8 rounded-full flex items-center justify-center" [nzSrc]="userInfo()?.profileImageId" [nzText]="userInfo()?.name!.substring(0, 2).toUpperCase()" [nzShape]="'circle'" nzSize="small"></nz-avatar>
+    <nz-avatar class="w-8 h-8 bg-blue-200 text-blue-700 rounded-full flex items-center justify-center" [nzSrc]="userInfo()?.profileImageId" [nzText]="userInfo()?.name!.substring(0, 2).toUpperCase()" [nzShape]="'circle'" nzSize="small"></nz-avatar>
 </button>
 <!-- Dropdown menu -->
 <div *ngIf="isAccountDetailsDropdownOpen"

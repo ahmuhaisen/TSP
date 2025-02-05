@@ -34,6 +34,7 @@ export class RoleGuardService implements CanActivate {
             !this.authService.isAuthenticated()
             || tokenPayload.utp !== expectedUserType
         ) {
+            console.log('unauthenticated');
             this.navigateToLogin();
             return false;
         }

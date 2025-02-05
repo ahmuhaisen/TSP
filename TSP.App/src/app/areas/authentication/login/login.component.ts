@@ -7,16 +7,20 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 import { AuthService, LoginRequest, UserType } from '../../../common/services/auth.service';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-login',
   imports: [
-    ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule,NzSegmentedModule
+    ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule,NzSegmentedModule, NzIconModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  passwordVisible = false;
+  password?: string;
+
   selectedUserType: UserType = 'Guest';
   userTypes = ['Student', 'FacultyMember'];
 

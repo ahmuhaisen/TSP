@@ -1,11 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
+import { AuthService, User } from '../../../../common/services/auth.service';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 @Component({
   selector: 'app-home',
@@ -15,12 +17,22 @@ import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
     NzIconModule,
     NzButtonModule,
     NzDividerModule,
+    NzAvatarModule,
     NzTagModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+
+  userInfo = signal<User | null>(null);
+
+  authService = inject(AuthService);
+
+  ngOnInit() {
+    this.userInfo.set(this.authService.currentUser());
+  }
+
   events = [
     {
       id: '1ab-2cd-3ef-4gh',
