@@ -40,21 +40,5 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
         return Ok();
     }
 
-    [HttpPost("upload-image")]
-    public async Task<IActionResult> UploadImage([FromBody] string base64StringImage)
-    {
-        string base64Image = base64StringImage;
-        var result = await gitHubService.uploadFile_EXPERIMENTAL("images", base64Image);
-
-        if (result.IsSuccess)
-        {
-            Console.WriteLine($"Image uploaded successfully. Image ID: {result.Data}");
-        }
-        else
-        {
-            Console.WriteLine($"Error uploading image: {result.Error.Message}");
-        }
-
-        return Ok();
-    }
+   
 }

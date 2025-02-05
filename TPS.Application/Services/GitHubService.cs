@@ -35,8 +35,9 @@ public class GitHubService : IGitHubService
         {
             return Result.Failure<string>(Error.ValueInvalid("Not valid image type"));
         }
+        string imageId = generateImageId(base64Content);
         base64Content = base64Content.Split(',')[1];
-        string imageId = Guid.NewGuid().ToString();
+
         string fileName = filePath + "/" + imageId;
 
         string currentUrl = BaseURL + fileName;
@@ -128,6 +129,7 @@ public class GitHubService : IGitHubService
         {
             return Result.Failure<string>(Error.ValueInvalid("Not valid image type"));
         }
+        
         string currentUrl = BaseURL + path;
         var requestBody = new
         {
@@ -135,10 +137,13 @@ public class GitHubService : IGitHubService
             content = base64Content,
             sha = getSha(path)
         };
+
         var jsonContent = new StringContent(
            JsonSerializer.Serialize(requestBody),
            Encoding.UTF8, "application/json");
+
         var result = await _httpClient.PutAsync(currentUrl, jsonContent);
+
         if (result.IsSuccessStatusCode)
         {
             return Result.Success("");
@@ -148,45 +153,6 @@ public class GitHubService : IGitHubService
             string error = await result.Content.ReadAsStringAsync();
             return Result.Failure<string>(Error.InternalServerError(error));
         }
-    }
-
-
-    public async Task<Result<string>> uploadFile_EXPERIMENTAL(string path, string base64Content)
-    {
-        if (!IsValidBase64ImageString(base64Content))
-            return Result.Failure<string>(Error.ValueInvalid("Not valid Base64 image"));
-
-        if (!IsValidImageType(base64Content))
-            return Result.Failure<string>(Error.ValueInvalid("Not valid image type"));
-
-        var base64Data = base64Content.Split(',')[1];
-
-        byte[] imageBytes = Convert.FromBase64String(base64Data);
-
-        string imageId = $"{Guid.NewGuid()}.png";
-        string fullPath = $"{path}/{imageId}";
-
-        string githubBase64Content = Convert.ToBase64String(imageBytes);
-
-        var requestBody = new
-        {
-            message = $"Upload file: {fullPath}",
-            content = githubBase64Content
-        };
-
-        var jsonContent = new StringContent(
-            JsonSerializer.Serialize(requestBody),
-            Encoding.UTF8, "application/json");
-
-        var response = await _httpClient.PutAsync(BaseURL + fullPath, jsonContent);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            string error = await response.Content.ReadAsStringAsync();
-            return Result.Failure<string>(Error.CustomError(error));
-        }
-
-        return Result.Success(imageId);
     }
 
 
@@ -233,6 +199,13 @@ public class GitHubService : IGitHubService
         int separatorIndex = base64Image.IndexOf(';');
         return base64Image.Substring(5, separatorIndex - 5).Split('/')[1];
     }
+    private string generateImageId(string Base64Image)
+    {
+        string s = getImageType(Base64Image);
+
+        return Guid.NewGuid().ToString() + "." + s;
+    }
+
     #endregion
 }
 

@@ -9,7 +9,8 @@ namespace TSP.Domain.Entities
 {
     public class EventApproval :Entity
     {
-        public bool IsApproved { get; set; }
+        public bool AdvisorApproval{ get; set; }
+        public bool DeanAssistantApproval { get; set; }
         public string? Remarks { get; set; }
         public DateTime DecisionDate { get; set; }
         public Guid EventId { get; set; }

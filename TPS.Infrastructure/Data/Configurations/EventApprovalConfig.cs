@@ -7,8 +7,11 @@ namespace TPS.Infrastructure.Data.Configurations
     {
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<EventApproval> builder)
         {
-            builder.Property(d => d.IsApproved)
+            builder.Property(d => d.DeanAssistantApproval)
                 .IsRequired();
+            builder.Property(d => d.AdvisorApproval)
+                .IsRequired();
+
             builder.Property(d => d.Remarks)
                 .HasMaxLength(250)
                 .IsRequired(false);

@@ -37,7 +37,8 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
 
                 var totalCompletedEvents = await _context.EventsApproval
                     .Include(x => x.Event)
-                    .Where(x => x.IsApproved == true
+                    .Where(x => x.AdvisorApproval
+                            && x.DeanAssistantApproval
                             && x.Event.EndTime < DateTime.Now)
                     .CountAsync();
 
