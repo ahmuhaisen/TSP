@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\AdminArea\Advisors\Commands\**" />
+    <EmbeddedResource Remove="Areas\AdminArea\Advisors\Commands\**" />
+    <None Remove="Areas\AdminArea\Advisors\Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
   </ItemGroup>
@@ -16,8 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\AdminArea\Advisors\Commands\" />
-    <Folder Include="Areas\AdminArea\Advisors\Contracts\" />
     <Folder Include="Areas\StudentArea\" />
     <Folder Include="Areas\AdminArea\Students\Contracts\Requests\" />
   </ItemGroup>

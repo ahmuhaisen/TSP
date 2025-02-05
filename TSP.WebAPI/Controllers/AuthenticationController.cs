@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Abstractions;
 using TPS.Application.Areas.Authentication;
 using TSP.Domain.Entities;
+using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers;
 
@@ -58,7 +59,7 @@ public class AuthenticationController : ControllerBase
             return Unauthorized("Invalid credentials");
 
         var token = await _tokenService.GenerateAsync(user);
-        return Ok(new { Token = token });
+        return Ok(Result.Success(token));
     }
 
     [HttpPost("FacultyMember/ResetPassword")]

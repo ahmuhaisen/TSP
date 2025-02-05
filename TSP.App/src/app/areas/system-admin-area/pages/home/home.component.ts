@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzEmptyComponent, NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -10,7 +10,6 @@ import { NzDrawerModule, NzDrawerPlacement } from 'ng-zorro-antd/drawer';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
 import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTagModule } from 'ng-zorro-antd/tag';
@@ -24,7 +23,6 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
     NgIf,
     NgFor,
     DatePipe,
-    TruncatePipe,
     RouterLink,
     NzEmptyModule,
     NzSpinModule,

@@ -24,11 +24,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         });
 
       } else {
-        messageService.error(
-          error.status === 500
-          ? 'Internal server error'
-          : 'An unknown error occurred'
-        );
+        if(error.status === 401){
+        }
+        else {
+          messageService.error('An unknown error occurred');
+        }
       }
 
       return throwError(error);

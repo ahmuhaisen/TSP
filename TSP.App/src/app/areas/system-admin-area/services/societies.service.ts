@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { Society } from '../api-interfaces/society.types';
+import { Society, SocietyBasicDetails } from '../api-interfaces/society.types';
 import { DbService } from '../../../common/services/db.service';
 
 @Injectable({
@@ -8,9 +8,20 @@ import { DbService } from '../../../common/services/db.service';
 })
 export class SocietiesService {
 
-  model = 'societies';
+  model = 'AdminArea/Societies';
 
   db = inject(DbService);
+  // TODO: Get the current user id by Auth service
+  tempUserId = '8ec53c2d-8abe-4c55-e810-08dd3fb8d60a';
+
+
+  advisorSocieties() {
+    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/Advisor/AdvisorSocieties?advisorIds=${this.tempUserId}`);
+  }
+
+  otherSocieties() {
+    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/Advisor/OtherSocieties?advisorIds=${this.tempUserId}`);
+  }
 
   all() {
     return this.db.getRequest<Society[]>(this.model);
@@ -39,5 +50,5 @@ export class SocietiesService {
   private getUrlWithId(id: string) {
     return `${this.getUrl()}/${id}`;
   }
-
 }
+

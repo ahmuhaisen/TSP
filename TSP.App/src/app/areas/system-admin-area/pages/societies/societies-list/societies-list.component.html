@@ -22,12 +22,13 @@
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 mt-5">
-    @for(society of advisedSocieties; track society.id) {
+    @for(society of advisorSocieties; track society.id) {
     <div
         class="relative flex flex-col mt-6 max-h-72 text-gray-700 shadow rounded-lg border-b-2 border-secondary bg-clip-border">
         <div
             class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden bg-white bg-clip-border rounded-2xl shadow-md">
-            <img [src]="society.logoUrl" class="object-contain w-full h-full" alt="profile-image" />
+            <nz-avatar [nzSrc]="society.logoId" class="object-contain bg-secondary w-full h-full flex items-center justify-center"
+            [nzIcon]="'product'" nzShape="square" nzSize="large" />
         </div>
         <div class="p-6 flex-grow">
             <h5
@@ -48,7 +49,8 @@
             </button>
         </div>
     </div>
-
+    }@empty {
+        <nz-empty class="col-span-4" [nzNotFoundContent]="'You are not an advisor of any societies.'"/>
     }
 </div>
 
@@ -69,7 +71,9 @@
         <div class="w-full ">
             <a [routerLink]="'/admin-area/societies/' + society.id" class="flex flex-wrap sm:flex-nowrap items-center py-2 cursor-pointer shadow rounded-lg border-b-2 border-primary-light">
                 <div class="w-16 p-2 shrink-0">
-                    <img [src]="society.logoUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                    <!-- <img [src]="society.logoId" class="w-12 h-12 sm:w-10 sm:h-10" alt="profile image"> -->
+                    <nz-avatar [nzSrc]="society.logoId" class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
+                               [nzIcon]="'product'" nzShape="square" nzSize="large" />
                 </div>
                 <div>
                     <p class="font-semibold text-xs">{{ society.name  | truncate: 35 }}</p>
@@ -77,6 +81,8 @@
                 </div>
             </a>
         </div>
+    }@empty {
+        <nz-empty class="col-span-3" [nzNotFoundContent]="'No societies found.'"/>
     }
 </div>
 
