@@ -16,7 +16,6 @@ public class GetAllSocieties
         {
             SearchTerm = searchTerm;
         }
-
         public static Query Create(string? searchTerm) => new Query(searchTerm);
     }
 

@@ -35,7 +35,8 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
 
                 var finishedEvent = await allEventsQuery
                     .Include(s => s.Event)
-                    .Where(s => s.IsApproved == true
+                    .Where(s => s.AdvisorApproval
+                            && s.DeanAssistantApproval
                             && s.FacultyMemberId == request.AdvisorId
                             && s.Event.EndTime < today)
                     .OrderByDescending(s => s.Event.EndTime)
@@ -59,7 +60,7 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
 
                 var upcomingEvent = await allEventsQuery
                     .Include(s => s.Event)
-                    .Where(s => s.IsApproved == true
+                    .Where(s => s.AdvisorApproval && s.DeanAssistantApproval
                             && s.Event.StartTime > today)
                     .OrderBy(s => s.Event.StartTime)
                     .Take(no)
