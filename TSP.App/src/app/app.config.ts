@@ -10,6 +10,7 @@ import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@an
 import { errorInterceptor } from './config/http-interceptor';
 import { JwtModule } from '@auth0/angular-jwt';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { authInterceptor } from './config/auth-interceptor';
 
 
 registerLocaleData(en);
@@ -24,7 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideCharts(withDefaultRegisterables()), // TODO: Consider including a minimal configuration
     provideHttpClient(
-      withInterceptors([errorInterceptor]),
+      withInterceptors([errorInterceptor, authInterceptor]),
       withInterceptorsFromDi()
     ),
     importProvidersFrom([

@@ -18,15 +18,23 @@
     <nz-form-item>
         <nz-form-control nzErrorTip="Please enter a valid email!">
             <nz-input-group nzPrefixIcon="mail" nzSize="large">
-                <input type="text" nz-input formControlName="email" placeholder="Email" />
+                <input type="text" nz-input formControlName="email" placeholder="Email"/>
             </nz-input-group>
         </nz-form-control>
     </nz-form-item>
     <nz-form-item>
         <nz-form-control nzErrorTip="Please enter your Password!">
-            <nz-input-group nzPrefixIcon="lock" nzSize="large">
-                <input type="password" nz-input formControlName="password" placeholder="Password" />
+            <nz-input-group nzPrefixIcon="lock" nzSize="large" [nzSuffix]="suffixTemplate">
+                <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="password" placeholder="Password"  [(ngModel)]="password"/>
             </nz-input-group>
+            <ng-template #suffixTemplate>
+                <span
+                  nz-icon
+                  class="ant-input-password-icon"
+                  [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                  (click)="passwordVisible = !passwordVisible"
+                ></span>
+              </ng-template>
         </nz-form-control>
     </nz-form-item>
     <button nz-button class="my-2 w-full" [nzSize]="'large'" [nzType]="'primary'">Log in</button>

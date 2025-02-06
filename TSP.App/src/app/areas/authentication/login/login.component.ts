@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -6,20 +6,26 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
+import { AuthService, LoginRequest, UserType } from '../../../common/services/auth.service';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-login',
   imports: [
-    ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule,NzSegmentedModule
+    ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule,NzSegmentedModule, NzIconModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  selectedUserType: 'facultyMember' | 'student' = 'student';
-  userTypes = ['Student', 'Faculty Member'];
+  passwordVisible = false;
+  password?: string;
+
+  selectedUserType: UserType = 'Guest';
+  userTypes = ['Student', 'FacultyMember'];
 
   fb = new FormBuilder();
+  authService = inject(AuthService);
 
   loginForm = this.fb.group({
     email: this.fb.control('', [Validators.required, Validators.email]),
@@ -27,9 +33,7 @@ export class LoginComponent {
   });
 
   submitForm(): void {
-    if (this.loginForm.valid) {
-      console.log('submit', this.loginForm.value);
-    } else {
+    if(this.loginForm.invalid) {
       Object.values(this.loginForm.controls).forEach(control => {
         if (control.invalid) {
           control.markAsDirty();
@@ -37,9 +41,13 @@ export class LoginComponent {
         }
       });
     }
+
+    const request = this.loginForm.value as LoginRequest;
+
+    this.authService.login(request, this.selectedUserType);
   }
 
   handleUserTypeChange(e: string | number): void {
-    this.selectedUserType = e === 'facultyMember' ? 'facultyMember' : 'student';
+    this.selectedUserType = e === 'FacultyMember' ? 'FacultyMember' : 'Student';
   }
 }

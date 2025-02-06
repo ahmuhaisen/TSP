@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { INavbarItem } from '../../../../common/types/navbar.types';
 import { NotificationsComponent } from "../../../../components/notifications/notifications.component";
 import { AccountDetailsComponent } from "../../../../components/account-details/account-details.component";
@@ -6,6 +6,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NgIf } from '@angular/common';
 import { IUserBasicDetails } from '../../../../common/types/user.types';
+import { AuthService, User } from '../../../../common/services/auth.service';
 
 @Component({
   selector: 'app-student-navbar',
@@ -25,18 +26,19 @@ export class StudentNavbarComponent {
   isNotificationsDropdownOpen = false;
   isLargeScreen = window.innerWidth >= 1024;
 
-  user: IUserBasicDetails = {
-    id: '12da-1876',
-    name: 'Suhaib Saleh',
-    email: 'suh0211111@ju.edu.jo',
-    imageUrl: 'https://robohash.org/Suhaib@ju.edu.jo?bgset=bg2'
-  }
+  authService = inject(AuthService);
+
+  user: User | null = null;
 
   navbarItems: INavbarItem[] = [
     { name: 'Home', targetPagePath: 'home', iconName: 'home' },
     { name: 'My Societies', targetPagePath: 'societies', iconName: 'product' },
     { name: 'All Events', targetPagePath: 'events', iconName: 'project' },
   ];
+
+  ngOnInit(){
+    this.user = this.authService.currentUser();
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;

@@ -9,9 +9,9 @@
 
 <section class="mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
     <div class="flex gap-3 items-center">
-        <img class="w-11 h-11 rounded-full" src="https://robohash.org/suhaib0211111@ju.edu.jo?bgset=bg2" alt="profile image">
+        <nz-avatar class="w-11 h-11 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="userInfo()!.profileImageId" [nzText]="userInfo()!.name.substring(0, 2).toUpperCase()" />
         <div>
-            <h2 class="text-lg font-bold text-gray-700">Welcome, Suhaib!</h2>
+            <h2 class="text-lg font-bold text-gray-700">Welcome, {{ userInfo()!.name }}!</h2>
             <p class="text-sm text-gray-600">Here's a quick overview of your societies.</p>
         </div>
     </div>
@@ -22,9 +22,7 @@
     </div>
 </section>
 
-
 <nz-divider />
-
 
 <div class="grid gap-5 grid-cols-1 lg:grid-cols-2">
     <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-primary-light">

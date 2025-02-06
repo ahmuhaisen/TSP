@@ -1,15 +1,83 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { SecureLocalStorageService } from './secure-local-storage.service';
+import { DbService } from './db.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    localStorageService = inject(SecureLocalStorageService);
-    jwtHelper = inject(JwtHelperService);
 
-    public isAuthenticated(): boolean {
-        this.localStorageService.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNjdjOGU3Yy02NTRhLTRkNzctYTNmYy0xM2ZlMGNjZWJhYjMiLCJlbWFpbCI6ImZAZ21haWwuY29tIiwibmFtZSI6InN0cmluZyBzdHJpbmciLCJ1aWQiOiI4ZWM1M2MyZC04YWJlLTRjNTUtZTgxMC0wOGRkM2ZiOGQ2MGEiLCJVc2VyVHlwZSI6IkZhY3VsdHlNZW1iZXIiLCJleHAiOjE3MzgzNDEzNTEsImlzcyI6IlRoZVNvY2lldGllc1BvcnRhbCIsImF1ZCI6IlRoZVNvY2lldGllc1BvcnRhbCJ9.vcueRB_oEqlDrSttU8-4_Ax-UGRSrAQOdWg_MuZ8ebs');
+    currentUser = signal<User | null>(null);
+
+    model = 'Authentication';
+
+    db = inject(DbService);
+    router = inject(Router);
+    jwtHelper = inject(JwtHelperService);
+    messageService = inject(NzMessageService);
+    localStorageService = inject(SecureLocalStorageService);
+
+    isAuthenticated(): boolean {
         const token = this.localStorageService.getItem('token');
         return !this.jwtHelper.isTokenExpired(token);
     }
+
+    login(request: LoginRequest, userType: UserType) {
+        if(userType === 'Guest') return;
+
+        this.db.postRequest<LoginResponse, LoginRequest>(`${this.model}/${userType}/Login`, request).subscribe({
+            next: (res) => {
+                this.localStorageService.setItem('token', res.token);
+                this.setCurrentUser(res);
+                this.navigateToHome(res.userType);
+            }
+        });
+    }
+
+    logout(){
+        this.localStorageService.removeItem('token');
+        this.currentUser.set(null);
+        this.router.navigate(['authentication']);
+    }
+
+    setCurrentUser(userInfo: { id: string, fullName: string, email: string, profileImageId?: string }) {
+        this.currentUser.set({
+            id: userInfo.id,
+            name: userInfo.fullName,
+            email: userInfo.email,
+            profileImageId: userInfo.profileImageId
+        });
+    }
+
+    private navigateToHome(userType: string) {
+        if(userType === 'FacultyMember') {
+            this.router.navigate(['admin-area']);
+        }else {
+            this.router.navigate(['student-area']);
+        }
+    }
 }
+
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    token: string;
+    userType: string;
+    id: string;
+    fullName: string;
+    email: string;
+    profileImageId: string;
+}
+
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+    profileImageId?: string;
+}
+
+export type UserType = 'FacultyMember' | 'Student' | 'Guest';
