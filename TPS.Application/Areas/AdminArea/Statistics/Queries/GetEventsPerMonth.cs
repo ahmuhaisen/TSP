@@ -32,22 +32,23 @@ public class GetEventsPerMonth
 
 
             var data = await _context.EventsApproval
-    .Where(s => s.DeanAssistantApproval && s.AdvisorApproval)
-    .Include(s => s.Event)
-    .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
-    .Select(g => new
-    {
-        Date = new DateOnly(g.Key.Year, g.Key.Month, 1),
-        Events = g.Count()
-    })
-    .OrderByDescending(s => s.Date)
-    .Take(request.numberOfSocities)
-    .Select(s => new EventsPerMonthDTO
-    {
-        Date = s.Date.ToString("yyyy/MMMM"),
-        Events = s.Events
-    })
-    .ToListAsync();
+            .Where(s => s.DeanAssistantApproval && s.AdvisorApproval)
+            .Include(s => s.Event)
+            .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
+            .Select(g => new
+            {
+                Date = new DateOnly(g.Key.Year, g.Key.Month, 1),
+                Events = g.Count()
+            })
+            .OrderByDescending(s => s.Date)
+            .Take(request.numberOfSocities)
+            .Select(s => new EventsPerMonthDTO
+            {
+                Date = s.Date.ToString("yyyy/MMMM"),
+                Events = s.Events
+            })
+            .ToListAsync();
+
 
 
             return Result.Success(data);
