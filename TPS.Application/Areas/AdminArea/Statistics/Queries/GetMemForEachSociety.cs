@@ -46,6 +46,8 @@ public class GetMemForEachSociety
                 .OrderByDescending(s=>s.count)
                 .ToListAsync();
 
+
+
             if (data.Count == 0)
             {
                 return Result.Success(l);
