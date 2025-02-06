@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.AdminArea.Advisors.Queries;
 using TPS.Application.Areas.AdminArea.Societies.Contracts;
@@ -38,7 +37,8 @@ public class AdvisorController : ApiController
 
         return await FromResult(task);
     }
-    //[Authorize(Roles = "Faculty")]
+
+
     [HttpGet("AllAdvisors")]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -50,6 +50,4 @@ public class AdvisorController : ApiController
 
         return await FromResult(task);
     }
-
-
 }

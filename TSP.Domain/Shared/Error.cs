@@ -42,6 +42,9 @@ public class Error
     public static Error AccessDenied(string resource) =>
         new($"Access to {resource} is denied", ErrorCode.AccessDenied);
 
+    public static Error InvalidCredentials() =>
+        new($"Invalid email or password", ErrorCode.InvalidCredentials);
+
     public static Error GuidInvalid(Guid guid) =>
         new($"Invalid Id value, Id must be a valid GUID. Id: {guid}", ErrorCode.GuidInvalid);
 
@@ -70,6 +73,7 @@ public enum ErrorCode
     ValueAlreadyExist,
     InUse,
     AccessDenied,
+    InvalidCredentials,
     GuidInvalid,
     FormatInvalid,
     InternalServer,
