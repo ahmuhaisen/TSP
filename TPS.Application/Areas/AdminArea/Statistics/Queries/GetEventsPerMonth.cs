@@ -31,7 +31,7 @@ public class GetEventsPerMonth
         {
             List<EventsPerMonthDTO> l = new List<EventsPerMonthDTO>();
             var data = await _context.EventsApproval
-                .Where(s => s.DeanAssistantApproval && s.AdvisorApproval)
+                .Where(s => s.DeanAssistantApproval == true == true && s.AdvisorApproval == true)
                 .Include(s => s.Event)
                 .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
                 .Select(

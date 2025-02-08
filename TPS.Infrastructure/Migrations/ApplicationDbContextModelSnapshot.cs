@@ -405,10 +405,12 @@ namespace TPS.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("AdvisorApproval")
+                    b.Property<bool?>("AdvisorApproval")
+                        .IsRequired()
                         .HasColumnType("bit");
 
-                    b.Property<bool>("DeanAssistantApproval")
+                    b.Property<bool?>("DeanAssistantApproval")
+                        .IsRequired()
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("DecisionDate")
