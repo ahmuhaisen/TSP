@@ -10,7 +10,7 @@ public class GetEventsPerMonth
 
     public sealed class Query : IQuery<Result<List<EventsPerMonthDTO>>>
     {
-        public int numberOfSocities{ get; set; }
+        public int numberOfSocities { get; set; }
         private Query(int num)
         {
             numberOfSocities = num;
@@ -24,37 +24,35 @@ public class GetEventsPerMonth
 
         public Handler(ApplicationDbContext context)
         {
-            _context = context; 
+            _context = context;
         }
 
         public async Task<Result<List<EventsPerMonthDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            List<EventsPerMonthDTO> l = new List<EventsPerMonthDTO>();
+
             var data = await _context.EventsApproval
+                .AsNoTracking()
                 .Where(s => s.DeanAssistantApproval && s.AdvisorApproval)
                 .Include(s => s.Event)
                 .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
-                .Select(
-                    s => new
-                    {
-                        Date = new DateTime(s.Key.Year, s.Key.Month, 1),
-                        Events = s.Count()
-                    }
-                )
-                .OrderByDescending(s => s.Date)
-                .Take(request.numberOfSocities)
+                .Select(g => new
+                {
+                    Date = new DateOnly(g.Key.Year, g.Key.Month, 1),
+                    Events = g.Count()
+                })
                 .ToListAsync();
 
-            for (int x = 0; x < data.Count(); x++)
-            {
-                l.Add(new EventsPerMonthDTO
+            var result = data
+                .OrderByDescending(s => s.Date)
+                .Take(request.numberOfSocities)
+                .Select(s => new EventsPerMonthDTO
                 {
-                    Date = data[x].Date.ToString("yyyy/MMMM"),
-                    Events = data[x].Events
-                });
+                    Date = s.Date.ToString("yyyy/MMMM"),
+                    Events = s.Events
+                })
+                .ToList();
 
-            }
-            return Result.Success(l);
+            return Result.Success(result);
         }
 
 
