@@ -34,7 +34,7 @@ public class GetMemForEachSociety
             var l = new List<SocietyMembersCountDTO>();
             var data = await _context.EventsApproval
                 .AsNoTracking()
-                .Where(s => s.DeanAssistantApproval && s.AdvisorApproval)
+                .Where(s => s.DeanAssistantApproval==true && s.AdvisorApproval==true)
                 .Include(s => s.Event)
                 .ThenInclude(s => s.Society)
                 .GroupBy(s => s.Event.SocietyId)
