@@ -31,28 +31,25 @@ public class GetEventsPerMonth
         {
 
             var data = await _context.EventsApproval
-                .AsNoTracking()
-                .Where(s => s.DeanAssistantApproval && s.AdvisorApproval)
-                .Include(s => s.Event)
-                .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
-                .Select(g => new
-                {
-                    Date = new DateOnly(g.Key.Year, g.Key.Month, 1),
-                    Events = g.Count()
-                })
-                .ToListAsync();
+                    .AsNoTracking()
+                    .Where(s => s.DeanAssistantApproval && s.AdvisorApproval)
+                    .Include(s => s.Event)
+                    .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
+                    .Select(g => new
+                    {
+                        Date =  ""+g.Key.Year+"-0"+g.Key.Month+"-01",
+                        Events = g.Count()
+                    })
+                    .OrderByDescending(s => s.Date)
+                    .Take(request.numberOfSocities)
+                    .Select(s => new EventsPerMonthDTO
+                        {
+                            Date = DateOnly.Parse(s.Date).ToString(),
+                            Events = s.Events
+                        })
+                    .ToListAsync();
 
-            var result = data
-                .OrderByDescending(s => s.Date)
-                .Take(request.numberOfSocities)
-                .Select(s => new EventsPerMonthDTO
-                {
-                    Date = s.Date.ToString("yyyy/MMMM"),
-                    Events = s.Events
-                })
-                .ToList();
-
-            return Result.Success(result);
+            return Result.Success(data);
         }
 
 
