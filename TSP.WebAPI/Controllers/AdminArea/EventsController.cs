@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.AdminArea.Events.Contracts;
 using TPS.Application.Areas.AdminArea.Events.Queries;
@@ -6,6 +7,7 @@ using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers.AdminArea;
 
+[Authorize]
 [ApiController]
 [Route($"api/{Constants.APIAreas.Admin}/[controller]")]
 public class EventsController : ApiController
@@ -20,7 +22,8 @@ public class EventsController : ApiController
     [ProducesResponseType(typeof(ResponseEnvelope),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Events()
     {
-        var query = GetAllEvents.Query.Create();
+
+        var query = GetAllEvents.Query.Create(GetCurrentUserId()!.Value);
         var task = _sender.Send(query);
         return await FromResult(task);
     }

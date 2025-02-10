@@ -31,8 +31,8 @@ public class GetEventsPerMonth
         {
 
             var data = await _context.EventsApproval
-.AsNoTracking()
-               .Where(s => s.DeanAssistantApproval && s.AdvisorApproval)
+                .AsNoTracking()
+               .Where(s => s.DeanAssistantApproval.Value && s.AdvisorApproval.Value)
                .Include(s => s.Event)
                .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
                .Select(g => new

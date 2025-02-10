@@ -1,12 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.AdminArea.Events.Contracts;
 using TPS.Infrastructure.Data;
+using TSP.Domain.Entities;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.AdminArea.Events.Queries
@@ -15,16 +13,30 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
     {
         public sealed class Query : IQuery<Result<List<EventsDTO>>>
         {
-            private Query() { }
-            public static Query Create() => new Query();
+            public Guid UserId { get; set; }
+
+            public Query(Guid userId)
+            {
+                UserId = userId;
+            }
+
+            public static Query Create(Guid userId) => new Query(userId);
         }
+
+
         public sealed class Handler : IQueryHandler<Query, Result<List<EventsDTO>>>
         {
+            private readonly ILogger<Handler> logger;
+
             private ApplicationDbContext _context { get; }
-            public Handler(ApplicationDbContext context)
+
+
+            public Handler(ApplicationDbContext context, ILogger<Handler> logger)
             {
                 _context = context;
+                this.logger = logger;
             }
+
             public async Task<Result<List<EventsDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var data = await _context.Events
@@ -36,13 +48,14 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                         DateTime = x.StartTime,
                         LocationString = x.LocationString,
                         Description = x.Description,
-                        ApprovalStatus = _context.EventsApproval.Any(y => y.EventId == x.Id&&!(y.AdvisorApproval==true&&y.DeanAssistantApproval==null))
-                            ? (_context.EventsApproval.Any(y => y.AdvisorApproval == true&&y.DeanAssistantApproval==true)
-                            ? "Accepted": "Rejected")
+                        ApprovalStatus = _context.EventsApproval.Any(y => y.EventId == x.Id && !(y.AdvisorApproval == true && y.DeanAssistantApproval == null))
+                            ? (_context.EventsApproval.Any(y => y.AdvisorApproval == true && y.DeanAssistantApproval == true)
+                            ? "Accepted" : "Rejected")
                         : "Pending",
-                        SocietyName=x.Society.Name
+                        SocietyName = x.Society.Name
                     })
                     .ToListAsync();
+
                 return Result.Success(data);
             }
         }
