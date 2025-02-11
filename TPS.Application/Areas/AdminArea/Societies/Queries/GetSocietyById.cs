@@ -52,6 +52,7 @@ public class GetSocietyById
                     {
                         Id = s.Advisor.Id,
                         FullName = $"{s.Advisor.FirstName} {s.Advisor.LastName}",
+                        LogoId = s.LogoId
                     }
                 })
                 .SingleAsync(cancellationToken);

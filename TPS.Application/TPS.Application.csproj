@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Shared\Events\Commands\" />
     <Folder Include="Areas\StudentArea\" />
     <Folder Include="Areas\AdminArea\Students\Contracts\Requests\" />
   </ItemGroup>

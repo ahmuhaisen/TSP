@@ -33,7 +33,8 @@ public class GetAllSocieties
             var allSocietiesQuery = _context.Societies.AsQueryable();
 
             if (!string.IsNullOrEmpty(request.SearchTerm))
-                allSocietiesQuery = allSocietiesQuery.Where(s => s.Name.Contains(request.SearchTerm));
+                allSocietiesQuery = allSocietiesQuery.Where(s => s.Name.Contains(request.SearchTerm)||
+                                                                 s.Description.Contains(request.SearchTerm));
 
             var data = await allSocietiesQuery.Select(s => new SocietyListDTO
             {
