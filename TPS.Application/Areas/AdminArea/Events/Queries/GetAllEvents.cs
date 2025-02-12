@@ -36,15 +36,15 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                         DateTime = x.StartTime,
                         LocationString = x.LocationString,
                         Description = x.Description,
-                        ApprovalStatus = _context.EventsApproval.Any(y => y.EventId == x.Id&&!(y.AdvisorApproval==true&&y.DeanAssistantApproval==null))
-                            ? (_context.EventsApproval.Any(y => y.AdvisorApproval == true&&y.DeanAssistantApproval==true)
-                            ? "Accepted": "Rejected")
+                        ApprovalStatus = _context.EventsApproval.Any(y => y.EventId == x.Id && !(y.AdvisorApproval == true && y.DeanAssistantApproval == null))
+                            ? (_context.EventsApproval.Any(y => y.AdvisorApproval == true && y.DeanAssistantApproval == true)
+                            ? "Accepted" : "Rejected")
                         : "Pending",
-                        SocietyName=x.Society.Name
+                        SocietyName = x.Society.Name
                     })
                     .ToListAsync();
                 return Result.Success(data);
             }
-        }
     }
+}
 }
