@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers;
@@ -77,5 +78,14 @@ public abstract class ApiController : ControllerBase
             var errorEnvelope = ResponseEnvelope.Failure(Error.InternalServerError(ex.Message));
             return BadRequest(errorEnvelope);
         }
+    }
+    protected virtual Guid? GetCurrentUserId()
+    {
+        var userId = User.FindFirstValue("uid");
+
+        if (string.IsNullOrEmpty(userId))
+            return null;
+
+        return Guid.Parse(userId);
     }
 }
