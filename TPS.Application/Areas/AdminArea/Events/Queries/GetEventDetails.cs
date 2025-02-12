@@ -1,13 +1,6 @@
-﻿using Azure.Core;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.AdminArea.Events.Contracts;
-using TPS.Application.Areas.AdminArea.Home.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
@@ -38,11 +31,10 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     return Result.Failure<EventDetailsDTO>(Error.NotFound(nameof(Event), request.EventId.ToString()));
 
                 var accessSocietiesMembers = _context.SocietiesMembers;
-
                 var data = await _context.Events
+                    .Where(x => x.Id == request.EventId)
                     .Select(x => new EventDetailsDTO
                     {
-
                         type = x.type,
                         DateOnly = DateOnly.FromDateTime(x.StartTime),
                         TimeOnly = TimeOnly.FromDateTime(x.EndTime),
