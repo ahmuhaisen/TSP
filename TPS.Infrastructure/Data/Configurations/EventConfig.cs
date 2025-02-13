@@ -20,7 +20,7 @@ namespace TPS.Infrastructure.Data.Configurations
                 .IsRequired(false);
 
             builder.HasOne(s => s.Society)
-                .WithMany()
+                .WithMany(s=>s.Events)
                 .HasForeignKey(d => d.SocietyId)
                 .IsRequired();
 

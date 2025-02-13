@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TPS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class aa2 : Migration
+    public partial class SolveProblemOFShadowForeignKey : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -296,8 +296,7 @@ namespace TPS.Infrastructure.Migrations
                     type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SocietyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsAttendeesFormEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    SocietyId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    IsAttendeesFormEnabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -308,11 +307,6 @@ namespace TPS.Infrastructure.Migrations
                         principalTable: "Societies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Events_Societies_SocietyId1",
-                        column: x => x.SocietyId1,
-                        principalTable: "Societies",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Events_Students_StudentId",
                         column: x => x.StudentId,
@@ -522,11 +516,6 @@ namespace TPS.Infrastructure.Migrations
                 name: "IX_Events_SocietyId",
                 table: "Events",
                 column: "SocietyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Events_SocietyId1",
-                table: "Events",
-                column: "SocietyId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_StudentId",
