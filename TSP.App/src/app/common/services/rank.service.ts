@@ -1,15 +1,15 @@
 import { inject, Injectable } from "@angular/core";
 import { DbService } from "./db.service";
-import { Rank, SchoolWithDepartmentsBasicDetails } from "../types/system-tables.types";
+import { Rank } from "../types/system-tables.types";
 
 @Injectable({ providedIn: 'root' })
-export class SchoolService {
-    model = 'schools';
+export class RankService {
+    model = 'ranks';
 
     db = inject(DbService);
 
-    allSchoolsWithDepartments() {
-        return this.db.getRequest<SchoolWithDepartmentsBasicDetails[]>(this.model);
+    all() {
+        return this.db.getRequest<Rank[]>(this.model);
     }
 
     private getUrl() {
@@ -20,6 +20,3 @@ export class SchoolService {
         return `${this.getUrl()}/${id}`;
     }
 }
-
-
-
