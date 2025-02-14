@@ -17,6 +17,7 @@ import { HomeService } from '../../services/home.service';
 import { HomeStatistics, RecentEvent, RecentlyJoinedMember } from '../../api-interfaces/home.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { AuthService, User } from '../../../../common/services/auth.service';
+import { SearchDrawerComponent } from "../../../../components/search-drawer/search-drawer.component";
 
 @Component({
   selector: 'app-home',
@@ -38,8 +39,9 @@ import { AuthService, User } from '../../../../common/services/auth.service';
     NzButtonModule,
     NzInputModule,
     NzEmptyModule,
-    NzAvatarModule
-  ],
+    NzAvatarModule,
+    SearchDrawerComponent
+],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -68,23 +70,9 @@ export class HomeComponent {
   }
 
   // Drawer
-  visible = false;
-  placement: NzDrawerPlacement = 'bottom';
-  open(): void {
-    this.visible = true;
+  isSearchVisible = false;
+  openSearch(): void {
+    this.isSearchVisible = true;
   }
-
-  close(): void {
-    this.visible = false;
-  }
-
-  doSearch() {
-    this.isSearchLoading = true;
-
-    setTimeout(() => {
-      this.isSearchLoading = false;
-    }, 1000);
-  }
-
 
 }
