@@ -22,12 +22,13 @@ namespace TPS.Infrastructure.Data.Configurations
             builder.HasOne(s => s.Society)
                 .WithMany(s=>s.Events)
                 .HasForeignKey(d => d.SocietyId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             builder.HasOne(s => s.Student)
                 .WithMany(s => s.RequestedEvents)
                 .HasForeignKey(d => d.StudentId)
-                .OnDelete(DeleteBehavior.NoAction)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         }
     }
