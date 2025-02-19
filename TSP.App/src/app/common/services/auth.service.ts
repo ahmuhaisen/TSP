@@ -68,6 +68,12 @@ export class AuthService {
         });
     }
 
+    isCurrentUserHasRole(role: string) {
+        const token = this.localStorageService.getItem('token');
+        const tokenPayload = this.jwtHelper.decodeToken(token);
+        return tokenPayload['rle'] === role;
+    }
+
     private navigateToHome(userType: string) {
         if(userType === 'FacultyMember') {
             this.router.navigate(['admin-area']);

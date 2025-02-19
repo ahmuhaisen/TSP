@@ -1,0 +1,12 @@
+.steps-content {
+  border: 1px dashed #e9e9e9;
+  border-radius: 6px;
+  background-color: #fafafa;
+  min-height: 300px;
+  text-align: center;
+}
+
+.selected {
+    border: 1px solid #009cd5 !important;
+    background-color: #f4fcff !important;
+}

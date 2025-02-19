@@ -33,7 +33,7 @@ export class StudentNavbarComponent {
   navbarItems: INavbarItem[] = [
     { name: 'Home', targetPagePath: 'home', iconName: 'home' },
     { name: 'My Societies', targetPagePath: 'societies', iconName: 'product' },
-    { name: 'All Events', targetPagePath: 'events', iconName: 'project' },
+    { name: 'Events', targetPagePath: 'events', iconName: 'project' },
   ];
 
   ngOnInit(){
