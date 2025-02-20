@@ -26,23 +26,29 @@
         </nz-steps>
 
         @if(currentStep === 0) {
-        <div class="grid grid-cols-3 gap-3">
-            <div (click)="selectSociety(1)" class="p-3 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                    hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 1}">
-                <img src="https://robohash.org/society?bgset=bg2" class="w-12 h-12 rounded-lg" alt="profile image">
-                <p class="text-sm text-center font-semibold text-gray-700 mt-2">IEEE CS JU</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div (click)="selectSociety(1)" 
+                class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
+                hover:cursor-pointer hover:shadow-md transition-all" 
+                [ngClass]="{'selected': selectedSocietyId === 1}">
+                <img src="https://robohash.org/society?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
+                <p class="text-sm text-center font-semibold text-gray-700 mt-3">IEEE CS JU</p>
             </div>
 
-            <div (click)="selectSociety(2)" class="p-3 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                    hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 2}">
-                <img src="https://robohash.org/society2?bgset=bg2" class="w-12 h-12 rounded-lg" alt="profile image">
-                <p class="text-sm text-center font-semibold text-gray-700 mt-2">ACM University of Jordan Student Chapter</p>
+            <div (click)="selectSociety(2)" 
+                class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
+                hover:cursor-pointer hover:shadow-md transition-all" 
+                [ngClass]="{'selected': selectedSocietyId === 2}">
+                <img src="https://robohash.org/society2?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
+                <p class="text-sm text-center font-semibold text-gray-700 mt-3">ACM University of Jordan Student Chapter</p>
             </div>
 
-            <div (click)="selectSociety(3)" class="p-3 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                    hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 3}">
-                <img src="https://robohash.org/society3?bgset=bg2" class="w-12 h-12 rounded-lg" alt="profile image">
-                <p class="text-sm text-center font-semibold text-gray-700 mt-2">Waves JU</p>
+            <div (click)="selectSociety(3)" 
+                class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
+                hover:cursor-pointer hover:shadow-md transition-all" 
+                [ngClass]="{'selected': selectedSocietyId === 3}">
+                <img src="https://robohash.org/society3?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
+                <p class="text-sm text-center font-semibold text-gray-700 mt-3">Waves JU</p>
             </div>
         </div>
         }
