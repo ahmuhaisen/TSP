@@ -13,6 +13,7 @@ import { differenceInCalendarDays, setHours } from 'date-fns';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-events-list',
@@ -28,10 +29,23 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
     NzModalModule,
     NzStepsModule,
     CommonModule,
-    NzToolTipModule
+    NzToolTipModule,
+    ReactiveFormsModule
   ],
   templateUrl: './events-list.component.html',
-  styleUrl: './events-list.component.css'
+  styleUrl: './events-list.component.css',
+  styles: [`
+    ::ng-deep .date-time-dropdown {
+      max-width: calc(100vw - 32px);
+    }
+    ::ng-deep .ant-picker-dropdown, ::ng-deep .ant-picker-panel-container {
+      max-width: 100%;
+    }
+    ::ng-deep .ant-picker-panels {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  `]
 })
 export class EventsListComponent {
 
@@ -72,13 +86,45 @@ export class EventsListComponent {
     return result;
   }
 
+  eventRequestForm!: FormGroup;
+  private fb = inject(FormBuilder);
+
+  constructor() {
+    this.initForm();
+  }
+
+  private initForm(): void {
+    this.eventRequestForm = this.fb.group({
+      societyId: [null, Validators.required],
+      title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      location: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      eventType: ['', Validators.required],
+      dateRange: [null, Validators.required],
+      hasAttendanceForm: [false]
+    });
+  }
 
   openEventRequestModal() {
+    // Set default start time to next day at 9:00 AM
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() + 1);
+    startDate.setHours(9, 0, 0, 0);
+    
+    // Set default end time to same day at 11:00 AM
+    const endDate = new Date(startDate);
+    endDate.setHours(11, 0, 0, 0);
+
+    this.eventRequestForm.patchValue({
+      dateRange: [startDate, endDate]
+    });
+    
     this.isEventRequestModalVisible = true;
   }
 
   handleEventRequestModalCancel() {
     this.isEventRequestModalVisible = false;
+    this.resetForm();
   }
 
   pre(): void {
@@ -88,22 +134,55 @@ export class EventsListComponent {
 
   next(): void {
     if (this.currentStep === 0) {
-      if (this.selectedSocietyId === 0) {
+      if (!this.eventRequestForm.get('societyId')?.valid) {
         this.messageService.error('Please select a society');
         return;
       }
     }
-
     this.currentStep += 1;
     //this.changeContent();
   }
 
   done(): void {
-    console.log('done');
-    this.isEventRequestModalVisible = false;
+    if (this.eventRequestForm.valid) {
+      const formValue = this.eventRequestForm.value;
+      
+      const eventRequest = {
+        societyId: formValue.societyId,
+        title: formValue.title,
+        description: formValue.description,
+        location: formValue.location,
+        type: formValue.eventType,
+        startDate: formValue.dateRange[0],
+        endDate: formValue.dateRange[1],
+        hasAttendanceForm: formValue.hasAttendanceForm
+      };
+
+      console.log('Event Request:', eventRequest);
+      
+      this.isEventRequestModalVisible = false;
+      this.messageService.success('Event request submitted successfully');
+      this.resetForm();
+    } else {
+      Object.keys(this.eventRequestForm.controls).forEach(key => {
+        const control = this.eventRequestForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
+      this.messageService.error('Please fill all required fields correctly');
+    }
   }
 
   selectSociety(societyId: number) {
     this.selectedSocietyId = societyId;
+    this.eventRequestForm.patchValue({ societyId });
+  }
+
+  private resetForm(): void {
+    this.currentStep = 0;
+    this.selectedSocietyId = 0;
+    this.eventRequestForm.reset();
+    this.initForm();
   }
 }

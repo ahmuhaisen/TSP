@@ -20,156 +20,130 @@
     nzWidth="800px" [(nzVisible)]="isEventRequestModalVisible" (nzOnCancel)="handleEventRequestModalCancel()">
 
     <ng-container *nzModalContent>
-
-        <nz-steps [nzCurrent]="currentStep" class="mb-4" nzStatus="process" nzSize="small">
-            <nz-step nzTitle="Society" nzIcon="product"></nz-step>
-            <nz-step nzTitle="Event details" nzIcon="info-circle"></nz-step>
-            <nz-step nzTitle="Event manager" nzIcon="user"></nz-step>
+        <nz-steps [nzCurrent]="currentStep" class="mb-3" nzStatus="process" nzSize="small">
+            <nz-step nzTitle="Society" nzIcon="team"></nz-step>
+            <nz-step nzTitle="Event details" nzIcon="form"></nz-step>
         </nz-steps>
 
-        <div class="">
-            @if(currentStep === 0) {
-            <div class="mt-2 grid grid-cols-2 gap-2">
-                <div (click)="selectSociety(1)" class="p-3 w-full min-h-32 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                        hover:cursor-pointer hover:shadow" [ngClass]="{'selected': selectedSocietyId === 1}">
-                    <img src="https://robohash.org/society?bgset=bg2" class="w-14 h-14 rounded-lg" alt="profile image">
-                    <p class="text-[12px] text-center font-semibold text-gray-700 mt-2">IEEE CS JU</p>
-                </div>
-
-                <div (click)="selectSociety(2)" class="p-3 w-full min-h-32 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                        hover:cursor-pointer hover:shadow" [ngClass]="{'selected': selectedSocietyId === 2}">
-                    <img src="https://robohash.org/society2?bgset=bg2" class="w-14 h-14 rounded-lg" alt="profile image">
-                    <p class="text-[12px] text-center font-semibold text-gray-700 mt-2">ACM University of Jordan Student
-                        Chapter</p>
-                </div>
-
-                <div (click)="selectSociety(3)" class="p-3 w-full min-h-32 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                        hover:cursor-pointer hover:shadow" [ngClass]="{'selected': selectedSocietyId === 3}">
-                    <img src="https://robohash.org/society3?bgset=bg2" class="w-14 h-14 rounded-lg" alt="profile image">
-                    <p class="text-[12px] text-center font-semibold text-gray-700 mt-2">Waves JU</p>
-                </div>
+        @if(currentStep === 0) {
+        <div class="grid grid-cols-3 gap-3">
+            <div (click)="selectSociety(1)" class="p-3 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
+                    hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 1}">
+                <img src="https://robohash.org/society?bgset=bg2" class="w-12 h-12 rounded-lg" alt="profile image">
+                <p class="text-sm text-center font-semibold text-gray-700 mt-2">IEEE CS JU</p>
             </div>
-            }
-            @if(currentStep === 1) {
-            <div class="mt-2">
 
-                <form nz-form [nzLayout]="'vertical'" class="grid grid-cols-2 gap-2">
-                    <nz-form-item nzRequired class="col-span-2">
-                        <nz-form-label>Title</nz-form-label>
-                        <nz-form-control>
-                            <input nz-input placeholder="Event title" />
-                        </nz-form-control>
-                    </nz-form-item>
-
-                    <nz-form-item>
-                        <nz-form-label>Description</nz-form-label>
-                        <nz-form-control>
-                            <textarea style="resize: none;" nz-input placeholder="Event description"></textarea>
-                        </nz-form-control>
-                    </nz-form-item>
-
-                    <nz-form-item>
-                        <nz-form-label>Location</nz-form-label>
-                        <nz-form-control>
-                            <textarea style="resize: none;" nz-input placeholder="(e.g. Prgressoft lab)"></textarea>
-                        </nz-form-control>
-                    </nz-form-item>
-
-                    <nz-form-item>
-                        <nz-form-label>Date and time</nz-form-label>
-                        <nz-form-control>
-                            <nz-range-picker
-                                [nzDisabledDate]="disabledDate"
-                                [nzDisabledTime]="disabledRangeTime"
-                                [nzShowTime]="{ nzHideDisabledOptions: true, nzDefaultOpenValue: timeDefaultValue }"
-                                nzFormat="yyyy-MM-dd HH:mm"
-                                ></nz-range-picker>
-
-                        </nz-form-control>
-                    </nz-form-item>
-
-                    <nz-form-item>
-                        <nz-form-label>
-                            Type
-                        </nz-form-label>
-                        <nz-form-control>
-                            <nz-select nzPlaceHolder="Event type">
-                                <nz-option nzValue="Workshop" nzLabel="Workshop"></nz-option>
-                                <nz-option nzValue="Course" nzLabel="Course"></nz-option>
-                                <nz-option nzValue="Contest" nzLabel="Contest"></nz-option>
-                                <nz-option nzValue="Training" nzLabel="Training"></nz-option>
-                                <nz-option nzValue="Seminar" nzLabel="Seminar"></nz-option>
-                                <nz-option nzValue="Conference" nzLabel="Conference"></nz-option>
-                                <nz-option nzValue="Meeting" nzLabel="Meeting"></nz-option>
-                                <nz-option nzValue="Other" nzLabel="Other"></nz-option>
-                            </nz-select>
-                        </nz-form-control>
-                    </nz-form-item>
-
-                    <nz-form-item>
-                        <nz-form-label>
-                            Attendance form:
-                            <span class="ml-1 text-primary-light">
-                                <nz-icon nzType="question-circle" nzTheme="outline"/>
-                            </span>
-                        </nz-form-label>
-                        <nz-form-control>
-                            <nz-switch
-                            [nzCheckedChildren]="checkedTemplate"
-                            [nzUnCheckedChildren]="unCheckedTemplate"
-                            ></nz-switch>
-                            <ng-template #checkedTemplate>Enabled</ng-template>
-                            <ng-template #unCheckedTemplate>Disabled</ng-template>
-                        </nz-form-control>
-                    </nz-form-item>
-                </form>
-
+            <div (click)="selectSociety(2)" class="p-3 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
+                    hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 2}">
+                <img src="https://robohash.org/society2?bgset=bg2" class="w-12 h-12 rounded-lg" alt="profile image">
+                <p class="text-sm text-center font-semibold text-gray-700 mt-2">ACM University of Jordan Student Chapter</p>
             </div>
-            }
-            @if(currentStep === 2) {
-            <div class="mt-2 grid grid-cols-2 gap-2">
-                <div (click)="selectSociety(1)" class="p-3 w-full min-h-32 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                        hover:cursor-pointer hover:shadow" [ngClass]="{'selected': selectedSocietyId === 1}">
-                    <img src="https://robohash.org/society7?bgset=bg2" class="w-14 h-14 rounded-lg" alt="profile image">
-                    <p class="text-[14px] text-center font-semibold text-gray-700 mt-2">Suhaib Saleh</p>
-                    <p class="text-[12px] text-center font-semibold text-gray-500">President</p>
-                </div>
 
-                <div (click)="selectSociety(2)" class="p-3 w-full min-h-32 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                        hover:cursor-pointer hover:shadow" [ngClass]="{'selected': selectedSocietyId === 2}">
-                    <img src="https://robohash.org/society6?bgset=bg2" class="w-14 h-14 rounded-lg" alt="profile image">
-                    <p class="text-[14px] text-center font-semibold text-gray-700 mt-2">Mohammad Abu Adas
-                        Chapter</p>
-                        <p class="text-[12px] text-center font-semibold text-gray-500">Vice President</p>
-                    </div>
-
-                <div (click)="selectSociety(3)" class="p-3 w-full min-h-32 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
-                        hover:cursor-pointer hover:shadow" [ngClass]="{'selected': selectedSocietyId === 3}">
-                    <img src="https://robohash.org/society5?bgset=bg2" class="w-14 h-14 rounded-lg" alt="profile image">
-                    <p class="text-[14px] text-center font-semibold text-gray-700 mt-2">Ahmad Muhaisen</p>
-                    <p class="text-[12px] text-center font-semibold text-gray-500">Team Leader</p>
-                </div>
+            <div (click)="selectSociety(3)" class="p-3 bg-white border border-gray-300 rounded flex flex-col items-center justify-center
+                    hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 3}">
+                <img src="https://robohash.org/society3?bgset=bg2" class="w-12 h-12 rounded-lg" alt="profile image">
+                <p class="text-sm text-center font-semibold text-gray-700 mt-2">Waves JU</p>
             </div>
-            }
         </div>
+        }
 
-        <div class="mt-5">
+        @if(currentStep === 1) {
+        <form nz-form [formGroup]="eventRequestForm" [nzLayout]="'vertical'" class="grid grid-cols-2 gap-x-4 gap-y-2">
+            <nz-form-item class="col-span-2 mb-2">
+                <nz-form-label nzRequired>Title</nz-form-label>
+                <nz-form-control [nzErrorTip]="titleErrorTpl">
+                    <input nz-input formControlName="title" placeholder="Enter event title" />
+                    <ng-template #titleErrorTpl let-control>
+                        @if (control.hasError('required')) { Title is required }
+                        @else if (control.hasError('minlength')) { Title must be at least 3 characters }
+                        @else if (control.hasError('maxlength')) { Title cannot exceed 100 characters }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="col-span-2 mb-2">
+                <nz-form-label nzRequired>Description</nz-form-label>
+                <nz-form-control [nzErrorTip]="descriptionErrorTpl">
+                    <textarea rows="3" formControlName="description" style="resize: none;" 
+                        nz-input placeholder="Describe your event"></textarea>
+                    <ng-template #descriptionErrorTpl let-control>
+                        @if (control.hasError('required')) { Description is required }
+                        @else if (control.hasError('minlength')) { Description must be at least 10 characters }
+                        @else if (control.hasError('maxlength')) { Description cannot exceed 500 characters }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="mb-2">
+                <nz-form-label nzRequired>Location</nz-form-label>
+                <nz-form-control [nzErrorTip]="locationErrorTpl">
+                    <input nz-input formControlName="location" placeholder="e.g. Progressoft lab" />
+                    <ng-template #locationErrorTpl let-control>
+                        @if (control.hasError('required')) { Location is required }
+                        @else if (control.hasError('minlength')) { Location must be at least 3 characters }
+                        @else if (control.hasError('maxlength')) { Location cannot exceed 100 characters }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="mb-2">
+                <nz-form-label nzRequired>Type</nz-form-label>
+                <nz-form-control nzErrorTip="Please select an event type">
+                    <nz-select formControlName="eventType" nzPlaceHolder="Select event type">
+                        <nz-option nzValue="Workshop" nzLabel="Workshop"></nz-option>
+                        <nz-option nzValue="Course" nzLabel="Course"></nz-option>
+                        <nz-option nzValue="Contest" nzLabel="Contest"></nz-option>
+                        <nz-option nzValue="Training" nzLabel="Training"></nz-option>
+                        <nz-option nzValue="Seminar" nzLabel="Seminar"></nz-option>
+                        <nz-option nzValue="Conference" nzLabel="Conference"></nz-option>
+                        <nz-option nzValue="Meeting" nzLabel="Meeting"></nz-option>
+                        <nz-option nzValue="Other" nzLabel="Other"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="col-span-2 mb-2">
+                <nz-form-label nzRequired>Date and time</nz-form-label>
+                <nz-form-control nzErrorTip="Please select event date and time">
+                    <nz-range-picker class="w-full"
+                        formControlName="dateRange"
+                        [nzDisabledDate]="disabledDate"
+                        [nzDisabledTime]="disabledRangeTime"
+                        [nzShowTime]="{ nzHideDisabledOptions: true, nzDefaultOpenValue: timeDefaultValue }"
+                        nzFormat="yyyy-MM-dd HH:mm">
+                    </nz-range-picker>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="mb-2">
+                <nz-form-label>
+                    Attendance form
+                    <nz-icon nzType="question-circle" nzTheme="outline" class="text-primary-light ml-1" 
+                        nz-tooltip nzTooltipTitle="Enable this to track attendance for your event"/>
+                </nz-form-label>
+                <nz-form-control>
+                    <nz-switch formControlName="hasAttendanceForm"
+                        [nzCheckedChildren]="checkedTemplate"
+                        [nzUnCheckedChildren]="unCheckedTemplate">
+                    </nz-switch>
+                    <ng-template #checkedTemplate>Enabled</ng-template>
+                    <ng-template #unCheckedTemplate>Disabled</ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+        }
+
+        <div class="flex justify-end mt-4">
             @if (currentStep > 0) {
-            <button class="mr-2" nz-button nzType="default" (click)="pre()">
-                <span>Previous</span>
-            </button>
+            <button class="mr-2" nz-button nzType="default" (click)="pre()">Previous</button>
             }
-            @if (currentStep < 2) { <button nz-button nzType="default" (click)="next()">
-                <span>Next</span>
-                </button>
-                }
-                @if (currentStep === 2) {
-                <button class="mr-2" nz-button nzType="primary" (click)="done()">
-                    <span>Submit</span>
-                </button>
-                }
+            @if (currentStep < 1) {
+            <button nz-button nzType="default" (click)="next()">Next</button>
+            }
+            @if (currentStep === 1) {
+            <button nz-button nzType="primary" (click)="done()">Submit</button>
+            }
         </div>
-
     </ng-container>
 
 </nz-modal>
