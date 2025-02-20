@@ -8,6 +8,14 @@ import { NgClass } from '@angular/common';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-societies-list',
@@ -19,7 +27,15 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     NzDividerModule,
     NzButtonModule,
     NzEmptyModule,
-    NzModalModule
+    NzModalModule,
+    ReactiveFormsModule,
+    NzSelectModule,
+    NzInputModule,
+    NzFormModule,
+    NzTagModule,
+    NzTableModule,
+    NzTabsModule,
+    DatePipe
   ],
   templateUrl: './societies-list.component.html',
   styleUrl: './societies-list.component.css'
@@ -89,6 +105,60 @@ export class SocietiesListComponent {
   isLeaveSocietyPopupVisible = false;
   isLeaveSocietyLoading = false;
 
+  isJoinSocietyModalVisible = false;
+  isJoinSocietyLoading = false;
+  joinSocietyForm: FormGroup;
+
+  suggestedSections = [
+    'Technical',
+    'Media',
+    'Logistics',
+    'Human Resources',
+    'Public Relations',
+    'Content Creation'
+  ];
+
+  joinRequests: SocietyJoinRequest[] = [
+    {
+      id: '1',
+      societyId: '5ij-6kl-7mn-8op',
+      societyName: 'IEEE CS JU',
+      societyLogo: 'https://robohash.org/society1',
+      section: 'Technical',
+      status: 'pending',
+      submittedAt: new Date(2024, 2, 15),
+      motivation: 'I want to contribute to the technical team...'
+    },
+    {
+      id: '2',
+      societyId: '2345-fghi-0123-4mn',
+      societyName: 'Waves JU',
+      societyLogo: 'https://robohash.org/society4',
+      section: 'Media',
+      status: 'approved',
+      submittedAt: new Date(2024, 2, 10),
+      motivation: 'I have experience in media...'
+    },
+    {
+      id: '3',
+      societyId: '9qr-0st-1uv-2wx',
+      societyName: 'Linux Society JU',
+      societyLogo: 'https://robohash.org/society3',
+      section: 'Content Creation',
+      status: 'rejected',
+      submittedAt: new Date(2024, 2, 5),
+      motivation: 'I want to help create content...'
+    }
+  ];
+
+  constructor(private fb: FormBuilder) {
+    this.joinSocietyForm = this.fb.group({
+      societyId: [null, [Validators.required]],
+      section: ['', [Validators.required]],
+      motivation: ['', [Validators.required, Validators.minLength(50)]]
+    });
+  }
+
   leaveSociety(society: MemberAssociatedSociety) {
     this.societyToLeave = society;
     this.isLeaveSocietyPopupVisible = true;
@@ -108,6 +178,48 @@ export class SocietiesListComponent {
       this.messageService.success('You have left ' + this.societyToLeave.name + ' successfully.');
     }, 1000);
   }
+
+  showJoinSocietyModal(): void {
+    this.isJoinSocietyModalVisible = true;
+  }
+
+  handleCancelJoinSociety(): void {
+    this.isJoinSocietyModalVisible = false;
+    this.joinSocietyForm.reset();
+  }
+
+  handleJoinSociety(): void {
+    if (this.joinSocietyForm.valid) {
+      this.isJoinSocietyLoading = true;
+      
+      // Simulate API call
+      setTimeout(() => {
+        this.isJoinSocietyLoading = false;
+        this.isJoinSocietyModalVisible = false;
+        this.messageService.success('Your request to join the society has been submitted successfully!');
+        this.joinSocietyForm.reset();
+      }, 1000);
+    } else {
+      Object.values(this.joinSocietyForm.controls).forEach(control => {
+        if (control.invalid) {
+          control.markAsTouched();
+        }
+      });
+    }
+  }
+
+  selectSuggestedSection(section: string): void {
+    this.joinSocietyForm.patchValue({ section });
+  }
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'pending': return 'processing';
+      case 'approved': return 'success';
+      case 'rejected': return 'error';
+      default: return '';
+    }
+  }
 }
 
 export interface MemberAssociatedSociety {
@@ -117,4 +229,15 @@ export interface MemberAssociatedSociety {
   logoUrl: string;
   position: string;
   isCommittee: boolean;
+}
+
+interface SocietyJoinRequest {
+  id: string;
+  societyId: string;
+  societyName: string;
+  societyLogo: string;
+  section: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: Date;
+  motivation: string;
 }
