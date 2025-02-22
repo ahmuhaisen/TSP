@@ -16,8 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\StudentArea\" />
-    <Folder Include="Areas\AdminArea\Students\Contracts\Requests\" />
+    <Folder Include="Areas\StudentArea\Societies\Contracts\" />
+    <Folder Include="Areas\StudentArea\Societies\Commands\" />
+    <Folder Include="Areas\StudentArea\Students\Queries\" />
   </ItemGroup>
 
 </Project>

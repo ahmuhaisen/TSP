@@ -10,7 +10,8 @@ builder.Services.AddApiControllers()
     .AddIdentity(builder.Configuration)
     .AddFluentValidation()
     .AddMediatR()
-    .AddSwagger();
+    .AddSwagger()
+    .AddApisSharedServices();
 
 var app = builder.Build();
 

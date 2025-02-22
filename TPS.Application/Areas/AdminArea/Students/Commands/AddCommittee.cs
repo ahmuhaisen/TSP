@@ -2,6 +2,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
+using TPS.Application.Areas.Shared.Abstractions;
+using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
@@ -12,59 +14,22 @@ public class AddCommittee
 {
     public sealed class Command : ICommand<Result<Guid>>
     {
-        public Guid StudentId { get; set; }
-        public Guid SocietyId { get; set; }
-        public required string StudentPosition { get; set; }
-        public DateOnly StudentDate { get; set; }
-        public static Command Create(Guid id, Guid SocietyId, string position, DateOnly date)
+        public required AddCommitteeRequest committeRequest { get; set; }
+        public static Command Create(AddCommitteeRequest committeRequest)
         {
             return new Command
             {
-                StudentId = id,
-                SocietyId = SocietyId,
-                StudentPosition = position,
-                StudentDate = date
+                committeRequest = committeRequest,
             };
         }
     }
 
-    public sealed class Handler : ICommandHandler<Command, Result<Guid>>
+    public sealed class Handler(IStudentsService studentsService) : ICommandHandler<Command, Result<Guid>>
     {
-        private ApplicationDbContext _context { get; }
 
-        public Handler(ApplicationDbContext context)
-        {
-            _context = context;
-        }
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var data = await _context.SocietiesMembers
-                .FirstOrDefaultAsync(
-                s => s.StudentId == request.StudentId &&
-                s.SocietyId == request.SocietyId);
-
-            if (data is null)
-            {
-                return Result.Failure<Guid>(Error.GuidInvalid(request.StudentId));
-
-            }
-            if (data.IsCommittee == true)
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()));
-            }
-            data.IsCommittee = true;
-            data.Position = request.StudentPosition;
-            data.JoinDate = request.StudentDate;
-            var check = _context.SaveChanges();
-            if (check > 0)
-            {
-                return Result.Success(request.StudentId);
-            }
-            else
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()));
-            }
-
+            return await studentsService.addCommitte(request.committeRequest);
         }
     }
 }
