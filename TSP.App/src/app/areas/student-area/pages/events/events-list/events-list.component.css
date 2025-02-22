@@ -10,3 +10,52 @@
     border: 1px solid #009cd5 !important;
     background-color: #f4fcff !important;
 }
+
+
+.event-badge {
+  margin: 4px;
+  flex: 1 1 100%;
+  display: block;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 640px) {
+  .event-badge {
+    flex: 1 1 calc(33.33% - 8px);
+  }
+}
+
+@media (min-width: 768px) {
+  .event-badge {
+    flex: 1 1 calc(25% - 8px);
+  }
+}
+
+::ng-deep .ant-badge-status-text {
+  font-size: 12px;
+}
+
+::ng-deep .ant-picker-calendar-full .ant-picker-panel .ant-picker-calendar-date-content {
+  height: auto;
+  min-height: 32px;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+/* Add these styles */
+::ng-deep .ant-picker-calendar-header .ant-picker-calendar-year-select,
+::ng-deep .ant-picker-calendar-header .ant-picker-calendar-month-select {
+  display: none;
+}
+
+::ng-deep .ant-picker-calendar-header .ant-picker-calendar-mode-switch {
+  display: none;
+}
+
+::ng-deep .ant-picker-calendar {
+  max-width: 1200px;
+  margin: 0 auto;
+}
