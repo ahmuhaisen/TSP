@@ -9,7 +9,11 @@ using System.Text;
 using System.Text.Json.Serialization;
 using TPS.Application;
 using TPS.Application.Abstractions;
+using TPS.Application.Areas.AdminArea.Societies.Commands;
 using TPS.Application.Areas.Authentication;
+using TPS.Application.Areas.Shared.Abstractions;
+using TPS.Application.Areas.Shared.Societies;
+using TPS.Application.Areas.Shared.Students;
 using TPS.Application.Services;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
@@ -168,6 +172,13 @@ public static class DependencyInjection
         services.AddTransient<IGitHubService, GitHubService>();
         services.Configure<GitOptions>(configuration.GetSection("GitImages"));
 
+        return services;
+    }
+
+    public static IServiceCollection AddApisSharedServices(this IServiceCollection services)
+    {
+        services.AddScoped<IStudentsService, StudentService>();
+        services.AddScoped<ISocietiesService, SocietiesService>();
         return services;
     }
 }
