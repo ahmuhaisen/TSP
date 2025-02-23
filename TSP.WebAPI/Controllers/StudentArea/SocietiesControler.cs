@@ -16,23 +16,7 @@ public class SocietiesController : ApiController
     { }
 
 
-    [HttpGet("OtherSocieties")]
-    public async Task<IActionResult> GetOtherSocieties([FromQuery] Guid StudentId)
-    {
-        var query = GetMemberOtherSocieties.Query.Create(StudentId);
 
-        var task = _sender.Send(query);
-
-        return await FromResult(task);
-    }
-
-    [HttpGet("AllSocieties")]
-    public async Task<IActionResult> getMemberSocieties([FromQuery]Guid StudentId)
-    {
-        var query = GetMemberSocieties.Query.Create(StudentId);
-        var task = _sender.Send(query); 
-        return await FromResult(task);
-    }
     [HttpGet("Society")]
     public async Task<IActionResult> getSocietyById([FromQuery] Guid SocietyId)
     {
