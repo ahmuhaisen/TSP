@@ -15,6 +15,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "TSP.App", "TSP.App\TSP.App.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSP.WebAPI", "TSP.WebAPI\TSP.WebAPI.csproj", "{6B0A64D2-E76F-4C02-8991-B0CF5A28DEA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDLCDesign", "RDLCDesign\RDLCDesign.csproj", "{22D5B24B-F4FF-4241-93B7-C255C195D6F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{6B0A64D2-E76F-4C02-8991-B0CF5A28DEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B0A64D2-E76F-4C02-8991-B0CF5A28DEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B0A64D2-E76F-4C02-8991-B0CF5A28DEA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22D5B24B-F4FF-4241-93B7-C255C195D6F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22D5B24B-F4FF-4241-93B7-C255C195D6F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22D5B24B-F4FF-4241-93B7-C255C195D6F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22D5B24B-F4FF-4241-93B7-C255C195D6F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

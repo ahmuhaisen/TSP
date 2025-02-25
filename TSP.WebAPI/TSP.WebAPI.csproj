@@ -7,8 +7,13 @@
     <UserSecretsId>e447ea3f-b2c3-41d6-94cd-2ec8bafdacbe</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\Reports\rptEvent.rdlc" />
+  </ItemGroup>
+
 
 	<ItemGroup>
+		<PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.1.0" />
@@ -30,6 +35,26 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\TPS.Application\TPS.Application.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="ReportDataSet\dsEvent.Designer.cs">
+	    <DependentUpon>dsEvent.xsd</DependentUpon>
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="ReportDataSet\dsEvent.xsd">
+	    <SubType>Designer</SubType>
+	    <LastGenOutput>dsEvent.Designer.cs</LastGenOutput>
+	    <Generator>MSDataSetGenerator</Generator>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="wwwroot\Reports\rptEvent.rdlc" />
 	</ItemGroup>
 
 </Project>
