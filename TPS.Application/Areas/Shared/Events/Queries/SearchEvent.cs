@@ -1,0 +1,55 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TPS.Application.Abstractions.Messaging;
+using TPS.Application.Areas.AdminArea.Students.Contracts;
+using TPS.Application.Areas.Shared.Events.Contracts;
+using TPS.Infrastructure.Data;
+using TSP.Domain.Shared;
+
+namespace TPS.Application.Areas.Shared.Events.Queries;
+
+public class SearchEvent
+{
+    public sealed class Query : IQuery<Result<List<EventBasicDTO>>>
+    {
+        public string? SearchTerm { get; set; }
+
+        private Query(string? searchTerm)
+        {
+            SearchTerm = searchTerm;
+        }
+        public static Query Create(string? searchTerm) => new Query(searchTerm);
+    }
+    public sealed class Handler : IQueryHandler<Query, Result<List<EventBasicDTO>>>
+    {
+        private ApplicationDbContext _context { get; }
+
+        public Handler(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<Result<List<EventBasicDTO>>> Handle(Query request, CancellationToken cancellationToken)
+        {
+
+            var data = await _context.Events
+                .AsNoTracking()
+                .Where(
+                s => s.Name.Contains(request.SearchTerm ?? "")||
+                     s.Description.Contains(request.SearchTerm??"")
+                )
+                .Select(s => new EventBasicDTO
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                })
+                .ToListAsync();
+
+            return Result.Success(data);
+        }
+    }
+}

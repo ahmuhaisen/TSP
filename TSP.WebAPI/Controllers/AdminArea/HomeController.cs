@@ -1,7 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TPS.Application.Areas.AdminArea.Advisors.Queries;
 using TPS.Application.Areas.AdminArea.Home.Contracts;
 using TPS.Application.Areas.AdminArea.Home.Queries;
+using TPS.Application.Areas.AdminArea.Societies.Contracts;
+using TPS.Application.Areas.AdminArea.Students.Contracts;
+using TPS.Application.Areas.AdminArea.Students.Queries;
+using TPS.Application.Areas.Shared.Events.Contracts;
+using TPS.Application.Areas.Shared.Events.Queries;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers.AdminArea;
@@ -48,27 +54,42 @@ public class HomeController : ApiController
         return await FromResult(task);
     }
 
-    [HttpGet("studentEvents")]
-    [ProducesResponseType(typeof(StudentEventListDTO), StatusCodes.Status200OK)]
+
+    [HttpGet("Advisors")]
+    [ProducesResponseType(typeof(FacultyMemberBasicDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> StudentHomeEvents()
+    public async Task<IActionResult> SearchAdvisorByName([FromQuery] string? searchTerm)
     {
-        var query = StudentGetHomeEvents.Query.Create(GetCurrentUserId()!.Value);
+        var query = SearchAdvisor.Query.Create(searchTerm);
+
+        var task = _sender.Send(query);
+      
+        return await FromResult(task);
+    }
+
+    [HttpGet("Students")]
+    [ProducesResponseType(typeof(StudentBasicDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> SearchStudentByName([FromQuery] string? searchTerm)
+    {
+        var query = SearchStudent.Query.Create(searchTerm);
 
         var task = _sender.Send(query);
 
         return await FromResult(task);
     }
-    
-    [HttpGet("studentStatistics")]
-    [ProducesResponseType(typeof(StudentHomeStatisticsDTO), StatusCodes.Status200OK)]
+
+
+    [HttpGet("Events")]
+    [ProducesResponseType(typeof(EventBasicDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> StudentHomeStatistics()
+    public async Task<IActionResult> SearchEventByName([FromQuery] string? searchTerm)
     {
-        var query = StudentGetHomeStatistics.Query.Create(GetCurrentUserId()!.Value);
+        var query = SearchEvent.Query.Create(searchTerm);
 
         var task = _sender.Send(query);
 
         return await FromResult(task);
     }
+
 }

@@ -20,12 +20,4 @@
     <ProjectReference Include="..\TPS.Infrastructure\TPS.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\StudentArea\Events\Commands\" />
-    <Folder Include="Areas\StudentArea\Events\Contracts\" />
-    <Folder Include="Areas\StudentArea\Societies\Contracts\" />
-    <Folder Include="Areas\StudentArea\Societies\Commands\" />
-    <Folder Include="Areas\StudentArea\Students\Queries\" />
-  </ItemGroup>
-
 </Project>
