@@ -29,6 +29,7 @@ public class SocietyConfig : IEntityTypeConfiguration<Society>
         builder.HasOne(s => s.Advisor)
                .WithMany(fm => fm.SocietiesAdvised)
                .HasForeignKey(s => s.AdvisorId)
+               .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
     }
 }

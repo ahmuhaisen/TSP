@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TPS.Application.Areas.AdminArea.Societies.Contracts;
 using TPS.Application.Areas.StudentArea.Societies.Queries;
 using TPS.Application.Areas.StudentArea.Socities.Commands;
 using TPS.Application.Areas.StudentArea.Students.Commands;
@@ -16,8 +17,31 @@ public class SocietiesController : ApiController
     { }
 
 
+    [HttpGet("OtherSocieties")]
+    [ProducesResponseType(typeof(SocietyListDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetOtherSocieties([FromQuery] Guid StudentId)
+    {
+        var query = GetMemberOtherSocieties.Query.Create(StudentId);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+
+    [HttpGet("AllSocieties")]
+    [ProducesResponseType(typeof(SocietyListDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> getMemberSocieties([FromQuery]Guid StudentId)
+    {
+        var query = GetMemberSocieties.Query.Create(StudentId);
+        var task = _sender.Send(query); 
+        return await FromResult(task);
+    }
 
     [HttpGet("Society")]
+    [ProducesResponseType(typeof(SocietyDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getSocietyById([FromQuery] Guid SocietyId)
     {
         var query = GetSocietyById.Query.Create(SocietyId);
@@ -25,6 +49,8 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
     [HttpDelete("SocietyMember")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteMemberFromSociety(Guid StudentId, Guid SocietyId)
     {
         var query = LeaveSociety.Command.Create(StudentId, SocietyId);

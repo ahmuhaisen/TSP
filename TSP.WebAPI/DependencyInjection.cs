@@ -172,6 +172,7 @@ public static class DependencyInjection
         services.AddTransient<IGitHubService, GitHubService>();
         services.Configure<GitOptions>(configuration.GetSection("GitImages"));
 
+        services.AddScoped<IPdfService, PdfService>();
         return services;
     }
 

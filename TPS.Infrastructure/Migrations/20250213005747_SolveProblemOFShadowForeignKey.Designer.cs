@@ -12,8 +12,8 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250206135735_initial")]
-    partial class initial
+    [Migration("20250213005747_SolveProblemOFShadowForeignKey")]
+    partial class SolveProblemOFShadowForeignKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -379,9 +379,6 @@ namespace TPS.Infrastructure.Migrations
                     b.Property<Guid>("SocietyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("SocietyId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
@@ -395,8 +392,6 @@ namespace TPS.Infrastructure.Migrations
 
                     b.HasIndex("SocietyId");
 
-                    b.HasIndex("SocietyId1");
-
                     b.HasIndex("StudentId");
 
                     b.ToTable("Events");
@@ -408,10 +403,12 @@ namespace TPS.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("AdvisorApproval")
+                    b.Property<bool?>("AdvisorApproval")
+                        .IsRequired()
                         .HasColumnType("bit");
 
-                    b.Property<bool>("DeanAssistantApproval")
+                    b.Property<bool?>("DeanAssistantApproval")
+                        .IsRequired()
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("DecisionDate")
@@ -819,14 +816,10 @@ namespace TPS.Infrastructure.Migrations
             modelBuilder.Entity("TSP.Domain.Entities.Event", b =>
                 {
                     b.HasOne("TSP.Domain.Entities.Society", "Society")
-                        .WithMany()
+                        .WithMany("Events")
                         .HasForeignKey("SocietyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("TSP.Domain.Entities.Society", null)
-                        .WithMany("Events")
-                        .HasForeignKey("SocietyId1");
 
                     b.HasOne("TSP.Domain.Entities.Student", "Student")
                         .WithMany("RequestedEvents")
