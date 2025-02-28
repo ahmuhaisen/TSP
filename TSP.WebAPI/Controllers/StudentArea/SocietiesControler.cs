@@ -38,6 +38,7 @@ public class SocietiesController : ApiController
         var task = _sender.Send(query); 
         return await FromResult(task);
     }
+
     [HttpGet("Society")]
     [ProducesResponseType(typeof(SocietyDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
