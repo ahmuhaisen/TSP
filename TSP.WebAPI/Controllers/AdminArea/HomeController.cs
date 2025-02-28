@@ -47,4 +47,28 @@ public class HomeController : ApiController
 
         return await FromResult(task);
     }
+
+    [HttpGet("studentEvents")]
+    [ProducesResponseType(typeof(StudentEventListDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> StudentHomeEvents()
+    {
+        var query = StudentGetHomeEvents.Query.Create(GetCurrentUserId()!.Value);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+    
+    [HttpGet("studentStatistics")]
+    [ProducesResponseType(typeof(StudentHomeStatisticsDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> StudentHomeStatistics()
+    {
+        var query = StudentGetHomeStatistics.Query.Create(GetCurrentUserId()!.Value);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
 }

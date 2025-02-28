@@ -18,8 +18,19 @@ export const routes: Routes = [
         data: { breadcrumb: 'Societies' }
     },
     {
+        path: 'events',
+        loadComponent: () => import('./pages/events/events.component').then(m => m.EventsComponent),
+        loadChildren: () => import('./pages/events/events.routes').then(m => m.routes),
+        data: { breadcrumb: 'Events' }
+    },
+    {
         path: '**',
         loadComponent: () => import('../../components/not-found.component').then(m => m.NotFoundComponent),
         data: { breadcrumb: { skip: true } }
     }
+    // {
+    //     path: '**',
+    //     loadComponent: () => import('../../components/access-denied.component').then(m => m.AccessDeniedComponent),
+    //     data: { breadcrumb: { skip: true } }
+    // }
 ];

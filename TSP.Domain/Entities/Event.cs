@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace TSP.Domain.Entities
         public DateTime RequestTime { get; set; }
         public string? type { get; set; }
         public Guid SocietyId { get; set; }
+        [ForeignKey(nameof(SocietyId))]
         public Society Society { get; set; } = null!;
         public Guid StudentId { get; set; }
         public Student Student { get; set; } = null!;

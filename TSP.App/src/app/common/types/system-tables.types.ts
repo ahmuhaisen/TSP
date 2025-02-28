@@ -9,3 +9,8 @@ export interface Department {
     id: number;
     name: string;
 }
+
+export interface Rank {
+    id: string;
+    name: string;
+}

@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { DbService } from "./db.service";
-import { SchoolWithDepartmentsBasicDetails } from "../types/system-tables.types";
+import { Rank, SchoolWithDepartmentsBasicDetails } from "../types/system-tables.types";
 
 @Injectable({ providedIn: 'root' })
 export class SchoolService {
@@ -20,3 +20,6 @@ export class SchoolService {
         return `${this.getUrl()}/${id}`;
     }
 }
+
+
+

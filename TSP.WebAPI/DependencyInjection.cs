@@ -9,7 +9,11 @@ using System.Text;
 using System.Text.Json.Serialization;
 using TPS.Application;
 using TPS.Application.Abstractions;
+using TPS.Application.Areas.AdminArea.Societies.Commands;
 using TPS.Application.Areas.Authentication;
+using TPS.Application.Areas.Shared.Abstractions;
+using TPS.Application.Areas.Shared.Societies;
+using TPS.Application.Areas.Shared.Students;
 using TPS.Application.Services;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
@@ -127,7 +131,34 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
         services.AddFluentValidationRulesToSwagger();
 
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(opt =>
+        {
+            opt.SwaggerDoc("v1", new OpenApiInfo { Title = "TSP", Version = "v1" });
+            opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter a token",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "bearer"
+            });
+
+            opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    []
+                }
+            });
+        });
 
         return services;
     }
@@ -141,6 +172,14 @@ public static class DependencyInjection
         services.AddTransient<IGitHubService, GitHubService>();
         services.Configure<GitOptions>(configuration.GetSection("GitImages"));
 
+        services.AddScoped<IPdfService, PdfService>();
+        return services;
+    }
+
+    public static IServiceCollection AddApisSharedServices(this IServiceCollection services)
+    {
+        services.AddScoped<IStudentsService, StudentService>();
+        services.AddScoped<ISocietiesService, SocietiesService>();
         return services;
     }
 }

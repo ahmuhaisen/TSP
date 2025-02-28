@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.AdminArea.Students.Commands;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
+using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers.AdminArea;
@@ -28,9 +29,9 @@ public class MembersController : ApiController
     [HttpPut("Committee")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> addCommittee(Guid StudentId, Guid SocietyId, string Position, DateOnly StudentDate)
+    public async Task<IActionResult> addCommittee(AddCommitteeRequest request)
     {
-        var query = AddCommittee.Command.Create(StudentId, SocietyId, Position, StudentDate);
+        var query = AddCommittee.Command.Create(request);
 
         var task = _sender.Send(query);
 

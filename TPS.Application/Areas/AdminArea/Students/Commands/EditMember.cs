@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
+using TPS.Application.Areas.AdminArea.Students.Contracts.Requests;
+using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
@@ -10,53 +12,23 @@ public class EditMember
 {
     public sealed class Command : ICommand<Result<Guid>>
     {
-        public Guid StudentId { get; set; }
-        public Guid SocietyId { get; set; }
-        public required string Position { get; set; }
-        public static Command Create(Guid id, Guid SocietyId, string Position)
+       public required EditMemberRequest editRequest {  get; set; }
+        public static Command Create(EditMemberRequest editRequest)
         {
             return new Command
             {
-                StudentId = id,
-                SocietyId = SocietyId,
-                Position = Position
+               editRequest = editRequest
             };
         }
     }
 
 
-    public sealed class Handler : ICommandHandler<Command, Result<Guid>>
+    public sealed class Handler(IStudentsService studentsService) : ICommandHandler<Command, Result<Guid>>
     {
-        private ApplicationDbContext _context { get; }
-
-        public Handler(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+     
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (await _context.Societies.FirstOrDefaultAsync(s => s.Id == request.SocietyId) is null)
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), request.StudentId.ToString()));
-
-            }
-            var data = await _context.SocietiesMembers
-                .Include(x => x.Society)
-                .FirstOrDefaultAsync(s => s.StudentId == request.StudentId
-                && s.SocietyId == request.SocietyId);
-
-            if (data is null)
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), request.StudentId.ToString()));
-            }
-
-            data.Position = request.Position;
-            var check = await _context.SaveChangesAsync();
-            if (check <= 0)
-            {
-                return Result.Failure<Guid>(Error.InternalServerError(request.StudentId.ToString()));
-            }
-            return Result.Success(data.StudentId);
+            return await studentsService.editMember(request.editRequest);
         }
     }
 }
