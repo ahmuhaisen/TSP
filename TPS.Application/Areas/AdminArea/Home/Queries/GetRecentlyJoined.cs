@@ -38,7 +38,7 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
                         ProfileImageId = x.Student.ProfileImageId,
                         FirstName = x.Student.FirstName,
                         LastName = x.Student.LastName,
-                        DepartmentName = x.Student.Department.Name,
+                        DepartmentName = x.Student.Department!.Name,
                         JoinDate = x.JoinDate,
                         SocietyName = x.Society.Name
                     })

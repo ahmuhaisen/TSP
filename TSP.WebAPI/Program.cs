@@ -10,11 +10,12 @@ builder.Services.AddApiControllers()
     .AddIdentity(builder.Configuration)
     .AddFluentValidation()
     .AddMediatR()
-    .AddSwagger();
+    .AddSwagger()
+    .AddApisSharedServices();
 
 var app = builder.Build();
 
-// TODO: Should be removed
+//// TODO: Should be removed
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();

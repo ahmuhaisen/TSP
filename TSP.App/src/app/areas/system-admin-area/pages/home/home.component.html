@@ -2,7 +2,7 @@
     <h1 class="text-xl font-extrabold text-gray-700 mt-2">
         <nz-icon nzType="home" class="mr-2" />Home
     </h1>
-    <button nz-button nzType="default" nzShape="circle" (click)="open()">
+    <button nz-button nzType="default" nzShape="circle" (click)="openSearch()">
         <nz-icon nzType="search" />
     </button>
 </div>
@@ -164,26 +164,4 @@
 </div>
 
 
-<nz-drawer [nzClosable]="true" [nzVisible]="visible" [nzPlacement]="placement"
-    nzTitle="Search for members, societies, or events!" (nzOnClose)="close()">
-    <ng-container *nzDrawerContent>
-        <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
-            <input type="text" nz-input placeholder="e.g. ACM JU Student Chapter" />
-        </nz-input-group>
-        <ng-template #suffixButton>
-            <button nz-button nzType="primary" nzSize="large" [nzLoading]="isSearchLoading" nzSearch
-                (click)="doSearch()">Search</button>
-        </ng-template>
-
-        <div class="bg-gray-100 rounded-lg py-3 mt-4 h-48">
-            <div class="flex justify-center items-center h-full">
-                @if(isSearchLoading){
-                <nz-spin />
-                }@else {
-                <nz-empty nzNotFoundContent="No results found."
-                    nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" />
-                }
-            </div>
-        </div>
-    </ng-container>
-</nz-drawer>
+<app-search-drawer [(visible)]="isSearchVisible" />

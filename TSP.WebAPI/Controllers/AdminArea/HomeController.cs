@@ -53,6 +53,8 @@ public class HomeController : ApiController
 
         return await FromResult(task);
     }
+
+
     [HttpGet("Advisors")]
     [ProducesResponseType(typeof(FacultyMemberBasicDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -76,6 +78,7 @@ public class HomeController : ApiController
 
         return await FromResult(task);
     }
+
 
     [HttpGet("Events")]
     [ProducesResponseType(typeof(EventBasicDTO), StatusCodes.Status200OK)]

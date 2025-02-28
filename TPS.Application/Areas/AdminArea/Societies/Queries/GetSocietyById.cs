@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
+using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
@@ -20,17 +21,11 @@ public class GetSocietyById
         public static Query Create(Guid id) => new Query(id);
     }
 
-    public sealed class Handler : IQueryHandler<Query, Result<Contracts.SocietyDTO>>
+    public sealed class Handler(ISocietiesService societiesService) : IQueryHandler<Query, Result<Contracts.SocietyDTO>>
     {
-        private ApplicationDbContext _context { get; }
-
-        public Handler(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<Result<Contracts.SocietyDTO>> Handle(Query request, CancellationToken cancellationToken)
         {
+
             if (!_context.Societies.Any(s => s.Id == request.Id))
                 return Result.Failure<Contracts.SocietyDTO>(Error.NotFound(nameof(Society), request.Id.ToString()));
 
@@ -57,7 +52,7 @@ public class GetSocietyById
                 })
                 .SingleAsync(cancellationToken);
 
-            return Result.Success(data);
+            return await societiesService.getSocietyById(request.Id);  
         }
     }
 }

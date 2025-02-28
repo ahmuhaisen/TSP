@@ -35,6 +35,24 @@ export class AuthService {
         });
     }
 
+    registerStudent(request: StudentRegisterRequest) {
+        this.db.postRequest(`${this.model}/Student/Register`, request).subscribe({
+            next: () => {
+                this.messageService.success('Registration successful!');
+                this.navigateToLogin();
+            }
+        });
+    }
+
+    registerFaculty(request: FacultyRegisterRequest) {
+        this.db.postRequest(`${this.model}/FacultyMember/Register`, request).subscribe({
+            next: () => {
+                this.messageService.success('Registration successful!');
+                this.navigateToLogin();
+            }
+        });
+    }
+
     logout(){
         this.localStorageService.removeItem('token');
         this.currentUser.set(null);
@@ -50,12 +68,22 @@ export class AuthService {
         });
     }
 
+    isCurrentUserHasRole(role: string) {
+        const token = this.localStorageService.getItem('token');
+        const tokenPayload = this.jwtHelper.decodeToken(token);
+        return tokenPayload['rle'] === role;
+    }
+
     private navigateToHome(userType: string) {
         if(userType === 'FacultyMember') {
             this.router.navigate(['admin-area']);
         }else {
             this.router.navigate(['student-area']);
         }
+    }
+
+    private navigateToLogin() {
+        this.router.navigate(['authentication/login']);
     }
 }
 
@@ -81,3 +109,22 @@ export interface User {
 }
 
 export type UserType = 'FacultyMember' | 'Student' | 'Guest';
+
+export interface BaseRegisterRequest {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    gender: string;
+    departmentId: number;
+  }
+  
+  export interface FacultyRegisterRequest extends BaseRegisterRequest {
+    employeeNumber: string;
+    rankId: number;
+  }
+  
+  export interface StudentRegisterRequest extends BaseRegisterRequest {
+    universityNumber: string;
+  }
+  

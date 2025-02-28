@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
+using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
@@ -8,7 +9,7 @@ namespace TPS.Application.Areas.AdminArea.Students.Commands;
 
 public class DeleteMember
 {
-    public sealed class Command : ICommand<Result<Guid>>
+    public sealed class Command : ICommand<Result>
     {
         public Guid StudentId { get; set; }
         public Guid SocietyId { get; set; }
@@ -22,36 +23,11 @@ public class DeleteMember
         }
     }
 
-    public sealed class Handler : ICommandHandler<Command, Result<Guid>>
+    public sealed class Handler(IStudentsService studentsService) : ICommandHandler<Command, Result>
     {
-        private ApplicationDbContext _context { get; }
-
-        public Handler(ApplicationDbContext context)
+        public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
-            _context = context;
-        }
-        public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
-        {
-            var data = await _context.SocietiesMembers
-                .FirstOrDefaultAsync(
-                s => s.StudentId == request.StudentId &&
-                s.SocietyId == request.SocietyId
-                );
-            if (data is null)
-            {
-                return Result.Failure<Guid>(Error.GuidInvalid(request.StudentId));
-            }
-
-            _context.SocietiesMembers.Remove(data);
-            var check = await _context.SaveChangesAsync();
-            if (check > 0)
-            {
-                return Result.Success(data.StudentId);
-            }
-            else
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()));
-            }
+           return await studentsService.deleteMember(request.StudentId,request.SocietyId);
         }
     }
 }

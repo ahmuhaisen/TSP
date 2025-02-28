@@ -10,6 +10,7 @@ import { SocietiesService } from '../../../services/societies.service';
 import { SocietyBasicDetails } from '../../../api-interfaces/society.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { AuthService } from '../../../../../common/services/auth.service';
 
 
 @Component({
@@ -28,6 +29,8 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
   styleUrl: './societies-list.component.css'
 })
 export class SocietiesListComponent {
+
+  authService = inject(AuthService);
 
   advisorSocieties: SocietyBasicDetails[] = [];
   otherSocieties: SocietyBasicDetails[] = [];
