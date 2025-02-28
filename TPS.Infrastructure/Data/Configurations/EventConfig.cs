@@ -20,14 +20,15 @@ namespace TPS.Infrastructure.Data.Configurations
                 .IsRequired(false);
 
             builder.HasOne(s => s.Society)
-                .WithMany()
+                .WithMany(s=>s.Events)
                 .HasForeignKey(d => d.SocietyId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             builder.HasOne(s => s.Student)
                 .WithMany(s => s.RequestedEvents)
                 .HasForeignKey(d => d.StudentId)
-                .OnDelete(DeleteBehavior.NoAction)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         }
     }

@@ -80,6 +80,7 @@ public abstract class ApiController : ControllerBase
         }
     }
 
+
     protected virtual Guid? GetCurrentUserId()
     {
         var userId = User.FindFirstValue("uid");

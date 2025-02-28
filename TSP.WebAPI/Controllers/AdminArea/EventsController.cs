@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TPS.Application.Areas.AdminArea.Events.Commands;
 using TPS.Application.Areas.AdminArea.Events.Contracts;
 using TPS.Application.Areas.AdminArea.Events.Queries;
 using TSP.Domain.Shared;
@@ -17,7 +18,7 @@ public class EventsController : ApiController
         
     }
 
-    [HttpGet("Events")]
+    [HttpGet]
     [ProducesResponseType(typeof(List<EventsDTO>),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Events()
@@ -34,6 +35,24 @@ public class EventsController : ApiController
     public async Task<IActionResult> EventDetails([FromQuery] Guid EventId)
     {
         var query = GetEventDetails.Query.Create(EventId);
+        var task = _sender.Send(query);
+        return await FromResult(task);
+    }
+    [HttpPut("accept")]
+    [ProducesResponseType(typeof(Guid),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Accept([FromQuery] Guid EventId)
+    {
+        var query= AcceptEvent.Command.Create(EventId,GetCurrentUserId()!.Value);
+        var task = _sender.Send(query);
+        return await FromResult(task);
+    }
+    [HttpPut("reject")]
+    [ProducesResponseType(typeof(Guid),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Reject([FromQuery] Guid EventId, [FromQuery]string Remark)
+    {
+        var query= RejectEvent.Command.Create(EventId,GetCurrentUserId()!.Value,Remark);
         var task = _sender.Send(query);
         return await FromResult(task);
     }

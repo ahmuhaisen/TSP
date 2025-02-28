@@ -58,6 +58,6 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
 
                 return Result.Success(data);
             }
-        }
     }
+}
 }
