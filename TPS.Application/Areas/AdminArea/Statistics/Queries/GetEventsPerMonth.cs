@@ -30,7 +30,7 @@ public class GetEventsPerMonth
         public async Task<Result<List<EventsPerMonthDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
 
-            var data = await _context.EventsApproval.AsNoTracking()
+                var data = await _context.EventsApproval.AsNoTracking()
                .Where(s => s.DeanAssistantApproval==true && s.AdvisorApproval == true)
                .Include(s => s.Event)
                .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
@@ -49,8 +49,8 @@ public class GetEventsPerMonth
                .ToListAsync();
 
             return Result.Success(data);
-        }
 
+        }
 
     }
 }
