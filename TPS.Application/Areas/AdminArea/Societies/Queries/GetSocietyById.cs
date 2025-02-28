@@ -25,33 +25,6 @@ public class GetSocietyById
     {
         public async Task<Result<Contracts.SocietyDTO>> Handle(Query request, CancellationToken cancellationToken)
         {
-
-            if (!_context.Societies.Any(s => s.Id == request.Id))
-                return Result.Failure<Contracts.SocietyDTO>(Error.NotFound(nameof(Society), request.Id.ToString()));
-
-            var data = await _context.Societies
-                .Include(s => s.SocietiesMembers)
-                .Include(s => s.Advisor)
-                .AsNoTracking()
-                .Where(s => s.Id == request.Id)
-                .Select(s => new Contracts.SocietyDTO
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Description = s.Description,
-                    LogoId = s.LogoId,
-                    ThemeColor = s.ThemeColor,
-                    CreationDate = s.CreationDate,
-                    NumberOfMembers = s.SocietiesMembers.Count(),
-                    Advisor = new Contracts.FacultyMemberBasicDTO
-                    {
-                        Id = s.Advisor.Id,
-                        FullName = $"{s.Advisor.FirstName} {s.Advisor.LastName}",
-                        LogoId = s.LogoId
-                    }
-                })
-                .SingleAsync(cancellationToken);
-
             return await societiesService.getSocietyById(request.Id);  
         }
     }

@@ -39,6 +39,7 @@ public class SocietiesService(ApplicationDbContext context): ISocietiesService
                 {
                     Id = s.Advisor.Id,
                     FullName = $"{s.Advisor.FirstName} {s.Advisor.LastName}",
+                    LogoId = s.LogoId
                 }
             }).FirstAsync();
 
