@@ -79,6 +79,8 @@ public abstract class ApiController : ControllerBase
             return BadRequest(errorEnvelope);
         }
     }
+
+
     protected virtual Guid? GetCurrentUserId()
     {
         var userId = User.FindFirstValue("uid");

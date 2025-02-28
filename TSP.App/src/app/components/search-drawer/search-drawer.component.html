@@ -1,0 +1,56 @@
+<nz-drawer [nzClosable]="true" [nzVisible]="visible" [nzPlacement]="'bottom'"
+    nzTitle="Search for members, societies, or events!" (nzOnClose)="close()">
+    <ng-container *nzDrawerContent>
+        <div>
+            <!-- Input group: stack vertically on small screens, row on sm+ -->
+            <nz-input-group
+              nzCompact
+              nzSearch
+              nzSize="large"
+              class="flex gap-2"
+            >
+              <!-- Text input: full width on small screens, half width on sm+ -->
+              <input
+                type="text"
+                nz-input
+                placeholder="e.g. acm"
+                class="w-1/2"
+              />
+              <!-- Select: full width on small screens, fixed width on sm+ -->
+              <nz-select
+                nzSize="large"
+                nzPlaceHolder="Search by"
+                class="w-full sm:w-[130px]"
+              >
+                <nz-option [nzLabel]="'Societies'" [nzValue]="'1'"></nz-option>
+                <nz-option [nzLabel]="'Members'" [nzValue]="'2'"></nz-option>
+                <nz-option [nzLabel]="'Events'" [nzValue]="'3'"></nz-option>
+              </nz-select>
+              <!-- Button: full width on small screens, auto width on sm+ -->
+              <button
+                nz-button
+                nzType="primary"
+                nzSize="large"
+                [nzLoading]="isSearchLoading()"
+                nzSearch
+                (click)="doSearch()"
+                class="w-full sm:w-auto"
+              >
+                Search
+              </button>
+            </nz-input-group>
+          </div>
+      
+
+        <div class="bg-gray-100 rounded-lg py-3 mt-4 h-48">
+            <div class="flex justify-center items-center h-full">
+                @if(isSearchLoading()){
+                <nz-spin />
+                }@else {
+                <nz-empty nzNotFoundContent="No results found."
+                    nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" />
+                }
+            </div>
+        </div>
+    </ng-container>
+</nz-drawer>

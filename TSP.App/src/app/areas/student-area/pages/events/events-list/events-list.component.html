@@ -1,0 +1,317 @@
+<div class="flex justify-between items-center">
+  <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+    <nz-icon nzType="project" class="mr-2" />Events
+  </h1>
+  <div>
+    <button nz-button nzType="primary" (click)="openEventRequestModal()">
+      <nz-icon nzType="reconciliation" />
+      Request a new event
+    </button>
+  </div>
+</div>
+
+<nz-divider />
+
+<nz-tabset>
+  <nz-tab nzTitle="Events this month">
+    <div class="flex justify-between items-center mb-4">
+      <div class="text-lg font-semibold text-gray-700">
+        {{ currentDate | date:'MMMM yyyy' }}
+      </div>
+      <div class="flex items-center gap-2">
+        <button nzType="default" nzShape="circle" nz-button
+        class="flex items-center justify-center"
+          (click)="setViewType('calendar')">
+          <nz-icon nzType="calendar"/>
+        </button>
+
+        <button nzType="default" nzShape="circle" nz-button
+         (click)="setViewType('cards')">
+          <nz-icon nzType="appstore"/>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="viewType === 'calendar'">
+      <nz-calendar [nzFullscreen]="false" [nzDisabledDate]="disabledDate" [(ngModel)]="currentDate" class="w-full">
+        <ng-container *nzDateCell="let date">
+          <div class="events" (click)="openEventModal(date)">
+            <ng-container *ngFor="let event of getDayEvents(date)">
+              <nz-badge 
+                [nzStatus]="getEventBadgeStatus(event.startDate)" 
+                [nzText]="event.title"
+                class="event-badge cursor-pointer hover:text-primary-dark" />
+            </ng-container>
+            
+          </div>
+        </ng-container>
+      </nz-calendar>
+    </div>
+
+    <div *ngIf="viewType === 'cards'">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <nz-card *ngFor="let event of upcomingEvents"
+          class="shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
+          <div class="flex items-center mb-2">
+            <img src="https://robohash.org/society?bgset=bg2" alt="{{ event.society }}"
+              class="w-12 h-12 rounded-full mr-2" />
+            <div>
+              <h3 class="text-md font-semibold text-gray-800">{{ event.title }}</h3>
+              <p class="text-xs text-gray-600">{{ event.society }}</p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500">
+            <nz-badge 
+                [nzStatus]="getEventBadgeStatus(event.startDate)" 
+                class="cursor-pointer hover:text-primary-dark" />
+            {{ event.startDate | date:'MMM d, y, h:mm a' }} - {{ event.endDate |
+            date:'MMM d, y, h:mm a' }}</p>
+          <p class="text-xs text-gray-600">{{ event.location }}</p>
+          <p class="mt-2 text-gray-600">{{ event.description }}</p>
+
+          @if (event.hasAttendanceForm) {
+          <button nz-button nzType="default" class="mt-4 w-full">
+            <nz-icon nzType="form"></nz-icon>
+            Register
+          </button>
+          }
+        </nz-card>
+      </div>
+    </div>
+
+    <nz-drawer [nzVisible]="isEventDetailsVisible" [nzWidth]="400" nzPlacement="right" nzTitle="Event Details"
+      (nzOnClose)="closeEventDetails()">
+      <ng-container *nzDrawerContent>
+        @if (selectedEvent) {
+        <div class="p-4">
+          <h3 class="text-lg font-semibold mb-4">{{ selectedEvent?.title }}</h3>
+
+          <div class="mb-4">
+            <p class="text-sm text-gray-600">{{ selectedEvent?.society }}</p>
+            <nz-tag [nzColor]="'blue'" class="mt-2">{{ selectedEvent?.type }}</nz-tag>
+          </div>
+
+          <div class="text-sm space-y-2">
+            <p class="flex items-center text-gray-600">
+              <nz-icon nzType="calendar" class="mr-2"></nz-icon>
+              {{ selectedEvent?.startDate | date:'MMM d, y, h:mm a' }}
+            </p>
+            <p class="flex items-center text-gray-600">
+              <nz-icon nzType="environment" class="mr-2"></nz-icon>
+              {{ selectedEvent?.location }}
+            </p>
+          </div>
+
+          <p class="mt-4 text-gray-600">{{ selectedEvent?.description }}</p>
+
+          <div class="mt-6">
+            @if (selectedEvent?.hasAttendanceForm) {
+            <button nz-button nzType="primary" class="w-full">
+              <nz-icon nzType="form"></nz-icon>
+              Register for Event
+            </button>
+            }
+          </div>
+        </div>
+        } @else {
+        <div class="p-4">No event selected</div>
+        }
+      </ng-container>
+    </nz-drawer>
+  </nz-tab>
+
+  <nz-tab nzTitle="My Event Requests">
+    @if (eventRequests.length === 0) {
+    <nz-empty nzDescription="No event requests found"></nz-empty>
+    } @else {
+    <div class="grid grid-cols-2 gap-4">
+      @for (request of eventRequests; track request.id) {
+      <nz-card class="w-full shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
+        <div class="flex flex-col md:flex-row md:items-center justify-between">
+          <div class="flex-grow">
+            <div class="flex items-start gap-4">
+              <div class="flex-grow">
+                <h3 class="text-md font-semibold text-gray-800">{{ request.title }}</h3>
+                <p class="text-xs text-gray-600">{{ request.society }}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <nz-tag [nzColor]="'blue'">{{ request.type }}</nz-tag>
+              </div>
+            </div>
+
+            <div class="mt-2 text-xs">
+              <p class="flex items-center text-gray-600">
+                <nz-icon nzType="calendar" class="mr-2"></nz-icon>
+                {{ request.startDate | date:'MMM d, y, h:mm a' }}
+              </p>
+              <p class="flex items-center text-gray-600">
+                <nz-icon nzType="environment" class="mr-2"></nz-icon>
+                {{ request.location }}
+              </p>
+            </div>
+
+            <p class="mt-2 text-gray-600">{{ request.description }}</p>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <div class="flex items-center gap-4">
+            <div class="flex items-center">
+              <span class="text-xs font-medium text-gray-500 mr-2">Society Advisor:</span>
+              @if (request.societyAdvisorApproval === null) {
+              <nz-tag nzSize="small" [nzColor]="'gold'">Pending</nz-tag>
+              } @else if (request.societyAdvisorApproval) {
+              <nz-tag nzSize="small" [nzColor]="'success'">Approved</nz-tag>
+              } @else {
+              <nz-tag nzSize="small" [nzColor]="'error'">Rejected</nz-tag>
+              }
+            </div>
+
+            <div class="flex items-center">
+              <span class="text-xs font-medium text-gray-500 mr-2">Dean Office:</span>
+              @if (request.deanApproval === null) {
+              <nz-tag nzSize="small" [nzColor]="'gold'">Pending</nz-tag>
+              } @else if (request.deanApproval) {
+              <nz-tag nzSize="small" [nzColor]="'success'">Approved</nz-tag>
+              } @else {
+              <nz-tag nzSize="small" [nzColor]="'error'">Rejected</nz-tag>
+              }
+            </div>
+          </div>
+        </div>
+      </nz-card>
+      }@empty {
+      <nz-empty nzDescription="No event requests found"></nz-empty>
+      }
+    </div>
+    }
+  </nz-tab>
+</nz-tabset>
+
+<nz-modal [nzNoAnimation]="true" [nzOkText]="'Submit'" nzTitle="Request a new event" nzCentered nzFooter=" "
+  nzWidth="800px" [(nzVisible)]="isEventRequestModalVisible" (nzOnCancel)="handleEventRequestModalCancel()">
+
+  <ng-container *nzModalContent>
+    <nz-steps [nzCurrent]="currentStep" class="mb-3" nzStatus="process" nzSize="small">
+      <nz-step nzTitle="Society" nzIcon="team"></nz-step>
+      <nz-step nzTitle="Event details" nzIcon="form"></nz-step>
+    </nz-steps>
+
+    @if(currentStep === 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div (click)="selectSociety(1)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
+                hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 1}">
+        <img src="https://robohash.org/society?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
+        <p class="text-sm text-center font-semibold text-gray-700 mt-3">IEEE CS JU</p>
+      </div>
+
+      <div (click)="selectSociety(2)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
+                hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 2}">
+        <img src="https://robohash.org/society2?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
+        <p class="text-sm text-center font-semibold text-gray-700 mt-3">ACM University of Jordan Student Chapter</p>
+      </div>
+
+      <div (click)="selectSociety(3)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
+                hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 3}">
+        <img src="https://robohash.org/society3?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
+        <p class="text-sm text-center font-semibold text-gray-700 mt-3">Waves JU</p>
+      </div>
+    </div>
+    }
+
+    @if(currentStep === 1) {
+    <form nz-form [formGroup]="eventRequestForm" [nzLayout]="'vertical'" class="grid grid-cols-2 gap-x-4 gap-y-2">
+      <nz-form-item class="col-span-2 mb-2">
+        <nz-form-label nzRequired>Title</nz-form-label>
+        <nz-form-control [nzErrorTip]="titleErrorTpl">
+          <input nz-input formControlName="title" placeholder="Enter event title" />
+          <ng-template #titleErrorTpl let-control>
+            @if (control.hasError('required')) { Title is required }
+            @else if (control.hasError('minlength')) { Title must be at least 3 characters }
+            @else if (control.hasError('maxlength')) { Title cannot exceed 100 characters }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="col-span-2 mb-2">
+        <nz-form-label nzRequired>Description</nz-form-label>
+        <nz-form-control [nzErrorTip]="descriptionErrorTpl">
+          <textarea rows="3" formControlName="description" style="resize: none;" nz-input
+            placeholder="Describe your event"></textarea>
+          <ng-template #descriptionErrorTpl let-control>
+            @if (control.hasError('required')) { Description is required }
+            @else if (control.hasError('minlength')) { Description must be at least 10 characters }
+            @else if (control.hasError('maxlength')) { Description cannot exceed 500 characters }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="mb-2">
+        <nz-form-label nzRequired>Location</nz-form-label>
+        <nz-form-control [nzErrorTip]="locationErrorTpl">
+          <input nz-input formControlName="location" placeholder="e.g. Progressoft lab" />
+          <ng-template #locationErrorTpl let-control>
+            @if (control.hasError('required')) { Location is required }
+            @else if (control.hasError('minlength')) { Location must be at least 3 characters }
+            @else if (control.hasError('maxlength')) { Location cannot exceed 100 characters }
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="mb-2">
+        <nz-form-label nzRequired>Type</nz-form-label>
+        <nz-form-control nzErrorTip="Please select an event type">
+          <nz-select formControlName="eventType" nzPlaceHolder="Select event type">
+            <nz-option nzValue="Workshop" nzLabel="Workshop"></nz-option>
+            <nz-option nzValue="Course" nzLabel="Course"></nz-option>
+            <nz-option nzValue="Contest" nzLabel="Contest"></nz-option>
+            <nz-option nzValue="Training" nzLabel="Training"></nz-option>
+            <nz-option nzValue="Seminar" nzLabel="Seminar"></nz-option>
+            <nz-option nzValue="Conference" nzLabel="Conference"></nz-option>
+            <nz-option nzValue="Meeting" nzLabel="Meeting"></nz-option>
+            <nz-option nzValue="Other" nzLabel="Other"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="col-span-2 mb-2">
+        <nz-form-label nzRequired>Date and time</nz-form-label>
+        <nz-form-control nzErrorTip="Please select event date and time">
+          <nz-range-picker class="w-full" formControlName="dateRange" [nzDisabledDate]="disabledDate"
+            [nzDisabledTime]="disabledRangeTime"
+            [nzShowTime]="{ nzHideDisabledOptions: true, nzDefaultOpenValue: timeDefaultValue }"
+            nzFormat="yyyy-MM-dd HH:mm">
+          </nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="mb-2">
+        <nz-form-label>
+          Attendance form
+          <nz-icon nzType="question-circle" nzTheme="outline" class="text-primary-light ml-1" nz-tooltip
+            nzTooltipTitle="Enable this to track attendance for your event" />
+        </nz-form-label>
+        <nz-form-control>
+          <nz-switch formControlName="hasAttendanceForm" [nzCheckedChildren]="checkedTemplate"
+            [nzUnCheckedChildren]="unCheckedTemplate">
+          </nz-switch>
+          <ng-template #checkedTemplate>Enabled</ng-template>
+          <ng-template #unCheckedTemplate>Disabled</ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+    }
+
+    <div class="flex justify-end mt-4">
+      @if (currentStep > 0) {
+      <button class="mr-2" nz-button nzType="default" (click)="pre()">Previous</button>
+      }
+      @if (currentStep < 1) { <button nz-button nzType="default" (click)="next()">Next</button>
+        }
+        @if (currentStep === 1) {
+        <button nz-button nzType="primary" (click)="done()">Submit</button>
+        }
+    </div>
+  </ng-container>
+
+</nz-modal>
