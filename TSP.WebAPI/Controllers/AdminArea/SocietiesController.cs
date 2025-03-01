@@ -4,6 +4,9 @@ using TPS.Application.Areas.AdminArea.Societies.Commands;
 using TPS.Application.Areas.AdminArea.Societies.Contracts;
 using TPS.Application.Areas.AdminArea.Societies.Contracts.Requests;
 using TPS.Application.Areas.AdminArea.Societies.Queries;
+using TPS.Application.Areas.AdminArea.Students.Commands;
+using TPS.Application.Areas.AdminArea.Students.Contracts;
+using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers.AdminArea;
@@ -15,7 +18,7 @@ public class SocietiesController : ApiController
     public SocietiesController(ISender sender) : base(sender)
     { }
 
-    
+
     [HttpGet("{societyId}")]
     [ProducesResponseType(typeof(SocietyListDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -28,16 +31,7 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
-
-    [HttpGet("{societyId}/members")]
-    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> GetSocietyMembers(Guid societyId)
-    {
-        return Task.FromResult<IActionResult>(Ok("Not Implemented 2"));
-    }
-
-    [HttpPost("Society")]
+    [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post(CreateSocietyRequest request)
@@ -54,36 +48,19 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
-    [HttpPost("{societyId}/members")]
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> PostMember(Guid societyId)
-    {
-        throw new NotImplementedException();
-    }
-
-    [HttpPost("{societyId}/advisor")]
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public Task<IActionResult> PostAdvisor(Guid societyId)
-    {
-        throw new NotImplementedException();
-    }
-
-    [HttpPut("Society")]
+    [HttpPut("{societyId}")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Put(UpdateSocietyRequest request)
+    public async Task<IActionResult> Put(Guid societyId, UpdateSocietyRequest request)
     {
         var command = UpdateSociety.Command.Create(request.Name,
                                                    request.Description,
                                                    request.LogoBase64,
                                                    request.ThemeColor,
-                                                   request.Id);
+                                                   societyId);
         var task = _sender.Send(command);
 
         return await FromResult(task);
-
     }
 
     [HttpDelete("{societyId}")]
@@ -96,6 +73,42 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
+    // Members
 
+    [HttpGet("{societyId}/Members")]
+    [ProducesResponseType(typeof(List<MembersListDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> getCommitteeMembers(Guid societyId, [FromQuery] bool isCommittee)
+    {
+        var query = GetAllSocietyMembers.Query.Create(societyId, isCommittee);
 
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+
+    [HttpPut("{societyId}/Members/{studentId}/Committee")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> addCommittee(Guid societyId, Guid studentId,AddCommitteeRequest request)
+    {
+        //TODO: Remove studentId and SocietyId from the request
+        var query = AddCommittee.Command.Create(request);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+
+    [HttpDelete("{societyId}/Members/{studentId}/Committee")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> deleteCommittee(Guid societyId, Guid studentId)
+    {
+        var query = DeleteCommittee.Command.Create(studentId, societyId);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
 }

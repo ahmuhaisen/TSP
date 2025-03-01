@@ -16,6 +16,7 @@ public class EventsController : ApiController
 
     }
 
+    //api/studentArea/events/events
     [HttpGet("Events")]
     [ProducesResponseType(typeof(MemberEventDetailsDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]

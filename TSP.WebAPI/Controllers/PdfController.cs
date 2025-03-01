@@ -2,22 +2,33 @@
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Abstractions;
 
-namespace TSP.WebAPI.Controllers
+namespace TSP.WebAPI.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class PdfController : ApiController
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PdfController : ApiController
+    private readonly IPdfService _pdfService;
+    public PdfController(ISender sender, IPdfService pdfService) : base(sender)
     {
-        private readonly IPdfService _pdfService;
-        public PdfController(ISender sender,IPdfService pdfService) : base(sender)
+        _pdfService = pdfService;
+    }
+
+
+
+    [HttpPost]
+    public async Task<IActionResult> GeneratePdf()
+    {
+        try
         {
-            _pdfService = pdfService;
+            var pdfBytes = await _pdfService.GeneratePdf("");
+            return File(pdfBytes, "application/pdf", "Report.pdf");
         }
-        [HttpPost]
-        public async Task<IActionResult> GeneratePdf([FromBody] string content)
+        catch (Exception ex)
         {
-            var pdfBytes = await _pdfService.GeneratePdf(content);
-            return File(pdfBytes, "application/pdf", "GeneratePdf.pdf");
+            // Log the exception (e.g., ILogger)
+            return StatusCode(500, "Failed to generate PDF: " + ex.Message);
         }
     }
 }
+

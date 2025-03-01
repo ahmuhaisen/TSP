@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TPS.Application.Areas.AdminArea.Events.Contracts
 {
-    public class EventsDTO
+    public class EventDTO
     {
         public required Guid Id { get; set; }
         public required string EventName { get; set; }

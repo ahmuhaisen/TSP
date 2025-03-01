@@ -7,7 +7,7 @@ using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.AdminArea.Advisors.Queries;
 
-public class SearchAdvisor
+public class SearchFacultyMember
 {
     public sealed class Query : IQuery<Result<List<FacultyMemberBasicDTO>>>
     {

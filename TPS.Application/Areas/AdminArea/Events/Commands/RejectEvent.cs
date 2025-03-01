@@ -6,7 +6,7 @@ using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.AdminArea.Events.Commands
 {
-    public class RejectEvent
+    public class  RejectEvent
     {
         public sealed class Command : ICommand<Result>
         {

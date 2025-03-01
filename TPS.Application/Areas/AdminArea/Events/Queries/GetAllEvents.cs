@@ -11,7 +11,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
 {
     public class GetAllEvents
     {
-        public sealed class Query : IQuery<Result<List<EventsDTO>>>
+        public sealed class Query : IQuery<Result<List<EventDTO>>>
         {
             public Guid UserId { get; set; }
 
@@ -24,7 +24,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
         }
 
 
-        public sealed class Handler : IQueryHandler<Query, Result<List<EventsDTO>>>
+        public sealed class Handler : IQueryHandler<Query, Result<List<EventDTO>>>
         {
             private readonly ILogger<Handler> logger;
 
@@ -37,11 +37,22 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 this.logger = logger;
             }
 
-            public async Task<Result<List<EventsDTO>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<EventDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
+                // -- case 1 --
+                // Current = heba / 
+                // Validation heba has no advisor role
+                // return empty list
+
+                // -- case 2 --
+                // Current = Mousa alakhras / cs
+                // Only return the events that Mousa is an advisor of
+
+                // TODO: Validate the user id if he / she is an advisor of a society or a dean / dean assistant
+                // TODO: Edit the query to return only the events that the user is an advisor of
                 var data = await _context.Events
                     .OrderByDescending(x => x.StartTime)
-                    .Select(x => new EventsDTO
+                    .Select(x => new EventDTO
                     {
                         Id = x.Id,
                         EventName = x.Name,

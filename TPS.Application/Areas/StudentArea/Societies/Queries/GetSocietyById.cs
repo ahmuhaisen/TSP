@@ -20,8 +20,6 @@ public class GetSocietyById
 
     public sealed class Handler(ISocietiesService societiesService) : IQueryHandler<Query, Result<SocietyDTO>>
     {
-
-
         public async Task<Result<SocietyDTO>> Handle(Query request, CancellationToken cancellationToken)
         {
 

@@ -27,10 +27,7 @@ public class GetAllSocietyMembers
     {
         public async Task<Result<List<MembersListDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            return await studentsService.
-                        getSocietyMembers(request.SocitieyId, request.IsCommittee);
-
-            
+            return await studentsService.getSocietyMembers(request.SocitieyId, request.IsCommittee);
         }
     }
 }

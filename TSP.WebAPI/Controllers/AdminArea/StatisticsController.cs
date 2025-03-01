@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TPS.Application.Areas.AdminArea.Home.Contracts;
-using TPS.Application.Areas.AdminArea.Home.Queries;
 using TPS.Application.Areas.AdminArea.Statistics.Contracts;
 using TPS.Application.Areas.AdminArea.Statistics.Queries;
 using TSP.Domain.Shared;
@@ -15,7 +13,7 @@ public class StatisticsController : ApiController
     public StatisticsController(ISender sender) : base(sender)
     {
     }
-    [HttpGet("TopSocietiesByMembers")]
+    [HttpGet("TopSocietiesByMembers")] //L1
     [ProducesResponseType(typeof(List<SocietyMembersCountDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getTopSocietiesByMembers([FromQuery] int numberOfSocities)
@@ -24,7 +22,7 @@ public class StatisticsController : ApiController
         var task = _sender.Send(query);
         return await FromResult(task);
     }
-    [HttpGet("TopEventsByAttendence")]
+    [HttpGet("TopEventsByAttendence")] //L2
     [ProducesResponseType(typeof(List<EventAttendanceCountDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getTopEventsByAttendence([FromQuery] int numberOfEvents)
@@ -33,7 +31,7 @@ public class StatisticsController : ApiController
         var task = _sender.Send(query);
         return await FromResult(task);
     }
-    [HttpGet("TopSocities")]
+    [HttpGet("TopSocities")] //R2
     [ProducesResponseType(typeof(List<SocietyDataDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getTopSocities([FromQuery] int numberOfSocities)
@@ -43,7 +41,7 @@ public class StatisticsController : ApiController
         return await FromResult(task);
     }
 
-    [HttpGet("EventsByMonth")]
+    [HttpGet("EventsByMonth")] //R1
     [ProducesResponseType(typeof(List<SocietyDataDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getLastMonths([FromQuery] int numberOfMonths)

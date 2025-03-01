@@ -6,5 +6,6 @@ public class Constants
     {
         public const string Admin = "AdminArea";
         public const string Student = "StudentArea";
+        public const string Shared = "Shared";
     }
 }

@@ -10,36 +10,37 @@ namespace TSP.WebAPI.Controllers.AdminArea;
 
 [ApiController]
 [Route($"api/{Constants.APIAreas.Admin}/[controller]")]
-public class AdvisorController : ApiController
+public class FacultyMemberController : ApiController
 {
-    public AdvisorController(ISender sender) : base(sender)
+    public FacultyMemberController(ISender sender) : base(sender)
     { }
 
-    [HttpGet("AdvisorSocieties")]
+    [HttpGet("Societies/Advised")]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> getAdvisorSocieties([FromQuery] Guid advisorIds)
+    public async Task<IActionResult> getAdvisorSocieties()
     {
-        var query = GetAdvisorSocieties.Query.Create(advisorIds);
-
-        var task = _sender.Send(query);
-
-        return await FromResult(task);
-    }
-    [HttpGet("OtherSocieties")]
-    [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> getOtherSocieties([FromQuery] Guid advisorIds)
-    {
-        var query = GetOtherSocieties.Query.Create(advisorIds);
+        var query = GetAdvisorSocieties.Query.Create(GetCurrentUserId()!.Value);
 
         var task = _sender.Send(query);
 
         return await FromResult(task);
     }
 
+    [HttpGet("Societies/Other")]
+    [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> getOtherSocieties()
+    {
+        var query = GetOtherSocieties.Query.Create(GetCurrentUserId()!.Value);
 
-    [HttpGet("AllAdvisors")]
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+
+    // AdminArea/FacultyMembers
+    [HttpGet]
     [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getAllAdvisors()

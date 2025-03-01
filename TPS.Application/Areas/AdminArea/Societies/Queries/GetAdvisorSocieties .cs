@@ -52,7 +52,6 @@ public class GetAdvisorSocieties
                     LogoId = s.LogoId,
                     ThemeColor = s.ThemeColor,
                     CreationDate = s.CreationDate,
-
                 })
                 .ToListAsync();
 

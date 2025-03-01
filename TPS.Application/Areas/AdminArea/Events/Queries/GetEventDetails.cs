@@ -35,9 +35,9 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     .Where(x => x.Id == request.EventId)
                     .Select(x => new EventDetailsDTO
                     {
-                        type = x.type,
-                        DateOnly = DateOnly.FromDateTime(x.StartTime),
-                        TimeOnly = TimeOnly.FromDateTime(x.EndTime),
+                        Type = x.type,
+                        EventDate = DateOnly.FromDateTime(x.StartTime),
+                        StartTime = TimeOnly.FromDateTime(x.EndTime),
                         SocietyDescription = x.Society.Description,
                         SocietyLogoId = x.Society.LogoId,
                         AdvisorId = x.Society.AdvisorId,
@@ -60,7 +60,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                             .Where(y => y.StudentId == x.StudentId)
                             .Select(y => y.Society.Name)
                             .ToList(),
-                        EventDTO = new EventsDTO
+                        EventDTO = new EventDTO
                         {
                             Id = x.Id,
                             EventName = x.Name,

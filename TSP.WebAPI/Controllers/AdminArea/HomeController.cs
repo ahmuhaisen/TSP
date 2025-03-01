@@ -19,7 +19,9 @@ public class HomeController : ApiController
     public HomeController(ISender sender) : base(sender)
     {
     }
-    //api/home
+
+
+
     [HttpGet("recentEvents")]
     [ProducesResponseType(typeof(List<EventListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -55,41 +57,8 @@ public class HomeController : ApiController
     }
 
 
-    [HttpGet("Advisors")]
-    [ProducesResponseType(typeof(FacultyMemberBasicDTO), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SearchAdvisorByName([FromQuery] string? searchTerm)
-    {
-        var query = SearchAdvisor.Query.Create(searchTerm);
-
-        var task = _sender.Send(query);
-      
-        return await FromResult(task);
-    }
-
-    [HttpGet("Students")]
-    [ProducesResponseType(typeof(StudentBasicDTO), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SearchStudentByName([FromQuery] string? searchTerm)
-    {
-        var query = SearchStudent.Query.Create(searchTerm);
-
-        var task = _sender.Send(query);
-
-        return await FromResult(task);
-    }
 
 
-    [HttpGet("Events")]
-    [ProducesResponseType(typeof(EventBasicDTO), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SearchEventByName([FromQuery] string? searchTerm)
-    {
-        var query = SearchEvent.Query.Create(searchTerm);
 
-        var task = _sender.Send(query);
-
-        return await FromResult(task);
-    }
-
+   
 }
