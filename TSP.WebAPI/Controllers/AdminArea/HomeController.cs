@@ -1,13 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TPS.Application.Areas.AdminArea.Advisors.Queries;
 using TPS.Application.Areas.AdminArea.Home.Contracts;
 using TPS.Application.Areas.AdminArea.Home.Queries;
-using TPS.Application.Areas.AdminArea.Societies.Contracts;
-using TPS.Application.Areas.AdminArea.Students.Contracts;
-using TPS.Application.Areas.AdminArea.Students.Queries;
-using TPS.Application.Areas.Shared.Events.Contracts;
-using TPS.Application.Areas.Shared.Events.Queries;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers.AdminArea;

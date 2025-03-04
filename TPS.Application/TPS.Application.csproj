@@ -19,5 +19,9 @@
   <ItemGroup>
     <ProjectReference Include="..\TPS.Infrastructure\TPS.Infrastructure.csproj" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <Folder Include="Areas\AdminArea\Students\Contracts\Requests\" />
+  </ItemGroup>
 
 </Project>

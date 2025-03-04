@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.AdminArea.Societies.Commands;
 using TPS.Application.Areas.AdminArea.Societies.Contracts;
 using TPS.Application.Areas.AdminArea.Societies.Contracts.Requests;
-using TPS.Application.Areas.AdminArea.Societies.Queries;
 using TPS.Application.Areas.AdminArea.Students.Commands;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
 using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
@@ -92,13 +91,22 @@ public class SocietiesController : ApiController
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> addCommittee(Guid societyId, Guid studentId,AddCommitteeRequest request)
     {
-        //TODO: Remove studentId and SocietyId from the request
-        var query = AddCommittee.Command.Create(request);
+        var query = AddCommittee.Command.Create(studentId,societyId,request);
 
         var task = _sender.Send(query);
 
         return await FromResult(task);
     }
+    [HttpPut("{societyId}/Members/{studentId}")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult>editMember(Guid societyId, Guid studentId,string position)
+    {
+        var query = EditMember.Command.Create(studentId, societyId, position);
+        var task = _sender.Send(query);
+        return await FromResult(task);
+    }
+
 
     [HttpDelete("{societyId}/Members/{studentId}/Committee")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
@@ -111,4 +119,6 @@ public class SocietiesController : ApiController
 
         return await FromResult(task);
     }
+
+
 }
