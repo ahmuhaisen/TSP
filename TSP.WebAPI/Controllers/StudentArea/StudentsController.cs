@@ -1,11 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.StudentArea.Societies.Queries;
-using TPS.Application.Areas.StudentArea.Socities.Commands;
-using TPS.Application.Areas.StudentArea.Students.Commands;
-using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
-using TSP.Domain.Shared;
-
 namespace TSP.WebAPI.Controllers.StudentArea;
 
 [ApiController]

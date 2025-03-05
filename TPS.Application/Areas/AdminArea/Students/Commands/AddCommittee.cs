@@ -14,11 +14,15 @@ public class AddCommittee
 {
     public sealed class Command : ICommand<Result<Guid>>
     {
+        public Guid StudentId { get; set; }    
+        public Guid SocietyId { get; set; }
         public required AddCommitteeRequest committeRequest { get; set; }
-        public static Command Create(AddCommitteeRequest committeRequest)
+        public static Command Create(Guid studentId,Guid societyId,AddCommitteeRequest committeRequest)
         {
             return new Command
             {
+                StudentId = studentId,
+                SocietyId = societyId,
                 committeRequest = committeRequest,
             };
         }
@@ -29,7 +33,7 @@ public class AddCommittee
 
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
-            return await studentsService.addCommitte(request.committeRequest);
+            return await studentsService.addCommitte(request.StudentId,request.SocietyId,request.committeRequest);
         }
     }
 }

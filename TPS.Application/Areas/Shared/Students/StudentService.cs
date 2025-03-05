@@ -1,12 +1,5 @@
-﻿using Azure.Core;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
-using TPS.Application.Areas.AdminArea.Students.Contracts.Requests;
 using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
 using TPS.Infrastructure.Data;
@@ -17,21 +10,21 @@ namespace TPS.Application.Areas.Shared.Students;
 
 public class StudentService(ApplicationDbContext context) : IStudentsService
 {
-    public async Task<Result<Guid>> addCommitte(AddCommitteeRequest request)
+    public async Task<Result<Guid>> addCommitte(Guid StudentId, Guid SocietyId, AddCommitteeRequest request)
     {
         var data = await context.SocietiesMembers
            .FirstOrDefaultAsync(
-           s => s.StudentId == request.StudentId &&
-           s.SocietyId == request.SocietyId);
+           s => s.StudentId ==StudentId &&
+           s.SocietyId == SocietyId);
 
         if (data is null)
         {
-            return Result.Failure<Guid>(Error.GuidInvalid(request.StudentId));
+            return Result.Failure<Guid>(Error.GuidInvalid(StudentId));
 
         }
         if (data.IsCommittee == true)
         {
-            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()));
+            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student),StudentId.ToString()));
         }
         data.IsCommittee = true;
         data.Position = request.Position;
@@ -39,11 +32,11 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
         var check = context.SaveChanges();
         if (check > 0)
         {
-            return Result.Success(request.StudentId);
+            return Result.Success(StudentId);
         }
         else
         {
-            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()));
+            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student),StudentId.ToString()));
         }
     }
 
@@ -70,28 +63,28 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
         return Result.Success();
     }
 
-    public async Task<Result<Guid>> editMember(EditMemberRequest request)
+    public async Task<Result<Guid>> editMember(Guid StudentId, Guid SocietyId, string Position)
     {
-        if (await context.Societies.FirstOrDefaultAsync(s => s.Id == request.SocietyId) is null)
+        if (await context.Societies.FirstOrDefaultAsync(s => s.Id == SocietyId) is null)
         {
-            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), request.StudentId.ToString()));
+            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), StudentId.ToString()));
 
         }
         var data = await context.SocietiesMembers
             .Include(x => x.Society)
-            .FirstOrDefaultAsync(s => s.StudentId == request.StudentId
-            && s.SocietyId == request.SocietyId);
+            .FirstOrDefaultAsync(s => s.StudentId == StudentId
+            && s.SocietyId == SocietyId);
 
         if (data is null)
         {
-            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), request.StudentId.ToString()));
+            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), StudentId.ToString()));
         }
 
-        data.Position = request.Position;
+        data.Position = Position;
         var check = await context.SaveChangesAsync();
         if (check <= 0)
         {
-            return Result.Failure<Guid>(Error.InternalServerError(request.StudentId.ToString()));
+            return Result.Failure<Guid>(Error.InternalServerError(StudentId.ToString()));
         }
         return Result.Success(data.StudentId);
     }
