@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TPS.Application.Areas.AdminArea.Home.Contracts
+namespace TPS.Application.Areas.StudentArea.Home.Contracts
 {
     public class StudentEventListDTO
     {

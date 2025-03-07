@@ -27,12 +27,21 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             }
             public async Task<Result<EventDetailsDTO>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var eventRequest = await _context.EventsApproval.FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+                var eventRequest = await _context.EventsApproval
+                    .Include(x => x.Event)
+                        .ThenInclude(x => x.Society)
+                            .ThenInclude(x => x.Advisor)
+                    .Include(x => x.Event)
+                        .ThenInclude(x => x.Student)
+                            .ThenInclude(x => x.Department)
+                    .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+
                 if (eventRequest == null)
                     return Result.Failure<EventDetailsDTO>(Error.NotFound(nameof(Event), request.EventRequestId.ToString()));
 
                 var eventManager = _context.SocietiesMembers
                     .Where(x => x.StudentId == eventRequest.Event.StudentId);
+
                 var data = new EventDetailsDTO
                 {
                     Type = eventRequest.Event.Type,
@@ -52,11 +61,12 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     IsAdvisorApproved = eventRequest.AdvisorApproval,
                     IsDeanAssistantApproved = eventRequest.DeanAssistantApproval,
                     JoinYear = eventManager
-                            .Where(y=>y.SocietyId == eventRequest.Event.SocietyId)
+                            .Include(y => y.Society)
+                            .Where(y => y.SocietyId == eventRequest.Event.SocietyId)
                             .Select(y => y.JoinDate.Year)
                             .SingleOrDefault(),
                     StudentRole = eventManager
-                            .Where(y=>y.SocietyId == eventRequest.Event.SocietyId)
+                            .Where(y => y.SocietyId == eventRequest.Event.SocietyId)
                             .Select(y => y.Position)
                             .SingleOrDefault() ?? "Unknown",
                     JoinedSocietiesNames = eventManager
@@ -84,14 +94,15 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                         AdvisorEmail = eventRequest.Event.Society.Advisor.Email!,
                         IsAttendeesFormEnabled = eventRequest.Event.IsAttendeesFormEnabled,
                         Admins = _context.FacultyMembers
-                                .Where(y => y.Rank.Title.ToLower() == "Dean".ToLower() || y.Rank.Title.ToLower() == "Dean Assistant".ToLower())
-                                .Select(y => new ApprovalAdministrators
-                                {
-                                    FacultyMemberName = $"{y.FirstName} {y.LastName}",
-                                    FacultyMemberEmail = y.Email!,
-                                    Rank = y.Rank.Title
-                                })
-                                .ToList()
+                             .Include(y => y.Rank)
+                             .Where(y => y.Rank.Title.ToLower() == "Dean".ToLower() || y.Rank.Title.ToLower() == "Dean Assistant".ToLower())
+                             .Select(y => new ApprovalAdministrators
+                             {
+                                 FacultyMemberName = $"{y.FirstName} {y.LastName}",
+                                 FacultyMemberEmail = y.Email!,
+                                 Rank = y.Rank.Title
+                             })
+                             .ToList()
                     }
                 };
                 return Result.Success(data);
