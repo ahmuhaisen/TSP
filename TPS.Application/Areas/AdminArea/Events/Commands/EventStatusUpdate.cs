@@ -33,12 +33,9 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
             }
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
-                // If the current user is an Advisor => If the advisor decision is made, return 400 // The advisor can't change his decision
-                // If the current user is a Dean or Dean Assistant => If the advisor decision is not made, return 400
-                // If the current user is a Dean or Dean Assistant => If the advisor decision is made => 
-                //     advisor decision is accepted => continue with the dean decision
-                //     advisor decision is rejected => return 400
-                var facultyMember = await _context.FacultyMembers.FirstOrDefaultAsync(x => x.Id == request.UserId);
+                var facultyMember = await _context.FacultyMembers
+                .Include(x => x.Rank)
+                .FirstOrDefaultAsync(x => x.Id == request.UserId);
                 //User not found
                 if (facultyMember == null)
                 {

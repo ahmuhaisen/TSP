@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TPS.Application.Abstractions.Messaging;
-using TPS.Application.Areas.AdminArea.Home.Contracts;
+using TPS.Application.Areas.StudentArea.Home.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Shared;
 
-namespace TPS.Application.Areas.AdminArea.Home.Queries
+namespace TPS.Application.Areas.StudentArea.Home.Queries
 {
-    public class StudentGetHomeStatistics
+    public class GetHomeStatistics
     {
         public sealed class Query : IQuery<Result<StudentHomeStatisticsDTO>>
         {
@@ -44,8 +44,8 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
 
                 var studentStatistics = new StudentHomeStatisticsDTO
                 {
-                    NoSocieties=totalSocieties,
-                    NoAttendedEvents = totalAttendedEvents
+                    NumSocieties=totalSocieties,
+                    NumAttendedEvents = totalAttendedEvents
                 };
                 return Result.Success(studentStatistics);
             }

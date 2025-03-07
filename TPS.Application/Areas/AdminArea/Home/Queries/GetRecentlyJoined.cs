@@ -10,12 +10,12 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
     {
         public sealed class Query : IQuery<Result<List<RecentlyJoinedDTO>>>
         {
-            public string? SearchTerm { get; set; }
-            private Query(string? searchTerm)
+            public Guid LoggedInUser { get; set; }
+            private Query(Guid LoggedInUser)
             {
-                SearchTerm = searchTerm;
+                this.LoggedInUser = LoggedInUser;
             }
-            public static Query Create(string? searchTerm) => new Query(searchTerm);
+            public static Query Create(Guid LoggedInUser) => new Query(LoggedInUser);
         }
         public sealed class Handler : IQueryHandler<Query, Result<List<RecentlyJoinedDTO>>>
         {
@@ -29,6 +29,7 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
                 var recentlyJoinedMembers = await _context.SocietiesMembers
                     .Include(x => x.Society)
                     .Include(x => x.Student)
+                    .ThenInclude(x=>x.Department)
                     .AsNoTracking()
                     .OrderByDescending(x => x.JoinDate)
                     .Take(4)
