@@ -44,7 +44,7 @@ public class GetMemberEvents
                    Title = s.Event.Name,
                    Description = s.Event.Description,
                    Location = s.Event.LocationString,
-                   Type = s.Event.type,
+                   Type = s.Event.Type,
                    StartDate = s.Event.StartTime,
                    EndDate = s.Event.EndTime,
                    DeanAssistantApproval = s.DeanAssistantApproval,

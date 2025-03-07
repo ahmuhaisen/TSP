@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TPS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class SolveProblemOFShadowForeignKey : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -293,10 +293,10 @@ namespace TPS.Infrastructure.Migrations
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RequestTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAttendeesFormEnabled = table.Column<bool>(type: "bit", nullable: false),
                     SocietyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsAttendeesFormEnabled = table.Column<bool>(type: "bit", nullable: false)
+                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -305,10 +305,36 @@ namespace TPS.Infrastructure.Migrations
                         name: "FK_Events_Societies_SocietyId",
                         column: x => x.SocietyId,
                         principalTable: "Societies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Events_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MembershipRequest",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SocietyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Section = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Motivation = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    RequestedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MembershipRequest", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MembershipRequest_Societies_SocietyId",
+                        column: x => x.SocietyId,
+                        principalTable: "Societies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MembershipRequest_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id");
@@ -538,6 +564,16 @@ namespace TPS.Infrastructure.Migrations
                 column: "RankId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MembershipRequest_SocietyId",
+                table: "MembershipRequest",
+                column: "SocietyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MembershipRequest_StudentId",
+                table: "MembershipRequest",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Societies_AdvisorId",
                 table: "Societies",
                 column: "AdvisorId");
@@ -571,6 +607,9 @@ namespace TPS.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "EventsApproval");
+
+            migrationBuilder.DropTable(
+                name: "MembershipRequest");
 
             migrationBuilder.DropTable(
                 name: "SocietiesMembers");

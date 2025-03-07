@@ -12,8 +12,8 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250213005747_SolveProblemOFShadowForeignKey")]
-    partial class SolveProblemOFShadowForeignKey
+    [Migration("20250307130016_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -385,7 +385,7 @@ namespace TPS.Infrastructure.Migrations
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("type")
+                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -431,6 +431,43 @@ namespace TPS.Infrastructure.Migrations
                     b.HasIndex("FacultyMemberId");
 
                     b.ToTable("EventsApproval");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Motivation")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("RequestedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Section")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("SocietyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SocietyId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("MembershipRequest");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.Rank", b =>
@@ -818,7 +855,7 @@ namespace TPS.Infrastructure.Migrations
                     b.HasOne("TSP.Domain.Entities.Society", "Society")
                         .WithMany("Events")
                         .HasForeignKey("SocietyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TSP.Domain.Entities.Student", "Student")
@@ -849,6 +886,25 @@ namespace TPS.Infrastructure.Migrations
                     b.Navigation("Event");
 
                     b.Navigation("FacultyMember");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
+                {
+                    b.HasOne("TSP.Domain.Entities.Society", "Society")
+                        .WithMany("MembershipRequests")
+                        .HasForeignKey("SocietyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TSP.Domain.Entities.Student", "Student")
+                        .WithMany("MembershipRequests")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Society");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.SocietiesMembers", b =>
@@ -926,6 +982,8 @@ namespace TPS.Infrastructure.Migrations
                 {
                     b.Navigation("Events");
 
+                    b.Navigation("MembershipRequests");
+
                     b.Navigation("SocietiesMembers");
                 });
 
@@ -936,6 +994,8 @@ namespace TPS.Infrastructure.Migrations
 
             modelBuilder.Entity("TSP.Domain.Entities.Student", b =>
                 {
+                    b.Navigation("MembershipRequests");
+
                     b.Navigation("RequestedEvents");
 
                     b.Navigation("SocietiesMembers");

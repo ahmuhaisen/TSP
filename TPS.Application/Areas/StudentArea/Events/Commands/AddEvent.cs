@@ -49,7 +49,7 @@ public class AddEvent
                 IsAttendeesFormEnabled = Request.IsAttendanceFormEnabled,
                 StartTime = Request.StartDate,
                 EndTime = Request.EndDate,
-                type = Request.Type,
+                Type = Request.Type,
                 LocationString = Request.Location,
                 RequestTime = DateTime.Now
             };

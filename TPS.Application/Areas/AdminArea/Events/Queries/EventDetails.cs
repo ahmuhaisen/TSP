@@ -35,7 +35,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     .Where(x => x.StudentId == eventRequest.Event.StudentId);
                 var data = new EventDetailsDTO
                 {
-                    Type = eventRequest.Event.type,
+                    Type = eventRequest.Event.Type,
                     EventDate = DateOnly.FromDateTime(eventRequest.Event.StartTime),
                     StartTime = TimeOnly.FromDateTime(eventRequest.Event.StartTime),
                     EndTime = TimeOnly.FromDateTime(eventRequest.Event.EndTime),

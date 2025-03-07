@@ -13,7 +13,8 @@ public class Society : Entity
 
     public Guid AdvisorId { get; set; }
     public FacultyMember Advisor { get; set; } = null!;
-    public ICollection<SocietiesMembers> SocietiesMembers { get; set; } = new List<SocietiesMembers>();
-    public ICollection<Event>Events {get; set; } = new List<Event>();
+    public ICollection<SocietiesMembers> SocietiesMembers { get; set; } = [];
+    public ICollection<Event>Events {get; set; } = [];
+    public ICollection<MembershipRequest> MembershipRequests { get; set; } = [];
 
 }

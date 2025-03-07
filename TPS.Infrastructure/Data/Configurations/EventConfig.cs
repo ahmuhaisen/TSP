@@ -16,19 +16,19 @@ namespace TPS.Infrastructure.Data.Configurations
                 .HasMaxLength(250)
                 .IsRequired();
 
-            builder.Property(d => d.type)
+            builder.Property(d => d.Type)
                 .IsRequired(false);
 
             builder.HasOne(s => s.Society)
                 .WithMany(s=>s.Events)
                 .HasForeignKey(d => d.SocietyId)
-                .OnDelete(DeleteBehavior.Cascade)
+                .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired();
 
             builder.HasOne(s => s.Student)
                 .WithMany(s => s.RequestedEvents)
                 .HasForeignKey(d => d.StudentId)
-                .OnDelete(DeleteBehavior.Cascade)
+                .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired();
         }
     }
