@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.AdminArea.Home.Contracts;
 using TPS.Infrastructure.Data;
@@ -11,10 +10,12 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
     {
         public sealed class Query : IQuery<Result<HomeStatisticsDTO>>
         {
-            public Query()
+            public string? SearchTerm { get; }
+            private Query(string? searchTerm)
             {
+                SearchTerm = searchTerm;
             }
-            public static Query Create() => new Query();
+            public static Query Create(string? searchTerm) => new Query(searchTerm);
         }
         public sealed class Handler : IQueryHandler<Query, Result<HomeStatisticsDTO>>
         {

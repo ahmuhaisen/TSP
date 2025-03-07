@@ -39,10 +39,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
 
             public async Task<Result<List<EventDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var facultyMember = await _context.FacultyMembers
-                    .Include(x=>x.Rank)
-                    .FirstOrDefaultAsync(x => x.Id == request.UserId);
-
+                var facultyMember = await _context.FacultyMembers.FirstOrDefaultAsync(y => y.Id == request.UserId);
                 if (facultyMember == null)
                 {
                     return Result<List<EventDTO>>.Failure<List<EventDTO>>(Error.NotFound("Faculty Member", request.UserId.ToString()));
@@ -53,8 +50,6 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 if (facultyMember.Rank.Title == "Dean Assistant" || facultyMember.Rank.Title == "Dean")
                 {
                     var data = await _context.EventsApproval
-                        .Include(x=>x.Event)
-                        .ThenInclude(x=>x.Society)
                         .Where(x => x.AdvisorApproval == true)
                         .OrderByDescending(x => x.Event.StartTime)
                         .Select(x => new EventDTO
@@ -84,8 +79,6 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 // The user has and advisor role
                 // Return the requests for societies he advises
                 var result = await _context.EventsApproval
-                    .Include(x=>x.Event)
-                    .ThenInclude(x=>x.Society)
                     .Where(x => x.Event.Society.AdvisorId==request.UserId)
                     .OrderByDescending(x => x.Event.StartTime)
                     .Select(x => new EventDTO
@@ -101,6 +94,8 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     })
                     .ToListAsync();
                 return Result.Success(result);
+                // TODO: Validate the user id if he / she is an advisor of a society or a dean / dean assistant DONE
+                // TODO: Edit the query to return only the events that the user is an advisor of DONE
             }
         }
     }

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TPS.Application.Abstractions.Messaging;
-using TPS.Application.Areas.StudentArea.Home.Contracts;
+using TPS.Application.Areas.AdminArea.Home.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Shared;
 
-namespace TPS.Application.Areas.StudentArea.Home.Queries
+namespace TPS.Application.Areas.AdminArea.Home.Queries
 {
-    public class GetHomeEvents
+    public class StudentGetHomeEvents
     {
         public sealed class Query : IQuery<Result<List<StudentEventListDTO>>>
         {
@@ -34,8 +34,6 @@ namespace TPS.Application.Areas.StudentArea.Home.Queries
                 var today=DateTime.Now;
                 var resultEvents = await _context.EventsApproval
                     .Include(x => x.Event)
-                        .ThenInclude(x=>x.Society)
-                            .ThenInclude(x=>x.SocietiesMembers)
                     .Where(x => x.AdvisorApproval == true
                             && x.DeanAssistantApproval == true
                             && x.Event.StartTime > today)

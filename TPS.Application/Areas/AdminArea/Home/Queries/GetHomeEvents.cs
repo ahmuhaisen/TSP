@@ -10,13 +10,13 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
     {
         public sealed class Query : IQuery<Result<List<EventListDTO>>>
         {
-            public Guid LoggedInUser { get; }
+            public Guid AdvisorId { get; }
 
             private Query(Guid id)
             {
-                LoggedInUser = id;
+                AdvisorId = id;
             }
-            public static Query Create(Guid LoggedInUser) => new Query(LoggedInUser);
+            public static Query Create(Guid AdvisorId) => new Query(AdvisorId);
         }
         public sealed class Handler : IQueryHandler<Query, Result<List<EventListDTO>>>
         {
@@ -35,10 +35,9 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
 
                 var finishedEvent = await allEventsQuery
                     .Include(s => s.Event)
-                    .ThenInclude(s=>s.Society)
                     .Where(s => s.AdvisorApproval==true
                             && s.DeanAssistantApproval==true
-                            && s.FacultyMemberId == request.LoggedInUser
+                            && s.FacultyMemberId == request.AdvisorId
                             && s.Event.EndTime < today)
                     .OrderByDescending(s => s.Event.EndTime)
                     .Select(s => new EventListDTO
@@ -61,7 +60,6 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
 
                 var upcomingEvent = await allEventsQuery
                     .Include(s => s.Event)
-                    .ThenInclude(s=> s.Society)
                     .Where(s => s.AdvisorApproval == true && s.DeanAssistantApproval==true
                             && s.Event.StartTime > today)
                     .OrderBy(s => s.Event.StartTime)
@@ -74,7 +72,7 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
                         LogoId = s.Event.Society.LogoId,
                         LocationString = s.Event.LocationString,
                         StartTime = s.Event.StartTime,
-                        isAdvised = s.FacultyMemberId == request.LoggedInUser ? true : false,
+                        isAdvised = s.FacultyMemberId == request.AdvisorId ? true : false,
                         isFinished = false
                     })
                     .ToListAsync();
