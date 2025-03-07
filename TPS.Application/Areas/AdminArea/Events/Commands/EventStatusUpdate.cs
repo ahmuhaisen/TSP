@@ -38,14 +38,19 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                 // If the current user is a Dean or Dean Assistant => If the advisor decision is made => 
                 //     advisor decision is accepted => continue with the dean decision
                 //     advisor decision is rejected => return 400
-                var facultyMember = await _context.FacultyMembers.FirstOrDefaultAsync(x => x.Id == request.UserId);
+                var facultyMember = await _context.FacultyMembers
+                .Include(x => x.Rank)
+                .FirstOrDefaultAsync(x => x.Id == request.UserId);
                 //User not found
                 if (facultyMember == null)
                 {
                     return Result.Failure(Error.NotFound("Faculty Member", request.UserId.ToString()));
                 }
                 //Event not found
-                var eventRequest = await _context.EventsApproval.FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+                var eventRequest = await _context.EventsApproval
+                .Include(x => x.Event)
+                .ThenInclude(x => x.Society)
+                .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
                 if (eventRequest == null)
                 {
                     return Result.Failure(Error.NotFound("Event", request.EventRequestId.ToString()));

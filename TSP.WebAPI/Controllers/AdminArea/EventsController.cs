@@ -62,6 +62,7 @@ public class EventsController : ApiController
         return await FromResult(task);
     }
 
+    // TODO: remove this api 
     // TODO: AdminArea/Events/:id/Attendees DONE
     [HttpGet("{eventRequestId}/Attendees")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]

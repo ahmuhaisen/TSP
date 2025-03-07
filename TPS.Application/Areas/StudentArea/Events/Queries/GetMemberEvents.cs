@@ -12,6 +12,7 @@ using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.StudentArea.Events.Queries;
 
+//TODO: Rename: GetMemberEventsRequests
 public class GetMemberEvents
 {
     public sealed class Query : IQuery<Result<List<MemberEventDetailsDTO>>>

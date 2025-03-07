@@ -14,7 +14,7 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
     {
         var data = await context.SocietiesMembers
            .FirstOrDefaultAsync(
-           s => s.StudentId ==StudentId &&
+           s => s.StudentId == StudentId &&
            s.SocietyId == SocietyId);
 
         if (data is null)
@@ -24,7 +24,7 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
         }
         if (data.IsCommittee == true)
         {
-            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student),StudentId.ToString()));
+            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), StudentId.ToString()));
         }
         data.IsCommittee = true;
         data.Position = request.Position;
@@ -36,14 +36,14 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
         }
         else
         {
-            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student),StudentId.ToString()));
+            return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), StudentId.ToString()));
         }
     }
 
     public async Task<Result> deleteMember(Guid memberId, Guid SocietyId)
     {
         var data = await context.SocietiesMembers
-    .FirstOrDefaultAsync(s => s.StudentId == memberId && s.SocietyId == SocietyId);
+                                .FirstOrDefaultAsync(s => s.StudentId == memberId && s.SocietyId == SocietyId);
         if (data is null)
         {
             return Result.Failure(Error.NotFound(nameof(SocietiesMembers)));

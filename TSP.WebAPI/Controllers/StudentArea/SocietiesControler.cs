@@ -15,16 +15,17 @@ public class SocietiesController : ApiController
     public SocietiesController(ISender sender) : base(sender)
     { }
 
-    [HttpGet("Society")]
+    [HttpGet("{societyId}")]
     [ProducesResponseType(typeof(SocietyDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> getSocietyById([FromQuery] Guid SocietyId)
+    public async Task<IActionResult> getSocietyById(Guid SocietyId)
     {
         var query = GetSocietyById.Query.Create(SocietyId);
         var task = _sender.Send(query);
         return await FromResult(task);
     }
-    [HttpDelete("SocietyMember")]
+
+    [HttpDelete("{societyId}/Members/{studentId}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteMemberFromSociety(Guid StudentId, Guid SocietyId)
@@ -36,6 +37,7 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
+    //TODO: Relocate this to AdminArea
     [HttpPut("{societyId}/Members/{studentId}/Committee")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
@@ -48,4 +50,5 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
+    //TODO: UpdateSocietyMember endpoint
 }

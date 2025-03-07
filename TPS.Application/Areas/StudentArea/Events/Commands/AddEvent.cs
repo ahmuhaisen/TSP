@@ -20,17 +20,18 @@ public class AddEvent
         {
             return new Command
             {
-               eventRequest = eventRequest,
+                eventRequest = eventRequest,
             };
         }
     }
-        public sealed class Handler(ApplicationDbContext context) : ICommandHandler<Command, Result<Guid>>
+    public sealed class Handler(ApplicationDbContext context) : ICommandHandler<Command, Result<Guid>>
+    {
+        public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
-            public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
-            {
-                var Request = request.eventRequest;
-                var member = await context.SocietiesMembers
-                .FirstOrDefaultAsync(s => s.StudentId == Request.CommitteeId && s.SocietyId == Request.SocietyId);
+            var Request = request.eventRequest;
+            var member = await context.SocietiesMembers
+            .FirstOrDefaultAsync(s => s.StudentId == Request.CommitteeId && s.SocietyId == Request.SocietyId);
+            
             if (member is null)
             {
                 return Result.Failure<Guid>(Error.NotFound(nameof(Student), Request.CommitteeId.ToString()));
@@ -52,19 +53,19 @@ public class AddEvent
                 LocationString = Request.Location,
                 RequestTime = DateTime.Now
             };
-            
+
             await context.Events.AddAsync(
               tempEvent
              );
             var checkChanges = context.SaveChanges();
-            if(checkChanges<=0)
+            if (checkChanges <= 0)
             {
                 return Result.Failure<Guid>(Error.InternalServerError("could not save record"));
             }
-             
 
-                return Result.Success(tempEvent.Id);
-            }
+
+            return Result.Success(tempEvent.Id);
         }
     }
+}
 

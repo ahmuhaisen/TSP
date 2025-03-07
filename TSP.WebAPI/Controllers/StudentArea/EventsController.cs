@@ -16,21 +16,22 @@ public class EventsController : ApiController
 
     }
 
-    //api/studentArea/events/events
-    [HttpGet("Events")]
+    //TODO: api/studentArea/events/requests
+    [HttpGet("Requests")]
     [ProducesResponseType(typeof(MemberEventDetailsDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAllEvents()
     {
         var query = GetMemberEvents.Query.Create(GetCurrentUserId()!.Value);
         var task = _sender.Send(query);
-        return await FromResult(task);    
+        return await FromResult(task);
     }
 
-    [HttpPut("Event")]
+    // TODO: Rename CreateEventRequest
+    [HttpPost("Requests")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> addEvent(AddEventRequest request)
+    public async Task<IActionResult> createEventRequest(AddEventRequest request)
     {
         var query = AddEvent.Command.Create(request);
         var task = _sender.Send(query);
