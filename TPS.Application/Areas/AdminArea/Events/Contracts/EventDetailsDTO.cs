@@ -4,8 +4,8 @@
     {
         public string? Type { get; set; }
         public DateOnly EventDate { get; set; }
-        public TimeOnly StartTime { get; set; } //TODO: Rename to StartTime
-        public TimeOnly EndTime { get; set; } //TODO: Rename to EndTime
+        public TimeOnly StartTime { get; set; } //TODO: Rename to StartTime DONE
+        public TimeOnly EndTime { get; set; } //TODO: Rename to EndTime DONE
         public required string SocietyDescription { get; set; }
         public required string SocietyLogoId { get; set; }
         public required Guid AdvisorId { get; set; }
@@ -23,7 +23,9 @@
         public required EventRequestDTO EventRequestDTO { get; set; }
 
         //TODO: Add these for application history
-        // IsAdvisorApproved: boolean
-        // IsDeanApproved: boolean
+        // IsAdvisorApproved: boolean DONE
+        // IsDeanApproved: boolean DONE
+        public bool? IsAdvisorApproved { get; set; }
+        public bool? IsDeanAssistantApproved { get; set; }
     }
 }
