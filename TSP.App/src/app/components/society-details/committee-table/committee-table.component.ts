@@ -16,6 +16,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { committeePositions } from '../../../common/constants/committee-positions.constant';
+import { SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 @Component({
   selector: 'app-committee-table',
@@ -34,6 +36,7 @@ import { committeePositions } from '../../../common/constants/committee-position
     NzInputModule,
     NzSelectModule,
     NzAlertModule,
+    NzAvatarModule,
     ReactiveFormsModule,
   ],
   templateUrl: './committee-table.component.html',
@@ -44,9 +47,9 @@ export class CommitteeTableComponent {
 
   isEditCommitteePopupVisible = false;
   isEditCommitteePopupLoading = false;
-  memberToEdit: any = null;
+  memberToEdit: SocietyMember | undefined = undefined;
 
-  committee = input.required<any[]>();
+  committee = input.required<SocietyMember[]>();
 
   messageService = inject(NzMessageService);
 
@@ -83,7 +86,7 @@ export class CommitteeTableComponent {
   handleCancelEditCommitteeMember() {
     this.isEditCommitteePopupVisible = false;
     this.isEditCommitteePopupLoading = false;
-    this.memberToEdit = null;
+    this.memberToEdit = undefined;
     this.clearEditMemberForm();
   }
 
@@ -94,9 +97,9 @@ export class CommitteeTableComponent {
   setEditMemberFormValues() {
     console.table(this.memberToEdit);
     this.editCommitteeMemberForm!.get('name')?.disable();
-    this.editCommitteeMemberForm!.get('name')?.setValue(this.memberToEdit!.name);
+    this.editCommitteeMemberForm!.get('name')?.setValue(this.memberToEdit!.firstName + ' ' + this.memberToEdit!.lastName);
     this.editCommitteeMemberForm!.get('position')?.setValue(this.memberToEdit!.position);
-    this.editCommitteeMemberForm!.get('startDate')?.setValue(this.memberToEdit!.startDate);
+    this.editCommitteeMemberForm!.get('startDate')?.setValue(this.memberToEdit!.joinDate);
   }
 
   clearEditMemberForm() {

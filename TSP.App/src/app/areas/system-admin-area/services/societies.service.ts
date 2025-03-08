@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { Society, SocietyBasicDetails } from '../api-interfaces/society.types';
+import { PostSociety, Society, SocietyBasicDetails, SocietyMember, SocietyWithAdvisor } from '../api-interfaces/society.types';
 import { DbService } from '../../../common/services/db.service';
 import { AuthService } from '../../../common/services/auth.service';
 
@@ -17,11 +17,15 @@ export class SocietiesService {
 
 
   advisorSocieties() {
-    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/Advisor/AdvisorSocieties?advisorIds=${this.userId}`);
+    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/FacultyMember/Societies/Advised`);
   }
 
   otherSocieties() {
-    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/Advisor/OtherSocieties?advisorIds=${this.userId}`);
+    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/FacultyMember/Societies/Other`);
+  }
+
+  societyMembers(id: string, isCommittee: boolean) {
+    return this.db.getRequest<SocietyMember[]>(`AdminArea/Societies/${id}/Members?isCommittee=${isCommittee}`);
   }
 
   all() {
@@ -29,11 +33,11 @@ export class SocietiesService {
   }
 
   find(id: string) {
-    return this.db.getRequest<Society>(this.getUrlWithId(id));
+    return this.db.getRequest<SocietyWithAdvisor>(this.getUrlWithId(id));
   }
 
-  create(society: Society) {
-    return this.db.postRequest<Society, Society>(this.getUrl(), society);
+  create(society: PostSociety) {
+    return this.db.postRequest<PostSociety, PostSociety>(this.getUrl(), society);
   }
 
   update(id: string, society: Society) {

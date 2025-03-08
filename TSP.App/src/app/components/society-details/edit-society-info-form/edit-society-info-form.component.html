@@ -83,7 +83,7 @@
             <nz-select formControlName="advisorId" nzAllowClear="true" nzPlaceHolder="Select an advisor" nzShowSearch nzServerSearch (nzOnSearch)="onSearchFacultyMembers($event)">
                 @if (!isFacultyMembersLoading) {
                 @for (member of displayedFacultyMembers; track member.id) {
-                <nz-option [nzValue]="member.id" [nzLabel]="member.name"></nz-option>
+                <nz-option [nzValue]="member.id" [nzLabel]="member.fullName"></nz-option>
                 }
                 } @else {
                 <nz-option nzDisabled nzCustomContent>

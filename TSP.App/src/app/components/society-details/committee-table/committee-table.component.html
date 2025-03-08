@@ -22,12 +22,11 @@
         @for(data of committeeTable.data; track data) {
         <tr>
             <td class="flex items-center justify-center">
-                <img class="w-7 h-7 rounded-full ring-1 ring-gray-200"
-                    [src]="data.imageUrl" alt="organizers" />
+                <nz-avatar class="w-7 h-7 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="data.profileImageId" [nzText]="data.firstName.substring(0, 2).toUpperCase()" />
             </td>
             <td>
                 <p class="text-xs">
-                    {{ data.name }}
+                    {{ data.firstName }} {{ data.lastName }}
                 </p>
             </td>
             <td>
@@ -37,7 +36,7 @@
             </td>
             <td>
                 <p class="text-xs">
-                    {{ data.startDate | date: 'mediumDate' }}
+                    {{ data.joinDate | date: 'mediumDate' }}
                 </p>
             </td>
             @if(!isViewOnly()){
@@ -47,9 +46,9 @@
                     </button>
                     <nz-divider nzType="vertical" />
                     <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
-                        [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.name + ') from the committee?'"
+                        [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.firstName + ' ' + data.lastName + ') from the committee?'"
                         nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeCommitteeMember(data.id)">
-                        <nz-icon nzType="delete" />
+                        <nz-icon nzType="api" />
                     </button>
                 </td>
             }

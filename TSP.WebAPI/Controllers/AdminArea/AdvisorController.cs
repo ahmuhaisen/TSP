@@ -41,7 +41,7 @@ public class FacultyMemberController : ApiController
 
     // AdminArea/FacultyMembers
     [HttpGet]
-    [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<FacultyMemberBasicDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getAllAdvisors()
     {
