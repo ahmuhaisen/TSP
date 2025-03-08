@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TPS.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250308114725_Updated_SeedSocieties")]
+    partial class Updated_SeedSocieties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -775,71 +778,6 @@ namespace TPS.Infrastructure.Migrations
                     b.HasIndex("RankId");
 
                     b.ToTable("FacultyMembers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b6530abe-bfe5-4212-8acb-08dd5e35e650"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "2ec4788c-5f4c-421e-8abb-4a704a9d5421",
-                            DepartmentId = 2,
-                            Email = "asaf@ju.edu.jo",
-                            EmailConfirmed = false,
-                            FirstName = "Abdelbast",
-                            Gender = "Male",
-                            LastName = "A'asaf",
-                            LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELIhT49xTHOXI0y72eDfBfyjO2rS+RgWK4USYS3KSxFT8aC2IR8o0MsLuc7n/o+Mxg==",
-                            PhoneNumber = "0799999999",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "76ZUI2EVMGSBUF7NWRTDDMRYSD3P2OZA",
-                            TwoFactorEnabled = false,
-                            UserName = "asaf",
-                            EmployeeNumber = "CIS01",
-                            RankId = 2
-                        },
-                        new
-                        {
-                            Id = new Guid("e67bb4a6-0eb9-498a-8acd-08dd5e35e650"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "162f4cc2-930b-4a65-985b-69d59f9bcea0",
-                            DepartmentId = 2,
-                            Email = "musa@ju.edu.jo",
-                            EmailConfirmed = false,
-                            FirstName = "Musa",
-                            Gender = "Male",
-                            LastName = "Al Akhras",
-                            LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELIhT49xTHOXI0y72eDfBfyjO2rS+RgWK4USYS3KSxFT8aC2IR8o0MsLuc7n/o+Mxg==",
-                            PhoneNumber = "0799999999",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "76ZUI2EVMGSBUF7NWRTDDMRYSD3P2OZA",
-                            TwoFactorEnabled = false,
-                            UserName = "musa",
-                            EmployeeNumber = "CIS02",
-                            RankId = 4
-                        },
-                        new
-                        {
-                            Id = new Guid("75445a2d-ec45-4e52-8acc-08dd5e35e650"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "822ba1ac-825b-4df6-b6ec-e85b960ba0e2",
-                            DepartmentId = 4,
-                            Email = "ruba@ju.edu.jo",
-                            EmailConfirmed = false,
-                            FirstName = "Ruba",
-                            Gender = "Female",
-                            LastName = "E'baidat",
-                            LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELIhT49xTHOXI0y72eDfBfyjO2rS+RgWK4USYS3KSxFT8aC2IR8o0MsLuc7n/o+Mxg==",
-                            PhoneNumber = "0799999999",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "76ZUI2EVMGSBUF7NWRTDDMRYSD3P2OZA",
-                            TwoFactorEnabled = false,
-                            UserName = "ruba",
-                            EmployeeNumber = "AIS01",
-                            RankId = 4
-                        });
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.Student", b =>
