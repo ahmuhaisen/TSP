@@ -11,9 +11,9 @@ namespace TSP.WebAPI.Controllers;
 public class TestsController(ApplicationDbContext _context, IEmailService emailService, IGitHubService gitHubService) : ControllerBase
 {
     [HttpPost("GenerateFakeData")]
-    public async Task<IActionResult> GenerateFakeData()
+    public async Task<IActionResult> GenerateFakeData(int number = 5)
     {
-        var data = new FacultyMemberFaker().Generate(10);
+        var data = new FacultyMemberFaker().Generate(number);
 
         foreach (var row in data)
         {

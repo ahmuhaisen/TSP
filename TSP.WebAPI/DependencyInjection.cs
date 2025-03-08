@@ -16,6 +16,7 @@ using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
 using TPS.Application.Services;
 using TPS.Infrastructure.Data;
+using TPS.Infrastructure.DataGenerators;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared.Options;
 using TSP.WebAPI;
@@ -58,6 +59,8 @@ public static class DependencyInjection
             optionsBuilder.EnableDetailedErrors();
             optionsBuilder.EnableSensitiveDataLogging();
         });
+
+        services.AddScoped<ApplicationDataSeeder>();
 
         return services;
     }

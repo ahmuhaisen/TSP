@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Identity;
-using TSP.Domain.Entities;
+using TPS.Infrastructure.DataGenerators;
 using TSP.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,21 +12,13 @@ builder.Services.AddApiControllers()
     .AddSwagger()
     .AddApisSharedServices();
 
+
 var app = builder.Build();
 
-//// TODO: Should be removed
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-    string[] roles = { "Student", "Faculty" };
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new ApplicationRole { Name = role });
-        }
-    }
+    var seeder = scope.ServiceProvider.GetRequiredService<ApplicationDataSeeder>();
+    await seeder.Seed();
 }
 
 if (app.Environment.IsDevelopment())
