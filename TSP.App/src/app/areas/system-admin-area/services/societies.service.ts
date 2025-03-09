@@ -28,6 +28,11 @@ export class SocietiesService {
     return this.db.getRequest<SocietyMember[]>(`AdminArea/Societies/${id}/Members?isCommittee=${isCommittee}`);
   }
 
+  removeCommitteeMember(societyId: string, memberId: string)
+  {
+    return this.db.deleteRequest(`AdminArea/Societies/${societyId}/Members/${memberId}/Committee`);
+  }
+
   all() {
     return this.db.getRequest<Society[]>(this.model);
   }

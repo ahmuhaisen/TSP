@@ -58,6 +58,7 @@ export class MembersTableComponent {
   isViewOnly = input<boolean>(false);
   allMembers = input<SocietyMember[]>([]);
   listOfDisplayData: SocietyMember[] = [];
+  isLoading = input<boolean>(false);
 
   ngOnInit() {
     this.listOfDisplayData = [...this.allMembers()];

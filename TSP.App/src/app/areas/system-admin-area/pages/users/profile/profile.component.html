@@ -1,10 +1,17 @@
+@if(isLoading){
+    <nz-skeleton class="mt-4" [nzAvatar]="true" [nzLoading]="isLoading" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+}@else {
+
 <div class="flex flex-col md:flex-row items-center md:justify-between mt-5 gap-4 md:gap-0">
     <div class="flex items-center gap-3">
-        <img src="https://robohash.org/user?bgset=bg2" alt="user-avatar-image"
-            class="w-16 h-16 md:w-16 md:h-16 rounded-xl object-cover">
+        <nz-avatar class="w-16 h-16 md:w-16 md:h-16 bg-secondary text-lg rounded-xl flex items-center justify-center"
+            [nzSrc]="userProfile!.profileImageId"
+            [nzText]="userProfile!.fullName.substring(0, 2).toUpperCase()"></nz-avatar>
         <div>
-            <h3 class="font-manrope font-bold text-xl md:text-2xl text-center md:text-left text-gray-900">Suhaib Saleh</h3>
-            <p class="font-normal text-sm text-gray-500 text-left">Student</p>
+            <h3 class="font-manrope font-bold text-xl md:text-2xl text-center md:text-left text-gray-900">
+                {{ userProfile!.fullName }}
+            </h3>
+            <p class="font-normal text-sm text-gray-500 text-left">{{ userProfile!.userType }}</p>
         </div>
     </div>
 
@@ -16,36 +23,38 @@
                     stroke="#374151" stroke-width="1.6" stroke-linecap="round" />
             </svg>
             <span class="w-fit px-2 font-medium text-sm leading-7 text-gray-700">
-                Computer Science Department
+                {{ userProfile!.department }} department
             </span>
         </div>
     </div>
 </div>
 
-
 <nz-divider />
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5">
     <app-container-block [header]="{
-        title: 'Student Information',
+        title: userProfile!.userType + ' Information',
         icon: 'info-circle',
         link: null
     }">
         <div class="mt-5">
             <div class="flex flex-col gap-3">
                 <div class="flex items-center gap-3">
-                    <span class="font-medium text-gray-500">University Number:</span>
-                    <span class="font-medium text-gray-900">0211111</span>
+                    <span class="font-medium text-gray-500">{{ userProfile!.userType == 'Student' ? 'University' : 'Employee'}} Number:</span>
+                    <span class="font-medium text-gray-900">{{ userProfile!.number }}</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="font-medium text-gray-500">Email:</span>
                     <span class="font-medium text-gray-900">
-                        <a href="mailto:6c0Xn@example.com">suh0211111&#64;ju.edu.jo</a>
+                        {{ userProfile!.email }}
                     </span>
+                    <a [href]="'mailto:' + userProfile!.email">
+                        <nz-icon nzType="mail" nzTheme="twotone" nzSize="small"/>
+                    </a>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="font-medium text-gray-500">School:</span>
-                    <span class="font-medium text-gray-900">King Abdullah II School for Information Technology</span>
+                    <span class="font-medium text-gray-900">{{ userProfile!.school }}</span>
                 </div>
             </div>
         </div>
@@ -57,26 +66,23 @@
         link: null
     }">
         <div class="mt-5 grid grid-cols-1 gap-3">
-            <div class="flex flex-wrap sm:flex-nowrap items-center py-1 rounded-lg shadow">
-                <div class="w-16 p-2 shrink-0">
-                    <img src="https://robohash.org/society" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md"
-                        alt="profile image">
+            @for(society of userProfile!.memberships; track $index) {
+                <div class="flex flex-wrap sm:flex-nowrap items-center py-1 rounded-lg shadow">
+                    <div class="w-16 p-2 shrink-0">
+                        <!-- <img [src]="society.logoId" class="w-12 h-12 sm:w-10 sm:h-10" alt="profile image"> -->
+                        <nz-avatar [nzSrc]="society.societyLogoId" class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
+                                   [nzIcon]="'product'" nzShape="square" nzSize="large" />
+                    </div>
+                    <div>
+                        <p class="font-semibold text-sm">{{ society.societyName  | truncate: 35 }}</p>
+                        <span class="text-gray-600 text-xs block">{{ society.section | capitalizefirst }} | Since {{ society.joinDate | date }}</span>
+                    </div>
                 </div>
-                <div>
-                    <p class="font-semibold text-sm">Waves JU</p>
-                    <span class="text-gray-600 text-xs block">Technical Team | Since June 2024</span>
-                </div>
-            </div>
-            <div class="flex flex-wrap sm:flex-nowrap items-center py-1 rounded-lg shadow">
-                <div class="w-16 p-2 shrink-0">
-                    <img src="https://robohash.org/society2" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md"
-                        alt="profile image">
-                </div>
-                <div>
-                    <p class="font-semibold text-sm">IEEE CIS JU</p>
-                    <span class="text-gray-600 text-xs block">Public Relations | Since May 2022</span>
-                </div>
-            </div>
+            }@empty {
+                <nz-empty></nz-empty>
+            }
+
         </div>
     </app-container-block>
 </div>
+}

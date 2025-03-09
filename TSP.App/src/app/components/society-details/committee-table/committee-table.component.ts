@@ -18,6 +18,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { committeePositions } from '../../../common/constants/committee-positions.constant';
 import { SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 
 @Component({
   selector: 'app-committee-table',
@@ -44,14 +45,17 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 export class CommitteeTableComponent {
 
   isViewOnly = input<boolean>(false);
+  societyId = input<string>('');
 
   isEditCommitteePopupVisible = false;
   isEditCommitteePopupLoading = false;
   memberToEdit: SocietyMember | undefined = undefined;
 
   committee = input.required<SocietyMember[]>();
+  displayedCommittee: SocietyMember[] = [];
 
   messageService = inject(NzMessageService);
+  societiesService = inject(SocietiesService);
 
   formBuilder = inject(FormBuilder);
   editCommitteeMemberForm: FormGroup | undefined;
@@ -60,13 +64,14 @@ export class CommitteeTableComponent {
 
   displayedPositions = [...this.positions];
 
-
   ngOnInit() {
     this.editCommitteeMemberForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       position: ['', [Validators.required]],
       startDate: [new Date(), [Validators.required]],
     });
+
+    this.displayedCommittee = this.committee();
 
     this.positions = this.positions.filter(p => !this.isTakenPosition(p.name));
   }
@@ -81,6 +86,11 @@ export class CommitteeTableComponent {
 
   removeCommitteeMember(id: string) {
     // remove member
+    console.log('remove member', id);
+    this.societiesService.removeCommitteeMember(this.societyId(), id).subscribe(() => {
+      this.messageService.success('Committee member removed successfully.');
+      this.displayedCommittee = this.displayedCommittee!.splice(this.displayedCommittee!.findIndex(m => m.id === id), 1);
+    })
   }
 
   handleCancelEditCommitteeMember() {

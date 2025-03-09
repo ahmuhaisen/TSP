@@ -38,14 +38,14 @@ public class DeleteCommittee
                 s => s.StudentId == request.StudentId &&
                 s.SocietyId == request.SocietyId
                 );
+
             if (data is null)
             {
                 return Result.Failure<Guid>(Error.GuidInvalid(request.StudentId));
             }
-            if (data.IsCommittee == true)
+            if (!data.IsCommittee)
             {
                 return Result.Failure<Guid>(Error.ValueInvalid(nameof(Student), request.StudentId.ToString()));
-
             }
             data.IsCommittee = false;
             data.Position = "member";

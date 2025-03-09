@@ -37,8 +37,8 @@ export interface SocietyAdvisor {
 }
 
 export interface SocietyMember {
-  id: string;
-  firstName: string;
+    id: string;
+    firstName: string;
     lastName: string;
     position: string;
     joinDate: Date;
@@ -46,9 +46,9 @@ export interface SocietyMember {
 }
 
 export interface Member {
-  id: string;
-  name: string;
-  position: string;
-  memberSince: Date;
-  imageUrl: string;
+    id: string;
+    name: string;
+    position: string;
+    memberSince: Date;
+    imageUrl: string;
 }

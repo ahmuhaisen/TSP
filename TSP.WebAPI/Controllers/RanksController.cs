@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.Shared.Schools.Queries;
-using TSP.WebAPI.Controllers;
 
+namespace TSP.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

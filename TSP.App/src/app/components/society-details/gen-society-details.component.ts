@@ -17,6 +17,8 @@ import { SocietiesService } from '../../areas/system-admin-area/services/societi
 import { Member, SocietyMember, SocietyWithAdvisor } from '../../areas/system-admin-area/api-interfaces/society.types';
 import { DatePipe } from '@angular/common';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { Router } from '@angular/router';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 
 @Component({
   selector: 'app-gen-society-details',
@@ -31,6 +33,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
     MembersTableComponent,
     CommitteeTableComponent,
     NzModalModule,
+    NzSkeletonModule,
     EditSocietyInfoFormComponent,
     AddCommitteeMemberFormComponent,
     AddMemberFormComponent,
@@ -46,8 +49,13 @@ export class GenSocietyDetailsComponent {
   members = signal<SocietyMember[]>([]);
   committee = signal<SocietyMember[]>([]);
 
+  isSocietyLoading = false;
+  isCommitteeLoading = false;
+  isMembersLoading = false;
+
   messageService = inject(NzMessageService);
   breadcrumbService = inject(BreadcrumbService);
+  router = inject(Router);
 
   isEditSocietyInfoPopupVisible = false;
   isEditSocietyInfoLoading = false;
@@ -59,6 +67,10 @@ export class GenSocietyDetailsComponent {
   @ViewChild(AddCommitteeMemberFormComponent) addCommitteeMemberForm?: AddCommitteeMemberFormComponent;
 
   ngOnInit() {
+    this.isSocietyLoading = true;
+    this.isCommitteeLoading = true;
+    this.isMembersLoading = true;
+
     this.societyService.find(this.societyId()).subscribe({
       next: society => {
         if (!society) {
@@ -69,6 +81,12 @@ export class GenSocietyDetailsComponent {
         this.society = society;
         this.breadcrumbService.set('@societyName', this.society!.name);
         console.log('pageMode:', this.pageMode(), 'societyId:', this.societyId());
+
+        this.isSocietyLoading = false;
+      },
+      error: () => {
+        this.isSocietyLoading = false;
+        this.router.navigate(['/societies']);
       }
     });
 
@@ -76,12 +94,14 @@ export class GenSocietyDetailsComponent {
     this.societyService.societyMembers(this.societyId(), false).subscribe({
       next: members => {
         this.members.set(members);
+        this.isMembersLoading = false;
       }
     });
 
     this.societyService.societyMembers(this.societyId(), true).subscribe({
       next: members => {
         this.committee.set(members);
+        this.isCommitteeLoading = false;
       }
     });
   }

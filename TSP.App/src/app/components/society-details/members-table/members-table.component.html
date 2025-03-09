@@ -1,5 +1,5 @@
 <nz-table #requestsTable class="mt-5" [nzData]="listOfDisplayData" nzPaginationType="small" [nzPageSize]="10"
-    [nzLoading]="false" nzBordered="true" [nzScroll]="{ x: '800px' }" nzSize="small">
+    [nzLoading]="isLoading()" nzBordered="true" [nzScroll]="{ x: '800px' }" nzSize="small">
     <thead>
         <tr>
             <th nzWidth="70px"></th>
