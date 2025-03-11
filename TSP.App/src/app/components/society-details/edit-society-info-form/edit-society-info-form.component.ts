@@ -36,6 +36,41 @@ import { SocietiesService } from '../../../areas/system-admin-area/services/soci
     NzSelectModule
   ],
   templateUrl: './edit-society-info-form.component.html',
+  styles: [`
+    .avatar-uploader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    :host ::ng-deep .ant-upload.ant-upload-select-picture-card {
+      width: 150px;
+      height: 100px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    :host ::ng-deep .ant-upload-list-picture-card-container {
+      width: 144px;
+      height: 144px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    :host ::ng-deep .ant-form-item-label {
+      text-align: left;
+    }
+
+    :host ::ng-deep .ant-form-vertical .ant-form-item-label {
+      padding-bottom: 4px;
+    }
+
+    :host ::ng-deep .ant-form-vertical .ant-form-item {
+      margin-bottom: 16px;
+    }
+  `]
 })
 export class EditSocietyInfoFormComponent {
 
@@ -82,6 +117,11 @@ export class EditSocietyInfoFormComponent {
   onSearchFacultyMembers(value: string): void {
     //this.isFacultyMembersLoading = true;
     this.displayedFacultyMembers = this.facultyMembers.filter(member => member.fullName.toLowerCase().includes(value.toLowerCase()));
+  }
+
+  removeLogo(): void {
+    this.createSocietyForm!.get('logo')?.setValue('');
+    this.messageService.success('Logo removed successfully');
   }
 
   handleImageUpload({ file }: NzUploadChangeParam): void {

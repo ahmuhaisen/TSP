@@ -63,8 +63,12 @@ export class GenSocietyDetailsComponent {
   isAddCommitteePopupVisible = false;
   isAddCommitteeLoading = false;
 
+  isAddMemberPopupVisible = false;
+  isAddMemberLoading = false;
+
   @ViewChild(EditSocietyInfoFormComponent) editSocietyInfoFormComponent?: EditSocietyInfoFormComponent;
   @ViewChild(AddCommitteeMemberFormComponent) addCommitteeMemberForm?: AddCommitteeMemberFormComponent;
+  @ViewChild(AddMemberFormComponent) addMemberForm: AddMemberFormComponent | undefined;
 
   ngOnInit() {
     this.isSocietyLoading = true;
@@ -150,22 +154,41 @@ export class GenSocietyDetailsComponent {
     console.table(this.addCommitteeMemberForm!.getFormValue());
   }
 
-  isAddMemberPopupVisible = false;
-
   openAddMemberPopup() {
-    this.isAddCommitteePopupVisible = true;
+    this.isAddMemberPopupVisible = true;
   }
 
   handleCancelAddMember() {
-    this.isAddCommitteePopupVisible = false;
+    this.isAddMemberPopupVisible = false;
   }
 
   handleOkAddMember() {
-    if (!this.addCommitteeMemberForm!.isFormValid()) {
-      this.addCommitteeMemberForm!.messageService.error('Please fill in all required fields.');
+    if (!this.addMemberForm?.isFormValid()) {
+      this.messageService.error('Please fill in all required fields.');
       return;
     }
 
-    console.table(this.addCommitteeMemberForm!.getFormValue());
+    const formValue = this.addMemberForm.getFormValue();
+    this.isAddMemberLoading = true;
+
+    this.societyService.addMember(this.societyId(), formValue).subscribe({
+      next: () => {
+        this.messageService.success('Member added successfully');
+        this.isAddMemberPopupVisible = false;
+        // Refresh members list
+        this.societyService.societyMembers(this.societyId(), false).subscribe({
+          next: members => {
+            this.members.set(members);
+          }
+        });
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to add member');
+        console.error('Error adding member:', error);
+      },
+      complete: () => {
+        this.isAddMemberLoading = false;
+      }
+    });
   }
 }

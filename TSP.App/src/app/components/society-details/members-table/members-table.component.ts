@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -14,11 +14,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { EditMemberFormComponent } from "./edit-member-form/edit-member-form.component";
 import { Member, SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-
-
+import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 
 interface ColumnItem {
   name: string;
@@ -29,7 +29,6 @@ interface ColumnItem {
   filterMultiple: boolean;
   sortDirections: NzTableSortOrder[];
 }
-
 
 @Component({
   selector: 'app-members-table',
@@ -48,32 +47,39 @@ interface ColumnItem {
     NzToolTipModule,
     NzModalModule,
     NzAvatarModule,
-    EditMemberFormComponent
-],
+    EditMemberFormComponent,
+    NzFormModule
+  ],
   templateUrl: './members-table.component.html',
   styleUrl: './members-table.component.css'
 })
-export class MembersTableComponent {
+export class MembersTableComponent implements OnInit {
   
   isViewOnly = input<boolean>(false);
-  allMembers = input<SocietyMember[]>([]);
-  listOfDisplayData: SocietyMember[] = [];
   isLoading = input<boolean>(false);
-
-  ngOnInit() {
-    this.listOfDisplayData = [...this.allMembers()];
-    
-  }
-
-  isEditMemberPopupVisible = false;
-  isEditMemberLoading = false;
-  memberToEdit: SocietyMember | null = null;
-
+  allMembers = input.required<SocietyMember[]>();
+  listOfDisplayData: SocietyMember[] = [];
   searchValue = '';
   visible = false;
   expandSet = new Set<number>();
 
-  nzMessageService = inject(NzMessageService);
+  messageService = inject(NzMessageService);
+  societiesService = inject(SocietiesService);
+
+  isEditMemberPopupVisible = false;
+  isEditMemberLoading = false;
+  memberToEdit: SocietyMember | null = null;
+  editPosition = '';
+
+  ngOnInit() {
+    this.listOfDisplayData = [...this.allMembers()];
+  }
+
+  ngOnChanges() {
+    if (this.allMembers()) {
+      this.listOfDisplayData = [...this.allMembers()];
+    }
+  }
 
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
@@ -134,39 +140,65 @@ export class MembersTableComponent {
     },
   ];
 
-
   reset(): void {
     this.searchValue = '';
-    this.search();
+    this.listOfDisplayData = [...this.allMembers()];
   }
 
   search(): void {
     this.visible = false;
-    this.listOfDisplayData = this.allMembers().filter((item: SocietyMember) => item.firstName.indexOf(this.searchValue) !== -1);
+    this.listOfDisplayData = this.allMembers().filter((item: SocietyMember) =>
+      item.firstName.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+      item.lastName.toLowerCase().includes(this.searchValue.toLowerCase())
+    );
   }
 
   removeMember(id: string): void {
-    this.nzMessageService.success(`Removed member with ID: ${id} from the society.`);
+    this.messageService.success('Member removed successfully');
+    this.listOfDisplayData = this.listOfDisplayData.filter(m => m.id !== id);
   }
 
   openEditMemberPopup(id: string): void {
-    this.isEditMemberPopupVisible = true;
     this.memberToEdit = this.allMembers().find(member => member.id === id) || null;
-    this.nzMessageService.info(`Edit member with ID: ${id}.`);
+    if (this.memberToEdit) {
+      this.editPosition = this.memberToEdit.position;
+      this.isEditMemberPopupVisible = true;
+    }
   }
 
   handleCancelEditMember(): void {
     this.isEditMemberPopupVisible = false;
     this.memberToEdit = null;
+    this.editPosition = '';
   }
 
   handleOkEditMember(): void {
+    if (!this.memberToEdit || !this.editPosition.trim()) {
+      this.messageService.error('Please enter a valid position');
+      return;
+    }
+
     this.isEditMemberLoading = true;
-    setTimeout(() => {
-      this.isEditMemberPopupVisible = false;
-      this.isEditMemberLoading = false;
-      this.memberToEdit = null;
-      this.nzMessageService.success('Member edited successfully.');
-    }, 1000);
+    this.societiesService.editMember(this.memberToEdit.id, this.editPosition).subscribe({
+      next: () => {
+        this.messageService.success('Member position updated successfully');
+        // Update the local list
+        const index = this.listOfDisplayData.findIndex(m => m.id === this.memberToEdit!.id);
+        if (index !== -1) {
+          this.listOfDisplayData[index] = {
+            ...this.listOfDisplayData[index],
+            position: this.editPosition
+          };
+        }
+        this.handleCancelEditMember();
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to update member position');
+        console.error('Error updating member position:', error);
+      },
+      complete: () => {
+        this.isEditMemberLoading = false;
+      }
+    });
   }
 }

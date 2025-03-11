@@ -1,104 +1,121 @@
-<form nz-form [formGroup]="createSocietyForm!" class="grid grid-cols-1 gap-y-1">
-    <!-- Society name -->
-    <nz-form-item class="flex items-start">
-        <nz-form-label nzRequired class="w-1/4 text-left">Society name</nz-form-label>
-        <nz-form-control [nzSpan]="12" nzHasFeedback class="w-3/4" [nzErrorTip]="userErrorTpl">
-            <input nz-input formControlName="name" placeholder="e.g. The Eggs🥚 Society" />
-            <ng-template #userErrorTpl let-control>
-                @if(control.errors?.['required']){
-                <ng-container>
-                    Please enter the society name!
-                </ng-container>
-                }
-            </ng-template>
-        </nz-form-control>
-    </nz-form-item>
+<form nz-form [formGroup]="createSocietyForm!" nzLayout="vertical" class="flex flex-col md:flex-row gap-6">
+    <!-- Form fields section (left on md screens) -->
+    <div class="w-full md:w-2/3 order-2 md:order-1">
+        <!-- Society name -->
+        <nz-form-item>
+            <nz-form-label nzRequired>Society name</nz-form-label>
+            <nz-form-control nzHasFeedback [nzErrorTip]="nameErrorTpl">
+                <input nz-input formControlName="name" placeholder="e.g. The Eggs🥚 Society" />
+                <ng-template #nameErrorTpl let-control>
+                    @if(control.errors?.['required']){
+                    <ng-container>
+                        Please enter the society name!
+                    </ng-container>
+                    }
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
 
-    <!-- Description -->
-    <nz-form-item class="flex items-start">
-        <nz-form-label nzRequired class="w-1/4 text-left">Description</nz-form-label>
-        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="descriptionErrorTpl" class="w-3/4">
-            <nz-textarea-count [nzMaxCharacterCount]="200">
-                <textarea formControlName="description" nz-input rows="3"
-                    placeholder="e.g. The society is dedicated to..."></textarea>
-            </nz-textarea-count>
-            <ng-template #descriptionErrorTpl let-control>
-                @if(control.errors?.['required']){
-                <ng-container>
-                    Please enter the society name!
-                </ng-container>
-                }
-                @if(control.errors?.['maxlength']){
-                <ng-container>
-                    Description cannot exceed 200 characters
-                </ng-container>
-                }
-            </ng-template>
-        </nz-form-control>
-    </nz-form-item>
+        <!-- Description -->
+        <nz-form-item>
+            <nz-form-label nzRequired>Description</nz-form-label>
+            <nz-form-control nzHasFeedback [nzErrorTip]="descriptionErrorTpl">
+                <nz-textarea-count [nzMaxCharacterCount]="200">
+                    <textarea formControlName="description" nz-input rows="3"
+                        placeholder="e.g. The society is dedicated to..."></textarea>
+                </nz-textarea-count>
+                <ng-template #descriptionErrorTpl let-control>
+                    @if(control.errors?.['required']){
+                    <ng-container>
+                        Please enter the society description!
+                    </ng-container>
+                    }
+                    @if(control.errors?.['maxlength']){
+                    <ng-container>
+                        Description cannot exceed 200 characters
+                    </ng-container>
+                    }
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
 
-    <!-- Creation date -->
-    <nz-form-item class="flex items-start">
-        <nz-form-label nzRequired class="w-1/4 text-left">Creation Date</nz-form-label>
-        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="dateErrorTpl" class="w-3/4">
-            <nz-date-picker formControlName="creationDate"></nz-date-picker>
-            <ng-template #dateErrorTpl let-control>
-                @if(control.errors?.['required']){
-                <ng-container>
-                    Please enter the creation date!
-                </ng-container>
-                }
-            </ng-template>
-        </nz-form-control>
-    </nz-form-item>
+        <!-- Creation date and Theme Color in same row -->
+        <div class="grid grid-cols-2 gap-4">
+            <!-- Creation date -->
+            <nz-form-item>
+                <nz-form-label nzRequired>Creation Date</nz-form-label>
+                <nz-form-control nzHasFeedback [nzErrorTip]="dateErrorTpl">
+                    <nz-date-picker formControlName="creationDate" class="w-full"></nz-date-picker>
+                    <ng-template #dateErrorTpl let-control>
+                        @if(control.errors?.['required']){
+                        <ng-container>
+                            Please enter the creation date!
+                        </ng-container>
+                        }
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
 
-    <!-- Theme Color picker -->
-    <nz-form-item class="flex items-start">
-        <nz-form-label class="w-1/4 text-left">Theme Color</nz-form-label>
-        <nz-form-control [nzSpan]="12" class="w-3/4">
-            <nz-color-picker nzFormat="hex" formControlName="themeColor"></nz-color-picker>
-        </nz-form-control>
-    </nz-form-item>
+            <!-- Theme Color picker -->
+            <nz-form-item>
+                <nz-form-label>Theme Color</nz-form-label>
+                <nz-form-control>
+                    <nz-color-picker nzFormat="hex" formControlName="themeColor"></nz-color-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
 
-    <!-- Logo -->
-    <nz-form-item class="flex items-start">
-        <nz-form-label nzRequired class="w-1/4 text-left">Logo</nz-form-label>
-        <nz-form-control [nzSpan]="12" class="w-3/4">
-            <nz-upload nzListType="picture" [nzMultiple]="false" [nzShowUploadList]="true"
-                (nzChange)="handleImageUpload($event)">
-                <button nz-button>
-                    <span>
-                        <nz-icon nzType="upload" />
-                        Upload
-                    </span>
-                </button>
-            </nz-upload>
-        </nz-form-control>
-    </nz-form-item>
+        <!-- Advisor -->
+        <nz-form-item>
+            <nz-form-label nzRequired>Advisor</nz-form-label>
+            <nz-form-control nzHasFeedback [nzErrorTip]="advisorErrorTpl">
+                <nz-select formControlName="advisorId" nzAllowClear="true" nzPlaceHolder="Select an advisor" 
+                          nzShowSearch nzServerSearch (nzOnSearch)="onSearchFacultyMembers($event)">
+                    @if (!isFacultyMembersLoading) {
+                    @for (member of displayedFacultyMembers; track member.id) {
+                    <nz-option [nzValue]="member.id" [nzLabel]="member.fullName"></nz-option>
+                    }
+                    } @else {
+                    <nz-option nzDisabled nzCustomContent>
+                        <nz-icon nzType="loading" class="loading-icon" />
+                        Loading Faculty members...
+                    </nz-option>
+                    }
+                </nz-select>
+                <ng-template #advisorErrorTpl let-control>
+                    @if(control.errors?.['required']){
+                    <ng-container>
+                        Please select an advisor!
+                    </ng-container>
+                    }
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
 
-    <!-- Advisor -->
-    <nz-form-item class="flex items-start">
-        <nz-form-label nzRequired class="w-1/4 text-left">Advisor</nz-form-label>
-        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="advisorErrorTpl" class="w-3/4">
-            <nz-select formControlName="advisorId" nzAllowClear="true" nzPlaceHolder="Select an advisor" nzShowSearch nzServerSearch (nzOnSearch)="onSearchFacultyMembers($event)">
-                @if (!isFacultyMembersLoading) {
-                @for (member of displayedFacultyMembers; track member.id) {
-                <nz-option [nzValue]="member.id" [nzLabel]="member.fullName"></nz-option>
-                }
-                } @else {
-                <nz-option nzDisabled nzCustomContent>
-                    <nz-icon nzType="loading" class="loading-icon" />
-                    Loading Faculty members...
-                </nz-option>
-                }
-            </nz-select>
-            <ng-template #advisorErrorTpl let-control>
-                @if(control.errors?.['required']){
-                <ng-container>
-                    Please select an advisor!
-                </ng-container>
-                }
-            </ng-template>
-        </nz-form-control>
-    </nz-form-item>
+    <!-- Image uploader section (right on md screens) -->
+    <div class="w-full md:w-1/3 flex flex-col items-center order-1 md:order-2 mb-6 md:mb-0">
+        <nz-upload class="avatar-uploader" nzListType="picture-card" [nzShowUploadList]="false"
+            (nzChange)="handleImageUpload($event)">
+            @if (createSocietyForm!.get('logo')?.value) {
+            <img [src]="createSocietyForm!.get('logo')?.value" class="w-36 h-36 object-cover rounded-xl" />
+            } @else {
+            <div class="w-36 h-32 bg-gray-100 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors">
+                <nz-icon nzType="upload" class="text-3xl"></nz-icon>
+                <div class="mt-2 text-sm">Upload Logo</div>
+            </div>
+            }
+        </nz-upload>
+        
+        @if (createSocietyForm!.get('logo')?.value) {
+        <button nz-button nzType="default" class="mt-4" (click)="removeLogo()">
+            <nz-icon nzType="delete" nzTheme="outline"></nz-icon>
+            Remove Logo
+        </button>
+        }
+        
+        <div class="text-center text-xs text-gray-500">
+            Click to upload society logo
+        </div>
+    </div>
 </form>

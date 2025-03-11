@@ -1,5 +1,5 @@
 @if(isLoading){
-    <nz-skeleton class="mt-4" [nzAvatar]="true" [nzLoading]="isLoading" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+<nz-skeleton class="mt-4" [nzAvatar]="true" [nzLoading]="isLoading" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
 }@else {
 
 <div class="flex flex-col md:flex-row items-center md:justify-between mt-5 gap-4 md:gap-0">
@@ -14,20 +14,117 @@
             <p class="font-normal text-sm text-gray-500 text-left">{{ userProfile!.userType }}</p>
         </div>
     </div>
-
+    @if(authService.isUserIsTheCurrentUser(userProfile!.id)){
     <div class="w-full md:w-auto flex justify-center md:justify-end">
-        <div class="rounded-lg py-2 px-3 bg-gray-100 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path class="stroke-gray-700"
-                    d="M14.1667 11.6666V13.3333C14.1667 14.9046 14.1667 15.6903 13.6785 16.1785C13.1904 16.6666 12.4047 16.6666 10.8333 16.6666H7.50001C5.92866 16.6666 5.14299 16.6666 4.65483 16.1785C4.16668 15.6903 4.16668 14.9047 4.16668 13.3333V11.6666M16.6667 9.16663V13.3333M11.0157 10.434L12.5064 9.44014C14.388 8.18578 15.3287 7.55861 15.3287 6.66663C15.3287 5.77466 14.388 5.14749 12.5064 3.89313L11.0157 2.8993C10.1194 2.3018 9.67131 2.00305 9.16668 2.00305C8.66205 2.00305 8.21393 2.3018 7.31768 2.8993L5.82693 3.89313C3.9454 5.14749 3.00464 5.77466 3.00464 6.66663C3.00464 7.55861 3.9454 8.18578 5.82693 9.44014L7.31768 10.434C8.21393 11.0315 8.66205 11.3302 9.16668 11.3302C9.67131 11.3302 10.1194 11.0315 11.0157 10.434Z"
-                    stroke="#374151" stroke-width="1.6" stroke-linecap="round" />
-            </svg>
-            <span class="w-fit px-2 font-medium text-sm leading-7 text-gray-700">
-                {{ userProfile!.department }} department
-            </span>
-        </div>
+        <button nz-button nzType="primary" (click)="showEditProfileModal()">
+            <nz-icon nzType="edit" nzTheme="outline" />
+            Edit your profile
+        </button>
     </div>
+    }
 </div>
+
+<!-- Edit Profile Modal -->
+<nz-modal [(nzVisible)]="isEditProfileModalVisible" nzTitle="Edit Profile" nzCentered [nzClosable]="true"
+    [nzMaskClosable]="false" [nzOkLoading]="isEditProfileLoading" nzOkText="Save" [nzWidth]="768"
+    (nzOnCancel)="handleCancelEditProfile()" (nzOnOk)="handleOkEditProfile()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="profileForm" class="mt-3" nzLayout="vertical">
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Form fields section (left on md screens) -->
+                <div class="w-full md:w-2/3 order-2 md:order-1">
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Full Name</nz-form-label>
+                        <nz-form-control nzErrorTip="Please enter your full name">
+                            <input nz-input formControlName="fullName" placeholder="Full Name" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Email</nz-form-label>
+                        <nz-form-control nzErrorTip="Please enter a valid email">
+                            <input nz-input formControlName="email" placeholder="Email" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzRequired>{{ userProfile!.userType == 'Student' ? 'University' : 'Employee'}}
+                            Number</nz-form-label>
+                        <nz-form-control nzErrorTip="Please enter your number">
+                            <input nz-input formControlName="number" placeholder="Number" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label>Department</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="department" placeholder="Department" [disabled]="true" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label>School</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="school" placeholder="School" [disabled]="true" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <!-- Image uploader section (right on md screens) -->
+                <div class="w-full md:w-1/3 flex flex-col items-center order-1 md:order-2 mb-6 md:mb-0">
+                    <nz-upload class="avatar-uploader" [nzAction]="''" [nzBeforeUpload]="beforeUpload"
+                        [nzShowUploadList]="false" [nzFileList]="fileList">
+                        @if(isImageUploading) {
+                        <div class="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center">
+                            <nz-icon nzType="loading" class="text-2xl text-primary"></nz-icon>
+                        </div>
+                        } @else if(fileList.length > 0 && fileList[0].url) {
+                        <div class="relative">
+                            <nz-avatar
+                                class="w-24 h-24 bg-secondary text-lg rounded-xl flex items-center justify-center"
+                                [nzSrc]="fileList[0].url" [nzText]="userProfile!.fullName.substring(0, 2).toUpperCase()"
+                                nz-popover [nzPopoverVisible]="showRemovePhotoPopover"
+                                (nzPopoverVisibleChange)="showRemovePhotoPopover = $event" nzPopoverTrigger="click"
+                                [nzPopoverContent]="removePhotoTemplate"></nz-avatar>
+                            <div
+                                class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 rounded-xl flex items-center justify-center transition-all duration-200">
+                                <nz-icon nzType="camera"
+                                    class="text-white text-2xl opacity-0 hover:opacity-100"></nz-icon>
+                            </div>
+                        </div>
+                        <ng-template #removePhotoTemplate>
+                            <div class="p-1">
+                                <button nz-button nzType="text" nzDanger class="flex items-center"
+                                    (click)="removeProfileImage()">
+                                    <nz-icon nzType="delete" class="mr-1"></nz-icon>
+                                    Remove photo
+                                </button>
+                            </div>
+                        </ng-template>
+                        } @else {
+                        <div
+                            class="w-24 h-24 bg-gray-100 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors">
+                            <nz-icon nzType="upload" class="text-2xl"></nz-icon>
+                            <div class="mt-2 text-xs">Upload Photo</div>
+                        </div>
+                        }
+                    </nz-upload>
+
+                    @if(fileList.length > 0) {
+                    <button nz-button nzType="default" class="mt-3" (click)="removeProfileImage()">
+                        <nz-icon nzType="delete" nzTheme="outline"></nz-icon>
+                        Remove Image
+                    </button>
+                    }
+
+                    <div class="text-center mt-2 text-xs text-gray-500">
+                        Click on the image to change your profile photo.
+                    </div>
+                </div>
+            </div>
+        </form>
+    </ng-container>
+</nz-modal>
 
 <nz-divider />
 
@@ -40,7 +137,8 @@
         <div class="mt-5">
             <div class="flex flex-col gap-3">
                 <div class="flex items-center gap-3">
-                    <span class="font-medium text-gray-500">{{ userProfile!.userType == 'Student' ? 'University' : 'Employee'}} Number:</span>
+                    <span class="font-medium text-gray-500">{{ userProfile!.userType == 'Student' ? 'University' :
+                        'Employee'}} Number:</span>
                     <span class="font-medium text-gray-900">{{ userProfile!.number }}</span>
                 </div>
                 <div class="flex items-center gap-3">
@@ -49,12 +147,16 @@
                         {{ userProfile!.email }}
                     </span>
                     <a [href]="'mailto:' + userProfile!.email">
-                        <nz-icon nzType="mail" nzTheme="twotone" nzSize="small"/>
+                        <nz-icon nzType="mail" nzTheme="twotone" nzSize="small" />
                     </a>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="font-medium text-gray-500">School:</span>
                     <span class="font-medium text-gray-900">{{ userProfile!.school }}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="font-medium text-gray-500">Department:</span>
+                    <span class="font-medium text-gray-900">{{ userProfile!.department }}</span>
                 </div>
             </div>
         </div>
@@ -67,22 +169,26 @@
     }">
         <div class="mt-5 grid grid-cols-1 gap-3">
             @for(society of userProfile!.memberships; track $index) {
-                <div class="flex flex-wrap sm:flex-nowrap items-center py-1 rounded-lg shadow">
-                    <div class="w-16 p-2 shrink-0">
-                        <!-- <img [src]="society.logoId" class="w-12 h-12 sm:w-10 sm:h-10" alt="profile image"> -->
-                        <nz-avatar [nzSrc]="society.societyLogoId" class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
-                                   [nzIcon]="'product'" nzShape="square" nzSize="large" />
-                    </div>
-                    <div>
-                        <p class="font-semibold text-sm">{{ society.societyName  | truncate: 35 }}</p>
-                        <span class="text-gray-600 text-xs block">{{ society.section | capitalizefirst }} | Since {{ society.joinDate | date }}</span>
-                    </div>
+            <div class="flex flex-wrap sm:flex-nowrap items-center py-1 rounded-lg shadow">
+                <div class="w-16 p-2 shrink-0">
+                    <!-- <img [src]="society.logoId" class="w-12 h-12 sm:w-10 sm:h-10" alt="profile image"> -->
+                    <nz-avatar [nzSrc]="society.societyLogoId"
+                        class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
+                        [nzIcon]="'product'" nzShape="square" nzSize="large" />
                 </div>
+                <div>
+                    <p class="font-semibold text-sm">{{ society.societyName | truncate: 35 }}</p>
+                    <span class="text-gray-600 text-xs block">{{ society.section | capitalizefirst }} | Since {{
+                        society.joinDate | date }}</span>
+                </div>
+            </div>
             }@empty {
-                <nz-empty></nz-empty>
+            <nz-empty></nz-empty>
             }
 
         </div>
     </app-container-block>
 </div>
+
+
 }

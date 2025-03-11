@@ -141,11 +141,11 @@
 <!-- Add Member Popup -->
 <nz-modal [(nzVisible)]="isAddMemberPopupVisible"
         nzTitle="Add Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isEditSocietyInfoLoading" nzOkText="Save"
+        [nzOkLoading]="isAddMemberLoading" nzOkText="Save"
         (nzOnCancel)="handleCancelAddMember()" (nzOnOk)="handleOkAddMember()"
     >
     <ng-container *nzModalContent>
-        <app-add-member-form  />
+        <app-add-member-form />
     </ng-container>
 </nz-modal>
 }

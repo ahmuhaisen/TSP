@@ -15,6 +15,10 @@ export class ProfilesService {
         return this.db.getRequest<UserProfile>(`${this.model}/${id}?userType=${userType}`);
     }
 
+    update(id: string, userType: string, profile: Partial<UserProfile>) {
+        return this.db.putRequest<UserProfile, Partial<UserProfile>>(`${this.model}/${id}?userType=${userType}`, profile);
+    }
+
 }
 
 export interface UserProfile

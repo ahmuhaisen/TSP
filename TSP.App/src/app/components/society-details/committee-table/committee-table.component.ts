@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -42,7 +42,7 @@ import { SocietiesService } from '../../../areas/system-admin-area/services/soci
   ],
   templateUrl: './committee-table.component.html',
 })
-export class CommitteeTableComponent {
+export class CommitteeTableComponent implements OnInit {
 
   isViewOnly = input<boolean>(false);
   societyId = input<string>('');
@@ -71,9 +71,16 @@ export class CommitteeTableComponent {
       startDate: [new Date(), [Validators.required]],
     });
 
-    this.displayedCommittee = this.committee();
+    // Initialize and update displayed committee when input changes
+    this.displayedCommittee = [...this.committee()];
+    this.positions = committeePositions.filter(p => !this.isTakenPosition(p.name));
+  }
 
-    this.positions = this.positions.filter(p => !this.isTakenPosition(p.name));
+  ngOnChanges() {
+    if (this.committee()) {
+      this.displayedCommittee = [...this.committee()];
+      this.positions = committeePositions.filter(p => !this.isTakenPosition(p.name));
+    }
   }
 
   openEditMemberPopup(id: string) {
@@ -85,12 +92,10 @@ export class CommitteeTableComponent {
   }
 
   removeCommitteeMember(id: string) {
-    // remove member
-    console.log('remove member', id);
     this.societiesService.removeCommitteeMember(this.societyId(), id).subscribe(() => {
       this.messageService.success('Committee member removed successfully.');
-      this.displayedCommittee = this.displayedCommittee!.splice(this.displayedCommittee!.findIndex(m => m.id === id), 1);
-    })
+      this.displayedCommittee = this.displayedCommittee.filter(m => m.id !== id);
+    });
   }
 
   handleCancelEditCommitteeMember() {

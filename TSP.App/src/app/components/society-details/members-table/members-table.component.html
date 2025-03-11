@@ -71,7 +71,31 @@
     (nzOnCancel)="handleCancelEditMember()" (nzOnOk)="handleOkEditMember()"
     >
     <ng-container *nzModalContent>
-    <!-- <app-edit-member-form [member]="memberToEdit!"/> -->
+        <form nz-form class="grid grid-cols-1 gap-y-1">
+            <!-- Name -->
+            <nz-form-item class="flex items-start">
+                <nz-form-label class="w-1/4 text-left">Student name</nz-form-label>
+                <nz-form-control [nzSpan]="12" class="w-3/4">
+                    <input nz-input [value]="memberToEdit!.firstName + ' ' + memberToEdit!.lastName" [disabled]="true" />
+                </nz-form-control>
+            </nz-form-item>
+
+            <!-- Position -->
+            <nz-form-item class="flex items-start">
+                <nz-form-label class="w-1/4 text-left">Position</nz-form-label>
+                <nz-form-control [nzSpan]="12" class="w-3/4">
+                    <input nz-input [(ngModel)]="editPosition" [ngModelOptions]="{standalone: true}" />
+                </nz-form-control>
+            </nz-form-item>
+
+            <!-- Member Since -->
+            <nz-form-item class="flex items-start">
+                <nz-form-label class="w-1/4 text-left">Member since</nz-form-label>
+                <nz-form-control [nzSpan]="12" class="w-3/4">
+                    <input nz-input [value]="memberToEdit!.joinDate | date" [disabled]="true" />
+                </nz-form-control>
+            </nz-form-item>
+        </form>
     </ng-container>
     </nz-modal>
 }

@@ -53,6 +53,14 @@ export class SocietiesService {
     return this.db.deleteRequest(this.getUrlWithId(id));
   }
 
+  editMember(memberId: string, position: string) {
+    return this.db.putRequest(`AdminArea/Students/${memberId}/Position`, { position });
+  }
+
+  addMember(societyId: string, data: { studentId: string, position: string, startDate: Date }) {
+    return this.db.postRequest(`AdminArea/Societies/${societyId}/Members`, data);
+  }
+
   private getUrl() {
     return `${this.model}`;
   }
