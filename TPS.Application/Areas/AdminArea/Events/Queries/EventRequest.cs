@@ -94,7 +94,8 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     })
                     .ToListAsync();
                 return Result.Success(result);
-                // TODO: Validate the user id if he / she is an advisor of a society or a dean / dean assistant DONE
+                //
+                // : Validate the user id if he / she is an advisor of a society or a dean / dean assistant DONE
                 // TODO: Edit the query to return only the events that the user is an advisor of DONE
             }
         }

@@ -12,8 +12,8 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250307130016_Initial")]
-    partial class Initial
+    [Migration("20250307190612_intial")]
+    partial class intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
