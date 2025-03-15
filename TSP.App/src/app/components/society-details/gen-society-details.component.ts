@@ -126,15 +126,44 @@ export class GenSocietyDetailsComponent {
       return;
     }
 
-    console.table(this.editSocietyInfoFormComponent!.createSocietyForm?.value);
+    const formValue = this.editSocietyInfoFormComponent!.createSocietyForm!.value;
     this.isEditSocietyInfoLoading = true;
 
-    setTimeout(() => {
-      this.isEditSocietyInfoLoading = false;
-      this.isEditSocietyInfoPopupVisible = false;
-      this.isEditSocietyInfoPopupVisible = false;
-      this.messageService.success('Society info updated successfully.');
-    }, 1000);
+    const updateRequest = {
+      id: this.societyId(),
+      name: formValue.name,
+      description: formValue.description,
+      logoBase64: formValue.logo || this.society?.logoId || '',
+      themeColor: formValue.themeColor
+    };
+
+    console.log('Update request:', updateRequest);
+
+    this.societyService.update(this.societyId(), updateRequest).subscribe({
+      next: () => {
+        this.messageService.success('Society info updated successfully.');
+        this.isEditSocietyInfoPopupVisible = false;
+        this.editSocietyInfoFormComponent!.createSocietyForm?.reset();
+        
+        // Refresh society details
+        this.societyService.find(this.societyId()).subscribe({
+          next: society => {
+            if (!society) {
+              return;
+            }
+            this.society = society;
+            this.breadcrumbService.set('@societyName', this.society!.name);
+          }
+        });
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to update society info');
+        console.error('Error updating society:', error);
+      },
+      complete: () => {
+        this.isEditSocietyInfoLoading = false;
+      }
+    });
   }
 
   openAddCommitteePopup() {
@@ -147,11 +176,46 @@ export class GenSocietyDetailsComponent {
 
   handleOkAddCommittee() {
     if (!this.addCommitteeMemberForm!.isFormValid()) {
-      this.addCommitteeMemberForm!.messageService.error('Please fill in all required fields.');
+      this.messageService.error('Please fill in all required fields.');
       return;
     }
 
-    console.table(this.addCommitteeMemberForm!.getFormValue());
+    const formValue = this.addCommitteeMemberForm!.getFormValue();
+    this.isAddCommitteeLoading = true;
+
+    // Format date as yyyy-MM-dd
+    const date = new Date(formValue.startDate);
+    const formattedDate = date.getFullYear() + '-' + 
+      String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+      String(date.getDate()).padStart(2, '0');
+
+    this.societyService.addCommittee(this.societyId(), formValue.studentId, {
+      position: formValue.position,
+      startDate: formattedDate
+    }).subscribe({
+      next: () => {
+        this.messageService.success('Committee member added successfully');
+        this.isAddCommitteePopupVisible = false;
+        
+        // Remove member from members list
+        const updatedMembers = this.members().filter(member => member.id !== formValue.studentId);
+        this.members.set(updatedMembers);
+        
+        // Refresh committee list
+        this.societyService.societyMembers(this.societyId(), true).subscribe({
+          next: members => {
+            this.committee.set(members);
+          }
+        });
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to add committee member');
+        console.error('Error adding committee member:', error);
+      },
+      complete: () => {
+        this.isAddCommitteeLoading = false;
+      }
+    });
   }
 
   openAddMemberPopup() {
@@ -171,7 +235,18 @@ export class GenSocietyDetailsComponent {
     const formValue = this.addMemberForm.getFormValue();
     this.isAddMemberLoading = true;
 
-    this.societyService.addMember(this.societyId(), formValue).subscribe({
+    // Format date as yyyy-MM-dd
+    const date = new Date(formValue.startDate);
+    const formattedDate = date.getFullYear() + '-' + 
+      String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+      String(date.getDate()).padStart(2, '0');
+
+    const data = {
+      ...formValue,
+      startDate: formattedDate
+    };
+
+    this.societyService.addMember(this.societyId(), data).subscribe({
       next: () => {
         this.messageService.success('Member added successfully');
         this.isAddMemberPopupVisible = false;
@@ -190,5 +265,23 @@ export class GenSocietyDetailsComponent {
         this.isAddMemberLoading = false;
       }
     });
+  }
+
+  handleCommitteeChange(newCommittee: SocietyMember[]) {
+    const removedMembers = this.committee().filter(member => 
+      !newCommittee.some(newMember => newMember.id === member.id)
+    );
+    
+    // Add removed committee members to the members list
+    if (removedMembers.length > 0) {
+      const updatedMembers = [...this.members(), ...removedMembers.map(member => ({
+        ...member,
+        isCommitteeMember: false
+      }))];
+      this.members.set(updatedMembers);
+    }
+    
+    // Update committee list
+    this.committee.set(newCommittee);
   }
 }

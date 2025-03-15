@@ -89,9 +89,9 @@ public class SocietiesController : ApiController
     [HttpPut("{societyId}/Members/{studentId}/Committee")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> addCommittee(Guid societyId, Guid studentId,AddCommitteeRequest request)
+    public async Task<IActionResult> addCommittee(Guid societyId, Guid studentId, AddCommitteeRequest request)
     {
-        var query = AddCommittee.Command.Create(studentId,societyId,request);
+        var query = AddCommittee.Command.Create(studentId, societyId, request);
 
         var task = _sender.Send(query);
 
@@ -100,7 +100,7 @@ public class SocietiesController : ApiController
     [HttpPut("{societyId}/Members/{studentId}")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult>editMember(Guid societyId, Guid studentId,string position)
+    public async Task<IActionResult> editMember(Guid societyId, Guid studentId, string position)
     {
         var query = EditMember.Command.Create(studentId, societyId, position);
         var task = _sender.Send(query);

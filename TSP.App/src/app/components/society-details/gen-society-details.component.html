@@ -53,7 +53,7 @@
                     <nz-icon nzType="number" class="mr-1" />
                     No of Members
                 </p>
-                <p class="text-sm font-semibold text-gray-700">{{ society!.numberOfMembers }}</p>
+                <p class="text-sm font-semibold text-gray-700">{{ members().length + committee().length }}</p>
             </div>
         </div>
     </div>
@@ -83,7 +83,11 @@
     </div>
 </div>
 
-<app-committee-table [committee]="committee()" [isViewOnly]="pageMode() != 'ADMIN_MANAGE'" [societyId]="societyId()" />
+<app-committee-table 
+    [committee]="committee()" 
+    [isViewOnly]="pageMode() != 'ADMIN_MANAGE'" 
+    [societyId]="societyId()"
+    (committeeChange)="handleCommitteeChange($event)" />
 
 <nz-divider />
 
@@ -112,7 +116,12 @@
 </div>
 
 
-<app-members-table [isLoading]="isMembersLoading" [isViewOnly]="pageMode() === 'VIEW_ONLY'" [allMembers]="members()"/>
+<app-members-table 
+    [isLoading]="isMembersLoading" 
+    [isViewOnly]="pageMode() === 'VIEW_ONLY'" 
+    [allMembers]="members()"
+    [societyId]="societyId()"
+    (membersChange)="members.set($event)"/>
 
 
 @if(pageMode() === 'ADMIN_MANAGE' || pageMode() === 'STUDENT_MANAGE'){
@@ -130,11 +139,13 @@
 <!-- Add Committee Member Popup -->
 <nz-modal [(nzVisible)]="isAddCommitteePopupVisible"
         nzTitle="Add Committee Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isEditSocietyInfoLoading" nzOkText="Save"
+        [nzOkLoading]="isAddCommitteeLoading" nzOkText="Save"
         (nzOnCancel)="handleCancelAddCommittee()" (nzOnOk)="handleOkAddCommittee()"
     >
     <ng-container *nzModalContent>
-        <app-add-committee-member-form [existingCommitteeMembers]="committee()"/>
+        <app-add-committee-member-form 
+            [existingCommitteeMembers]="committee()"
+            [societyMembers]="members()"/>
     </ng-container>
 </nz-modal>
 
@@ -145,7 +156,7 @@
         (nzOnCancel)="handleCancelAddMember()" (nzOnOk)="handleOkAddMember()"
     >
     <ng-container *nzModalContent>
-        <app-add-member-form />
+        <app-add-member-form [societyId]="societyId()"/>
     </ng-container>
 </nz-modal>
 }

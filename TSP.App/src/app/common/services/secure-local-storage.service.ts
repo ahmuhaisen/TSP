@@ -14,13 +14,19 @@ export class SecureLocalStorageService {
   }
 
   public getItem(key: string): any {
-    const encryptedData = localStorage.getItem(key);
+    try {
+      const encryptedData = localStorage.getItem(key);
 
-    if (!encryptedData)
+      if (!encryptedData)
         return null;
 
-    const decryptedData = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY).toString(CryptoJS.enc.Utf8);
-    return JSON.parse(decryptedData);
+      const decryptedData = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY).toString(CryptoJS.enc.Utf8);
+      return JSON.parse(decryptedData);
+    } catch (error) {
+      console.error('Error decrypting data from localStorage:', error);
+      this.removeItem(key); // Remove corrupted data
+      return null;
+    }
   }
 
   public removeItem(key: string): void {

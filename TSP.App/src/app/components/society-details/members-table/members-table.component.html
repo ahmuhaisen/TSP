@@ -30,7 +30,7 @@
         <tr>
             <td class="flex items-center justify-center">
                 <!-- <img class="w-7 h-7 rounded-full ring-1 ring-gray-200" [src]="data.profileImageId" alt="organizers" /> -->
-                <nz-avatar class="w-7 h-7 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="data.profileImageId" [nzText]="data.firstName.substring(0, 2).toUpperCase()" />
+                <nz-avatar class="w-7 h-7 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="data.profileImageId" [nzText]="data ? (data.firstName[0] + data.lastName[0]).toUpperCase() : ''" />
             </td>
             <td>{{ data.firstName }} {{ data.lastName }}</td>
             <td>{{ data.position }}</td>
@@ -71,28 +71,31 @@
     (nzOnCancel)="handleCancelEditMember()" (nzOnOk)="handleOkEditMember()"
     >
     <ng-container *nzModalContent>
-        <form nz-form class="grid grid-cols-1 gap-y-1">
-            <!-- Name -->
-            <nz-form-item class="flex items-start">
-                <nz-form-label class="w-1/4 text-left">Student name</nz-form-label>
-                <nz-form-control [nzSpan]="12" class="w-3/4">
-                    <input nz-input [value]="memberToEdit!.firstName + ' ' + memberToEdit!.lastName" [disabled]="true" />
-                </nz-form-control>
-            </nz-form-item>
+        <form nz-form class="grid grid-cols-1 gap-y-4">
+            <!-- Member Info -->
+            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                <nz-avatar [nzSize]="48" [nzSrc]="memberToEdit?.profileImageId" 
+                          [nzText]="memberToEdit ? (memberToEdit.firstName[0] + memberToEdit.lastName[0]).toUpperCase() : ''">
+                </nz-avatar>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        {{ memberToEdit?.firstName }} {{ memberToEdit?.lastName }}
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                        Member since {{ memberToEdit?.joinDate | date }}
+                    </p>
+                </div>
+            </div>
 
             <!-- Position -->
             <nz-form-item class="flex items-start">
-                <nz-form-label class="w-1/4 text-left">Position</nz-form-label>
-                <nz-form-control [nzSpan]="12" class="w-3/4">
-                    <input nz-input [(ngModel)]="editPosition" [ngModelOptions]="{standalone: true}" />
-                </nz-form-control>
-            </nz-form-item>
-
-            <!-- Member Since -->
-            <nz-form-item class="flex items-start">
-                <nz-form-label class="w-1/4 text-left">Member since</nz-form-label>
-                <nz-form-control [nzSpan]="12" class="w-3/4">
-                    <input nz-input [value]="memberToEdit!.joinDate | date" [disabled]="true" />
+                <nz-form-label class="w-1/4 text-left" nzRequired>Position</nz-form-label>
+                <nz-form-control [nzSpan]="12" class="w-3/4" nzHasFeedback [nzErrorTip]="positionErrorTpl">
+                    <input nz-input [(ngModel)]="editPosition" [ngModelOptions]="{standalone: true}" 
+                           placeholder="Enter member position" />
+                    <ng-template #positionErrorTpl>
+                        Please enter a valid position!
+                    </ng-template>
                 </nz-form-control>
             </nz-form-item>
         </form>
