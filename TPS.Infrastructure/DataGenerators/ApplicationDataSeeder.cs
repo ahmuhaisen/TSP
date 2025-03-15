@@ -19,6 +19,9 @@ public class ApplicationDataSeeder(ApplicationDbContext _context, RoleManager<Ap
 
     private async Task seedRoles()
     {
+        if (_context.Roles.Any())
+            return;
+
         string[] roles = { "Student", "Faculty" };
 
         foreach (var role in roles)

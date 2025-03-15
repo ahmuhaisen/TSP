@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TPS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class intial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -266,7 +266,7 @@ namespace TPS.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    LogoId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    LogoId = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CreationDate = table.Column<DateOnly>(type: "date", nullable: false),
                     ThemeColor = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: true),
                     AdvisorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
