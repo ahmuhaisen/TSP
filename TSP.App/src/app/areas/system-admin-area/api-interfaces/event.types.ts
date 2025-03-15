@@ -1,8 +1,9 @@
-export interface eventSimpleRequest {
-    id: string;
-    name: string;
-    society: string;
-    date: Date;
-    location: string;
-    status: string;
+export interface EventSimpleRequest {
+    id: string;  
+    eventName: string;
+    dateTime: Date;  
+    locationString: string;
+    approvalStatus: string;
+    description: string;
+    societyName: string;
 }

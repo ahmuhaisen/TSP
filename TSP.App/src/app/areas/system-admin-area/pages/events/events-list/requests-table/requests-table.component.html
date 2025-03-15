@@ -1,4 +1,4 @@
-<nz-table #requestsTable class="mt-5" [nzData]="listOfDisplayData" nzPaginationType="small" [nzPageSize]="5"
+<nz-table #requestsTable class="mt-5" [nzData]="eventsRequests" nzPaginationType="small" [nzPageSize]="5"
     [nzLoading]="false" nzBordered="true" [nzScroll]="{ x: '1000px' }" nzSize="small">
     <thead>
         <tr>
@@ -26,12 +26,12 @@
         @for(data of requestsTable.data; track data) {
         <tr>
             <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
-            <td>{{ data.name }}</td>
-            <td>{{ data.society }}</td>
-            <td>{{ data.date | date: 'MMM d, y, h:mm a' }}</td>
-            <td>{{ data.location }}</td>
+            <td>{{ data.eventName }}</td>
+            <td>{{ data.societyName }}</td>
+            <td>{{ data.dateTime|date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td>{{ data.locationString }}</td>
             <td>
-                <nz-tag [nzColor]="getStatusColor(data.status)">{{ data.status }}</nz-tag>
+                <nz-tag [nzColor]="getStatusColor(data.approvalStatus)">{{ data.approvalStatus }}</nz-tag>
             </td>
             <td>
                 <button nz-button nzType="default" nzSize="small" nzShape="round" nz-tooltip
@@ -40,15 +40,17 @@
                 </button>
                 <nz-divider nzType="vertical" />
                 <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" nz-tooltip
-                    [nzTooltipTitle]="data.status == 'Pending' ? 'Accept' : ''" [disabled]="data.status != 'Pending'"
-                    nz-popconfirm nzPopconfirmTitle="Are you sure accept the request for: {{ data.name }}?"
+                    [nzTooltipTitle]="data.approvalStatus == 'Pending' ? 'Accept' : ''"
+                    [disabled]="data.approvalStatus != 'Pending'" nz-popconfirm
+                    nzPopconfirmTitle="Are you sure accept the request for: {{ data.eventName }}?"
                     nzPopconfirmPlacement="top" nzOkText="Yes" (nzOnConfirm)="confirmAcceptRequest()"
                     (nzOnCancel)="cancelAcceptRequest()">
                     <nz-icon nzType="check" />
                 </button>
                 <nz-divider nzType="vertical" />
-                <button nz-button nzSize="small" nzShape="round" nzDanger [disabled]="data.status != 'Pending'"
-                    nz-tooltip [nzTooltipTitle]="data.status == 'Pending' ? 'Reject' : ''" (click)="openRejectPopup()">
+                <button nz-button nzSize="small" nzShape="round" nzDanger [disabled]="data.approvalStatus != 'Pending'"
+                    nz-tooltip [nzTooltipTitle]="data.approvalStatus == 'Pending' ? 'Reject' : ''"
+                    (click)="openRejectPopup()">
                     <nz-icon nzType="close" />
                 </button>
             </td>
@@ -89,4 +91,3 @@
         </form>
     </ng-container>
 </nz-modal>
-
