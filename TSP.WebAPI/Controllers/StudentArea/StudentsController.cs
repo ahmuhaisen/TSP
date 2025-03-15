@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TPS.Application.Areas.StudentArea.Membership.Queries;
 using TPS.Application.Areas.StudentArea.Societies.Queries;
+using TSP.Domain.Shared;
 namespace TSP.WebAPI.Controllers.StudentArea;
 
 [ApiController]
@@ -27,6 +29,14 @@ public class StudentsController : ApiController
         return await FromResult(task);
     }
 
-
+    [HttpGet("MembershipRequests")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> StudentMembershipRequests()
+    {
+        var query = MembershipRequestsOfStudent.Query.Create(base.GetCurrentUserId()!.Value);
+        var task = _sender.Send(query);
+        return await FromResult(task);
+    }
 }
 

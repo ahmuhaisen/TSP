@@ -53,7 +53,7 @@ namespace TPS.Application.Areas.StudentArea.Membership.Commands
                 //User is not authorized for this action
                 if (await context.Societies
                     .AnyAsync(s => s.SocietiesMembers
-                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId && !(x.Position == "Chair" || x.Position == "Vice Chair"))))
+                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId && x.IsCommittee==true)))
                     return Result<List<MembershipRequestDTO>>.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
 
                 if (request.isAccepted == false)
@@ -67,7 +67,7 @@ namespace TPS.Application.Areas.StudentArea.Membership.Commands
                     {
                         SocietyId = request.SocietyId,
                         StudentId = membershipRequest.StudentId,
-                        Position = "Member",
+                        Position = membershipRequest.Section,
                         JoinDate = DateOnly.FromDateTime(DateTime.Now),
                         IsActive = true,
                         IsCommittee = false

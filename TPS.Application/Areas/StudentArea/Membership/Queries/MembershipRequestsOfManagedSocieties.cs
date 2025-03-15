@@ -32,6 +32,7 @@ namespace TPS.Application.Areas.StudentArea.Membership.Queries
             public async Task<Result<List<MembershipRequestDTO>>> Handle(Query request, CancellationToken cancellation)
             {
                 if (await context.Societies
+                    .Include(x=>x.SocietiesMembers)
                     .AnyAsync(s => s.SocietiesMembers
                             .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId)))
                     return Result<List<MembershipRequestDTO>>.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
