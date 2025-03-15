@@ -54,6 +54,8 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 {
 
                     var data = await _context.EventsApproval
+                        .Include(x=>x.Event)
+                        .ThenInclude(x=>x.Society)
                         .Where(x => x.AdvisorApproval == true)
                         .OrderByDescending(x => x.Event.StartTime)
                         .Select(x => new EventDTO
@@ -78,7 +80,9 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 }
 
                 var result = await _context.EventsApproval
-                    .Where(x => x.Event != null && x.Event.Society != null && x.Event.Society.AdvisorId == request.UserId)
+                    .Include(x=>x.Event)
+                    .ThenInclude(x=>x.Society)
+                    .Where(x => x.Event.Society.AdvisorId==request.UserId)
                     .OrderByDescending(x => x.Event.StartTime)
                     .Select(x => new EventDTO
                     {

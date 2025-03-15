@@ -18,7 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<Event> Events { get; set; }
     public DbSet<EventApproval> EventsApproval { get; set; }
     public DbSet<Attendee> Attendees { get; set; }
-
+    public DbSet<MembershipRequest>MembershipsRequests { get; set; }
     public ApplicationDbContext(DbContextOptions options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
