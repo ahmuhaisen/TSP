@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { Component, inject, NgModule } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
@@ -16,7 +16,9 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
-
+import { EventSimpleRequest } from '../../../../api-interfaces/event.types';
+import { OnInit } from '@angular/core';
+import { EventsService } from '../../../../services/events.service';
 
 interface Request {
   id: number;
@@ -81,15 +83,17 @@ interface ColumnItem {
       }
   `
 })
-export class RequestsTableComponent {
+export class RequestsTableComponent implements OnInit {
   searchValue = '';
   visible = false;
-  expandSet = new Set<number>();
-  constructor(private nzMessageService: NzMessageService) {}
+  expandSet = new Set<string>();
+  eventService = inject(EventsService);
+
+  constructor(private nzMessageService: NzMessageService) { }
 
   isRejectPopupVisible = false;
-  
-  onExpandChange(id: number, checked: boolean): void {
+
+  onExpandChange(id: string, checked: boolean): void {
     if (checked) {
       this.expandSet.add(id);
     } else {
@@ -184,63 +188,12 @@ export class RequestsTableComponent {
     reason: new FormControl('', [Validators.maxLength(200)])
   });
 
-  eventsRequests: Request[] = [
-    {
-      id: 1,
-      name: 'Event 1',
-      society: 'Society 1',
-      date: '2024-01-01 11:30 AM',
-      location: 'Location 1',
-      status: 'Pending',
-      description: 'Event Description 1',
-    },
-    {
-      id: 2,
-      name: 'Event 2',
-      society: 'Society 2',
-      date: '2024-01-02 12:00 PM',
-      location: 'Location 2',
-      status: 'Accepted',
-      description: 'Event Description 2',
-    },
-    {
-      id: 3,
-      name: 'Event 3',
-      society: 'Society 3',
-      date: '2024-01-03 1:30 PM',
-      location: 'Location 3',
-      status: 'Rejected',
-    },
-    {
-      id: 4,
-      name: 'Event 4',
-      society: 'Society 1',
-      date: '2024-01-01 11:30 AM',
-      location: 'Location 1',
-      status: 'Pending',
-      description: 'Event Description 1',
-    },
-    {
-      id: 5,
-      name: 'Event 5',
-      society: 'Society 2',
-      date: '2024-01-02 12:00 PM',
-      location: 'Location 2',
-      status: 'Accepted',
-      description: 'Event Description 2',
-    },
-    {
-      id: 6,
-      name: 'Event 6',
-      society: 'Society 3',
-      date: '2024-01-03 1:30 PM',
-      location: 'Location 3',
-      status: 'Accepted',
-    },
-  ];
+  eventsRequests: EventSimpleRequest[] = []
 
   listOfDisplayData = [...this.eventsRequests];
-
+  ngOnInit(): void {
+    this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
+  }
   reset(): void {
     this.searchValue = '';
     this.search();
@@ -248,7 +201,9 @@ export class RequestsTableComponent {
 
   search(): void {
     this.visible = false;
-    this.listOfDisplayData = this.eventsRequests.filter((item: Request) => item.name.indexOf(this.searchValue) !== -1);
+    this.listOfDisplayData = this.eventsRequests.filter((item: EventSimpleRequest) =>
+      item.eventName.toLowerCase().includes(this.searchValue.toLowerCase())
+    );
   }
 
   getStatusColor(status: string) {

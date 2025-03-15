@@ -10,7 +10,7 @@ export class HomeService {
 
     model = 'AdminArea/Home';
     // TODO: Get the current user id by Auth service
-    tempUserId = '8ec53c2d-8abe-4c55-e810-08dd3fb8d60a';
+    tempUserId = '91A9273B-098E-4A90-7B57-08DD5EF9673F';
 
     db = inject(DbService);
 
