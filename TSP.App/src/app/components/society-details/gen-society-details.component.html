@@ -1,3 +1,5 @@
+@if(society){
+    
 <div class="flex items-center justify-between">
     <div class="flex items-center justify-start text-lg font-semibold text-gray-700">
         <nz-icon nzType="info-circle" class="mr-2" />
@@ -14,45 +16,49 @@
     </div>
 </div>
 
-<div class="mt-5">
-    <div class="flex items-center gap-4 mt-3">
-        <img class="w-14 h-14  rounded-full ring-1 ring-gray-200" src="slogo.jpg" alt="organizers" />
-        <div class="">
-            <p class="text-sm font-bold text-gray-700 mt-2">ACM University of Jordan Student Chapter</p>
-            <p class="text-[12px] text-gray-600">
-                A Chapter of the Association for Computing Machinery, interested in
-                computer science and programming, and the development of software. We organize Competitive Programming
-                Contests, Programming Contests, and other events.
-            </p>
+@if(isSocietyLoading){
+    <nz-skeleton [nzAvatar]="true" [nzLoading]="isSocietyLoading" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+}@else {
+    <div class="mt-5">
+        <div class="flex items-center gap-4 mt-3">
+            <!-- <img class="w-14 h-14  rounded-full ring-1 ring-gray-200" src="slogo.jpg" alt="organizers" /> -->
+            <nz-avatar class="w-11 h-11 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="society!.logoId" [nzText]="society!.name.substring(0, 2).toUpperCase()" />
+            <div class="">
+                <p class="text-sm font-bold text-gray-700 mt-2">{{ society!.name }}</p>
+                <p class="text-[12px] text-gray-600">
+                    {{ society!.description }}
+                </p>
+            </div>
+        </div>
+    
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 mt-9">
+            <div class="grid gap-y-1.5">
+                <p class="text-xs text-gray-500 flex items-center">
+                    <nz-icon nzType="user" class="mr-1" />
+                    Advisor
+                </p>
+                <p class="text-sm font-semibold text-gray-700">{{ society!.advisor.fullName }}</p>
+            </div>
+    
+            <div class="grid gap-y-1.5">
+                <p class="text-xs text-gray-500 flex items-center">
+                    <nz-icon nzType="calendar" class="mr-1" />
+                    Date Created
+                </p>
+                <p class="text-sm font-semibold text-gray-700">{{ society!.creationDate | date }}</p>
+            </div>
+    
+            <div class="grid gap-y-1.5">
+                <p class="text-xs text-gray-500 flex items-center">
+                    <nz-icon nzType="number" class="mr-1" />
+                    No of Members
+                </p>
+                <p class="text-sm font-semibold text-gray-700">{{ society!.numberOfMembers }}</p>
+            </div>
         </div>
     </div>
+}
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 mt-9">
-        <div class="grid gap-y-1.5">
-            <p class="text-xs text-gray-500 flex items-center">
-                <nz-icon nzType="user" class="mr-1" />
-                Advisor
-            </p>
-            <p class="text-sm font-semibold text-gray-700">Prof. Sami Sarhan</p>
-        </div>
-
-        <div class="grid gap-y-1.5">
-            <p class="text-xs text-gray-500 flex items-center">
-                <nz-icon nzType="calendar" class="mr-1" />
-                Date Created
-            </p>
-            <p class="text-sm font-semibold text-gray-700">June 20, 2017</p>
-        </div>
-
-        <div class="grid gap-y-1.5">
-            <p class="text-xs text-gray-500 flex items-center">
-                <nz-icon nzType="number" class="mr-1" />
-                No of Members
-            </p>
-            <p class="text-sm font-semibold text-gray-700">22</p>
-        </div>
-    </div>
-</div>
 
 <nz-divider />
 
@@ -63,7 +69,7 @@
             <p class="flex items-center gap-1">
                 Committee
                 <span class="text-xs font-normal text-gray-500">
-                    (3 members)
+                    ({{ committee().length }} members)
                 </span>
             </p>
         </div>
@@ -77,7 +83,7 @@
     </div>
 </div>
 
-<app-committee-table [committee]="committee" [isViewOnly]="pageMode() != 'ADMIN_MANAGE'" />
+<app-committee-table [committee]="committee()" [isViewOnly]="pageMode() != 'ADMIN_MANAGE'" [societyId]="societyId()" />
 
 <nz-divider />
 
@@ -88,7 +94,7 @@
             <p class="flex items-center gap-1">
                 Members
                 <span class="text-xs font-normal text-gray-500">
-                    (total: 22)
+                    (total: {{ members().length }} members)
                 </span>
             </p>
         </div>
@@ -105,7 +111,9 @@
     </div>
 </div>
 
-<app-members-table [isViewOnly]="pageMode() === 'VIEW_ONLY'" />
+
+<app-members-table [isLoading]="isMembersLoading" [isViewOnly]="pageMode() === 'VIEW_ONLY'" [allMembers]="members()"/>
+
 
 @if(pageMode() === 'ADMIN_MANAGE' || pageMode() === 'STUDENT_MANAGE'){
 <!-- Edit Society Info Popup -->
@@ -115,7 +123,7 @@
         (nzOnCancel)="handleCancelEditSociety()" (nzOnOk)="handleOkEditSociety()"
         >
     <ng-container *nzModalContent>
-        <app-edit-society-info-form [society]="society"/>
+        <app-edit-society-info-form [society]="society!"/>
     </ng-container>
 </nz-modal>
 
@@ -126,18 +134,19 @@
         (nzOnCancel)="handleCancelAddCommittee()" (nzOnOk)="handleOkAddCommittee()"
     >
     <ng-container *nzModalContent>
-        <app-add-committee-member-form [existingCommitteeMembers]="committee"/>
+        <app-add-committee-member-form [existingCommitteeMembers]="committee()"/>
     </ng-container>
 </nz-modal>
 
 <!-- Add Member Popup -->
 <nz-modal [(nzVisible)]="isAddMemberPopupVisible"
         nzTitle="Add Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isEditSocietyInfoLoading" nzOkText="Save"
+        [nzOkLoading]="isAddMemberLoading" nzOkText="Save"
         (nzOnCancel)="handleCancelAddMember()" (nzOnOk)="handleOkAddMember()"
     >
     <ng-container *nzModalContent>
-        <app-add-member-form  />
+        <app-add-member-form />
     </ng-container>
 </nz-modal>
+}
 }

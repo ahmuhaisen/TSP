@@ -40,18 +40,19 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             public async Task<Result<List<EventDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var facultyMember = await _context.FacultyMembers
-                    .Include(x=>x.Rank)
-                    .FirstOrDefaultAsync(x => x.Id == request.UserId);
+                    .Include(f => f.Rank) 
+                    .Include(f => f.SocietiesAdvised)  
+                    .FirstOrDefaultAsync(y => y.Id == request.UserId);
 
                 if (facultyMember == null)
                 {
                     return Result<List<EventDTO>>.Failure<List<EventDTO>>(Error.NotFound("Faculty Member", request.UserId.ToString()));
                 }
-                // -- case 1 --
-                // The user is a dean or dean assistant
-                // Return all not decided requests
-                if (facultyMember.Rank.Title == "Dean Assistant" || facultyMember.Rank.Title == "Dean")
+
+                if (facultyMember.Rank != null &&
+                   (facultyMember.Rank.Title == "Dean Assistant" || facultyMember.Rank.Title == "Dean"))
                 {
+
                     var data = await _context.EventsApproval
                         .Include(x=>x.Event)
                         .ThenInclude(x=>x.Society)
@@ -64,25 +65,20 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                             DateTime = x.Event.StartTime,
                             LocationString = x.Event.LocationString,
                             Description = x.Event.Description,
-                            ApprovalStatus = !(x.DeanAssistantApproval == null)
-                            ? (x.DeanAssistantApproval == true
-                            ? "Accepted" : "Rejected")
+                            ApprovalStatus = x.DeanAssistantApproval != null
+                                ? (x.DeanAssistantApproval == true ? "Accepted" : "Rejected")
                                 : "Pending",
-                            SocietyName = x.Event.Society.Name
+                            SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown"
                         })
                         .ToListAsync();
                     return Result.Success(data);
                 }
-                // -- case 2 --
-                // The user has no advisor role
-                // Return empty list
-                if (!facultyMember.SocietiesAdvised.Any())
+
+                if (facultyMember.SocietiesAdvised == null || !facultyMember.SocietiesAdvised.Any())
                 {
                     return Result.Success(new List<EventDTO>());
                 }
-                // -- case 3 --
-                // The user has and advisor role
-                // Return the requests for societies he advises
+
                 var result = await _context.EventsApproval
                     .Include(x=>x.Event)
                     .ThenInclude(x=>x.Society)
@@ -95,13 +91,14 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                         DateTime = x.Event.StartTime,
                         LocationString = x.Event.LocationString,
                         Description = x.Event.Description,
-                        ApprovalStatus =x.AdvisorApproval == false ?
-                            "Rejected" : "Pending",
+                        ApprovalStatus = x.AdvisorApproval == false ? "Rejected" : "Pending",
                         SocietyName = x.Event.Society.Name
                     })
                     .ToListAsync();
+
                 return Result.Success(result);
             }
+
         }
     }
 }

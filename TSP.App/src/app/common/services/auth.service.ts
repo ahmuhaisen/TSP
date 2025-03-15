@@ -23,6 +23,10 @@ export class AuthService {
         return !this.jwtHelper.isTokenExpired(token);
     }
 
+    isUserIsTheCurrentUser(id: string): boolean {
+        return this.currentUser()!.id === id;
+    }
+
     login(request: LoginRequest, userType: UserType) {
         if(userType === 'Guest') return;
 

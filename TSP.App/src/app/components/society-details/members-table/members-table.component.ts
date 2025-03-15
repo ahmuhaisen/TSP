@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -14,26 +14,21 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { EditMemberFormComponent } from "./edit-member-form/edit-member-form.component";
-
-interface Member {
-  id: string;
-  name: string;
-  position: string;
-  memberSince: string;
-  imageUrl: string;
-}
+import { Member, SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 
 interface ColumnItem {
   name: string;
   sortOrder: NzTableSortOrder | null;
-  sortFn: NzTableSortFn<Member> | null;
+  sortFn: NzTableSortFn<SocietyMember> | null;
   listOfFilter: NzTableFilterList;
-  filterFn: NzTableFilterFn<Member> | null;
+  filterFn: NzTableFilterFn<SocietyMember> | null;
   filterMultiple: boolean;
   sortDirections: NzTableSortOrder[];
 }
-
 
 @Component({
   selector: 'app-members-table',
@@ -51,24 +46,40 @@ interface ColumnItem {
     NzPopconfirmModule,
     NzToolTipModule,
     NzModalModule,
-    EditMemberFormComponent
-],
+    NzAvatarModule,
+    EditMemberFormComponent,
+    NzFormModule
+  ],
   templateUrl: './members-table.component.html',
   styleUrl: './members-table.component.css'
 })
-export class MembersTableComponent {
+export class MembersTableComponent implements OnInit {
   
   isViewOnly = input<boolean>(false);
-
-  isEditMemberPopupVisible = false;
-  isEditMemberLoading = false;
-  memberToEdit: Member | null = null;
-
+  isLoading = input<boolean>(false);
+  allMembers = input.required<SocietyMember[]>();
+  listOfDisplayData: SocietyMember[] = [];
   searchValue = '';
   visible = false;
   expandSet = new Set<number>();
 
-  nzMessageService = inject(NzMessageService);
+  messageService = inject(NzMessageService);
+  societiesService = inject(SocietiesService);
+
+  isEditMemberPopupVisible = false;
+  isEditMemberLoading = false;
+  memberToEdit: SocietyMember | null = null;
+  editPosition = '';
+
+  ngOnInit() {
+    this.listOfDisplayData = [...this.allMembers()];
+  }
+
+  ngOnChanges() {
+    if (this.allMembers()) {
+      this.listOfDisplayData = [...this.allMembers()];
+    }
+  }
 
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
@@ -86,8 +97,8 @@ export class MembersTableComponent {
     };
   }
 
-  private static dateSortFn(a: Member, b: Member): number {
-    return new Date(a.memberSince).getTime() - new Date(b.memberSince).getTime();
+  private static dateSortFn(a: SocietyMember, b: SocietyMember): number {
+    return new Date(a.joinDate).getTime() - new Date(b.joinDate).getTime();
   }
 
   private static filterFn<T>(key: keyof T) {
@@ -101,21 +112,21 @@ export class MembersTableComponent {
     {
       name: 'Name',
       sortOrder: null,
-      sortFn: MembersTableComponent.localeSortFn<Member>('name'),
+      sortFn: MembersTableComponent.localeSortFn<SocietyMember>('firstName'),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: false,
       listOfFilter: [],
-      filterFn: (search: string, item: Member) =>
-        item.name.toLowerCase().includes(search.toLowerCase()),
+      filterFn: (search: string, item: SocietyMember) =>
+        item.firstName.toLowerCase().includes(search.toLowerCase()),
     },
     {
       name: 'Section / Position',
       sortOrder: null,
-      sortFn: MembersTableComponent.localeSortFn<Member>('position'),
+      sortFn: MembersTableComponent.localeSortFn<SocietyMember>('position'),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: MembersTableComponent.filterFn<Member>('position')
+      filterFn: MembersTableComponent.filterFn<SocietyMember>('position')
     },
     {
       name: 'Member since',
@@ -124,154 +135,70 @@ export class MembersTableComponent {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: (list: string[], item: Member) =>
-        list.some(date => new Date(item.memberSince).toDateString() === new Date(date).toDateString())
+      filterFn: (list: string[], item: SocietyMember) =>
+        list.some(date => new Date(item.joinDate).toDateString() === new Date(date).toDateString())
     },
   ];
-
-
-  allMembers: Member[] = [
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Suhaib Ahmed',
-      position: 'media',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/1.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Amer Khaleel',
-      position: 'problem solving',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/5.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'media',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/4.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'podcast',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/3.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'magazine',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/2.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Suhaib Ahmed',
-      position: 'media',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/1.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Amer Khaleel',
-      position: 'problem solving',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/5.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'media',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/4.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'podcast',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/3.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'magazine',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/2.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Suhaib Ahmed',
-      position: 'media',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/1.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Amer Khaleel',
-      position: 'problem solving',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/5.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'media',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/4.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'podcast',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/3.jpg'
-    },
-    {
-      id: 'fe324b6d-8b5b-4a9f-9a5b-8b5bfe324b6d',
-      name: 'Noor Aldeen',
-      position: 'magazine',
-      memberSince: '2024-01-01 11:30 AM',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/2.jpg'
-    }
-  ];
-
-  listOfDisplayData = [...this.allMembers];
 
   reset(): void {
     this.searchValue = '';
-    this.search();
+    this.listOfDisplayData = [...this.allMembers()];
   }
 
   search(): void {
     this.visible = false;
-    this.listOfDisplayData = this.allMembers.filter((item: Member) => item.name.indexOf(this.searchValue) !== -1);
+    this.listOfDisplayData = this.allMembers().filter((item: SocietyMember) =>
+      item.firstName.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+      item.lastName.toLowerCase().includes(this.searchValue.toLowerCase())
+    );
   }
 
   removeMember(id: string): void {
-    this.nzMessageService.success(`Removed member with ID: ${id} from the society.`);
+    this.messageService.success('Member removed successfully');
+    this.listOfDisplayData = this.listOfDisplayData.filter(m => m.id !== id);
   }
 
   openEditMemberPopup(id: string): void {
-    this.isEditMemberPopupVisible = true;
-    this.memberToEdit = this.allMembers.find(member => member.id === id) || null;
-    this.nzMessageService.info(`Edit member with ID: ${id}.`);
+    this.memberToEdit = this.allMembers().find(member => member.id === id) || null;
+    if (this.memberToEdit) {
+      this.editPosition = this.memberToEdit.position;
+      this.isEditMemberPopupVisible = true;
+    }
   }
 
   handleCancelEditMember(): void {
     this.isEditMemberPopupVisible = false;
     this.memberToEdit = null;
+    this.editPosition = '';
   }
 
   handleOkEditMember(): void {
+    if (!this.memberToEdit || !this.editPosition.trim()) {
+      this.messageService.error('Please enter a valid position');
+      return;
+    }
+
     this.isEditMemberLoading = true;
-    setTimeout(() => {
-      this.isEditMemberPopupVisible = false;
-      this.isEditMemberLoading = false;
-      this.memberToEdit = null;
-      this.nzMessageService.success('Member edited successfully.');
-    }, 1000);
+    this.societiesService.editMember(this.memberToEdit.id, this.editPosition).subscribe({
+      next: () => {
+        this.messageService.success('Member position updated successfully');
+        // Update the local list
+        const index = this.listOfDisplayData.findIndex(m => m.id === this.memberToEdit!.id);
+        if (index !== -1) {
+          this.listOfDisplayData[index] = {
+            ...this.listOfDisplayData[index],
+            position: this.editPosition
+          };
+        }
+        this.handleCancelEditMember();
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to update member position');
+        console.error('Error updating member position:', error);
+      },
+      complete: () => {
+        this.isEditMemberLoading = false;
+      }
+    });
   }
 }

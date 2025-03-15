@@ -19,7 +19,7 @@ public class SocietiesController : ApiController
 
 
     [HttpGet("{societyId}")]
-    [ProducesResponseType(typeof(SocietyListDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SocietyDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetById(Guid societyId)
     {

@@ -1,11 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TPS.Application.Areas.AdminArea.Societies.Contracts;
-using TPS.Application.Areas.AdminArea.Students.Contracts;
 using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
@@ -39,7 +33,7 @@ public class SocietiesService(ApplicationDbContext context): ISocietiesService
                 {
                     Id = s.Advisor.Id,
                     FullName = $"{s.Advisor.FirstName} {s.Advisor.LastName}",
-                    LogoId = s.LogoId
+                    LogoId = s.Advisor.ProfileImageId??""
                 }
             }).FirstAsync();
 

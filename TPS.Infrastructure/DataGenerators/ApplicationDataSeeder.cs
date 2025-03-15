@@ -19,6 +19,9 @@ public class ApplicationDataSeeder(ApplicationDbContext _context, RoleManager<Ap
 
     private async Task seedRoles()
     {
+        if (_context.Roles.Any())
+            return;
+
         string[] roles = { "Student", "Faculty" };
 
         foreach (var role in roles)
@@ -94,6 +97,17 @@ public class ApplicationDataSeeder(ApplicationDbContext _context, RoleManager<Ap
         }
 
         _context.FacultyMembers.AddRange(data);
+
+        var roles = await _roleManager.Roles.ToListAsync();
+        foreach (var facultyMember in data)
+        {
+            await _context.UserRoles.AddAsync(new IdentityUserRole<Guid>
+            {
+                RoleId = roles.First(r => r.Name == "Faculty").Id,
+                UserId = facultyMember.Id
+            });
+        }
+
         await _context.SaveChangesAsync();
     }
 
@@ -159,6 +173,18 @@ public class ApplicationDataSeeder(ApplicationDbContext _context, RoleManager<Ap
         }
 
         _context.Students.AddRange(data);
+
+
+        var roles = await _roleManager.Roles.ToListAsync();
+        foreach (var student in data)
+        {
+            await _context.UserRoles.AddAsync(new IdentityUserRole<Guid>
+            {
+                RoleId = roles.First(r => r.Name == "Student").Id,
+                UserId = student.Id
+            });
+        }
+
         await _context.SaveChangesAsync();
     }
 

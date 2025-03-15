@@ -1,4 +1,4 @@
-import { Component, inject, input, ViewChild } from '@angular/core';
+import { Component, inject, input, signal, ViewChild } from '@angular/core';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -13,18 +13,27 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { AddCommitteeMemberFormComponent } from "./add-committee-member-form/add-committee-member-form.component";
 import { AddMemberFormComponent } from "./add-member-form/add-member-form.component";
 import { PageMode } from '../../common/types/presentaion.types';
+import { SocietiesService } from '../../areas/system-admin-area/services/societies.service';
+import { Member, SocietyMember, SocietyWithAdvisor } from '../../areas/system-admin-area/api-interfaces/society.types';
+import { DatePipe } from '@angular/common';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { Router } from '@angular/router';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 
 @Component({
   selector: 'app-gen-society-details',
   imports: [
+    DatePipe,
     NzBreadCrumbModule,
     NzButtonModule,
     NzDividerModule,
     NzIconModule,
     NzTableModule,
+    NzAvatarModule,
     MembersTableComponent,
     CommitteeTableComponent,
     NzModalModule,
+    NzSkeletonModule,
     EditSocietyInfoFormComponent,
     AddCommitteeMemberFormComponent,
     AddMemberFormComponent,
@@ -33,46 +42,20 @@ import { PageMode } from '../../common/types/presentaion.types';
   styleUrl: './gen-society-details.component.css'
 })
 export class GenSocietyDetailsComponent {
-
+  societyService = inject(SocietiesService);
   pageMode = input<PageMode>('VIEW_ONLY');
   societyId = input.required<string>();
+  society: SocietyWithAdvisor | null = null;
+  members = signal<SocietyMember[]>([]);
+  committee = signal<SocietyMember[]>([]);
 
-  society = {
-    id: '32-afd43',
-    name: 'ACM JU',
-    description: 'This is a description',
-    creationDate: new Date('2017-01-01'),
-    themeColor: '#1677ff',
-    logo: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    advisorId: 1
-  }
-
-  committee = [
-    {
-      id: '23fs-sdf',
-      name: 'Suhaib Saleh',
-      position: 'President',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/1.jpg',
-      startDate: '2024-01-01',
-    },
-    {
-      id: '23fs-sdf',
-      name: 'Amer Khaleel',
-      position: 'Vice President',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/2.jpg',
-      startDate: '2024-01-01',
-    },
-    {
-      id: '23fs-sdf',
-      name: 'Noor Aldeen',
-      position: 'Treasure',
-      imageUrl: 'https://randomuser.me/api/portraits/lego/3.jpg',
-      startDate: '2024-01-01',
-    }
-  ];
+  isSocietyLoading = false;
+  isCommitteeLoading = false;
+  isMembersLoading = false;
 
   messageService = inject(NzMessageService);
   breadcrumbService = inject(BreadcrumbService);
+  router = inject(Router);
 
   isEditSocietyInfoPopupVisible = false;
   isEditSocietyInfoLoading = false;
@@ -80,12 +63,51 @@ export class GenSocietyDetailsComponent {
   isAddCommitteePopupVisible = false;
   isAddCommitteeLoading = false;
 
+  isAddMemberPopupVisible = false;
+  isAddMemberLoading = false;
+
   @ViewChild(EditSocietyInfoFormComponent) editSocietyInfoFormComponent?: EditSocietyInfoFormComponent;
   @ViewChild(AddCommitteeMemberFormComponent) addCommitteeMemberForm?: AddCommitteeMemberFormComponent;
+  @ViewChild(AddMemberFormComponent) addMemberForm: AddMemberFormComponent | undefined;
 
   ngOnInit() {
-    this.breadcrumbService.set('@societyName', this.society.name);
-    console.log('pageMode:', this.pageMode(), 'societyId:', this.societyId());
+    this.isSocietyLoading = true;
+    this.isCommitteeLoading = true;
+    this.isMembersLoading = true;
+
+    this.societyService.find(this.societyId()).subscribe({
+      next: society => {
+        if (!society) {
+          return;
+        }
+
+        console.table(society);
+        this.society = society;
+        this.breadcrumbService.set('@societyName', this.society!.name);
+        console.log('pageMode:', this.pageMode(), 'societyId:', this.societyId());
+
+        this.isSocietyLoading = false;
+      },
+      error: () => {
+        this.isSocietyLoading = false;
+        this.router.navigate(['/societies']);
+      }
+    });
+
+
+    this.societyService.societyMembers(this.societyId(), false).subscribe({
+      next: members => {
+        this.members.set(members);
+        this.isMembersLoading = false;
+      }
+    });
+
+    this.societyService.societyMembers(this.societyId(), true).subscribe({
+      next: members => {
+        this.committee.set(members);
+        this.isCommitteeLoading = false;
+      }
+    });
   }
 
   openEditSocietyInfoPopup() {
@@ -132,22 +154,41 @@ export class GenSocietyDetailsComponent {
     console.table(this.addCommitteeMemberForm!.getFormValue());
   }
 
-  isAddMemberPopupVisible = false;
-
   openAddMemberPopup() {
-    this.isAddCommitteePopupVisible = true;
+    this.isAddMemberPopupVisible = true;
   }
 
   handleCancelAddMember() {
-    this.isAddCommitteePopupVisible = false;
+    this.isAddMemberPopupVisible = false;
   }
 
   handleOkAddMember() {
-    if (!this.addCommitteeMemberForm!.isFormValid()) {
-      this.addCommitteeMemberForm!.messageService.error('Please fill in all required fields.');
+    if (!this.addMemberForm?.isFormValid()) {
+      this.messageService.error('Please fill in all required fields.');
       return;
     }
 
-    console.table(this.addCommitteeMemberForm!.getFormValue());
+    const formValue = this.addMemberForm.getFormValue();
+    this.isAddMemberLoading = true;
+
+    this.societyService.addMember(this.societyId(), formValue).subscribe({
+      next: () => {
+        this.messageService.success('Member added successfully');
+        this.isAddMemberPopupVisible = false;
+        // Refresh members list
+        this.societyService.societyMembers(this.societyId(), false).subscribe({
+          next: members => {
+            this.members.set(members);
+          }
+        });
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to add member');
+        console.error('Error adding member:', error);
+      },
+      complete: () => {
+        this.isAddMemberLoading = false;
+      }
+    });
   }
 }

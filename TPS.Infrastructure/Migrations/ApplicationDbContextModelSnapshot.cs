@@ -709,8 +709,8 @@ namespace TPS.Infrastructure.Migrations
 
                     b.Property<string>("LogoId")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -726,38 +726,6 @@ namespace TPS.Infrastructure.Migrations
                     b.HasIndex("AdvisorId");
 
                     b.ToTable("Societies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("7981a758-5274-4349-ba71-6b8e689e9ea9"),
-                            AdvisorId = new Guid("b6530abe-bfe5-4212-8acb-08dd5e35e650"),
-                            CreationDate = new DateOnly(2017, 1, 1),
-                            Description = "A society for Problem Solving.",
-                            LogoId = "",
-                            Name = "ACM JU Student Chapter",
-                            ThemeColor = "#FF0000"
-                        },
-                        new
-                        {
-                            Id = new Guid("2a077a71-972d-4b6f-80e5-f2103dafd753"),
-                            AdvisorId = new Guid("75445a2d-ec45-4e52-8acc-08dd5e35e650"),
-                            CreationDate = new DateOnly(2024, 1, 1),
-                            Description = "A society for Robotics.",
-                            LogoId = "",
-                            Name = "Waves JU",
-                            ThemeColor = "#FF0000"
-                        },
-                        new
-                        {
-                            Id = new Guid("6f5fbae1-d89a-4dbd-96cd-7e7929cde69a"),
-                            AdvisorId = new Guid("e67bb4a6-0eb9-498a-8acd-08dd5e35e650"),
-                            CreationDate = new DateOnly(2019, 1, 1),
-                            Description = "A society for Computer Science students.",
-                            LogoId = "",
-                            Name = "IEEE CS JU",
-                            ThemeColor = "#FF0000"
-                        });
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.FacultyMember", b =>
@@ -775,71 +743,6 @@ namespace TPS.Infrastructure.Migrations
                     b.HasIndex("RankId");
 
                     b.ToTable("FacultyMembers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b6530abe-bfe5-4212-8acb-08dd5e35e650"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "2ec4788c-5f4c-421e-8abb-4a704a9d5421",
-                            DepartmentId = 2,
-                            Email = "asaf@ju.edu.jo",
-                            EmailConfirmed = false,
-                            FirstName = "Abdelbast",
-                            Gender = "Male",
-                            LastName = "A'asaf",
-                            LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELIhT49xTHOXI0y72eDfBfyjO2rS+RgWK4USYS3KSxFT8aC2IR8o0MsLuc7n/o+Mxg==",
-                            PhoneNumber = "0799999999",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "76ZUI2EVMGSBUF7NWRTDDMRYSD3P2OZA",
-                            TwoFactorEnabled = false,
-                            UserName = "asaf",
-                            EmployeeNumber = "CIS01",
-                            RankId = 2
-                        },
-                        new
-                        {
-                            Id = new Guid("e67bb4a6-0eb9-498a-8acd-08dd5e35e650"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "162f4cc2-930b-4a65-985b-69d59f9bcea0",
-                            DepartmentId = 2,
-                            Email = "musa@ju.edu.jo",
-                            EmailConfirmed = false,
-                            FirstName = "Musa",
-                            Gender = "Male",
-                            LastName = "Al Akhras",
-                            LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELIhT49xTHOXI0y72eDfBfyjO2rS+RgWK4USYS3KSxFT8aC2IR8o0MsLuc7n/o+Mxg==",
-                            PhoneNumber = "0799999999",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "76ZUI2EVMGSBUF7NWRTDDMRYSD3P2OZA",
-                            TwoFactorEnabled = false,
-                            UserName = "musa",
-                            EmployeeNumber = "CIS02",
-                            RankId = 4
-                        },
-                        new
-                        {
-                            Id = new Guid("75445a2d-ec45-4e52-8acc-08dd5e35e650"),
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "822ba1ac-825b-4df6-b6ec-e85b960ba0e2",
-                            DepartmentId = 4,
-                            Email = "ruba@ju.edu.jo",
-                            EmailConfirmed = false,
-                            FirstName = "Ruba",
-                            Gender = "Female",
-                            LastName = "E'baidat",
-                            LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELIhT49xTHOXI0y72eDfBfyjO2rS+RgWK4USYS3KSxFT8aC2IR8o0MsLuc7n/o+Mxg==",
-                            PhoneNumber = "0799999999",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "76ZUI2EVMGSBUF7NWRTDDMRYSD3P2OZA",
-                            TwoFactorEnabled = false,
-                            UserName = "ruba",
-                            EmployeeNumber = "AIS01",
-                            RankId = 4
-                        });
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.Student", b =>

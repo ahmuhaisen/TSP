@@ -5,6 +5,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { GenSocietyDetailsComponent } from '../../../../../components/society-details/gen-society-details.component';
 import { ActivatedRoute } from '@angular/router';
 import { PageMode } from '../../../../../common/types/presentaion.types';
+import { SocietiesService } from '../../../services/societies.service';
+import { SocietyWithAdvisor } from '../../../api-interfaces/society.types';
 
 @Component({
   selector: 'app-society-details',
@@ -18,6 +20,7 @@ import { PageMode } from '../../../../../common/types/presentaion.types';
   styleUrl: './society-details.component.css'
 })
 export class SocietyDetailsComponent {
+  
   activatedRoute = inject(ActivatedRoute);
 
   pageMode = signal<PageMode>('VIEW_ONLY');
@@ -32,6 +35,8 @@ export class SocietyDetailsComponent {
       else {
         this.pageMode.set('VIEW_ONLY');
       }
-    })
+    });
+
+    
   }
 }

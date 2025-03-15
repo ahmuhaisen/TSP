@@ -10,7 +10,7 @@ using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.StudentArea.Events.Commands;
 
-public class AddEvent
+public class CreateEventRequest
 {
     public sealed class Command : ICommand<Result<Guid>>
     {

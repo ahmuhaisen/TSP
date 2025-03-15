@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -16,6 +16,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { committeePositions } from '../../../common/constants/committee-positions.constant';
+import { SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 
 @Component({
   selector: 'app-committee-table',
@@ -34,21 +37,25 @@ import { committeePositions } from '../../../common/constants/committee-position
     NzInputModule,
     NzSelectModule,
     NzAlertModule,
+    NzAvatarModule,
     ReactiveFormsModule,
   ],
   templateUrl: './committee-table.component.html',
 })
-export class CommitteeTableComponent {
+export class CommitteeTableComponent implements OnInit {
 
   isViewOnly = input<boolean>(false);
+  societyId = input<string>('');
 
   isEditCommitteePopupVisible = false;
   isEditCommitteePopupLoading = false;
-  memberToEdit: any = null;
+  memberToEdit: SocietyMember | undefined = undefined;
 
-  committee = input.required<any[]>();
+  committee = input.required<SocietyMember[]>();
+  displayedCommittee: SocietyMember[] = [];
 
   messageService = inject(NzMessageService);
+  societiesService = inject(SocietiesService);
 
   formBuilder = inject(FormBuilder);
   editCommitteeMemberForm: FormGroup | undefined;
@@ -57,7 +64,6 @@ export class CommitteeTableComponent {
 
   displayedPositions = [...this.positions];
 
-
   ngOnInit() {
     this.editCommitteeMemberForm = this.formBuilder.group({
       name: ['', [Validators.required]],
@@ -65,7 +71,16 @@ export class CommitteeTableComponent {
       startDate: [new Date(), [Validators.required]],
     });
 
-    this.positions = this.positions.filter(p => !this.isTakenPosition(p.name));
+    // Initialize and update displayed committee when input changes
+    this.displayedCommittee = [...this.committee()];
+    this.positions = committeePositions.filter(p => !this.isTakenPosition(p.name));
+  }
+
+  ngOnChanges() {
+    if (this.committee()) {
+      this.displayedCommittee = [...this.committee()];
+      this.positions = committeePositions.filter(p => !this.isTakenPosition(p.name));
+    }
   }
 
   openEditMemberPopup(id: string) {
@@ -77,13 +92,16 @@ export class CommitteeTableComponent {
   }
 
   removeCommitteeMember(id: string) {
-    // remove member
+    this.societiesService.removeCommitteeMember(this.societyId(), id).subscribe(() => {
+      this.messageService.success('Committee member removed successfully.');
+      this.displayedCommittee = this.displayedCommittee.filter(m => m.id !== id);
+    });
   }
 
   handleCancelEditCommitteeMember() {
     this.isEditCommitteePopupVisible = false;
     this.isEditCommitteePopupLoading = false;
-    this.memberToEdit = null;
+    this.memberToEdit = undefined;
     this.clearEditMemberForm();
   }
 
@@ -94,9 +112,9 @@ export class CommitteeTableComponent {
   setEditMemberFormValues() {
     console.table(this.memberToEdit);
     this.editCommitteeMemberForm!.get('name')?.disable();
-    this.editCommitteeMemberForm!.get('name')?.setValue(this.memberToEdit!.name);
+    this.editCommitteeMemberForm!.get('name')?.setValue(this.memberToEdit!.firstName + ' ' + this.memberToEdit!.lastName);
     this.editCommitteeMemberForm!.get('position')?.setValue(this.memberToEdit!.position);
-    this.editCommitteeMemberForm!.get('startDate')?.setValue(this.memberToEdit!.startDate);
+    this.editCommitteeMemberForm!.get('startDate')?.setValue(this.memberToEdit!.joinDate);
   }
 
   clearEditMemberForm() {

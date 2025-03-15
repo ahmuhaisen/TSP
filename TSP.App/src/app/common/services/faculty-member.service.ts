@@ -1,15 +1,14 @@
 import { inject, Injectable } from "@angular/core";
 import { DbService } from "./db.service";
-import { Rank, SchoolWithDepartmentsBasicDetails } from "../types/system-tables.types";
 
 @Injectable({ providedIn: 'root' })
-export class SchoolService {
-    model = 'schools';
+export class FacultyMembersService {
+    model = 'facultyMember';
 
     db = inject(DbService);
 
-    allSchoolsWithDepartments() {
-        return this.db.getRequest<SchoolWithDepartmentsBasicDetails[]>(this.model);
+    all() {
+        return this.db.getRequest<facultyMemberBasicDetails[]>("AdminArea/FacultyMember");
     }
 
     private getUrl() {
@@ -21,4 +20,8 @@ export class SchoolService {
     }
 }
 
-
+export interface facultyMemberBasicDetails {
+    id: string;
+    fullName: string;
+    logoId: string;
+}

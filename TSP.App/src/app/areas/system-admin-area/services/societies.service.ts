@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { Society, SocietyBasicDetails } from '../api-interfaces/society.types';
+import { PostSociety, Society, SocietyBasicDetails, SocietyMember, SocietyWithAdvisor } from '../api-interfaces/society.types';
 import { DbService } from '../../../common/services/db.service';
 import { AuthService } from '../../../common/services/auth.service';
 
@@ -17,11 +17,20 @@ export class SocietiesService {
 
 
   advisorSocieties() {
-    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/Advisor/AdvisorSocieties?advisorIds=${this.userId}`);
+    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/FacultyMember/Societies/Advised`);
   }
 
   otherSocieties() {
-    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/Advisor/OtherSocieties?advisorIds=${this.userId}`);
+    return this.db.getRequest<SocietyBasicDetails[]>(`AdminArea/FacultyMember/Societies/Other`);
+  }
+
+  societyMembers(id: string, isCommittee: boolean) {
+    return this.db.getRequest<SocietyMember[]>(`AdminArea/Societies/${id}/Members?isCommittee=${isCommittee}`);
+  }
+
+  removeCommitteeMember(societyId: string, memberId: string)
+  {
+    return this.db.deleteRequest(`AdminArea/Societies/${societyId}/Members/${memberId}/Committee`);
   }
 
   all() {
@@ -29,11 +38,11 @@ export class SocietiesService {
   }
 
   find(id: string) {
-    return this.db.getRequest<Society>(this.getUrlWithId(id));
+    return this.db.getRequest<SocietyWithAdvisor>(this.getUrlWithId(id));
   }
 
-  create(society: Society) {
-    return this.db.postRequest<Society, Society>(this.getUrl(), society);
+  create(society: PostSociety) {
+    return this.db.postRequest<PostSociety, PostSociety>(this.getUrl(), society);
   }
 
   update(id: string, society: Society) {
@@ -42,6 +51,14 @@ export class SocietiesService {
 
   delete(id: string) {
     return this.db.deleteRequest(this.getUrlWithId(id));
+  }
+
+  editMember(memberId: string, position: string) {
+    return this.db.putRequest(`AdminArea/Students/${memberId}/Position`, { position });
+  }
+
+  addMember(societyId: string, data: { studentId: string, position: string, startDate: Date }) {
+    return this.db.postRequest(`AdminArea/Societies/${societyId}/Members`, data);
   }
 
   private getUrl() {

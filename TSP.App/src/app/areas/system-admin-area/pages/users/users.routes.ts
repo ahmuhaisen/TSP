@@ -10,7 +10,7 @@ export const routes: Routes = [
         path: ':id',
         loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent),
         data: {
-            breadcrumb: 'Profile'
+            breadcrumb: 'Profile',
         }
     }
 ];
