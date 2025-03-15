@@ -26,4 +26,3 @@ export class HomeService {
         return this.db.getRequest<HomeStatistics>(`${this.model}/homeStatistics?advisorId=${this.tempUserId}`);
     }
 }
-

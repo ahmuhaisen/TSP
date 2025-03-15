@@ -12,8 +12,7 @@ using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.StudentArea.Events.Queries;
 
-//TODO: Rename: GetMemberEventsRequests
-public class GetMemberEvents
+public class GetMemberEventsRequests
 {
     public sealed class Query : IQuery<Result<List<MemberEventDetailsDTO>>>
     {
@@ -30,27 +29,38 @@ public class GetMemberEvents
     {
         public async Task<Result<List<MemberEventDetailsDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var data = await context.EventsApproval
+            var data = await context.Events
                 .AsNoTracking()
-                .Include(s => s.Event)
                 .Where(
-                    s => s.Event.StudentId == request.UserId
+                    s => s.StudentId == request.UserId
                 )
                .Select(s => new MemberEventDetailsDTO
                {
                    CommitteeId = request.UserId,
-                   SocietyId = s.Event.SocietyId,
-                   EventId = s.EventId,
-                   Title = s.Event.Name,
-                   Description = s.Event.Description,
-                   Location = s.Event.LocationString,
-                   Type = s.Event.Type,
-                   StartDate = s.Event.StartTime,
-                   EndDate = s.Event.EndTime,
-                   DeanAssistantApproval = s.DeanAssistantApproval,
-                   AdvisorApproval = s.AdvisorApproval,
+                   SocietyId = s.SocietyId,
+                   EventId = s.Id,
+                   Title = s.Name,
+                   Description = s.Description,
+                   Location = s.LocationString,
+                   Type = s.Type,
+                   StartDate = s.StartTime,
+                   EndDate = s.EndTime,
+                   AdvisorApproval = null,
+                   DeanAssistantApproval = null
+               })
+               .ToListAsync();
 
-               }).ToListAsync();
+            foreach (var e in data)
+            {
+                var tempData = await context.EventsApproval
+                    .FirstOrDefaultAsync(s => s.Event.Id == e.EventId);
+
+                if (tempData != null)
+                {
+                    e.AdvisorApproval = tempData.AdvisorApproval;
+                    e.DeanAssistantApproval = tempData.DeanAssistantApproval;
+                }
+            }
 
 
             return Result.Success(data);

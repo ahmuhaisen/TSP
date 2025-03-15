@@ -102,6 +102,7 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
             .Where(s => s.SocietyId == SocietyId && s.IsCommittee == IsCommittee)
             .Select(s => new MembersListDTO
             {
+                Id = s.Student.Id,
                 FirstName = s.Student.FirstName,
                 LastName = s.Student.LastName,
                 Position = s.Position,

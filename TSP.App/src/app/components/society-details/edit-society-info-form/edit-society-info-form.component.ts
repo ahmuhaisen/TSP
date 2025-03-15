@@ -16,6 +16,9 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzColorPickerComponent } from 'ng-zorro-antd/color-picker';
 import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { SocietyWithAdvisor } from '../../../areas/system-admin-area/api-interfaces/society.types';
+import { facultyMemberBasicDetails, FacultyMembersService } from '../../../common/services/faculty-member.service';
+import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 
 @Component({
   selector: 'app-edit-society-info-form',
@@ -33,13 +36,49 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     NzSelectModule
   ],
   templateUrl: './edit-society-info-form.component.html',
+  styles: [`
+    .avatar-uploader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    :host ::ng-deep .ant-upload.ant-upload-select-picture-card {
+      width: 150px;
+      height: 100px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    :host ::ng-deep .ant-upload-list-picture-card-container {
+      width: 144px;
+      height: 144px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    :host ::ng-deep .ant-form-item-label {
+      text-align: left;
+    }
+
+    :host ::ng-deep .ant-form-vertical .ant-form-item-label {
+      padding-bottom: 4px;
+    }
+
+    :host ::ng-deep .ant-form-vertical .ant-form-item {
+      margin-bottom: 16px;
+    }
+  `]
 })
 export class EditSocietyInfoFormComponent {
 
-  society = input<{ id: string, name: string, description: string, creationDate: Date, themeColor: string, logo: string, advisorId: number }>();
+  society = input<SocietyWithAdvisor>();
 
   formBuilder = inject(FormBuilder);
   messageService = inject(NzMessageService);
+  facultyMembersService = inject(FacultyMembersService);
 
   createSocietyForm: FormGroup | undefined;
 
@@ -56,18 +95,13 @@ export class EditSocietyInfoFormComponent {
     if (this.society()) {
       this.setFormValues();
     }
+
+    this.facultyMembersService.all().subscribe(res => this.facultyMembers = res)
   }
 
   isFacultyMembersLoading = false;
 
-  facultyMembers = [
-    { id: 1, name: 'Sami Sarhan' },
-    { id: 2, name: 'Heba Sa\'adeh' },
-    { id: 3, name: 'Abdalbast Assaf' },
-    { id: 4, name: 'Shirinaz Alhaj Baddar' },
-    { id: 5, name: 'Osama Harfoshi' },
-    { id: 6, name: 'Basma Shqairat' }
-  ];
+  facultyMembers: facultyMemberBasicDetails[] = [];
 
   displayedFacultyMembers = [...this.facultyMembers];
 
@@ -76,13 +110,18 @@ export class EditSocietyInfoFormComponent {
     this.createSocietyForm!.get('description')?.setValue(this.society()!.description);
     this.createSocietyForm!.get('creationDate')?.setValue(this.society()!.creationDate);
     this.createSocietyForm!.get('themeColor')?.setValue(this.society()!.themeColor);
-    this.createSocietyForm!.get('logo')?.setValue(this.society()!.logo);
-    this.createSocietyForm!.get('advisorId')?.setValue(this.society()!.advisorId);
+    this.createSocietyForm!.get('logo')?.setValue(this.society()!.logoId);
+    this.createSocietyForm!.get('advisorId')?.setValue(this.society()!.advisor.id);
   }
 
   onSearchFacultyMembers(value: string): void {
     //this.isFacultyMembersLoading = true;
-    this.displayedFacultyMembers = this.facultyMembers.filter(member => member.name.toLowerCase().includes(value.toLowerCase()));
+    this.displayedFacultyMembers = this.facultyMembers.filter(member => member.fullName.toLowerCase().includes(value.toLowerCase()));
+  }
+
+  removeLogo(): void {
+    this.createSocietyForm!.get('logo')?.setValue('');
+    this.messageService.success('Logo removed successfully');
   }
 
   handleImageUpload({ file }: NzUploadChangeParam): void {

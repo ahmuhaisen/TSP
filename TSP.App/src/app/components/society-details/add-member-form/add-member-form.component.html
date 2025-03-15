@@ -1,0 +1,64 @@
+<form nz-form [formGroup]="addMemberForm!" class="grid grid-cols-1 gap-y-1">
+    <!-- Student -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Student</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="studentErrorTpl" class="w-3/4">
+            <nz-select formControlName="studentId" nzAllowClear="true" nzPlaceHolder="Select a student" 
+                      nzShowSearch nzServerSearch (nzOnSearch)="onSearchStudents($event)">
+                @if (!isMembersLoading) {
+                @for (student of displayedStudents; track student.id) {
+                <nz-option [nzValue]="student.id" [nzLabel]="student.name"></nz-option>
+                }
+                } @else {
+                <nz-option nzDisabled nzCustomContent>
+                    <nz-icon nzType="loading" class="loading-icon" />
+                    Loading students...
+                </nz-option>
+                }
+            </nz-select>
+            <ng-template #studentErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please select a student!
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Position -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Position</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="positionErrorTpl" class="w-3/4">
+            <input nz-input formControlName="position" placeholder="Enter position" />
+            <ng-template #positionErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please enter a position!
+                </ng-container>
+                }
+            </ng-template>
+            <div class="mt-2">
+                <span class="text-sm text-gray-500 mr-2">Suggested:</span>
+                @for (position of suggestedPositions; track position) {
+                    <nz-tag class="mb-1 cursor-pointer" (click)="selectPosition(position)">{{ position }}</nz-tag>
+                }
+            </div>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- Start Date -->
+    <nz-form-item class="flex items-start">
+        <nz-form-label nzRequired class="w-1/4 text-left">Start Date</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="dateErrorTpl" class="w-3/4">
+            <nz-date-picker formControlName="startDate"></nz-date-picker>
+            <ng-template #dateErrorTpl let-control>
+                @if(control.errors?.['required']){
+                <ng-container>
+                    Please enter the start date!
+                </ng-container>
+                }
+            </ng-template>
+        </nz-form-control>
+    </nz-form-item>
+</form>

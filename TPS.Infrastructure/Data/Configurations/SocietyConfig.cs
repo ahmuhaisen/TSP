@@ -17,7 +17,7 @@ public class SocietyConfig : IEntityTypeConfiguration<Society>
                .IsRequired();
 
         builder.Property(s => s.LogoId)
-               .HasMaxLength(100)
+               .HasMaxLength(200)
                .IsRequired();
 
         builder.Property(s => s.CreationDate)

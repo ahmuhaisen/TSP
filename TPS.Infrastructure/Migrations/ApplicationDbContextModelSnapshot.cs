@@ -709,8 +709,8 @@ namespace TPS.Infrastructure.Migrations
 
                     b.Property<string>("LogoId")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Name")
                         .IsRequired()
