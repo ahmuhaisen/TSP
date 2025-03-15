@@ -40,7 +40,9 @@ public class EventsController : ApiController
     [HttpPut("{eventRequestId}/Decision")]
     [ProducesResponseType(typeof(Guid),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateEventStatus([FromRoute]Guid EventRequestId, [FromQuery] bool isAccepted, [FromQuery] string? Remark)
+    public async Task<IActionResult> UpdateEventStatus([FromRoute]Guid EventRequestId, 
+                                                       [FromQuery] bool isAccepted,
+                                                       [FromQuery] string? Remark)
     {
         var query= EventStatusUpdate.Command.Create(EventRequestId, base.GetCurrentUserId()!.Value,isAccepted,Remark);
         var task = _sender.Send(query);

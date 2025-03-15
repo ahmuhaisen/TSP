@@ -15,11 +15,11 @@ builder.Services.AddApiControllers()
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var seeder = scope.ServiceProvider.GetRequiredService<ApplicationDataSeeder>();
-    await seeder.Seed();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var seeder = scope.ServiceProvider.GetRequiredService<ApplicationDataSeeder>();
+//    await seeder.Seed();
+//}
 
 if (app.Environment.IsDevelopment())
 {
