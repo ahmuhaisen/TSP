@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TPS.Application.Areas.StudentArea.Membership.Queries;
 using TPS.Application.Areas.StudentArea.Societies.Queries;
+using TPS.Application.Areas.StudentArea.Students.Queries;
 using TSP.Domain.Shared;
 namespace TSP.WebAPI.Controllers.StudentArea;
 

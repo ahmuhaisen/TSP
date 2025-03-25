@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.AdminArea.Societies.Contracts;
 using TPS.Application.Areas.AdminArea.Students.Commands;
-using TPS.Application.Areas.StudentArea.Membership.Commands;
-using TPS.Application.Areas.StudentArea.Membership.Contracts;
-using TPS.Application.Areas.StudentArea.Membership.Contracts.Requests;
-using TPS.Application.Areas.StudentArea.Membership.Queries;
+using TPS.Application.Areas.StudentArea.Societies.Commands;
+using TPS.Application.Areas.StudentArea.Societies.Contracts;
+using TPS.Application.Areas.StudentArea.Societies.Contracts.Requests;
+using TPS.Application.Areas.StudentArea.Societies.Queries;
 using TPS.Application.Areas.StudentArea.Socities.Commands;
 using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
 using TSP.Domain.Shared;
@@ -41,28 +41,13 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
-    //TODO: Relocate this to AdminArea
-    [HttpPut("{societyId}/Members/{studentId}/Committee")]
+    [HttpPost("{SocietyId}/Members/{StudentId}")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> addCommittee(Guid societyId, Guid studentId, AddCommitteeRequest request)
-    {
-        var query = AddCommittee.Command.Create(studentId, societyId, request);
-
-        var task = _sender.Send(query);
-
-        return await FromResult(task);
-    }
-
-    //TODO: UpdateSocietyMember endpoint
-
-    [HttpPost("{StudentId}/Members")]
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostJoinSocietyRequest(JoinSocietyRequest request, Guid StudentId)
+    public async Task<IActionResult> PostJoinSocietyRequest(JoinSocietyRequest request, Guid StudentId,Guid SocietyId)
     {
         var command = JoinSociety.Command.Create(request.StudentId,
-                                               request.SocietyName,
+                                               request.SocietyId,
                                                request.Motivation,
                                                request.Section);
         var task = _sender.Send(command);
@@ -79,7 +64,7 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
-    [HttpPut("{MembershipRequestId}/Members/Requests/{isAccepted}")]
+    [HttpPut("{SocietyId}/Members/Requests/{MembershipRequestId}/{isAccepted}")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateMembershipRequestStatus([FromRoute] Guid MembershipRequestId,

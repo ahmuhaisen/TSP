@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
 using TSP.Domain.Entities;
 
-namespace TPS.Application.Areas.StudentArea.Membership.Contracts
+namespace TPS.Application.Areas.StudentArea.Societies.Contracts
 {
     public class MembershipRequestDTO
     {
