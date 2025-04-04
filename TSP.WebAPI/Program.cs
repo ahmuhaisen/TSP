@@ -34,7 +34,7 @@ app.UseCors(builder =>
     builder.AllowAnyHeader();
 });
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
