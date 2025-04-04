@@ -7,12 +7,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
-using TPS.Application.Areas.StudentArea.Membership.Contracts;
+using TPS.Application.Areas.StudentArea.Societies.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
 
-namespace TPS.Application.Areas.StudentArea.Membership.Queries
+namespace TPS.Application.Areas.StudentArea.Societies.Queries
 {
     public class MembershipRequestsOfManagedSocieties
     {
@@ -35,7 +35,7 @@ namespace TPS.Application.Areas.StudentArea.Membership.Queries
                     .Include(x=>x.SocietiesMembers)
                     .AnyAsync(s => s.SocietiesMembers
                             .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId)))
-                    return Result<List<MembershipRequestDTO>>.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
+                    return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
 
                 var data = await context.MembershipsRequests
                     .Include(x=>x.Student)

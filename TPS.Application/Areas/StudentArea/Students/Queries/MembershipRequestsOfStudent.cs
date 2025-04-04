@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TPS.Application.Abstractions.Messaging;
-using TPS.Application.Areas.StudentArea.Membership.Contracts;
+using TPS.Application.Areas.StudentArea.Students.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Shared;
 
-namespace TPS.Application.Areas.StudentArea.Membership.Queries
+namespace TPS.Application.Areas.StudentArea.Students.Queries
 {
     public class MembershipRequestsOfStudent
     {

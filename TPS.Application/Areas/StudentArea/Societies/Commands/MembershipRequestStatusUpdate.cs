@@ -7,12 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TPS.Application.Abstractions.Messaging;
-using TPS.Application.Areas.StudentArea.Membership.Contracts;
+using TPS.Application.Areas.StudentArea.Societies.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
 
-namespace TPS.Application.Areas.StudentArea.Membership.Commands
+namespace TPS.Application.Areas.StudentArea.Societies.Commands
 {
     public class MembershipRequestStatusUpdate
     {
@@ -54,7 +54,7 @@ namespace TPS.Application.Areas.StudentArea.Membership.Commands
                 if (await context.Societies
                     .AnyAsync(s => s.SocietiesMembers
                             .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId && x.IsCommittee==true)))
-                    return Result<List<MembershipRequestDTO>>.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
+                    return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
 
                 if (request.isAccepted == false)
                 {

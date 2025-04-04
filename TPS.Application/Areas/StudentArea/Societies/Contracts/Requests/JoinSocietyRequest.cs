@@ -6,12 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TPS.Application.Areas.StudentArea.Membership.Contracts.Requests
+namespace TPS.Application.Areas.StudentArea.Societies.Contracts.Requests
 {
     public class JoinSocietyRequest
     {
         public Guid StudentId { get; set; }
-        public string SocietyName { get; private init; } = null!;
+        public Guid SocietyId { get; set; }
         public string Section { get; set; } = null!;
         public string Motivation { get; set; } = null!;
     }
@@ -20,7 +20,7 @@ namespace TPS.Application.Areas.StudentArea.Membership.Contracts.Requests
         public JoinSocietyRequestValidator()
         {
             RuleFor(r => r.StudentId);
-            RuleFor(r => r.SocietyName);
+            RuleFor(r => r.SocietyId);
             RuleFor(r => r.Section)
                 .NotNull()
                 .NotEmpty();
