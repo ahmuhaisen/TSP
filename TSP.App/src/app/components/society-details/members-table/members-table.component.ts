@@ -47,7 +47,6 @@ interface ColumnItem {
     NzToolTipModule,
     NzModalModule,
     NzAvatarModule,
-    EditMemberFormComponent,
     NzFormModule
   ],
   templateUrl: './members-table.component.html',
