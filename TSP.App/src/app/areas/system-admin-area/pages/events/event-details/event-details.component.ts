@@ -32,29 +32,7 @@ export class EventDetailsComponent {
 
   breadcrumbService = inject(BreadcrumbService);
 
-  tabs = [
-    {
-      name: 'Description',
-      icon: 'info-circle',
-      content: `Great college programmers 🤓
-      It's time to learn about many cool, fun and exciting things in our major and our college as well 🙆
-      In an event titled Junior to Solver 🤓
-      We will introduce you to us, Acm, and talk more about our majors and expand a little on Problem Solving, and talk about its benefits and importance to the job market in the presence of our distinguished guests 😍
-      Meet us on Sunday from 12 - 1 in the Ahmed Al-Louzi Auditorium at King Abdullah II College of Information Technology.
-      In addition to a competition in the lab after the event to live the atmosphere of competitions 🔥
-      There will be sweet prizes, don't miss them`
-    },
-    {
-      name: 'Participants',
-      icon: 'team',
-      content: 'The event is not approved yet!'
-    },
-    {
-      name: 'Event manager',
-      icon: 'user',
-      content: '**** Event manager / requester info ****'
-    },
-  ];
+  tabs = [];
 
   isEventRequestModalVisible = false;
 

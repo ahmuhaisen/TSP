@@ -8,7 +8,7 @@ using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers.AdminArea;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route($"api/{Constants.APIAreas.Admin}/[controller]")]
 public class EventsController : ApiController
@@ -21,12 +21,9 @@ public class EventsController : ApiController
     [ProducesResponseType(typeof(ResponseEnvelope),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetEventRequests()
     {
-        // This api returns all event requests for the current user
-        // TODO: Rename the query to GetEventRequests DONE
-        // TODO: Rename the Dto to EventRequestDTO DONE
-        // If the current user is an Advisor => return all event requests that are not approved by the advisor
-        // If the current user is a Dean or Dean Assistant => return all event requests that are approved by the advisor but not by the dean or dean assistant
-        var query = EventRequest.Query.Create(Guid.Parse("91A9273B-098E-4A90-7B57-08DD5EF9673F"));
+       
+        var query = EventRequest.Query.Create(GetCurrentUserId()!.Value);
+        Console.WriteLine(GetCurrentUserId()!.Value);
         var task = _sender.Send(query);
         return await FromResult(task);
     }

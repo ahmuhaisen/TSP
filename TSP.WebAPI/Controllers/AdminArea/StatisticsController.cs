@@ -14,7 +14,7 @@ public class StatisticsController : ApiController
     {
     }
     [HttpGet("TopSocietiesByMembers")] //L1
-    [ProducesResponseType(typeof(List<SocietyMembersCountDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SocietyCountDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getTopSocietiesByMembers([FromQuery] int numberOfSocities)
     {
@@ -32,7 +32,7 @@ public class StatisticsController : ApiController
         return await FromResult(task);
     }
     [HttpGet("TopSocities")] //R2
-    [ProducesResponseType(typeof(List<SocietyDataDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SocietyCountDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> getTopSocities([FromQuery] int numberOfSocities)
     {

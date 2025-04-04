@@ -25,9 +25,7 @@ public class UpdateSocietyRequestValidator : AbstractValidator<UpdateSocietyRequ
                .NotEmpty()
                .MaximumLength(200);
 
-        RuleFor(r => r.LogoBase64)
-               .NotNull()
-               .NotEmpty();
+        RuleFor(r => r.LogoBase64);
 
         RuleFor(r => r.ThemeColor)
        .Matches(@"^#[0-9A-Fa-f]{6}$")

@@ -10,7 +10,7 @@ namespace TPS.Application.Areas.AdminArea.Statistics.Queries;
 public class GetMemForEachSociety
 {
 
-    public sealed class Query : IQuery<Result<List<SocietyMembersCountDTO>>>
+    public sealed class Query : IQuery<Result<List<SocietyCountDTO>>>
     {
         public int numberOfSocieties { get; set; }
         private Query(int num)
@@ -20,7 +20,7 @@ public class GetMemForEachSociety
         public static Query Create(int num) => new Query(num);
     }
 
-    public sealed class Handler : IQueryHandler<Query, Result<List<SocietyMembersCountDTO>>>
+    public sealed class Handler : IQueryHandler<Query, Result<List<SocietyCountDTO>>>
     {
         private ApplicationDbContext _context { get; }
 
@@ -29,18 +29,15 @@ public class GetMemForEachSociety
             _context = context; 
         }
 
-        public async Task<Result<List<SocietyMembersCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<List<SocietyCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var l = new List<SocietyMembersCountDTO>();
-            var data = await _context.EventsApproval
+            var l = new List<SocietyCountDTO>();
+            var data = await _context.SocietiesMembers
                 .AsNoTracking()
-                .Where(s => s.DeanAssistantApproval==true && s.AdvisorApproval==true)
-                .Include(s => s.Event)
-                .ThenInclude(s => s.Society)
-                .GroupBy(s => s.Event.SocietyId)
-                .Select(s => new SocietyMembersCountDTO
+                .GroupBy(s => s.Society.Id)
+                .Select(s => new SocietyCountDTO
                 {
-                    Name = s.First().Event.Society.Name,
+                    Name = s.First().Society.Name,
                     count = s.Count()
                 })
                 .OrderByDescending(s=>s.count)
@@ -53,7 +50,7 @@ public class GetMemForEachSociety
                 return Result.Success(l);
             }
 
-            var temp = new SocietyMembersCountDTO { Name = "others", count = 0 };
+            var temp = new SocietyCountDTO { Name = "others", count = 0 };
             int sum = 0;
             for (int x = 0; x < data.Count&& x < request.numberOfSocieties; x++)
             {

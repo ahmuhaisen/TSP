@@ -10,17 +10,17 @@ namespace TPS.Application.Areas.AdminArea.Statistics.Queries;
 public class GetTopSocities
 {
 
-    public sealed class Query : IQuery<Result<List<EventAttendanceCountDTO>>>
+    public sealed class Query : IQuery<Result<List<SocietyCountDTO>>>
     {
-        public int numberOfEvents{ get; set; }
+        public int numberOfSocieties{ get; set; }
         private Query(int num)
         {
-            numberOfEvents = num;
+            numberOfSocieties = num;
         }
         public static Query Create(int num) => new Query(num);
     }
 
-    public sealed class Handler : IQueryHandler<Query, Result<List<EventAttendanceCountDTO>>>
+    public sealed class Handler : IQueryHandler<Query, Result<List<SocietyCountDTO>>>
     {
         private ApplicationDbContext _context { get; }
 
@@ -29,21 +29,21 @@ public class GetTopSocities
             _context = context; 
         }
 
-        public async Task<Result<List<EventAttendanceCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<List<SocietyCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var data = await _context.Attendees
+            var data = await _context.EventsApproval
                 .AsNoTracking()
-                .Include(s => s.Event)
-                .GroupBy(s => s.EventId)
+                .Where(s => s.DeanAssistantApproval == true && s.AdvisorApproval == true)
+                .GroupBy(s => s.Event.SocietyId)
                 .Select(
-                    s => new EventAttendanceCountDTO
+                    s => new SocietyCountDTO
                     {
-                        EventName = s.First().Event.Name,
+                        Name = s.First().Event.Society.Name,
                         count = s.Count()
                     }
                 )
                 .OrderByDescending(s=>s.count)
-                .Take(request.numberOfEvents)
+                .Take(request.numberOfSocieties)
                 .ToListAsync();
             return Result.Success(data);
         }

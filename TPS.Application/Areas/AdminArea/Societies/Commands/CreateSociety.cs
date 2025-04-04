@@ -48,7 +48,7 @@ public sealed class CreateSociety
             {
                 return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
             }
-            string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
+            string LogoId = result.Data ?? string.Empty;
             if (string.IsNullOrEmpty(LogoId))
             {
                 return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
