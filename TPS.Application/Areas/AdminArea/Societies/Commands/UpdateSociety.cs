@@ -36,7 +36,7 @@ public sealed class UpdateSociety
             if (data is null)
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
 
-
+            //TODO: Check if the logoBase64 in the request is null skip updating the image.
             var result = await _FileManager.updateFile(nameof(Society), request.Logo);
 
             if (result.IsFailure)

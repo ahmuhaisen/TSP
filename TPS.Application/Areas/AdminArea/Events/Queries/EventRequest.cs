@@ -62,7 +62,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                         {
                             Id = x.Id,
                             EventName = x.Event.Name,
-                            DateTime = x.Event.StartTime,
+                            StartDateTime = x.Event.StartTime,
                             LocationString = x.Event.LocationString,
                             Description = x.Event.Description,
                             ApprovalStatus = x.DeanAssistantApproval != null
@@ -88,7 +88,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     {
                         Id = x.Id,
                         EventName = x.Event.Name,
-                        DateTime = x.Event.StartTime,
+                        StartDateTime = x.Event.StartTime,
                         LocationString = x.Event.LocationString,
                         Description = x.Event.Description,
                         ApprovalStatus = x.AdvisorApproval == false ? "Rejected" : "Pending",
