@@ -22,7 +22,7 @@ public class EventsController : ApiController
     public async Task<IActionResult> GetEventRequests()
     {
         // This api returns all event requests for the current user
-        var query = EventRequest.Query.Create(Guid.Parse("91A9273B-098E-4A90-7B57-08DD5EF9673F"));
+        var query = EventRequest.Query.Create(base.GetCurrentUserId()!.Value);
         var task = _sender.Send(query);
         return await FromResult(task);
     }
