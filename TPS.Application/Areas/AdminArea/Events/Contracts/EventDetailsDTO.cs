@@ -33,9 +33,3 @@ public class AdvisorBasicDto
     public required string AdvisorName { get; set; }
     public required string AdvisorLogoId { get; set; }
 }
-
-public class EventSocietyBasicDto
-{
-    public required string SocietyDescription { get; set; }
-    public required string SocietyLogoId { get; set; }
-}
