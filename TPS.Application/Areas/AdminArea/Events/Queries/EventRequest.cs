@@ -64,11 +64,16 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                             EventName = x.Event.Name,
                             StartDateTime = x.Event.StartTime,
                             LocationString = x.Event.LocationString,
-                            Description = x.Event.Description,
                             ApprovalStatus = x.DeanAssistantApproval != null
                                 ? (x.DeanAssistantApproval == true ? "Accepted" : "Rejected")
                                 : "Pending",
-                            SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown"
+                            EventDescription = x.Event.Description,
+                            EventSociety=new EventSocietyBasicDto
+                            {
+                                SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown",
+                                SocietyDescription=x.Event.Society!=null? x.Event.Society.Description:"Unknown",
+                                SocietyLogoId=x.Event.Society!=null?x.Event.Society.LogoId:"Unkown"
+                            }
                         })
                         .ToListAsync();
                     return Result.Success(data);
@@ -90,9 +95,14 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                         EventName = x.Event.Name,
                         StartDateTime = x.Event.StartTime,
                         LocationString = x.Event.LocationString,
-                        Description = x.Event.Description,
                         ApprovalStatus = x.AdvisorApproval == false ? "Rejected" : "Pending",
-                        SocietyName = x.Event.Society.Name
+                        EventDescription = x.Event.Description,
+                        EventSociety = new EventSocietyBasicDto
+                        {
+                            SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown",
+                            SocietyDescription = x.Event.Society != null ? x.Event.Society.Description : "Unknown",
+                            SocietyLogoId = x.Event.Society != null ? x.Event.Society.LogoId : "Unkown"
+                        },
                     })
                     .ToListAsync();
 
