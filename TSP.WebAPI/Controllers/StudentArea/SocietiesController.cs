@@ -69,7 +69,8 @@ public class SocietiesController : ApiController
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateMembershipRequestStatus([FromRoute] Guid MembershipRequestId,
                                                                       [FromQuery] bool isAccpeted,
-                                                                      [FromRoute] Guid SocietyId)
+                                                                      [FromRoute] Guid SocietyId,
+                                                                      UpdateMembershipRequest request)
     {
         var query = MembershipRequestStatusUpdate.Command.Create(MembershipRequestId, SocietyId, isAccpeted, base.GetCurrentUserId()!.Value);
         var task = _sender.Send(query);

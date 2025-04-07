@@ -44,6 +44,7 @@ public class CreateEventRequest
             var tempEvent = new Event
             {
                 Id = Guid.NewGuid(),
+                Name=Request.Title,
                 StudentId = Request.CommitteeId,
                 SocietyId = Request.SocietyId,
                 IsAttendeesFormEnabled = Request.IsAttendanceFormEnabled,
@@ -51,7 +52,8 @@ public class CreateEventRequest
                 EndTime = Request.EndDate,
                 Type = Request.Type,
                 LocationString = Request.Location,
-                RequestTime = DateTime.Now
+                RequestTime = DateTime.Now,
+                Description = Request.Description,
             };
 
             await context.Events.AddAsync(
