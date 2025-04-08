@@ -1,6 +1,8 @@
 ﻿
+using iText.Commons.Actions.Contexts;
 using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
+using TPS.Application.Areas.AdminArea.Events.Queries;
 using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.StudentArea.Events.Contracts;
 using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
@@ -30,8 +32,9 @@ public class CreateEventRequest
         {
             var Request = request.eventRequest;
             var member = await context.SocietiesMembers
+                .Include(x=>x.Society)
             .FirstOrDefaultAsync(s => s.StudentId == Request.CommitteeId && s.SocietyId == Request.SocietyId);
-            
+
             if (member is null)
             {
                 return Result.Failure<Guid>(Error.NotFound(nameof(Student), Request.CommitteeId.ToString()));
@@ -44,7 +47,7 @@ public class CreateEventRequest
             var tempEvent = new Event
             {
                 Id = Guid.NewGuid(),
-                Name=Request.Title,
+                Name = Request.Title,
                 StudentId = Request.CommitteeId,
                 SocietyId = Request.SocietyId,
                 IsAttendeesFormEnabled = Request.IsAttendanceFormEnabled,
@@ -55,17 +58,23 @@ public class CreateEventRequest
                 RequestTime = DateTime.Now,
                 Description = Request.Description,
             };
-
+            var newEventApprovalRecord = new EventApproval
+            {
+                Id = Guid.NewGuid(),
+                AdvisorApproval = null,
+                DeanAssistantApproval = null,
+                Remarks = null,
+                DecisionDate = null,
+                EventId = tempEvent.Id,
+                FacultyMemberId = member.Society.AdvisorId
+            };
+            
             await context.Events.AddAsync(
               tempEvent
              );
-            var checkChanges = context.SaveChanges();
-            if (checkChanges <= 0)
-            {
-                return Result.Failure<Guid>(Error.InternalServerError("could not save record"));
-            }
-
-
+            await context.SaveChangesAsync();
+            await context.AddAsync(newEventApprovalRecord);
+            await context.SaveChangesAsync();
             return Result.Success(tempEvent.Id);
         }
     }

@@ -8,7 +8,7 @@ using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers.AdminArea;
 
-//[Authorize]
+[Authorize]
 [ApiController]
 [Route($"api/{Constants.APIAreas.Admin}/[controller]")]
 public class EventsController : ApiController
@@ -30,9 +30,9 @@ public class EventsController : ApiController
     [HttpGet("{eventRequestId}")]
     [ProducesResponseType(typeof(List<EventDetailsDTO>),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope),StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetEventDetails([FromRoute]Guid EventRequestId)
+    public async Task<IActionResult> GetEventDetails([FromRoute]Guid eventRequestId)
     {
-        var query = EventDetails.Query.Create(EventRequestId);
+        var query = EventDetails.Query.Create(eventRequestId);
         var task = _sender.Send(query);
         return await FromResult(task);
     }
@@ -40,11 +40,11 @@ public class EventsController : ApiController
     [HttpPut("{eventRequestId}/Decision")]
     [ProducesResponseType(typeof(Guid),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateEventStatus([FromRoute]Guid EventRequestId, 
+    public async Task<IActionResult> UpdateEventStatus([FromRoute]Guid eventRequestId, 
                                                        [FromQuery] bool isAccepted,
                                                        [FromQuery] string? Remark)
     {
-        var query= EventStatusUpdate.Command.Create(EventRequestId, base.GetCurrentUserId()!.Value,isAccepted,Remark);
+        var query= EventStatusUpdate.Command.Create(eventRequestId, base.GetCurrentUserId()!.Value,isAccepted,Remark);
         var task = _sender.Send(query);
         return await FromResult(task);
     }

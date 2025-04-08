@@ -24,8 +24,8 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
             public string? Number { get; set; }
             public string? UserType { get; set; }
             public static Command Create(Guid id,
-                                        string profileImageId,
                                         string fullName,
+                                        string profileImageId,
                                         string email,
                                         string number,
                                         string userType)
@@ -33,8 +33,8 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
                 return new Command
                 {
                     Id = id,
-                    ProfileImageId = profileImageId,
                     FullName = fullName,
+                    ProfileImageId = profileImageId,
                     Email = email,
                     Number = number,
                     UserType = userType
@@ -67,10 +67,6 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
                     {
                         student.UniversityNumber = request.Number;
                     }
-                    if (request.ProfileImageId != null)
-                    {
-                        student.ProfileImageId = request.ProfileImageId;
-                    }
                     context.Students.Update(student);
                 }
 
@@ -84,9 +80,9 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
                         return Result.Failure<Guid>(Error.NotFound(request.Id.ToString()));
                     if (!string.IsNullOrWhiteSpace(request.FullName))
                     {
-                        var names = request.FullName.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-                        facultyMember.FirstName = names.ElementAtOrDefault(0);
-                        facultyMember.LastName = names.ElementAtOrDefault(1);
+                        //var names = request.FullName.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                        facultyMember.FirstName = request.FullName;//names.ElementAtOrDefault(0);
+                        facultyMember.LastName = request.FullName;//names.ElementAtOrDefault(1);
                     }
                     if (request.Email != null)
                     {
@@ -96,23 +92,21 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
                     {
                         facultyMember.EmployeeNumber = request.Number;
                     }
-                    if (request.ProfileImageId != null)
+                    // TODO: Test image Update
+                    if (!string.IsNullOrWhiteSpace(request.ProfileImageId))
                     {
-                        facultyMember.ProfileImageId = request.ProfileImageId;
+                        var result = await _FileManager.uploadFile(nameof(ApplicationUser), request.ProfileImageId);
+                        if (result.IsFailure)
+                        {
+                            return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
+                        }
+
+                        string profileImageId = ResponseEnvelope.Success(result.Data!).ResponseData?.ToString() ?? "";
+                        facultyMember.ProfileImageId= profileImageId;
+                        //Strategy
                     }
                     context.FacultyMembers.Update(facultyMember);
                 }
-                //if (!string.IsNullOrWhiteSpace(request.ProfileImageId))
-                //{
-                //    var result = await _FileManager.updateFile(nameof(ApplicationUser), request.ProfileImageId);
-                //    if (result.IsFailure)
-                //    {
-                //        return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
-                //    }
-
-                //    string profileImageId = ResponseEnvelope.Success(result.Data!).ResponseData?.ToString() ?? "";
-
-                //}
                 await context.SaveChangesAsync();
                 return Result.Success(request.Id);
             }

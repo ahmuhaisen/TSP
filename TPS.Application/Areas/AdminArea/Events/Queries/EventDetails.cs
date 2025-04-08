@@ -28,50 +28,66 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             public async Task<Result<EventDetailsDTO>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var eventRequest = await _context.EventsApproval
-                    .Include(x => x.Event)
-                        .ThenInclude(x => x.Society)
-                            .ThenInclude(x => x.Advisor)
-                    .Include(x => x.Event)
-                        .ThenInclude(x => x.Student)
-                            .ThenInclude(x => x.Department)
+                    .FirstOrDefaultAsync(x => x.EventId == request.EventRequestId);
+
+                var tempEvent = await _context.Events
+                    .Include(x => x.Society)
+                        .ThenInclude(x => x.Advisor)
+                    .Include(x => x.Student)
+                        .ThenInclude(x => x.Department)
                     .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
 
-                if (eventRequest == null)
+                if (tempEvent == null)
                     return Result.Failure<EventDetailsDTO>(Error.NotFound(nameof(Event), request.EventRequestId.ToString()));
-
+                if (eventRequest == null)
+                {
+                    var newEventApprovalRecord = new EventApproval
+                    {
+                        Id=Guid.NewGuid(),
+                        AdvisorApproval=null,
+                        DeanAssistantApproval=null,
+                        Remarks=null,
+                        DecisionDate=null,
+                        EventId=request.EventRequestId,
+                        FacultyMemberId=tempEvent.Society.AdvisorId
+                    };
+                    eventRequest = newEventApprovalRecord;
+                    _context.Add(newEventApprovalRecord);
+                    await _context.SaveChangesAsync();
+                }
                 var eventManager = _context.SocietiesMembers
-                    .Where(x => x.StudentId == eventRequest.Event.StudentId);
+                    .Where(x => x.StudentId == tempEvent.StudentId);
 
                 var data = new EventDetailsDTO
                 {
-                    Type = eventRequest.Event.Type,
-                    EndDateTime = eventRequest.Event.EndTime,
+                    Type = tempEvent?.Type,
+                    EndDateTime = tempEvent.EndTime,
                     IsAdvisorApproved = eventRequest.AdvisorApproval,
                     IsDeanAssistantApproved = eventRequest.DeanAssistantApproval,
 
                     Id = eventRequest.Id,
-                    EventName = eventRequest.Event.Name,
-                    StartDateTime = eventRequest.Event.StartTime,
-                    LocationString = eventRequest.Event.LocationString,
-                    EventDescription = eventRequest.Event.Description,
+                    EventName = tempEvent.Name,
+                    StartDateTime = tempEvent.StartTime,
+                    LocationString = tempEvent.LocationString,
+                    EventDescription = tempEvent.Description,
                     ApprovalStatus = !(eventRequest.AdvisorApproval == true && eventRequest.DeanAssistantApproval == null)
                             ? (eventRequest.AdvisorApproval == true && eventRequest.DeanAssistantApproval == true
                             ? "Accepted" : "Rejected")
                             : "Pending",
                     EventSociety = new EventSocietyBasicDto
                     {
-                        SocietyName = eventRequest.Event.Society.Name,
-                        SocietyDescription = eventRequest.Event.Society.Description,
-                        SocietyLogoId = eventRequest.Event.Society.LogoId,
+                        SocietyName = tempEvent.Society.Name,
+                        SocietyDescription = tempEvent.Society.Description,
+                        SocietyLogoId = tempEvent.Society.LogoId,
                     },
 
                     EventRequestDTO = new EventRequestDTO
                     {
-                        RequestTime = eventRequest.Event.RequestTime,
-                        StartTime = eventRequest.Event.StartTime,
-                        EndTime = eventRequest.Event.EndTime,
-                        AdvisorEmail = eventRequest.Event.Society.Advisor.Email!,
-                        IsAttendeesFormEnabled = eventRequest.Event.IsAttendeesFormEnabled,
+                        RequestTime = tempEvent.RequestTime,
+                        StartTime = tempEvent.StartTime,
+                        EndTime = tempEvent.EndTime,
+                        AdvisorEmail = tempEvent.Society.Advisor.Email!,
+                        IsAttendeesFormEnabled = tempEvent.IsAttendeesFormEnabled,
                         Admins = _context.FacultyMembers
                              .Include(y => y.Rank)
                              .Where(y => y.Rank.Title.ToLower() == "Dean".ToLower() || y.Rank.Title.ToLower() == "Dean Assistant".ToLower())
@@ -86,34 +102,34 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
 
                     Advisor = new AdvisorBasicDto
                     {
-                        AdvisorId = eventRequest.Event.Society.AdvisorId,
-                        AdvisorName = $"{eventRequest.Event.Society.Advisor.FirstName} {eventRequest.Event.Society.Advisor.LastName}",
-                        AdvisorLogoId = eventRequest.Event.Society.LogoId,
+                        AdvisorId = tempEvent.Society.AdvisorId,
+                        AdvisorName = $"{tempEvent.Society.Advisor.FirstName} {tempEvent.Society.Advisor.LastName}",
+                        AdvisorLogoId = tempEvent.Society.LogoId,
                     },
 
                     EventManager = new MemberDto
                     {
-                        StudentId = eventRequest.Event.StudentId,
-                        StudentName = $"{eventRequest.Event.Student.FirstName} {eventRequest.Event.Student.LastName}",
-                        StudentEmail = eventRequest.Event.Student.Email ?? "Unknown",
-                        StudentLogoId = eventRequest.Event.Student.ProfileImageId,
-                        StudentDepartment = eventRequest.Event.Student.Department!.Name,
+                        StudentId = tempEvent.StudentId,
+                        StudentName = $"{tempEvent.Student.FirstName} {tempEvent.Student.LastName}",
+                        StudentEmail = tempEvent.Student.Email ?? "Unknown",
+                        StudentLogoId = tempEvent.Student.ProfileImageId,
+                        StudentDepartment = tempEvent.Student.Department!.Name,
                         JoinYear = eventManager
                             .Include(y => y.Society)
-                            .Where(y => y.SocietyId == eventRequest.Event.SocietyId)
+                            .Where(y => y.SocietyId == tempEvent.SocietyId)
                             .Select(y => y.JoinDate.Year)
                             .SingleOrDefault(),
                         StudentRole = eventManager
-                            .Where(y => y.SocietyId == eventRequest.Event.SocietyId)
+                            .Where(y => y.SocietyId == tempEvent.SocietyId)
                             .Select(y => y.Position)
                             .SingleOrDefault() ?? "Unknown",
                         JoinedSocietiesNames = eventManager
-                            .Where(y => y.StudentId == eventRequest.Event.StudentId)
+                            .Where(y => y.StudentId == tempEvent.StudentId)
                             .Select(y => y.Society.Name)
                             .ToList(),
                     }
                 };
-                return Result.Success(default(EventDetailsDTO)!);
+                return Result.Success(data);
             }
         }
     }

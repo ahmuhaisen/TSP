@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.Shared.Profiles.Command;
 using TPS.Application.Areas.Shared.Profiles.Contracts.Requests;
@@ -25,6 +26,7 @@ public class ProfilesController : ApiController
 
         return await FromResult(task);
     }
+    [Authorize]
     [HttpPut]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]

@@ -48,7 +48,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 {
                     return Result<List<EventDTO>>.Failure<List<EventDTO>>(Error.NotFound("Faculty Member", request.UserId.ToString()));
                 }
-
+                // TODO: Check when faculty member is dean/dean assistant and advisor at the same time
                 if (facultyMember.Rank != null &&
                    (facultyMember.Rank.Title == "Dean Assistant" || facultyMember.Rank.Title == "Dean"))
                 {
