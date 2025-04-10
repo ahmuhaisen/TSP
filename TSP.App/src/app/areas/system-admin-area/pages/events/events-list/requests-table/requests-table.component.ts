@@ -193,6 +193,7 @@ export class RequestsTableComponent implements OnInit {
   listOfDisplayData = [...this.eventsRequests];
   ngOnInit(): void {
     this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
+   
   }
   reset(): void {
     this.searchValue = '';
