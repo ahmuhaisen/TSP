@@ -153,7 +153,7 @@ export class ProfileComponent {
           updatedProfile.profileImageId = this.uploadedImageUrl;
         } else if (this.fileList.length === 0 && this.userProfile.profileImageId) {
           // If the user removed their profile image
-          updatedProfile.profileImageId = undefined;
+          updatedProfile.profileImageId = "";
         }
 
         // Log the form data to the console
@@ -261,6 +261,7 @@ export class ProfileComponent {
     this.fileList = [];
     this.uploadedImageUrl = null;
     this.showRemovePhotoPopover = false;
+    this.authService.setCurrentUserProfileImageId('');
     this.messageService.success('Profile image removed');
     console.log('Profile image removed by user');
   }

@@ -78,6 +78,11 @@ export class AuthService {
         return tokenPayload['rle'] === role;
     }
 
+    setCurrentUserProfileImageId(profileImageId: string) {
+        const currentUser = this.currentUser();
+        if(currentUser) currentUser.profileImageId = profileImageId;
+    }
+
     private navigateToHome(userType: string) {
         if(userType === 'FacultyMember') {
             this.router.navigate(['admin-area']);
@@ -89,6 +94,8 @@ export class AuthService {
     private navigateToLogin() {
         this.router.navigate(['authentication/login']);
     }
+
+
 }
 
 export interface LoginRequest {
