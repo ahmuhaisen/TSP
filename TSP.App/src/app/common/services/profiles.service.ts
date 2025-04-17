@@ -1,5 +1,17 @@
 import { inject, Injectable } from "@angular/core";
 import { DbService } from "./db.service";
+import { map } from "rxjs/operators";
+import { Observable } from "rxjs";
+
+// Define the Result interface to match the backend response structure
+interface Result<T> {
+    isSuccess: boolean;
+    value: T;
+    error?: {
+        code: string;
+        message: string;
+    };
+}
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +25,10 @@ export class ProfilesService {
 
     find(id: string, userType: string) {
         return this.db.getRequest<UserProfile>(`${this.model}/${id}?userType=${userType}`);
+    }
+
+    hasProfileImage(){
+        return this.db.getRequest<boolean>(`${this.model}/has-profile-image`);
     }
 
     update(id: string, userType: 'Student' | 'Faculty', profile: Partial<UserProfile>) {

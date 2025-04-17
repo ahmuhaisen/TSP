@@ -20,6 +20,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, Observer } from 'rxjs';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { environment } from '../../../../../../environments/environment';
 
 export interface SuggestedPerson {
   id: string;
@@ -51,11 +52,13 @@ export interface SuggestedPerson {
     ReactiveFormsModule,
     ContainerBlockComponent,
     RouterModule
-],
+  ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent {
+  baseProfileImageUrl = environment.gitHubUsersPicturesURL;
+
 
   profilesService = inject(ProfilesService);
   authService = inject(AuthService);
@@ -81,7 +84,7 @@ export class ProfileComponent {
       const id = params['id'];
       const userType = this.activatedRoute.snapshot.queryParamMap.get('userType') ?? 'Student';
       console.table(userType, id);
-  
+
       this.isLoading = true;
       this.profilesService.find(id, userType).subscribe({
         next: res => {
@@ -89,7 +92,6 @@ export class ProfileComponent {
           console.table(res);
           this.isLoading = false;
           this.initForm();
-          this.loadSuggestedPeople();
         },
         error: err => {
           console.error(err);
@@ -138,14 +140,14 @@ export class ProfileComponent {
   handleOkEditProfile(): void {
     if (this.profileForm.valid) {
       this.isEditProfileLoading = true;
-      
+
       if (this.userProfile) {
         const updatedProfile: Partial<UserProfile> = {
           fullName: this.profileForm.value.fullName,
           email: this.profileForm.value.email,
           number: this.profileForm.value.number
         };
-        
+
         // If a new profile image was uploaded, include it in the update
         if (this.uploadedImageUrl) {
           updatedProfile.profileImageId = this.uploadedImageUrl;
@@ -153,30 +155,30 @@ export class ProfileComponent {
           // If the user removed their profile image
           updatedProfile.profileImageId = undefined;
         }
-        
+
         // Log the form data to the console
         console.log('Form data to be submitted:', {
           ...updatedProfile,
-          profileImageId: updatedProfile.profileImageId ? 
-            `Base64 image string (${updatedProfile.profileImageId.substring(0, 30)}...)` : 
+          profileImageId: updatedProfile.profileImageId ?
+            `Base64 image string (${updatedProfile.profileImageId.substring(0, 30)}...)` :
             'No image provided'
         });
         console.log('Form is valid:', this.profileForm.valid);
         console.log('Form values:', this.profileForm.value);
-        
+
         // In a real application, you would first upload the image to a server
         // and get back a URL to store in the profile
-        
+
         this.profilesService.update(this.userProfile.id, (this.activatedRoute.snapshot.queryParamMap.get('userType') ?? 'Student') as 'Faculty' | 'Student', updatedProfile)
           .subscribe({
             next: (response) => {
               // First close the modal and stop loading
               this.isEditProfileLoading = false;
               this.isEditProfileModalVisible = false;
-              
+
               // Then update the local userProfile object with the response
               this.messageService.success('Profile updated successfully');
-              
+
               // Reset the uploaded image URL
               this.uploadedImageUrl = null;
               this.fileList = [];
@@ -205,7 +207,7 @@ export class ProfileComponent {
       this.messageService.error('You can only upload JPG or PNG files!');
       return false;
     }
-    
+
     const isLt2M = (file.size || 0) / 1024 / 1024 < 2;
     if (!isLt2M) {
       this.messageService.error('Image must be smaller than 2MB!');
@@ -214,22 +216,22 @@ export class ProfileComponent {
 
     // Handle the file upload
     this.handleImageUpload(file);
-    
+
     return false; // Prevent automatic upload
   };
 
   handleImageUpload(file: NzUploadFile): void {
     this.isImageUploading = true;
-    
+
     // Create a reader to preview the image
     const reader = new FileReader();
     reader.onload = (e: any) => {
       // Get the base64 string (this is what will be sent to the backend)
       const base64String = e.target.result;
-      
+
       // Store the base64 string for later use
       this.uploadedImageUrl = base64String;
-      
+
       // Update the file list for display
       this.fileList = [
         {
@@ -239,14 +241,14 @@ export class ProfileComponent {
           url: base64String
         }
       ];
-      
+
       this.isImageUploading = false;
       this.messageService.success('Image uploaded successfully');
-      
+
       // Log the base64 string length to console
       console.log('Base64 image string length:', base64String.length);
     };
-    
+
     // Read the file as a data URL (this will give us a base64 string)
     if (file instanceof File) {
       reader.readAsDataURL(file);
@@ -261,39 +263,5 @@ export class ProfileComponent {
     this.showRemovePhotoPopover = false;
     this.messageService.success('Profile image removed');
     console.log('Profile image removed by user');
-  }
-
-  loadSuggestedPeople(): void {
-    if (!this.userProfile) return;
-    
-    this.isSuggestedPeopleLoading = true;
-    // In a real application, this would be a service call
-    // For now, we'll simulate some data
-    setTimeout(() => {
-      this.suggestedPeople = [
-        {
-          id: '1',
-          fullName: 'John Smith',
-          userType: this.userProfile!.userType,
-          department: this.userProfile!.department || 'Unknown',
-          mutualSocieties: 2
-        },
-        {
-          id: '2',
-          fullName: 'Sarah Johnson',
-          userType: this.userProfile!.userType,
-          department: this.userProfile!.department || 'Unknown',
-          mutualSocieties: 1
-        },
-        {
-          id: '3',
-          fullName: 'Michael Brown',
-          userType: this.userProfile!.userType,
-          department: this.userProfile!.department || 'Unknown',
-          mutualSocieties: 3
-        }
-      ];
-      this.isSuggestedPeopleLoading = false;
-    }, 1000);
   }
 }

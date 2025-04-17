@@ -26,6 +26,21 @@ public class ProfilesController : ApiController
 
         return await FromResult(task);
     }
+
+    [Authorize]
+    [HttpGet("has-profile-image")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    public async Task<IActionResult> HasProfileImage()
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        var query = new HasProfileImage.Query(userId.Value);
+        var task = _sender.Send(query);
+        
+        return await FromResult(task);
+    }
     
     [Authorize]
     [HttpPut]

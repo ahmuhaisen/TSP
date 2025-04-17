@@ -32,6 +32,7 @@ public class JwtTokenService : IJwtTokenService
             new Claim(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
             new Claim("uid", user.Id.ToString()),
             new Claim("pid", user.ProfileImageId ?? string.Empty),
+            new Claim("pic", user.ProfileImageId ?? string.Empty),
         };
 
         var roles = await _userManager.GetRolesAsync(user);

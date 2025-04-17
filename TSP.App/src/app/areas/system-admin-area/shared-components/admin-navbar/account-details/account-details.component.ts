@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService, User } from '../../../../../common/services/auth.service';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-account-details',
@@ -17,6 +18,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
   styleUrl: './account-details.component.css'
 })
 export class AccountDetailsComponent {
+  baseProfileImageUrl = environment.gitHubUsersPicturesURL;
   isAccountDetailsDropdownOpen = false;
   userInfo = signal<User | null>(null);
 

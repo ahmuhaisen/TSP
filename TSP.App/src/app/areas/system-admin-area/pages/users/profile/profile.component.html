@@ -5,7 +5,7 @@
 <div class="flex flex-col md:flex-row items-center md:justify-between mt-5 gap-4 md:gap-0">
     <div class="flex items-center gap-3">
         <nz-avatar class="w-16 h-16 md:w-16 md:h-16 bg-secondary text-lg rounded-xl flex items-center justify-center"
-            [nzSrc]="userProfile!.profileImageId"
+            [nzSrc]="baseProfileImageUrl + '/' + userProfile!.profileImageId"
             [nzText]="userProfile!.fullName.substring(0, 2).toUpperCase()"></nz-avatar>
         <div>
             <h3 class="font-manrope font-bold text-xl md:text-2xl text-center md:text-left text-gray-900">

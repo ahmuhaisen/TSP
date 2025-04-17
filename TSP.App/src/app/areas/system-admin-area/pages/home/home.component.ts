@@ -18,6 +18,7 @@ import { HomeStatistics, RecentEvent, RecentlyJoinedMember } from '../../api-int
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { AuthService, User } from '../../../../common/services/auth.service';
 import { SearchDrawerComponent } from "../../../../components/search-drawer/search-drawer.component";
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -41,11 +42,14 @@ import { SearchDrawerComponent } from "../../../../components/search-drawer/sear
     NzEmptyModule,
     NzAvatarModule,
     SearchDrawerComponent
-],
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+  baseProfileImageUrl = environment.gitHubUsersPicturesURL;
+
+
   isLoading = false;
   isSearchLoading = false;
   userInfo = signal<User | null>(null);
