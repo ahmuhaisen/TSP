@@ -7,7 +7,7 @@ namespace TSP.Domain.Entities
         public bool? AdvisorApproval{ get; set; }
         public bool? DeanAssistantApproval { get; set; }
         public string? Remarks { get; set; }
-        public DateTime DecisionDate { get; set; }
+        public DateTime? DecisionDate { get; set; }
         public Guid EventId { get; set; }
         public Event Event { get; set; }= null!;
         public Guid FacultyMemberId { get; set; }
