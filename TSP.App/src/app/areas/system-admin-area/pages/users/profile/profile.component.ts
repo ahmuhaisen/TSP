@@ -167,13 +167,14 @@ export class ProfileComponent {
         // In a real application, you would first upload the image to a server
         // and get back a URL to store in the profile
         
-        this.profilesService.update(this.userProfile.id, this.userProfile.userType, updatedProfile)
+        this.profilesService.update(this.userProfile.id, (this.activatedRoute.snapshot.queryParamMap.get('userType') ?? 'Student') as 'Faculty' | 'Student', updatedProfile)
           .subscribe({
             next: (response) => {
-              // Update the local userProfile object with the response
-              this.userProfile = response;
+              // First close the modal and stop loading
               this.isEditProfileLoading = false;
               this.isEditProfileModalVisible = false;
+              
+              // Then update the local userProfile object with the response
               this.messageService.success('Profile updated successfully');
               
               // Reset the uploaded image URL

@@ -26,6 +26,7 @@ public class ProfilesController : ApiController
 
         return await FromResult(task);
     }
+    
     [Authorize]
     [HttpPut]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]

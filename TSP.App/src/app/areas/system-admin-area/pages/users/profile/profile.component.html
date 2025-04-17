@@ -25,7 +25,7 @@
 </div>
 
 <!-- Edit Profile Modal -->
-<nz-modal [(nzVisible)]="isEditProfileModalVisible" nzTitle="Edit Profile" nzCentered [nzClosable]="true"
+<nz-modal [(nzVisible)]="isEditProfileModalVisible" [nzVisible]="isEditProfileModalVisible" nzTitle="Edit Profile" nzCentered [nzClosable]="true"
     [nzMaskClosable]="false" [nzOkLoading]="isEditProfileLoading" nzOkText="Save" [nzWidth]="768"
     (nzOnCancel)="handleCancelEditProfile()" (nzOnOk)="handleOkEditProfile()">
     <ng-container *nzModalContent>
