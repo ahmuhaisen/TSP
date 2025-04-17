@@ -1,108 +1,119 @@
-<div class="mb-8 text-xs text-center">
-    <p class="focus:outline-none text-2xl font-extrabold leading-6 text-gray-800">
-        Register
-    </p>
-    <p class="focus:outline-none mt-4 font-medium leading-none text-gray-600">
+<div class="text-center mb-6 md:mb-8">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Create Account</h1>
+    <p class="text-sm md:text-base text-gray-600 mt-2">
         Already have an account?
-        <a routerLink="../login" class="font-medium text-gray-700 cursor-pointer">
-            Login here
+        <a routerLink="../login" class="text-gray-600 hover:text-gray-800 font-medium transition-colors duration-300">
+            Sign in
         </a>
     </p>
 </div>
 
-<div class="mb-8 text-center">
-    <nz-segmented [nzOptions]="userTypes" (nzValueChange)="handleUserTypeChange($event)"></nz-segmented>
+<div class="mb-5 md:mb-6 flex justify-center">
+    <nz-segmented [nzOptions]="userTypes" (nzValueChange)="onUserTypeChange($event)" class="shadow-sm text-xs sm:text-sm"></nz-segmented>
 </div>
 
-<form nz-form [nzLayout]="'vertical'" [formGroup]="registerForm" class="registerForm" (ngSubmit)="submitFacultyForm()">
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">E-mail</nz-form-label>
-        <nz-form-control nzErrorTip="Please enter a valid email!">
-            <input type="text" nz-input formControlName="email" placeholder="Email" />
-        </nz-form-control>
-    </nz-form-item>
+<div [class]="selectedUserType === 'Student' ? 'bg-orange-50 p-4 sm:p-6 rounded-lg border border-orange-100' : 'bg-blue-50 p-4 sm:p-6 rounded-lg border border-blue-100'">
+    <form nz-form [nzLayout]="'vertical'" [formGroup]="registerForm" class="space-y-3 md:space-y-4" (ngSubmit)="submitFacultyForm()">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-x-4">
+            <nz-form-item>
+                <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="firstName">First name</nz-form-label>
+                <nz-form-control nzErrorTip="Please enter a valid name!">
+                    <input type="text" nz-input formControlName="firstName" placeholder="First name" class="rounded-lg text-sm md:text-base" />
+                </nz-form-control>
+            </nz-form-item>
 
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="firstName">First name</nz-form-label>
-        <nz-form-control nzErrorTip="Please enter a valid name!">
-            <input type="text" nz-input formControlName="firstName" placeholder="First name" />
-        </nz-form-control>
-    </nz-form-item>
+            <nz-form-item>
+                <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="lastName">Last name</nz-form-label>
+                <nz-form-control nzErrorTip="Please enter a valid name!">
+                    <input type="text" nz-input formControlName="lastName" placeholder="Last name" class="rounded-lg text-sm md:text-base" />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
 
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="lastName">Last name</nz-form-label>
-        <nz-form-control nzErrorTip="Please enter a valid name!">
-            <input type="text" nz-input formControlName="lastName" placeholder="Last name" />
-        </nz-form-control>
-    </nz-form-item>
+        <nz-form-item>
+            <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="email">E-mail</nz-form-label>
+            <nz-form-control nzErrorTip="Please enter a valid email!">
+                <input type="text" nz-input formControlName="email" placeholder="Email" class="rounded-lg text-sm md:text-base" />
+            </nz-form-control>
+        </nz-form-item>
 
-    <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="lastName">Gender</nz-form-label>
-        <nz-form-control nzErrorTip="Please enter a valid name!">
-            <nz-select formControlName="gender" nzPlaceHolder="Gender">
-                <nz-option nzValue="MALE" nzLabel="Male"></nz-option>
-                <nz-option nzValue="FEMALE" nzLabel="Female"></nz-option>
-            </nz-select>
-        </nz-form-control>
-    </nz-form-item>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-x-4">
+            <nz-form-item>
+                <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="gender">Gender</nz-form-label>
+                <nz-form-control nzErrorTip="Please select gender!">
+                    <nz-select formControlName="gender" nzPlaceHolder="Gender" class="w-full rounded-lg text-sm md:text-base">
+                        <nz-option nzValue="MALE" nzLabel="Male"></nz-option>
+                        <nz-option nzValue="FEMALE" nzLabel="Female"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
 
-    <nz-form-item>
-        <nz-form-label nzRequired nzFor="departmentId">School and Department</nz-form-label>
-        <nz-form-control nzErrorTip="Please select a department!">
-            <nz-select formControlName="departmentId" nzPlaceHolder="School and Department">
-                @for(school of schoolsAndDepartments; track school.id){
-                    <nz-option-group [nzLabel]="school.name">
-                        @for(department of school.departments; track department.id){
-                            <nz-option [nzValue]="department.id" [nzLabel]="department.name"></nz-option>
+            <nz-form-item>
+                <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="departmentId">School and Department</nz-form-label>
+                <nz-form-control nzErrorTip="Please select a department!">
+                    <nz-select formControlName="departmentId" nzPlaceHolder="School and Department" class="w-full rounded-lg text-sm md:text-base">
+                        @for(school of schoolsAndDepartments; track school.id){
+                            <nz-option-group [nzLabel]="school.name">
+                                @for(department of school.departments; track department.id){
+                                    <nz-option [nzValue]="department.id" [nzLabel]="department.name"></nz-option>
+                                }
+                            </nz-option-group>
                         }
-                    </nz-option-group>
-                }
-            </nz-select>
-        </nz-form-control>
-    </nz-form-item>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
 
-    <nz-divider />
-    @if(selectedUserType == 'FacultyMember'){
-    <nz-form-item>
-        <nz-form-label nzRequired nzFor="employeeNumber">Employee number</nz-form-label>
-        <nz-form-control nzErrorTip="Please enter a valid employee number!">
-            <input type="text" nz-input formControlName="employeeNumber" placeholder="(e.g. sr1234)" />
-        </nz-form-control>
-    </nz-form-item>
+        <div class="my-3 md:my-4 border-t border-gray-200"></div>
 
-    <nz-form-item>
-        <nz-form-label nzRequired nzFor="rankId">Rank</nz-form-label>
-        <nz-form-control nzErrorTip="Please select a rank!">
-            <nz-select formControlName="rankId" nzPlaceHolder="(e.g. Assistant Professor)">
-                @for(rank of ranks; track rank.id){
-                    <nz-option [nzValue]="rank.id" [nzLabel]="rank.name"></nz-option>
-                }
-            </nz-select>
-        </nz-form-control>
-    </nz-form-item>
-    }@else {
-    <nz-form-item>
-        <nz-form-label nzRequired nzFor="universityNumber">University number</nz-form-label>
-        <nz-form-control nzErrorTip="Please enter a valid employee number!">
-            <input type="text" nz-input formControlName="universityNumber" placeholder="(e.g. 0221111)" />
-        </nz-form-control>
-    </nz-form-item>
-    }
+        @if(selectedUserType == 'FacultyMember'){
+        <nz-form-item>
+            <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="employeeNumber">Employee number</nz-form-label>
+            <nz-form-control nzErrorTip="Please enter a valid employee number!">
+                <input type="text" nz-input formControlName="employeeNumber" placeholder="(e.g. sr1234)" class="rounded-lg text-sm md:text-base" />
+            </nz-form-control>
+        </nz-form-item>
 
-    <nz-divider />
+        <nz-form-item>
+            <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="rankId">Rank</nz-form-label>
+            <nz-form-control nzErrorTip="Please select a rank!">
+                <nz-select formControlName="rankId" nzPlaceHolder="(e.g. Assistant Professor)" class="w-full rounded-lg text-sm md:text-base">
+                    @for(rank of ranks; track rank.id){
+                        <nz-option [nzValue]="rank.id" [nzLabel]="rank.name"></nz-option>
+                    }
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        }@else {
+        <nz-form-item>
+            <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="universityNumber">University number</nz-form-label>
+            <nz-form-control nzErrorTip="Please enter a valid university number!">
+                <input type="text" nz-input formControlName="universityNumber" placeholder="(e.g. 0221111)" class="rounded-lg text-sm md:text-base" />
+            </nz-form-control>
+        </nz-form-item>
+        }
 
-    <nz-form-item>
-        <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
-        <nz-form-control nzErrorTip="Please enter your Password!">
-            <nz-input-group nzPrefixIcon="lock" nzSize="large" [nzSuffix]="suffixTemplate">
-                <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="password"
-                    placeholder="Password" [(ngModel)]="password" />
-            </nz-input-group>
-            <ng-template #suffixTemplate>
-                <span nz-icon class="ant-input-password-icon" [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-                    (click)="passwordVisible = !passwordVisible"></span>
-            </ng-template>
-        </nz-form-control>
-    </nz-form-item>
-    <button nz-button class="my-2 w-full" [nzSize]="'large'" [nzType]="'primary'">Log in</button>
-</form>
+        <div class="my-3 md:my-4 border-t border-gray-200"></div>
+
+        <nz-form-item>
+            <nz-form-label class="text-xs md:text-sm" nzRequired nzFor="password">Password</nz-form-label>
+            <nz-form-control nzErrorTip="Please enter your Password!">
+                <nz-input-group nzPrefixIcon="lock" nzSize="large" [nzSuffix]="suffixTemplate" class="rounded-lg">
+                    <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="password"
+                        placeholder="Password" [(ngModel)]="password" class="py-2 md:py-2.5 text-sm md:text-base" />
+                </nz-input-group>
+                <ng-template #suffixTemplate>
+                    <span nz-icon class="ant-input-password-icon cursor-pointer text-gray-500 hover:text-gray-700" 
+                        [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                        (click)="passwordVisible = !passwordVisible"></span>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        
+        <button nz-button class="w-full h-10 md:h-12 rounded-lg shadow-lg transform hover:scale-[1.02] transition-all duration-300 text-white font-medium text-sm md:text-base mt-4 md:mt-6" 
+            [class]="selectedUserType === 'Student' ? 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 border-0' : 'bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-700 hover:to-indigo-600 border-0'"
+            [nzSize]="'large'" [nzType]="'primary'">
+            Create Account
+        </button>
+    </form>
+</div>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -9,11 +9,13 @@ import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 import { AuthService, LoginRequest, UserType } from '../../../common/services/auth.service';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { RouterEvent, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   imports: [
     RouterLink,
+    CommonModule,
     ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule,NzSegmentedModule, NzIconModule
   ],
   templateUrl: './login.component.html',
@@ -23,8 +25,9 @@ export class LoginComponent {
   passwordVisible = false;
   password?: string;
 
-  selectedUserType: UserType = 'Guest';
+  selectedUserType: UserType = 'Student';
   userTypes = ['Student', 'FacultyMember'];
+  @Output() handleUserTypeChange = new EventEmitter<UserType>();
 
   fb = new FormBuilder();
   authService = inject(AuthService);
@@ -49,7 +52,8 @@ export class LoginComponent {
     this.authService.login(request, this.selectedUserType);
   }
 
-  handleUserTypeChange(e: string | number): void {
+  onUserTypeChange(e: string | number): void {
     this.selectedUserType = e === 'FacultyMember' ? 'FacultyMember' : 'Student';
+    this.handleUserTypeChange.emit(this.selectedUserType);
   }
 }
