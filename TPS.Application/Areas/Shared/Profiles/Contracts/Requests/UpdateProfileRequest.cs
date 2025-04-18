@@ -10,7 +10,8 @@ namespace TPS.Application.Areas.Shared.Profiles.Contracts.Requests
     public class UpdateProfileRequest
     {
         public string? ProfileImageId { get; set; }
-        public string? FullName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? Email { get; set; }
         public string? Number {  get; set; }
     }
@@ -18,10 +19,14 @@ namespace TPS.Application.Areas.Shared.Profiles.Contracts.Requests
     {
         public UpdateProfileRequestValidator()
         {
-            RuleFor(r => r.FullName)
+            RuleFor(r => r.FirstName)
                 .NotEmpty()
-                .MaximumLength(60)
-                .When(r => r.FullName != null);
+                .MaximumLength(30)
+                .When(r => r.FirstName != null);
+            RuleFor(r => r.LastName)
+                .NotEmpty()
+                .MaximumLength(30)
+                .When(r => r.LastName != null);
 
             RuleFor(r => r.Email)
                 .NotEmpty()
@@ -29,11 +34,6 @@ namespace TPS.Application.Areas.Shared.Profiles.Contracts.Requests
 
             RuleFor(r => r.Number)
                 .NotEmpty();
-            //    .Matches(@"^[A-Za-z]{2}\d{4}$")
-            //    .When(r => r.userType == "Faculty" &&r.Number!=null);
-            //RuleFor(r => r.Number)
-            //    .Matches(@"^\d{7}$")
-            //    .When(r => r.userType == "Student" && r.Number != null);
         }
     }
 }

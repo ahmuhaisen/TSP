@@ -49,10 +49,11 @@ public class ProfilesController : ApiController
     public async Task<IActionResult> Put([FromQuery] string userType, UpdateProfileRequest request)
     {
         var command = UpdateProfile.Command.Create(base.GetCurrentUserId()!.Value,
-                                                   request.FullName,
-                                                   request.ProfileImageId,
-                                                   request.Email,
-                                                   request.Number,
+                                                   request.FirstName!,
+                                                   request.LastName!,
+                                                   request.ProfileImageId!,
+                                                   request.Email!,
+                                                   request.Number!,
                                                    userType);
         var task = _sender.Send(command);
         return await FromResult(task);
