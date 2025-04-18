@@ -91,7 +91,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     .OrderByDescending(x => x.Event.StartTime)
                     .Select(x => new EventDTO
                     {
-                        Id = x.Id,
+                        Id = x.EventId,
                         EventName = x.Event.Name,
                         StartDateTime = x.Event.StartTime,
                         LocationString = x.Event.LocationString,
