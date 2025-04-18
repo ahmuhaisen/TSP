@@ -15,6 +15,7 @@ using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
 using TPS.Application.Services;
+using TPS.Application.SignalR;
 using TPS.Infrastructure.Data;
 using TPS.Infrastructure.DataGenerators;
 using TSP.Domain.Entities;
@@ -92,6 +93,24 @@ public static class DependencyInjection
                 ValidAudience = configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+            };
+
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) &&
+                        path.StartsWithSegments("/api/hubs/notifications"))
+                    {
+                        context.Token = accessToken;
+                    }
+
+                    return Task.CompletedTask;
+                }
             };
         });
 
@@ -176,6 +195,12 @@ public static class DependencyInjection
         services.Configure<GitOptions>(configuration.GetSection("GitImages"));
 
         services.AddScoped<IPdfService, PdfService>();
+
+        services.AddScoped<INotificationService, NotificationService>();
+
+        services.AddSingleton<IUserConnectionManager, UserConnectionManager>();
+        services.AddSignalR();
+
         return services;
     }
 

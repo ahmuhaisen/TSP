@@ -8,6 +8,7 @@ import { ProgressbarLoaderService } from '../../common/services/progressbar-load
 import { BreadcrumbComponent } from 'xng-breadcrumb';
 import { StudentNavbarComponent } from "./shared-components/student-navbar/student-navbar.component";
 import { FooterComponent } from "../../components/footer.component";
+import { NotificationHubService } from '../../common/services/notification-hub.service';
 
 @Component({
   selector: 'app-student-area',
@@ -18,11 +19,21 @@ import { FooterComponent } from "../../components/footer.component";
     BreadcrumbComponent,
     StudentNavbarComponent,
     FooterComponent
-],
+  ],
   templateUrl: './student-area.component.html',
   styleUrl: './student-area.component.css'
 })
 export class StudentAreaComponent {
 
-  progressbarService = inject(ProgressbarLoaderService)
+  progressbarService = inject(ProgressbarLoaderService);
+  notificationHubService = inject(NotificationHubService);
+
+  ngOnInit() {
+    this.notificationHubService.startConnection();
+
+    this.notificationHubService.onNotification((data) => {
+      console.log('Notification received:', data);
+    });
+
+  }
 }

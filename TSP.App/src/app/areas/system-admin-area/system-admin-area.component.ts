@@ -8,6 +8,7 @@ import { AdminNavbarComponent } from "./shared-components/admin-navbar/admin-nav
 import { BreadcrumbComponent } from 'xng-breadcrumb';
 import { FooterComponent } from "../../components/footer.component";
 import { ProfileImageAlertComponent } from './shared-components/profile-image-alert/profile-image-alert.component';
+import { NotificationHubService } from '../../common/services/notification-hub.service';
 
 @Component({
   selector: 'app-system-admin-area',
@@ -19,12 +20,22 @@ import { ProfileImageAlertComponent } from './shared-components/profile-image-al
     BreadcrumbComponent,
     FooterComponent,
     ProfileImageAlertComponent
-],
+  ],
   templateUrl: './system-admin-area.component.html',
   styleUrl: './system-admin-area.component.css'
 })
 export class SystemAdminAreaComponent {
 
   progressbarService = inject(ProgressbarLoaderService);
+  notificationHubService = inject(NotificationHubService);
 
+
+  ngOnInit() {
+    this.notificationHubService.startConnection();
+
+    this.notificationHubService.onNotification((data) => {
+      console.log('Notification received:', data);
+    });
+
+  }
 }

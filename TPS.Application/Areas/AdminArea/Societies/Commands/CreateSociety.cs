@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
 using TSP.Domain.Shared.Options;
 
@@ -42,32 +43,34 @@ public sealed class CreateSociety
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
 
 
-            var result = await _FileManager.uploadFile(nameof(Society), request.Logo);
+            //var result = await _FileManager.uploadFile(nameof(Society), request.Logo);
 
-            if (result.IsFailure)
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
-            }
-            string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
-            if (string.IsNullOrEmpty(LogoId))
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
-            }
+            //if (result.IsFailure)
+            //{
+            //    return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
+            //}
+            //string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
+            //if (string.IsNullOrEmpty(LogoId))
+            //{
+            //    return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
+            //}
 
 
-            LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
+            //LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
             var society = new Society
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                LogoId = LogoId,
+                LogoId = "123.png",
                 CreationDate = request.CreationDate,
                 ThemeColor = request.ThemeColor,
                 AdvisorId = request.AdvisorId
             };
 
             await context.Societies.AddAsync(society, cancellationToken);
+
+            society.RaiseDomainEvent(new SocietyCreatedDomainEvent(Guid.NewGuid(), society.Id));
 
             var saveResult = await context.SaveChangesAsync(cancellationToken);
             if (saveResult <= 0)
