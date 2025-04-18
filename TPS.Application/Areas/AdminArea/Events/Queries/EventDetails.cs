@@ -28,40 +28,25 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             public async Task<Result<EventDetailsDTO>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var eventRequest = await _context.EventsApproval
-                    .FirstOrDefaultAsync(x => x.EventId == request.EventRequestId);
+                    .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+
+                if (eventRequest == null)
+                    return Result.Failure<EventDetailsDTO>(Error.NotFound(nameof(EventRequest), request.EventRequestId.ToString()));
 
                 var tempEvent = await _context.Events
                     .Include(x => x.Society)
                         .ThenInclude(x => x.Advisor)
                     .Include(x => x.Student)
                         .ThenInclude(x => x.Department)
-                    .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+                    .FirstOrDefaultAsync(x => x.Id == eventRequest!.EventId);
 
-                if (tempEvent == null)
-                    return Result.Failure<EventDetailsDTO>(Error.NotFound(nameof(Event), request.EventRequestId.ToString()));
-                if (eventRequest == null)
-                {
-                    var newEventApprovalRecord = new EventApproval
-                    {
-                        Id=Guid.NewGuid(),
-                        AdvisorApproval=null,
-                        DeanAssistantApproval=null,
-                        Remarks=null,
-                        DecisionDate=null,
-                        EventId=request.EventRequestId,
-                        FacultyMemberId=tempEvent.Society.AdvisorId
-                    };
-                    eventRequest = newEventApprovalRecord;
-                    _context.Add(newEventApprovalRecord);
-                    await _context.SaveChangesAsync();
-                }
                 var eventManager = _context.SocietiesMembers
-                    .Where(x => x.StudentId == tempEvent.StudentId);
+                    .Where(x => x.StudentId == tempEvent!.StudentId);
 
                 var data = new EventDetailsDTO
                 {
                     Type = tempEvent?.Type,
-                    EndDateTime = tempEvent.EndTime,
+                    EndDateTime = tempEvent!.EndTime,
                     IsAdvisorApproved = eventRequest.AdvisorApproval,
                     IsDeanAssistantApproved = eventRequest.DeanAssistantApproval,
 

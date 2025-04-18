@@ -34,8 +34,8 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
                 var facultyMember = await _context.FacultyMembers
-                .Include(x => x.Rank)
-                .FirstOrDefaultAsync(x => x.Id == request.UserId);
+                    .Include(x => x.Rank)
+                    .FirstOrDefaultAsync(x => x.Id == request.UserId);
                 //User not found
                 if (facultyMember == null)
                 {
@@ -43,9 +43,9 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                 }
                 //Event not found
                 var eventRequest = await _context.EventsApproval
-                .Include(x => x.Event)
-                .ThenInclude(x => x.Society)
-                .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+                    .Include(x => x.Event)
+                        .ThenInclude(x => x.Society)
+                    .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
                 if (eventRequest == null)
                 {
                     return Result.Failure(Error.NotFound("Event", request.EventRequestId.ToString()));
@@ -79,6 +79,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                         eventRequest.DecisionDate = DateTime.Now;
                         await _context.SaveChangesAsync();
                     }
+                    return Result.Success();
                 }
                 //If the current user is the Advisor
                 if (eventRequest.Event.Society.AdvisorId == facultyMember.Id)
@@ -101,13 +102,10 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                         eventRequest.DecisionDate = DateTime.Now;
                         await _context.SaveChangesAsync();
                     }
+                    return Result.Success();
                 }
                 //If the current User isnt an advisor nor dean/dean assistant
-                else
-                {
-                    return Result.Failure(Error.AccessDenied(request.EventRequestId.ToString()));
-                }
-                return Result.Success();
+                return Result.Failure(Error.AccessDenied(request.EventRequestId.ToString()));
             }
         }
     }

@@ -44,7 +44,7 @@ public class EventsController : ApiController
                                                        [FromQuery] bool isAccepted,
                                                        [FromQuery] string? Remark)
     {
-        var query= EventStatusUpdate.Command.Create(eventRequestId, base.GetCurrentUserId()!.Value,isAccepted,Remark);
+        var query= EventStatusUpdate.Command.Create(base.GetCurrentUserId()!.Value,eventRequestId,isAccepted,Remark!);
         var task = _sender.Send(query);
         return await FromResult(task);
     }
