@@ -40,8 +40,8 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             public async Task<Result<List<EventDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var facultyMember = await _context.FacultyMembers
-                    .Include(f => f.Rank) 
-                    .Include(f => f.SocietiesAdvised)  
+                    .Include(f => f.Rank)
+                    .Include(f => f.SocietiesAdvised)
                     .FirstOrDefaultAsync(y => y.Id == request.UserId);
 
                 if (facultyMember == null)
@@ -54,13 +54,13 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 {
 
                     var data = await _context.EventsApproval
-                        .Include(x=>x.Event)
-                        .ThenInclude(x=>x.Society)
-                        .Where(x => x.AdvisorApproval == true)
+                        .Include(x => x.Event)
+                            .ThenInclude(x => x.Society)
+                        .Where(x => x.AdvisorApproval == true || x.Event.Society.AdvisorId == facultyMember.Id)
                         .OrderByDescending(x => x.Event.StartTime)
                         .Select(x => new EventDTO
                         {
-                            Id = x.Id,
+                            Id = x.EventId,
                             EventName = x.Event.Name,
                             StartDateTime = x.Event.StartTime,
                             LocationString = x.Event.LocationString,
@@ -68,11 +68,11 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                                 ? (x.DeanAssistantApproval == true ? "Accepted" : "Rejected")
                                 : "Pending",
                             EventDescription = x.Event.Description,
-                            EventSociety=new EventSocietyBasicDto
+                            EventSociety = new EventSocietyBasicDto
                             {
                                 SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown",
-                                SocietyDescription=x.Event.Society!=null? x.Event.Society.Description:"Unknown",
-                                SocietyLogoId=x.Event.Society!=null?x.Event.Society.LogoId:"Unkown"
+                                SocietyDescription = x.Event.Society != null ? x.Event.Society.Description : "Unknown",
+                                SocietyLogoId = x.Event.Society != null ? x.Event.Society.LogoId : "Unkown"
                             }
                         })
                         .ToListAsync();
@@ -85,9 +85,9 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 }
 
                 var result = await _context.EventsApproval
-                    .Include(x=>x.Event)
-                    .ThenInclude(x=>x.Society)
-                    .Where(x => x.Event.Society.AdvisorId==request.UserId)
+                    .Include(x => x.Event)
+                    .ThenInclude(x => x.Society)
+                    .Where(x => x.Event.Society.AdvisorId == request.UserId)
                     .OrderByDescending(x => x.Event.StartTime)
                     .Select(x => new EventDTO
                     {

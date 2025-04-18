@@ -43,26 +43,26 @@ public sealed class CreateSociety
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
 
 
-            //var result = await _FileManager.uploadFile(nameof(Society), request.Logo);
+            var result = await _FileManager.uploadFile(nameof(Society), request.Logo);
 
-            //if (result.IsFailure)
-            //{
-            //    return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
-            //}
-            //string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
-            //if (string.IsNullOrEmpty(LogoId))
-            //{
-            //    return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
-            //}
+            if (result.IsFailure)
+            {
+                return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
+            }
+            string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
+            if (string.IsNullOrEmpty(LogoId))
+            {
+                return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
+            }
 
 
-            //LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
+            LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
             var society = new Society
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                LogoId = "123.png",
+                LogoId = LogoId,
                 CreationDate = request.CreationDate,
                 ThemeColor = request.ThemeColor,
                 AdvisorId = request.AdvisorId
