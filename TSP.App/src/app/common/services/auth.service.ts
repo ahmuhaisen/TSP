@@ -4,6 +4,7 @@ import { SecureLocalStorageService } from './secure-local-storage.service';
 import { DbService } from './db.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Router } from '@angular/router';
+import { LoaderService } from './loader.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
     jwtHelper = inject(JwtHelperService);
     messageService = inject(NzMessageService);
     localStorageService = inject(SecureLocalStorageService);
+    loader = inject(LoaderService);
 
     isAuthenticated(): boolean {
         const token = this.localStorageService.getItem('token');
@@ -28,6 +30,7 @@ export class AuthService {
     }
 
     login(request: LoginRequest, userType: UserType) {
+        this.loader.show();
         if(userType === 'Guest') return;
 
         this.db.postRequest<LoginResponse, LoginRequest>(`${this.model}/${userType}/Login`, request).subscribe({
@@ -35,24 +38,38 @@ export class AuthService {
                 this.localStorageService.setItem('token', res.token);
                 this.setCurrentUser(res);
                 this.navigateToHome(res.userType);
+                this.loader.hide();
+            },
+            error: (err) => {
+                this.loader.hide();
             }
         });
     }
 
     registerStudent(request: StudentRegisterRequest) {
+        this.loader.show();
         this.db.postRequest(`${this.model}/Student/Register`, request).subscribe({
             next: () => {
                 this.messageService.success('Registration successful!');
                 this.navigateToLogin();
+                this.loader.hide();
+            },
+            error: (err) => {
+                this.loader.hide();
             }
         });
     }
 
     registerFaculty(request: FacultyRegisterRequest) {
+        this.loader.show();
         this.db.postRequest(`${this.model}/FacultyMember/Register`, request).subscribe({
             next: () => {
                 this.messageService.success('Registration successful!');
                 this.navigateToLogin();
+                this.loader.hide();
+            }
+            , error: (err) => {
+                this.loader.hide();
             }
         });
     }
