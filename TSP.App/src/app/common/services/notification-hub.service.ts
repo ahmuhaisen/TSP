@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
 import { SecureLocalStorageService } from './secure-local-storage.service';
+import { IGenericNotification } from '../types/notification.types';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,7 @@ export class NotificationHubService {
       .catch(err => console.error('❌ SignalR Error: ', err));
   }
 
-  public onNotification(callback: (data: any) => void): void {
+  public onNotification(callback: (data: IGenericNotification) => void): void {
     this.hubConnection.on('ReceiveNotification', callback);
   }
 

@@ -3,9 +3,9 @@ import { Component, HostListener } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AccountDetailsComponent } from "./account-details/account-details.component";
-import { NotificationsComponent } from "./notifications/notifications.component";
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { INavbarItem } from '../../../../common/types/navbar.types';
+import { NotificationsComponent } from '../../../../components/notifications/notifications.component';
 
 @Component({
   selector: 'app-admin-navbar',
