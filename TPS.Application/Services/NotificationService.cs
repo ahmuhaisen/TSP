@@ -48,14 +48,10 @@ public class NotificationService(ApplicationDbContext _context,
         {
             var connections = _connectionManager.GetConnections(usr.Id.ToString());
 
-            if (connections == null || !connections.Any())
-            {
-                _logger.LogWarning($"No connections found for user {usr.Id}");
-                continue;
-            }
-
             foreach (var connectionId in connections)
             {
+
+
                 await _hubContext.Clients.Client(connectionId).SendAsync(ReceiveNotificationKey, new
                 {
                     Subject = subject.Trim(),

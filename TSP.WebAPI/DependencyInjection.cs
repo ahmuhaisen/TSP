@@ -21,6 +21,7 @@ using TPS.Infrastructure.BackgroundJobs;
 using TPS.Infrastructure.Data;
 using TPS.Infrastructure.Data.DataGenerators;
 using TPS.Infrastructure.Data.Interceptors;
+using TPS.Infrastructure.Emailing;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared.Options;
 using TSP.WebAPI;
