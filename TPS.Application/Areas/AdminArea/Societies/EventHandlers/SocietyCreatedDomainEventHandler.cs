@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using TPS.Application.Abstractions;
-using TSP.Domain.Entities;
 using TSP.Domain.Events;
 
 namespace TPS.Application.Areas.AdminArea.Societies.EventHandlers;
@@ -16,11 +15,9 @@ internal sealed class SocietyCreatedDomainEventHandler(
     {
         _logger.LogWarning("SocietyCreatedDomainEvent executing handler...");
 
-        var notificationSubject = "A new society created";
-        var notificationBody = $"{notification.SocietyId}";
+        var notificationSubject = $"A new society created";
+        var notificationBody = $"{notification.SocietyName}";
 
-        await _notificationService.SendNotificationForAllStudents(notificationSubject, notificationBody);
-
-
+        await _notificationService.SendNotificationForAllUsers(notificationSubject, notificationBody);
     }
 }

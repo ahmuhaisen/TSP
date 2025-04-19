@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Abstractions;
 using TPS.Infrastructure.Data;
-using TPS.Infrastructure.DataGenerators;
+using TPS.Infrastructure.Data.DataGenerators;
 
 namespace TSP.WebAPI.Controllers;
 

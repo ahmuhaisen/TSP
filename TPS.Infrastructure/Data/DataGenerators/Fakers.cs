@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using TSP.Domain.Entities;
 
-namespace TPS.Infrastructure.DataGenerators;
+namespace TPS.Infrastructure.Data.DataGenerators;
 
 public class StudentFaker : Faker<Student>
 {

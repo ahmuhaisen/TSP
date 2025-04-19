@@ -1,5 +1,4 @@
 using TPS.Application.SignalR;
-using TPS.Infrastructure.DataGenerators;
 using TSP.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +8,7 @@ builder.Services.AddApiControllers()
     .AddApplicationServicesWithOptions(builder.Configuration)
     .AddIdentity(builder.Configuration)
     .AddFluentValidation()
+    .AddBackgroundJobs()
     .AddMediatR()
     .AddSwagger()
     .AddApisSharedServices();

@@ -9,6 +9,7 @@ import { BreadcrumbComponent } from 'xng-breadcrumb';
 import { FooterComponent } from "../../components/footer.component";
 import { ProfileImageAlertComponent } from './shared-components/profile-image-alert/profile-image-alert.component';
 import { NotificationHubService } from '../../common/services/notification-hub.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-system-admin-area',
@@ -28,6 +29,7 @@ export class SystemAdminAreaComponent {
 
   progressbarService = inject(ProgressbarLoaderService);
   notificationHubService = inject(NotificationHubService);
+  nzNotificationService = inject(NzNotificationService)
 
 
   ngOnInit() {
@@ -35,6 +37,10 @@ export class SystemAdminAreaComponent {
 
     this.notificationHubService.onNotification((data) => {
       console.log('Notification received:', data);
+      this.nzNotificationService.info(
+        data.subject,
+        data.body
+      )
     });
 
   }

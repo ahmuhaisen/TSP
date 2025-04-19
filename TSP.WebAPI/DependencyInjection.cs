@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Quartz;
 using System.Text;
 using System.Text.Json.Serialization;
 using TPS.Application;
@@ -16,8 +17,10 @@ using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
 using TPS.Application.Services;
 using TPS.Application.SignalR;
+using TPS.Infrastructure.BackgroundJobs;
 using TPS.Infrastructure.Data;
-using TPS.Infrastructure.DataGenerators;
+using TPS.Infrastructure.Data.DataGenerators;
+using TPS.Infrastructure.Data.Interceptors;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared.Options;
 using TSP.WebAPI;
@@ -46,20 +49,25 @@ public static class DependencyInjection
     public static IServiceCollection AddEntityFrameworkStore(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
+        services.AddDbContext<ApplicationDbContext>((sp, optionsBuilder) =>
         {
+            var interceptor = sp.GetService<ConvertDomainEventsToOutboxMessagesInterceptor>();
+
             optionsBuilder.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
                 sqlServerAction =>
                 {
                     sqlServerAction.EnableRetryOnFailure(3);
                     sqlServerAction.CommandTimeout(30);
-                });
+                })
+            .AddInterceptors(interceptor!);
 
             // Only in development environment
             optionsBuilder.EnableDetailedErrors();
             optionsBuilder.EnableSensitiveDataLogging();
         });
+
+        services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
 
         services.AddScoped<ApplicationDataSeeder>();
 
@@ -208,6 +216,27 @@ public static class DependencyInjection
     {
         services.AddScoped<IStudentsService, StudentService>();
         services.AddScoped<ISocietiesService, SocietiesService>();
+        return services;
+    }
+
+    public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
+    {
+        services.AddQuartz(config =>
+        {
+            var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+
+            config.AddJob<ProcessOutboxMessagesJob>(jobKey)
+                  .AddTrigger(
+                        trigger => trigger.ForJob(jobKey)
+                                                   .WithSimpleSchedule(schedule =>
+                                                                    schedule.WithIntervalInSeconds(10).RepeatForever())
+                                    );
+
+            config.UseMicrosoftDependencyInjectionJobFactory();
+        });
+
+        services.AddQuartzHostedService();
+
         return services;
     }
 }

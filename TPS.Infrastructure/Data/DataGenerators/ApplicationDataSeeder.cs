@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 
-namespace TPS.Infrastructure.DataGenerators;
+namespace TPS.Infrastructure.Data.DataGenerators;
 
 public class ApplicationDataSeeder(ApplicationDbContext _context, RoleManager<ApplicationRole> _roleManager)
 {

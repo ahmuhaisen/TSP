@@ -9,6 +9,7 @@ import { BreadcrumbComponent } from 'xng-breadcrumb';
 import { StudentNavbarComponent } from "./shared-components/student-navbar/student-navbar.component";
 import { FooterComponent } from "../../components/footer.component";
 import { NotificationHubService } from '../../common/services/notification-hub.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-student-area',
@@ -27,12 +28,17 @@ export class StudentAreaComponent {
 
   progressbarService = inject(ProgressbarLoaderService);
   notificationHubService = inject(NotificationHubService);
+  nzNotificationService = inject(NzNotificationService)
 
   ngOnInit() {
     this.notificationHubService.startConnection();
 
     this.notificationHubService.onNotification((data) => {
       console.log('Notification received:', data);
+      this.nzNotificationService.info(
+        data.subject,
+        data.body
+      )
     });
 
   }
