@@ -5,11 +5,13 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService, User } from '../../../../../common/services/auth.service';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { environment } from '../../../../../../environments/environment';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @Component({
   selector: 'app-account-details',
   imports: [
     NgIf,
+    NzDropDownModule,
     NzIconModule,
     NzAvatarModule,
     RouterLink

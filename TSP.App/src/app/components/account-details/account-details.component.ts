@@ -5,12 +5,15 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { IUserBasicDetails } from '../../common/types/user.types';
 import { AuthService, User } from '../../common/services/auth.service';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { environment } from '../../../environments/environment';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @Component({
   selector: 'app-account-details',
   imports: [
     NgIf,
     NzIconModule,
+    NzDropDownModule,
     NzAvatarModule,
     RouterLink
   ],
@@ -18,6 +21,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
   styleUrl: './account-details.component.css'
 })
 export class AccountDetailsComponent {
+  baseProfileImageUrl = environment.gitHubUsersPicturesURL;
   isAccountDetailsDropdownOpen = false;
 
   authService = inject(AuthService);
