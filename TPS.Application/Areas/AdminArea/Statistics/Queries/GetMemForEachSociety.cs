@@ -32,21 +32,24 @@ public class GetMemForEachSociety
         public async Task<Result<List<SocietyMembersCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var l = new List<SocietyMembersCountDTO>();
-            var data = await _context.EventsApproval
-                .AsNoTracking()
-                .Where(s => s.DeanAssistantApproval==true && s.AdvisorApproval==true)
-                .Include(s => s.Event)
-                .ThenInclude(s => s.Society)
-                .GroupBy(s => s.Event.SocietyId)
+            var data = await _context.Societies
+                .GroupJoin(
+                   _context.SocietiesMembers,
+                   Society => Society.Id,
+                   SocietiesMembers => SocietiesMembers.SocietyId,
+                   (Society, SocietiesMembers) => new { Society, SocietiesMembers }
+                )
+                .SelectMany(
+                    x => x.SocietiesMembers.DefaultIfEmpty(),
+                    (x, SocietiesMembers) => new { x.Society, SocietiesMembers }
+                ).GroupBy(g => new { g.Society.Id, g.Society.Name })
                 .Select(s => new SocietyMembersCountDTO
                 {
-                    Name = s.First().Event.Society.Name,
-                    count = s.Count()
-                })
-                .OrderByDescending(s=>s.count)
-                .ToListAsync();
+                    id = s.Key.Id,
+                    Name = s.Key.Name,
+                    count = s.Count(x => x.SocietiesMembers != null)
 
-
+                }).ToListAsync();
 
             if (data.Count == 0)
             {
@@ -55,6 +58,10 @@ public class GetMemForEachSociety
 
             var temp = new SocietyMembersCountDTO { Name = "others", count = 0 };
             int sum = 0;
+            Console.WriteLine(data.Count);
+            Console.WriteLine(request.numberOfSocieties);
+
+
             for (int x = 0; x < data.Count&& x < request.numberOfSocieties; x++)
             {
                 l.Add(data[x]);

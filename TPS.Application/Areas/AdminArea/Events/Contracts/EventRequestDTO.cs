@@ -19,6 +19,6 @@ namespace TPS.Application.Areas.AdminArea.Events.Contracts
     {
         public required string FacultyMemberName { get; set; }
         public required string FacultyMemberEmail { get; set; }
-        public required string Rank {  get; set; }
+        public required string Rank { get; set; }
     }
 }

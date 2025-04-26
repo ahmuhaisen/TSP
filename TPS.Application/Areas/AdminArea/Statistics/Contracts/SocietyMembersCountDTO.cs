@@ -2,6 +2,7 @@
 
 public class SocietyMembersCountDTO
 {
+    public Guid id {  get; set; }
     public required string Name { get; set; }
     public int count { get; set; }
 }
