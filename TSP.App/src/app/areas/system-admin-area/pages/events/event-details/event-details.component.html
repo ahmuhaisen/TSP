@@ -140,13 +140,20 @@
                         </div>
                         <div class="text-md">
                             <nz-icon nzType="star" class="mr-1" />
-                            President
-                            <p class="text-xs text-gray-600 font-normal">of ACM Since 2021</p>
+                            <!-- President -->
+                            {{eventDetailsDTO.eventManager.studentRole}}
+                            <p class="text-xs text-gray-600 font-normal">of {{eventDetailsDTO.eventSociety.societyName}}
+                                Since {{eventDetailsDTO.eventManager.joinYear}}</p>
                         </div>
                         <div class="text-md">
                             <nz-icon nzType="team" class="mr-1" />
                             Member
-                            <p class="text-xs text-gray-600 font-normal">of Waves JU +2 more</p>
+                            <p class="text-xs text-gray-600 font-normal">of
+                                {{eventDetailsDTO.eventManager.joinedSocietiesNames[0]}}
+                                <ng-container *ngIf="eventDetailsDTO.eventManager.joinedSocietiesNames.length > 1">
+                                    +{{ eventDetailsDTO.eventManager.joinedSocietiesNames.length - 1 }} more
+                                </ng-container>
+                            </p>
                         </div>
                     </div>
                 </div>
