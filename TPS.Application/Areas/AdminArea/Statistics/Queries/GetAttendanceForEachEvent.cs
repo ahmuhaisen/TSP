@@ -32,19 +32,17 @@ public class GetattendanceForEachEvent
         public async Task<Result<List<EventAttendanceCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var data = await _context.Attendees
-                .AsNoTracking()
-                .Include(s => s.Event)
-                .GroupBy(s => s.EventId)
-                .Select(
-                    s => new EventAttendanceCountDTO
-                    {
-                        EventName = s.First().Event.Name,
-                        count = s.Count()
-                    }
-                )
-                .OrderByDescending(s=>s.count)
-                .Take(request.numberOfEvents)
-                .ToListAsync();
+       .AsNoTracking()
+       .GroupBy(a => new { a.EventId, a.Event.Name })
+       .Select(g => new EventAttendanceCountDTO
+       {
+           id = g.Key.EventId,
+           EventName = g.Key.Name,
+           count = g.Count()
+       })
+       .OrderByDescending(x => x.count)
+       .Take(request.numberOfEvents)
+       .ToListAsync();
             return Result.Success(data);
         }
 

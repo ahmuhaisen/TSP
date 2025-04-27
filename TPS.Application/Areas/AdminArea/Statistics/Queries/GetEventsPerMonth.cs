@@ -10,10 +10,10 @@ public class GetEventsPerMonth
 
     public sealed class Query : IQuery<Result<List<EventsPerMonthDTO>>>
     {
-        public int numberOfSocities { get; set; }
+        public int numberOfMonths { get; set; }
         private Query(int num)
         {
-            numberOfSocities = num;
+            numberOfMonths = num;
         }
         public static Query Create(int num) => new Query(num);
     }
@@ -36,11 +36,11 @@ public class GetEventsPerMonth
                .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
                .Select(g => new
                {
-                   Date =  ""+g.Key.Year+"-0"+g.Key.Month+"-01",
+                   Date =  ""+g.Key.Year+"-"+g.Key.Month+"-01",
                    Events = g.Count()
                })
                .OrderByDescending(s=>s.Date)
-               .Take(request.numberOfSocities)
+               .Take(request.numberOfMonths)
                .Select(s => new EventsPerMonthDTO
                 {
                     Date = DateOnly.Parse(s.Date).ToString(),

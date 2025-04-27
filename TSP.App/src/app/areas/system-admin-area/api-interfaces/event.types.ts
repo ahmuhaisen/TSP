@@ -53,3 +53,8 @@ export interface ApprovalAdministrators {
     facultyMemberEmail: string;
     rank: string;
 }
+export interface EventRequestDecision {
+    eventRequestId: string;
+    isAccepted: boolean;
+    Remark: string;
+}
