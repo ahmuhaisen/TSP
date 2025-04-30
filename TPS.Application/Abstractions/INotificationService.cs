@@ -10,4 +10,6 @@ public interface INotificationService
     Task SendNotificationForAllFacultyMembers(string subject, string body);
     Task SendNotificationForAllStudents(string subject, string body);
     Task<Result<List<NotificationDto>>> GetAllUserNotifications(Guid userId);
+    Task<Result> MarkNotificationAsReadAsync(Guid notificationId, Guid userId);
+    Task<Result> MarkAllNotificationsAsReadAsync(Guid userId);
 }

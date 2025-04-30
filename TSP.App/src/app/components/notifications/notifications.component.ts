@@ -51,6 +51,7 @@ export class NotificationsComponent {
       this.notifications.update((prev) => {
         return [data, ...prev];
       });
+
       this.notificationCount.update((prev) => {
         return prev + 1;
       }
@@ -67,11 +68,20 @@ export class NotificationsComponent {
     this.notificationService.all().subscribe((data) => {
       console.log('Notifications from DB:', data);
       this.notifications.set(data);
-      this.notificationCount.set(data.length);
+      this.notificationCount.set(data.filter((n) => !n.isSeen).length);
     });
   }
 
   markAllAsRead(){
+
+    if (this.notificationCount() === 0) {
+      return;
+    }
+
+    this.notificationService.markAllAsRead().subscribe((data) => {
+      console.log('All notifications marked as read:', data);
+    });
+
     this.notifications.update((prev) => {
       return prev.map((notification) => {
         notification.isSeen = true;
@@ -83,6 +93,15 @@ export class NotificationsComponent {
   }
 
   markAsRead(notification: IGenericNotification){
+
+    if (notification.isSeen) {
+      return;
+    }
+
+    this.notificationService.markAsRead(notification.id).subscribe((data) => {
+      console.log('Notification marked as read:', data);
+    });
+
     this.notifications.update((prev) => {
       return prev.map((n) => {
         if (n.id === notification.id) {

@@ -143,4 +143,39 @@ public class NotificationService(ApplicationDbContext _context,
         
         return Result.Success(notifications);
     }
+
+
+    public async Task<Result> MarkNotificationAsReadAsync(Guid notificationId, Guid userId)
+    {
+        var notification = await _context.Notifications
+            .FirstOrDefaultAsync(n => n.Id == notificationId && n.UserId == userId);
+
+        if (notification is null)
+            return Result.Failure(Error.NotFound(nameof(Notification), notificationId.ToString()));
+
+        notification.IsSeen = true;
+
+        await _context.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
+    public async Task<Result> MarkAllNotificationsAsReadAsync(Guid userId)
+    {
+        var notifications = await _context.Notifications
+            .Where(n => n.UserId == userId && !n.IsSeen)
+            .ToListAsync();
+
+        if (notifications is null || notifications.Count == 0)
+            return Result.Failure(Error.NotFound(nameof(Notification), userId.ToString()));
+
+        foreach (var notification in notifications)
+        {
+            notification.IsSeen = true;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Result.Success();
+    }
 }

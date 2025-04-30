@@ -12,6 +12,14 @@ export class NotificationService {
         return this.db.getRequest<IGenericNotification[]>(this.model);
     }
 
+    markAsRead(notificationId: string) {
+        return this.db.putRequest<any, any>(this.getUrl() + '/' + notificationId + '/mark-as-read', {});
+    }
+
+    markAllAsRead() {
+        return this.db.putRequest<any, any>(this.getUrl() + '/mark-all-as-read', {});
+    }
+
     private getUrl() {
         return `${this.model}`;
     }
