@@ -1,4 +1,3 @@
-﻿
 using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.AdminArea.Statistics.Contracts;
@@ -32,7 +31,7 @@ public class GetTopSocities
         public async Task<Result<List<SocietyDataDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var data = await _context.Societies
-          
+
            .Select(society => new SocietyDataDTO
            {
                id = society.Id,

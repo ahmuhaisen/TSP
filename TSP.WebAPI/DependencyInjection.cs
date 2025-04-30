@@ -65,7 +65,7 @@ public static class DependencyInjection
 
             // Only in development environment
             optionsBuilder.EnableDetailedErrors();
-            optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.EnableSensitiveDataLogging(true);
         });
 
         services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();

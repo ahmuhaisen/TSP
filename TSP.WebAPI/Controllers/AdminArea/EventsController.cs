@@ -21,8 +21,10 @@ public class EventsController : ApiController
     [ProducesResponseType(typeof(ResponseEnvelope),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetEventRequests()
     {
-        // This api returns all event requests for the current user
-        var query = EventRequest.Query.Create(base.GetCurrentUserId()!.Value);
+
+        var query = EventRequest.Query.Create(GetCurrentUserId()!.Value);
+        Console.WriteLine(GetCurrentUserId()!.Value);
+
         var task = _sender.Send(query);
         return await FromResult(task);
     }

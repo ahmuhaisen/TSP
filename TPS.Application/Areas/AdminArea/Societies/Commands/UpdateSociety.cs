@@ -1,4 +1,5 @@
-﻿using TPS.Application.Abstractions.Messaging;
+﻿using Microsoft.IdentityModel.Tokens;
+using TPS.Application.Abstractions.Messaging;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
@@ -36,17 +37,20 @@ public sealed class UpdateSociety
             if (data is null)
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
 
-            //TODO: Check if the logoBase64 in the request is null skip updating the image.
-            var result = await _FileManager.updateFile(nameof(Society), request.Logo);
+if (!request.Logo.IsNullOrEmpty())
+            {
+                var result = await _FileManager.updateFile($"{nameof(Society)}/{data.LogoId}", request.Logo);
 
-            if (result.IsFailure)
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
-            }
-            string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
-            if (string.IsNullOrEmpty(LogoId))
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
+                if (result.IsFailure)
+                {
+                    return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
+                }
+                string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
+                if (string.IsNullOrEmpty(LogoId))
+                {
+                    return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
+                }
+                data.LogoId = LogoId;
             }
 
 

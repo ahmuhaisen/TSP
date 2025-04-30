@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -41,7 +42,7 @@ public class GitHubService : IGitHubService
         string fileName = filePath + "/" + imageId;
 
         string currentUrl = BaseURL + fileName;
-
+        Console.WriteLine(currentUrl);
         var requestBody = new
         {
             message = $"Upload file: {fileName}",
@@ -121,6 +122,15 @@ public class GitHubService : IGitHubService
     }
     public async Task<Result<string>> updateFile(string path, string base64Content)
     {
+        string[]args = path.Split('/');
+       Console.WriteLine("TESTING PATH "+path);
+        if (args[1].IsNullOrEmpty())
+        {
+            Console.WriteLine("TESTING PATH " + path);
+            return await uploadFile(args[0], base64Content);
+        }
+
+
         if (!IsValidBase64ImageString(base64Content))
         {
             return Result.Failure<string>(Error.ValueInvalid("Not valid Base64 image"));
@@ -129,8 +139,12 @@ public class GitHubService : IGitHubService
         {
             return Result.Failure<string>(Error.ValueInvalid("Not valid image type"));
         }
-        
+
+
         string currentUrl = BaseURL + path;
+       
+
+
         var requestBody = new
         {
             message = $"Upload file: {path}",
@@ -142,6 +156,7 @@ public class GitHubService : IGitHubService
            JsonSerializer.Serialize(requestBody),
            Encoding.UTF8, "application/json");
 
+
         var result = await _httpClient.PutAsync(currentUrl, jsonContent);
 
         if (result.IsSuccessStatusCode)
@@ -150,6 +165,7 @@ public class GitHubService : IGitHubService
         }
         else
         {
+
             string error = await result.Content.ReadAsStringAsync();
             return Result.Failure<string>(Error.InternalServerError(error));
         }
@@ -165,9 +181,15 @@ public class GitHubService : IGitHubService
 
         if (!response.IsSuccessStatusCode)
             return string.Empty;
+       
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
+  
+
         using var doc = JsonDocument.Parse(jsonResponse);
+
+        Console.WriteLine(doc.RootElement.GetRawText());
+     
         return doc.RootElement.GetProperty("sha").GetString() ?? string.Empty;
 
     }
