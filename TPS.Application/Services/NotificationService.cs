@@ -1,10 +1,7 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Quartz.Logging;
-using System.Runtime.InteropServices;
 using TPS.Application.Abstractions;
 using TPS.Application.Areas.Shared.Notifications.Contracts;
 using TPS.Application.SignalR;
