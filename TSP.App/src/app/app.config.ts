@@ -11,6 +11,7 @@ import { errorInterceptor } from './config/http-interceptor';
 import { JwtModule } from '@auth0/angular-jwt';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { authInterceptor } from './config/auth-interceptor';
+import { TimeagoModule } from 'ngx-timeago';
 
 
 registerLocaleData(en);
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideNzI18n(en_US),
-    importProvidersFrom(FormsModule),
+    importProvidersFrom(FormsModule, TimeagoModule.forRoot()),
     provideAnimationsAsync(),
     provideCharts(withDefaultRegisterables()), // TODO: Consider including a minimal configuration
     provideHttpClient(

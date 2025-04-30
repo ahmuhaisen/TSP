@@ -18,8 +18,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzDividerModule,
     NzToolTipModule,
     NzDropDownModule,
-    RequestsTableComponent,
-    EventsScheduleComponent
+    RequestsTableComponent
 ],
   templateUrl: './events-list.component.html',
   styleUrl: './events-list.component.css'

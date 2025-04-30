@@ -21,7 +21,8 @@
                 [ngClass]="society.isCommittee ? 'border-secondary' : 'border-primary-light'">
                 <div
                     class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden bg-white bg-clip-border rounded-2xl shadow-md">
-                    <img [src]="society.logoUrl" class="object-contain w-full h-full" alt="profile-image" />
+                    <nz-avatar [nzSrc]="society.logoId" class="object-contain bg-primary-dark-2 w-full h-full flex items-center justify-center"
+                    [nzIcon]="'product'" nzShape="square" nzSize="large" />
                 </div>
                 <div class="p-6 flex-grow">
                     <h5
@@ -29,7 +30,7 @@
                         {{ society.name }}
                     </h5>
                     <p class="block font-sans text-xs antialiased font-light leading-relaxed text-inherit">
-                        {{ society.description | truncate: 90 }}
+                        Created on {{ society.creationDate | date:'MMM d, y' }}
                     </p>
                 </div>
                 <div class="p-6 pt-0">
@@ -87,7 +88,12 @@
                     <tr>
                         <td>
                             <div class="flex items-center gap-3">
-                                <img [src]="request.societyLogo" class="w-8 h-8 rounded" [alt]="request.societyName">
+                                <nz-avatar 
+                                    [nzSize]="32" 
+                                    [nzSrc]="request.societyLogo || undefined"
+                                    nzIcon="team"
+                                    [nzText]="request.societyName.substring(0, 2).toUpperCase()"
+                                ></nz-avatar>
                                 <span class="font-medium">{{ request.societyName }}</span>
                             </div>
                         </td>
@@ -110,11 +116,12 @@
                 <div class="w-full ">
                     <a [routerLink]="society.id" class="flex flex-wrap sm:flex-nowrap items-center py-2 cursor-pointer shadow rounded-lg border-b-2 border-primary-light">
                         <div class="w-16 p-2 shrink-0">
-                            <img [src]="society.logoUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                            <nz-avatar [nzSrc]="society.logoId" class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
+                            [nzIcon]="'product'" nzShape="square" nzSize="large" />
                         </div>
                         <div>
                             <p class="font-semibold text-xs">{{ society.name  | truncate: 35 }}</p>
-                            <span class="text-gray-600 text-xs block">{{ society.description | truncate: 40 }}</span>
+                            <span class="text-gray-600 text-xs block">Created on {{ society.creationDate | date:'MMM d, y' }}</span>
                         </div>
                     </a>
                 </div>
@@ -125,14 +132,12 @@
 
 <!-- Leave Society Popup -->
 <nz-modal [(nzVisible)]="isLeaveSocietyPopupVisible"
-        [nzTitle]="'Leave ' + societyToLeave.name + '?'" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
+        [nzTitle]="'Leave ' + (societyToLeave?.name || '') + '?'" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
         [nzOkLoading]="isLeaveSocietyLoading" nzOkText="Yes"
         (nzOnCancel)="handleCancelLeaveSociety()" (nzOnOk)="handleOkLeaveSociety()"
     >
     <ng-container *nzModalContent>
-        
-        <p>Are you sure you want to leave <b>{{ societyToLeave.name }}</b>?</p>
-        
+        <p>Are you sure you want to leave <b>{{ societyToLeave?.name }}</b>?</p>
     </ng-container>
 </nz-modal>
 

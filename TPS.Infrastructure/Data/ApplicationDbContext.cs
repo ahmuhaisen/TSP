@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using TPS.Infrastructure.Data.Outbox;
 using TSP.Domain.Entities;
+using TSP.Domain.Primitives;
 
 namespace TPS.Infrastructure.Data;
 
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+public class ApplicationDbContext(DbContextOptions options, IPublisher _publisher) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
 
     public DbSet<Student> Students { get; set; }
@@ -14,12 +18,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<School> Schools { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<Society> Societies { get; set; }
-    public DbSet<SocietiesMembers> SocietiesMembers  { get; set; }
+    public DbSet<SocietiesMembers> SocietiesMembers { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<EventApproval> EventsApproval { get; set; }
     public DbSet<Attendee> Attendees { get; set; }
+    public DbSet<MembershipRequest> MembershipsRequests { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
-    public ApplicationDbContext(DbContextOptions options) : base(options) {}
+
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

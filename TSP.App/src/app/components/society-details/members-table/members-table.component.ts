@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -47,7 +47,6 @@ interface ColumnItem {
     NzToolTipModule,
     NzModalModule,
     NzAvatarModule,
-    EditMemberFormComponent,
     NzFormModule
   ],
   templateUrl: './members-table.component.html',
@@ -58,6 +57,9 @@ export class MembersTableComponent implements OnInit {
   isViewOnly = input<boolean>(false);
   isLoading = input<boolean>(false);
   allMembers = input.required<SocietyMember[]>();
+  societyId = input.required<string>();
+  membersChange = output<SocietyMember[]>();
+
   listOfDisplayData: SocietyMember[] = [];
   searchValue = '';
   visible = false;
@@ -154,8 +156,17 @@ export class MembersTableComponent implements OnInit {
   }
 
   removeMember(id: string): void {
-    this.messageService.success('Member removed successfully');
-    this.listOfDisplayData = this.listOfDisplayData.filter(m => m.id !== id);
+    this.societiesService.removeMember(this.societyId(), id).subscribe({
+      next: () => {
+        this.messageService.success('Member removed successfully');
+        const updatedMembers = this.allMembers().filter(member => member.id !== id);
+        this.membersChange.emit(updatedMembers);
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to remove member');
+        console.error('Error removing member:', error);
+      }
+    });
   }
 
   openEditMemberPopup(id: string): void {
@@ -179,17 +190,17 @@ export class MembersTableComponent implements OnInit {
     }
 
     this.isEditMemberLoading = true;
-    this.societiesService.editMember(this.memberToEdit.id, this.editPosition).subscribe({
+    this.societiesService.editMember(this.memberToEdit.id, this.societyId(), this.editPosition).subscribe({
       next: () => {
         this.messageService.success('Member position updated successfully');
         // Update the local list
-        const index = this.listOfDisplayData.findIndex(m => m.id === this.memberToEdit!.id);
-        if (index !== -1) {
-          this.listOfDisplayData[index] = {
-            ...this.listOfDisplayData[index],
-            position: this.editPosition
-          };
-        }
+        const updatedMembers = this.allMembers().map(member => 
+          member.id === this.memberToEdit!.id 
+            ? { ...member, position: this.editPosition }
+            : member
+        );
+        this.membersChange.emit(updatedMembers);
+        this.listOfDisplayData = updatedMembers;
         this.handleCancelEditMember();
       },
       error: (error: unknown) => {

@@ -7,6 +7,9 @@ import { ProgressbarLoaderService } from '../../common/services/progressbar-load
 import { AdminNavbarComponent } from "./shared-components/admin-navbar/admin-navbar.component";
 import { BreadcrumbComponent } from 'xng-breadcrumb';
 import { FooterComponent } from "../../components/footer.component";
+import { ProfileImageAlertComponent } from './shared-components/profile-image-alert/profile-image-alert.component';
+import { NotificationHubService } from '../../common/services/notification-hub.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-system-admin-area',
@@ -16,13 +19,29 @@ import { FooterComponent } from "../../components/footer.component";
     NzProgressModule,
     ProgressbarLoaderComponent,
     BreadcrumbComponent,
-    FooterComponent
-],
+    FooterComponent,
+    ProfileImageAlertComponent
+  ],
   templateUrl: './system-admin-area.component.html',
   styleUrl: './system-admin-area.component.css'
 })
 export class SystemAdminAreaComponent {
 
   progressbarService = inject(ProgressbarLoaderService);
+  notificationHubService = inject(NotificationHubService);
+  nzNotificationService = inject(NzNotificationService)
 
+
+  ngOnInit() {
+    this.notificationHubService.startConnection();
+
+    this.notificationHubService.onNotification((data) => {
+      console.log('Notification received:', data);
+      this.nzNotificationService.info(
+        data.subject,
+        data.body
+      )
+    });
+
+  }
 }

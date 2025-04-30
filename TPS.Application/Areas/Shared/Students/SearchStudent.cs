@@ -1,7 +1,5 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
-using TPS.Application.Areas.AdminArea.Societies.Contracts;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Shared;
@@ -23,21 +21,19 @@ public class SearchStudent
 
     public sealed class Handler(ApplicationDbContext _context) : IQueryHandler<Query, Result<List<StudentBasicDTO>>>
     {
-
-
         public async Task<Result<List<StudentBasicDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var data = await _context.Students
                 .AsNoTracking()
-                .Where(s=>(s.FirstName+" "+s.LastName).Contains(request.SearchTerm))
-                .Select(s=> new StudentBasicDTO
+                .Where(s => $"{s.FirstName} {s.LastName}".Contains(request.SearchTerm ?? string.Empty, StringComparison.OrdinalIgnoreCase) ||
+                        s.Email!.Contains(request.SearchTerm ?? string.Empty, StringComparison.OrdinalIgnoreCase)
+                        )
+                .Select(s => new StudentBasicDTO
                 {
-                    Id = s.Id,  
-                 FullName = s.FirstName+" "+s.LastName,
-                 LogoId = s.ProfileImageId,
-                }
-                
-                )
+                    Id = s.Id,
+                    FullName = $"{s.FirstName} {s.LastName}",
+                    LogoId = s.ProfileImageId,
+                })
                 .ToListAsync();
 
             return Result.Success(data);

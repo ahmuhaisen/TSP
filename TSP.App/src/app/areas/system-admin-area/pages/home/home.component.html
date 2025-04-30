@@ -11,7 +11,8 @@
 
 <section *ngIf="!isLoading" class="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
     <div class="flex gap-3 items-center">
-         <nz-avatar class="w-11 h-11 bg-blue-200 text-blue-700 rounded-full flex items-center justify-center" [nzSrc]="userInfo()!.profileImageId" [nzText]="userInfo()!.name.substring(0, 2).toUpperCase()" />
+         <nz-avatar class="w-11 h-11 bg-blue-200 text-blue-700 rounded-full flex items-center justify-center"
+         [nzSrc]="baseProfileImageUrl + '/' + userInfo()!.profileImageId" [nzText]="userInfo()!.name.substring(0, 2).toUpperCase()" />
         <div>
             <h2 class="text-lg font-bold text-gray-700">Welcome, Dr. {{ userInfo()!.name }}!</h2>
             <p class="text-sm text-gray-600">Here's a quick overview of the system.</p>

@@ -35,7 +35,7 @@
         </div>
 
         <div class="grid gap-y-1.5">
-            @for(event of events; track $index){
+            @for(event of events || []; track event.id){
             <a [routerLink]="'/admin-area/events/' + event.id"
                 class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
                 <div class="w-16 p-2 shrink-0">
@@ -91,7 +91,7 @@
                         Membership
                     </p>
                 </div>
-                <p class="text-base font-semibold text-gray-700">3 societies</p>
+                <p class="text-base font-semibold text-gray-700">{{ statistics?.NumSocieties || 0 }} societies</p>
             </div>
 
             <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
@@ -101,7 +101,7 @@
                         Attendance
                     </p>
                 </div>
-                <p class="text-base font-semibold text-gray-700">9 events</p>
+                <p class="text-base font-semibold text-gray-700">{{ statistics?.NumAttendedEvents || 0 }} events</p>
             </div>
 
             <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">

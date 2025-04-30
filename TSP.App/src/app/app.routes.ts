@@ -3,6 +3,10 @@ import { UserTypeGuardService as UserTypeGuard } from './common/services/user-ty
 
 export const routes: Routes = [
     {
+        path: '',
+        loadComponent: () => import('./areas/public/landing-page/landing-page.component').then(m => m.LandingPageComponent),
+    },
+    {
         path: 'admin-area',
         loadComponent: () => import('./areas/system-admin-area/system-admin-area.component').then(m => m.SystemAdminAreaComponent),
         loadChildren: () => import('./areas/system-admin-area/system-admin-area.routes').then(m => m.routes),

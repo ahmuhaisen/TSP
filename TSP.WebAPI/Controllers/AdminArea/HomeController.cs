@@ -19,9 +19,9 @@ public class HomeController : ApiController
     [HttpGet("recentEvents")]
     [ProducesResponseType(typeof(List<EventListDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Events([FromQuery] Guid advisorId)
+    public async Task<IActionResult> Events()
     {
-        var query = GetHomeEvents.Query.Create(advisorId);
+        var query = GetHomeEvents.Query.Create(GetCurrentUserId()!.Value);
         var task = _sender.Send(query);
         return await FromResult(task);
     }
@@ -29,9 +29,9 @@ public class HomeController : ApiController
     [HttpGet("recentlyJoinedMembers")]
     [ProducesResponseType(typeof(List<RecentlyJoinedDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> RecentlyJoinedMembers([FromQuery] string? searchTerm)
+    public async Task<IActionResult> RecentlyJoinedMembers()
     {
-        var query = GetRecentlyJoined.Query.Create(searchTerm);
+        var query = GetRecentlyJoined.Query.Create(GetCurrentUserId()!.Value);
 
         var task = _sender.Send(query);
 
@@ -41,18 +41,12 @@ public class HomeController : ApiController
     [HttpGet("homeStatistics")]
     [ProducesResponseType(typeof(HomeStatisticsDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> HomeStatistics([FromQuery] string? searchTerm)
+    public async Task<IActionResult> HomeStatistics()
     {
-        var query = GetHomeStatistics.Query.Create(searchTerm);
+        var query = GetHomeStatistics.Query.Create();
 
         var task = _sender.Send(query);
 
         return await FromResult(task);
     }
-
-
-
-
-
-   
 }

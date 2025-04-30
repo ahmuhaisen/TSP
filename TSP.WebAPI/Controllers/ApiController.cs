@@ -90,4 +90,14 @@ public abstract class ApiController : ControllerBase
 
         return Guid.Parse(userId);
     }
+
+    protected virtual string GetCurrentUserType()
+    {
+        var userType = User.FindFirstValue("rle");
+
+        if (string.IsNullOrEmpty(userType))
+            return null!;
+
+        return userType.ToUpper();
+    }
 }

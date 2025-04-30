@@ -45,20 +45,38 @@ export class SocietiesService {
     return this.db.postRequest<PostSociety, PostSociety>(this.getUrl(), society);
   }
 
-  update(id: string, society: Society) {
-    return this.db.putRequest<Society, Society>(this.getUrlWithId(id), society);
+  update(id: string, society: { 
+    id: string;
+    name: string;
+    description: string;
+    logoBase64: string;
+    themeColor?: string;
+  }) {
+    return this.db.putRequest<any, any>(this.getUrlWithId(id), society);
   }
 
   delete(id: string) {
     return this.db.deleteRequest(this.getUrlWithId(id));
   }
 
-  editMember(memberId: string, position: string) {
-    return this.db.putRequest(`AdminArea/Students/${memberId}/Position`, { position });
+  editMember(memberId: string, societyId: string, position: string) {
+    return this.db.putRequest(`AdminArea/Societies/${societyId}/Members/${memberId}?position=${position}`, {});
   }
 
-  addMember(societyId: string, data: { studentId: string, position: string, startDate: Date }) {
+  addMember(societyId: string, data: { studentId: string, position: string, startDate: string }) {
     return this.db.postRequest(`AdminArea/Societies/${societyId}/Members`, data);
+  }
+
+  addCommittee(societyId: string, studentId: string, data: { position: string, startDate: string }) {
+    return this.db.putRequest(`AdminArea/Societies/${societyId}/Members/${studentId}/Committee`, data);
+  }
+
+  removeMember(societyId: string, memberId: string) {
+    return this.db.deleteRequest(`StudentArea/Societies/${societyId}/Members/${memberId}`);
+  }
+
+  searchNonMemberStudents(societyId: string, searchTerm: string) {
+    return this.db.getRequest<any[]>(`AdminArea/Societies/${societyId}/NonMembers?searchTerm=${searchTerm}`);
   }
 
   private getUrl() {

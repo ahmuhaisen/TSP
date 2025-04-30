@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TPS.Application.Abstractions;
 using TPS.Infrastructure.Data;
-using TPS.Infrastructure.DataGenerators;
+using TPS.Infrastructure.Data.DataGenerators;
+using TPS.Infrastructure.Emailing;
+using TSP.Domain.Enums;
 
 namespace TSP.WebAPI.Controllers;
 
@@ -26,11 +27,11 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
     }
 
     [HttpPost("emails/send")]
-    public async Task<IActionResult> SendFakeEmail()
+    public async Task<IActionResult> SendFakeEmail(string subject)
     {
         try
         {
-            await emailService.Send("ahmuhaisen03@gmail.com", "Hi Suhaib", "This is a test email");
+            await emailService.SendWelcomingEmail("ahmuhaisen03@gmail.com", "Ahmad Muhaisen", UserType.FacultyMember);
         }
         catch (Exception ex)
         {

@@ -1,31 +1,37 @@
-<!-- My Account -->
-<button type="button" (click)="toggleAccountDetailsDropdown()"
-    class="flex mx-3 text-sm rounded-full md:mr-0 hover:ring-1 hover:ring-primary-dark-2 hover:ring-offset-1 focus:ring-4 focus:ring-gray-100" id="user-menu-button"
-    aria-expanded="false">
+<!-- Account Details Dropdown -->
+<button type="button" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" (click)="toggleAccountDetailsDropdown()"
+    class="flex mx-3 text-sm rounded-full md:mr-0 hover:ring-1 hover:ring-primary-dark-2 hover:ring-offset-1 focus:ring-4 focus:ring-gray-100"
+    id="user-menu-button" aria-expanded="false">
     <span class="sr-only">Open user menu</span>
-    <nz-avatar class="w-8 h-8 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="userInfo()?.profileImageId" [nzText]="userInfo()?.name!.substring(0, 2).toUpperCase()" [nzShape]="'circle'" nzSize="small"></nz-avatar>
+    <nz-avatar class="w-8 h-8 bg-blue-200 text-blue-700 rounded-full flex items-center justify-center"
+        [nzSrc]="baseProfileImageUrl + '/' + userInfo()?.profileImageId"
+        [nzText]="userInfo()?.name!.substring(0, 2).toUpperCase()" [nzShape]="'circle'" nzSize="small"></nz-avatar>
 </button>
+
+
 <!-- Dropdown menu -->
-<div *ngIf="isAccountDetailsDropdownOpen"
-    class="z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow" id="dropdown">
-    <div class="py-3 px-4">
-        <span class="block text-sm font-semibold text-gray-900">{{ userInfo()?.name }}</span>
-        <span class="block text-sm text-gray-500 truncate">{{ userInfo()?.email }}</span>
+<nz-dropdown-menu #menu="nzDropdownMenu">
+    <div class="z-50 px-2 w-56 text-base list-none bg-white divide-y divide-gray-100 shadow-lg rounded-xl" id="dropdown">
+        <div class="py-3 px-4">
+            <span class="block text-sm font-semibold text-gray-900">{{ userInfo()?.name }}</span>
+            <span class="block text-[14px] text-gray-500 truncate">{{ userInfo()?.email }}</span>
+        </div>
+        <ul class="py-1 text-gray-500 " aria-labelledby="dropdown">
+            <li (click)="toggleAccountDetailsDropdown()">
+                <a routerLink="/admin-area/users/{{ userInfo()?.id }}" [queryParams]="{ userType: 'Faculty' }"
+                    class="block py-2 px-4 text-sm rounded-lg hover:bg-gray-100 cursor-pointer">
+                    <nz-icon nzType="user" nzTheme="outline" class="mr-1" />
+                    My profile
+                </a>
+            </li>
+        </ul>
+        <ul class="py-1 text-gray-500" aria-labelledby="dropdown">
+            <li (click)="toggleAccountDetailsDropdown()">
+                <a (click)="logout()" class="block py-2 px-4 text-sm rounded-lg hover:bg-gray-100 cursor-pointer">
+                    <nz-icon nzType="logout" nzTheme="outline" class="mr-1" />
+                    Sign out
+                </a>
+            </li>
+        </ul>
     </div>
-    <ul class="py-1 text-gray-500 " aria-labelledby="dropdown">
-        <li (click)="toggleAccountDetailsDropdown()">
-            <a routerLink="./my-account/{{ userInfo()?.id }}" class="block py-2 px-4 text-sm hover:bg-gray-100">
-                <nz-icon nzType="user" nzTheme="outline" class="mr-1" />
-                My profile
-            </a>
-        </li>
-    </ul>
-    <ul class="py-1 text-gray-500" aria-labelledby="dropdown">
-        <li (click)="toggleAccountDetailsDropdown()">
-            <a (click)="logout()" class="block py-2 px-4 text-sm hover:bg-gray-100">
-                <nz-icon nzType="logout" nzTheme="outline" class="mr-1" />
-                Sign out
-            </a>
-        </li>
-    </ul>
-</div>
+</nz-dropdown-menu>

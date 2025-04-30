@@ -10,7 +10,7 @@
             <nz-select formControlName="studentId" nzAllowClear="true" nzPlaceHolder="Select a student" nzShowSearch nzServerSearch (nzOnSearch)="onSearchMembers($event)">
                 @if (!isMembersLoading) {
                 @for (member of displayedMembers; track member.id) {
-                <nz-option [nzValue]="member.id" [nzLabel]="member.name"></nz-option>
+                <nz-option [nzValue]="member.id" [nzLabel]="member.firstName + ' ' + member.lastName"></nz-option>
                 }
                 } @else {
                 <nz-option nzDisabled nzCustomContent>

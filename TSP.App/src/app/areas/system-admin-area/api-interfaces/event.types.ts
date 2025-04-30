@@ -1,35 +1,60 @@
 export interface EventSimpleRequest {
-    id: string;  
+    id: string;
     eventName: string;
-    dateTime: Date;  
+    startDateTime: string;
     locationString: string;
     approvalStatus: string;
-    description: string;
+    eventDescription: string;
+    eventSociety: EventSocietyBasicDto;
+}
+export interface EventSocietyBasicDto {
     societyName: string;
+    societyDescription: string;
+    societyLogoId: string;
 }
 
-// export interface EventDetailsRequest {
-//     type?: string;
-//     eventDate: string; 
-//     startTime: string; 
-//     endTime: string; 
-//     societyDescription: string;
-//     societyLogoId: string;
-//     advisorId: string; 
-//     advisorName: string;
-//     advisorLogoId: string;
-//     studentId: string; 
-//     studentName: string;
-//     studentEmail: string;
-//     studentLogoId?: string;
-//     studentDepartment: string;
-//     joinYear: number;
-//     studentRole: string;
-//     joinedSocietiesNames: string[];
-//     eventDTO: EventDTO;
-//     eventRequestDTO: EventRequestDTO;
-  
-//     // Application history fields
-//     isAdvisorApproved?: boolean;
-//     isDeanAssistantApproved?: boolean;
-//   }
+export interface EventDetailsDTO extends EventSimpleRequest {
+    type?: string;
+    endDateTime: Date;
+    isAdvisorApproved?: boolean;
+    isDeanAssistantApproved?: boolean;
+    eventRequestDTO: EventRequestDTO;
+    advisor: AdvisorBasicDto;
+    eventManager: MemberDto;
+}
+
+export interface MemberDto {
+    studentId: string;
+    studentName: string;
+    studentEmail: string;
+    studentLogoId?: string;
+    studentDepartment: string;
+    joinYear: number;
+    studentRole: string;
+    joinedSocietiesNames: string[];
+}
+
+export interface AdvisorBasicDto {
+    advisorId: string;
+    advisorName: string;
+    advisorLogoId: string;
+}
+export interface EventRequestDTO {
+    requestTime: Date;
+    startTime: Date;
+    endTime: Date;
+    advisorEmail: string;
+    isAttendeesFormEnabled: boolean;
+    admins: ApprovalAdministrators[];
+}
+
+export interface ApprovalAdministrators {
+    facultyMemberName: string;
+    facultyMemberEmail: string;
+    rank: string;
+}
+export interface EventRequestDecision {
+    eventRequestId: string;
+    isAccepted: boolean;
+    Remark: string;
+}

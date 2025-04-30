@@ -36,7 +36,7 @@ public class GetEventsPerMonth
                .GroupBy(e => new { e.Event.StartTime.Year, e.Event.StartTime.Month })
                .Select(g => new
                {
-                   Date =  ""+g.Key.Year+"-0"+g.Key.Month+"-01",
+                   Date =  ""+g.Key.Year+"-"+g.Key.Month+"-01",
                    Events = g.Count()
                })
                .OrderByDescending(s=>s.Date)

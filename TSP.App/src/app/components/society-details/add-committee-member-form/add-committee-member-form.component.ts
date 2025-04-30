@@ -28,6 +28,7 @@ import { committeePositions } from '../../../common/constants/committee-position
 })
 export class AddCommitteeMemberFormComponent {
   existingCommitteeMembers = input.required<any[]>();
+  societyMembers = input.required<any[]>();
 
   isMembersLoading = false;
   isPositionsLoading = false;
@@ -40,30 +41,7 @@ export class AddCommitteeMemberFormComponent {
   positions = committeePositions;
 
   displayedPositions = [...this.positions];
-
-  members = [
-    { id: 1, name: 'Ahmad Muhaisen' },
-    { id: 2, name: 'Suhaib Saleh' },
-    { id: 3, name: 'Rimawi' },
-    { id: 4, name: 'Ahmad Abu Tair' },
-    { id: 5, name: 'Mohammad AbuAdas' },
-    { id: 6, name: 'Omar Waggad' },
-    { id: 7, name: 'Ahmad Muhaisen' },
-    { id: 8, name: 'Suhaib Saleh' },
-    { id: 9, name: 'Rimawi' },
-    { id: 10, name: 'Ahmad Abu Tair' },
-    { id: 11, name: 'Mohammad AbuAdas' },
-    { id: 12, name: 'Omar Waggad' },
-    { id: 13, name: 'Ahmad Muhaisen' },
-    { id: 14, name: 'Suhaib Saleh' },
-    { id: 15, name: 'Rimawi' },
-    { id: 16, name: 'Ahmad Abu Tair' },
-    { id: 17, name: 'Mohammad AbuAdas' },
-    { id: 18, name: 'Omar Waggad' }
-  ];
-
-  displayedMembers = [...this.members];
-
+  displayedMembers: any[] = [];
 
   ngOnInit() {
     this.addCommitteeMemberForm = this.formBuilder.group({
@@ -72,7 +50,11 @@ export class AddCommitteeMemberFormComponent {
       startDate: [new Date(), [Validators.required]],
     });
 
-    this.members = this.members.filter(m => !this.existingCommitteeMembers()!.some(e => e.name === m.name));
+    this.displayedMembers = this.societyMembers().filter(
+      member => !this.existingCommitteeMembers()!.some(
+        committee => committee.id === member.id
+      )
+    );
     this.positions = this.positions.filter(p => !this.isTakenPosition(p.name));
   }
 
@@ -110,8 +92,12 @@ export class AddCommitteeMemberFormComponent {
   }
 
   onSearchMembers(value: string): void {
-    //this.isMembersLoading = true;
-    this.displayedMembers = this.members.filter(member => member.name.toLowerCase().includes(value.toLowerCase()));
+    this.displayedMembers = this.societyMembers().filter(
+      member => !this.existingCommitteeMembers()!.some(
+        committee => committee.id === member.id
+      ) && 
+      (member.firstName + ' ' + member.lastName).toLowerCase().includes(value.toLowerCase())
+    );
   }
 
   isFormValid(): boolean {

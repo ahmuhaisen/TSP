@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -45,13 +45,14 @@ import { SocietiesService } from '../../../areas/system-admin-area/services/soci
 export class CommitteeTableComponent implements OnInit {
 
   isViewOnly = input<boolean>(false);
-  societyId = input<string>('');
+  societyId = input.required<string>();
+  committee = input.required<SocietyMember[]>();
+  committeeChange = output<SocietyMember[]>();
 
   isEditCommitteePopupVisible = false;
   isEditCommitteePopupLoading = false;
   memberToEdit: SocietyMember | undefined = undefined;
 
-  committee = input.required<SocietyMember[]>();
   displayedCommittee: SocietyMember[] = [];
 
   messageService = inject(NzMessageService);
@@ -85,40 +86,73 @@ export class CommitteeTableComponent implements OnInit {
 
   openEditMemberPopup(id: string) {
     this.memberToEdit = this.committee()!.find(m => m.id === id);
-    this.isEditCommitteePopupVisible = true;
-
-    this.memberToEdit = this.committee()!.find(m => m.id === id);
-    this.setEditMemberFormValues();
-  }
-
-  removeCommitteeMember(id: string) {
-    this.societiesService.removeCommitteeMember(this.societyId(), id).subscribe(() => {
-      this.messageService.success('Committee member removed successfully.');
-      this.displayedCommittee = this.displayedCommittee.filter(m => m.id !== id);
-    });
+    if (this.memberToEdit) {
+      this.setEditMemberFormValues();
+      this.isEditCommitteePopupVisible = true;
+    }
   }
 
   handleCancelEditCommitteeMember() {
     this.isEditCommitteePopupVisible = false;
-    this.isEditCommitteePopupLoading = false;
     this.memberToEdit = undefined;
-    this.clearEditMemberForm();
+    this.editCommitteeMemberForm?.reset();
   }
 
   handleOkEditCommitteeMember() {
+    if (!this.memberToEdit || !this.editCommitteeMemberForm?.valid) {
+      this.messageService.error('Please fill in all required fields.');
+      return;
+    }
 
+    const position = this.editCommitteeMemberForm.get('position')?.value;
+    this.isEditCommitteePopupLoading = true;
+
+    this.societiesService.editMember(this.memberToEdit.id, this.societyId(), position).subscribe({
+      next: () => {
+        this.messageService.success('Committee member position updated successfully');
+        // Update the local list
+        const updatedCommittee = this.committee().map(member => 
+          member.id === this.memberToEdit!.id 
+            ? { ...member, position: position }
+            : member
+        );
+        this.committeeChange.emit(updatedCommittee);
+        this.handleCancelEditCommitteeMember();
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to update committee member position');
+        console.error('Error updating committee member position:', error);
+      },
+      complete: () => {
+        this.isEditCommitteePopupLoading = false;
+      }
+    });
   }
 
   setEditMemberFormValues() {
-    console.table(this.memberToEdit);
+    if (!this.memberToEdit) return;
+    
+    this.editCommitteeMemberForm!.patchValue({
+      name: this.memberToEdit.firstName + ' ' + this.memberToEdit.lastName,
+      position: this.memberToEdit.position,
+      startDate: this.memberToEdit.joinDate
+    });
     this.editCommitteeMemberForm!.get('name')?.disable();
-    this.editCommitteeMemberForm!.get('name')?.setValue(this.memberToEdit!.firstName + ' ' + this.memberToEdit!.lastName);
-    this.editCommitteeMemberForm!.get('position')?.setValue(this.memberToEdit!.position);
-    this.editCommitteeMemberForm!.get('startDate')?.setValue(this.memberToEdit!.joinDate);
+    this.editCommitteeMemberForm!.get('startDate')?.disable();
   }
 
-  clearEditMemberForm() {
-    this.editCommitteeMemberForm!.reset();
+  removeCommitteeMember(id: string) {
+    this.societiesService.removeCommitteeMember(this.societyId(), id).subscribe({
+      next: () => {
+        this.messageService.success('Committee member removed successfully');
+        const updatedCommittee = this.committee().filter(member => member.id !== id);
+        this.committeeChange.emit(updatedCommittee);
+      },
+      error: (error: unknown) => {
+        this.messageService.error('Failed to remove committee member');
+        console.error('Error removing committee member:', error);
+      }
+    });
   }
 
   isTakenPosition(position: string): boolean {

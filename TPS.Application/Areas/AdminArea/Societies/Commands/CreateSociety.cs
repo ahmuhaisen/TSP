@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
 using TSP.Domain.Shared.Options;
 
@@ -32,48 +33,50 @@ public sealed class CreateSociety
         }
     }
 
-    public sealed class Handler(ApplicationDbContext context, 
-                                IGitHubService _FileManager, 
-                                IOptions<GitOptions> _options) : ICommandHandler<Command, Result<Guid>>
-    {
-        public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
-        {
-            if (await context.Societies.AnyAsync(s => s.Name.Equals(request.Name), cancellationToken: cancellationToken))
-                return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
+   public sealed class Handler(ApplicationDbContext context, 
+                              IGitHubService _FileManager, 
+                              IOptions<GitOptions> _options) : ICommandHandler<Command, Result<Guid>>
+  {
+      public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
+      {
+          if (await context.Societies.AnyAsync(s => s.Name.Equals(request.Name), cancellationToken: cancellationToken))
+              return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
 
 
-            var result = await _FileManager.uploadFile(nameof(Society), request.Logo);
+          var result = await _FileManager.uploadFile(nameof(Society), request.Logo);
 
-            if (result.IsFailure)
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
-            }
-            string LogoId = result.Data ?? string.Empty;
-            if (string.IsNullOrEmpty(LogoId))
-            {
-                return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
-            }
+          if (result.IsFailure)
+          {
+              return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
+          }
+          string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
+          if (string.IsNullOrEmpty(LogoId))
+          {
+              return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
+          }
 
 
-            LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
-            var society = new Society
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name,
-                Description = request.Description,
-                LogoId = LogoId,
-                CreationDate = request.CreationDate,
-                ThemeColor = request.ThemeColor,
-                AdvisorId = request.AdvisorId
-            };
+          LogoId = $"https://raw.githubusercontent.com/%7B_options.Value.UserName%7D/%7B_options.Value.Repo%7D/refs/heads/main/Society/%7BLogoId%7D";
+          var society = new Society
+          {
+              Id = Guid.NewGuid(),
+              Name = request.Name,
+              Description = request.Description,
+              LogoId =LogoId,
+              CreationDate = request.CreationDate,
+              ThemeColor = request.ThemeColor,
+              AdvisorId = request.AdvisorId
+          };
 
-            await context.Societies.AddAsync(society, cancellationToken);
+          await context.Societies.AddAsync(society, cancellationToken);
 
-            var saveResult = await context.SaveChangesAsync(cancellationToken);
-            if (saveResult <= 0)
-                return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society.Name), society.Name));
+          society.RaiseDomainEvent(new SocietyCreatedDomainEvent(Guid.NewGuid(), society.Id, society.Name));
 
-            return Result.Success(society.Id);
-        }
+          var saveResult = await context.SaveChangesAsync(cancellationToken);
+          if (saveResult <= 0)
+              return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society.Name), society.Name));
+
+          return Result.Success(society.Id);
+      }
     }
 }

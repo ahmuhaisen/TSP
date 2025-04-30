@@ -1,4 +1,3 @@
-﻿
 using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.AdminArea.Statistics.Contracts;
@@ -10,17 +9,17 @@ namespace TPS.Application.Areas.AdminArea.Statistics.Queries;
 public class GetTopSocities
 {
 
-    public sealed class Query : IQuery<Result<List<SocietyCountDTO>>>
+    public sealed class Query : IQuery<Result<List<SocietyDataDTO>>>
     {
-        public int numberOfSocieties{ get; set; }
+        public int numberOfSocities { get; set; }
         private Query(int num)
         {
-            numberOfSocieties = num;
+            numberOfSocities = num;
         }
         public static Query Create(int num) => new Query(num);
     }
 
-    public sealed class Handler : IQueryHandler<Query, Result<List<SocietyCountDTO>>>
+    public sealed class Handler : IQueryHandler<Query, Result<List<SocietyDataDTO>>>
     {
         private ApplicationDbContext _context { get; }
 
@@ -29,22 +28,23 @@ public class GetTopSocities
             _context = context; 
         }
 
-        public async Task<Result<List<SocietyCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<List<SocietyDataDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var data = await _context.EventsApproval
-                .AsNoTracking()
-                .Where(s => s.DeanAssistantApproval == true && s.AdvisorApproval == true)
-                .GroupBy(s => s.Event.SocietyId)
-                .Select(
-                    s => new SocietyCountDTO
-                    {
-                        Name = s.First().Event.Society.Name,
-                        count = s.Count()
-                    }
-                )
-                .OrderByDescending(s=>s.count)
-                .Take(request.numberOfSocieties)
-                .ToListAsync();
+            var data = await _context.Societies
+
+           .Select(society => new SocietyDataDTO
+           {
+               id = society.Id,
+               SocietyName = society.Name,
+               Members = _context.SocietiesMembers.Count(sm => sm.SocietyId == society.Id),
+               Events = _context.Events.Count(e => e.SocietyId == society.Id)
+           })
+           .OrderByDescending(s=>s.Events)
+           .ThenByDescending(s=>s.Members)
+           .Take(request.numberOfSocities)
+            .ToListAsync();
+
+
             return Result.Success(data);
         }
 

@@ -37,7 +37,7 @@ public sealed class UpdateSociety
             if (data is null)
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
 
-            if (!request.Logo.IsNullOrEmpty())
+if (!request.Logo.IsNullOrEmpty())
             {
                 var result = await _FileManager.updateFile($"{nameof(Society)}/{data.LogoId}", request.Logo);
 

@@ -27,8 +27,8 @@
         <tr>
             <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
             <td>{{ data.eventName }}</td>
-            <td>{{ data.societyName }}</td>
-            <td>{{ data.dateTime|date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td>{{ data.eventSociety.societyName}}</td>
+            <td>{{ data.startDateTime |date: 'yyyy-MM-dd HH:mm:ss' }}</td>
             <td>{{ data.locationString }}</td>
             <td>
                 <nz-tag [nzColor]="getStatusColor(data.approvalStatus)">{{ data.approvalStatus }}</nz-tag>
@@ -43,8 +43,8 @@
                     [nzTooltipTitle]="data.approvalStatus == 'Pending' ? 'Accept' : ''"
                     [disabled]="data.approvalStatus != 'Pending'" nz-popconfirm
                     nzPopconfirmTitle="Are you sure accept the request for: {{ data.eventName }}?"
-                    nzPopconfirmPlacement="top" nzOkText="Yes" (nzOnConfirm)="confirmAcceptRequest()"
-                    (nzOnCancel)="cancelAcceptRequest()">
+                    nzPopconfirmPlacement="top" nzOkText="Yes" (nzOnConfirm)="confirmAcceptRequest(data.id)"
+                    (nzOnCancel)="cancelAcceptRequest(data.id)">
                     <nz-icon nzType="check" />
                 </button>
                 <nz-divider nzType="vertical" />
@@ -56,7 +56,7 @@
             </td>
         </tr>
         <tr [nzExpand]="expandSet.has(data.id)">
-            <span>{{ data.description || 'No description' }}</span>
+            <span>{{ data.eventDescription || 'No description' }}</span>
         </tr>
         }
     </tbody>

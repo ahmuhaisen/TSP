@@ -1,4 +1,4 @@
-using TPS.Infrastructure.DataGenerators;
+using TPS.Application.SignalR;
 using TSP.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +8,7 @@ builder.Services.AddApiControllers()
     .AddApplicationServicesWithOptions(builder.Configuration)
     .AddIdentity(builder.Configuration)
     .AddFluentValidation()
+    .AddBackgroundJobs()
     .AddMediatR()
     .AddSwagger()
     .AddApisSharedServices();
@@ -15,23 +16,20 @@ builder.Services.AddApiControllers()
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var seeder = scope.ServiceProvider.GetRequiredService<ApplicationDataSeeder>();
-    await seeder.Seed();
-}
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors(builder =>
+var allowedOrigin = "http://localhost:4200"; // your Angular dev URL
+
+app.UseCors(policy =>
 {
-    builder.AllowAnyOrigin();
-    builder.AllowAnyMethod();
-    builder.AllowAnyHeader();
+    policy.WithOrigins(allowedOrigin)
+          .AllowAnyMethod()
+          .AllowAnyHeader()
+          .AllowCredentials(); // this is important!
 });
 
 //app.UseHttpsRedirection();
@@ -43,5 +41,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("api/hubs/notifications");
 
 app.Run();

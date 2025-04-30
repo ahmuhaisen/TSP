@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Quartz;
 using System.Text;
 using System.Text.Json.Serialization;
 using TPS.Application;
@@ -15,8 +16,12 @@ using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
 using TPS.Application.Services;
+using TPS.Application.SignalR;
+using TPS.Infrastructure.BackgroundJobs;
 using TPS.Infrastructure.Data;
-using TPS.Infrastructure.DataGenerators;
+using TPS.Infrastructure.Data.DataGenerators;
+using TPS.Infrastructure.Data.Interceptors;
+using TPS.Infrastructure.Emailing;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared.Options;
 using TSP.WebAPI;
@@ -45,20 +50,25 @@ public static class DependencyInjection
     public static IServiceCollection AddEntityFrameworkStore(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
+        services.AddDbContext<ApplicationDbContext>((sp, optionsBuilder) =>
         {
+            var interceptor = sp.GetService<ConvertDomainEventsToOutboxMessagesInterceptor>();
+
             optionsBuilder.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
                 sqlServerAction =>
                 {
                     sqlServerAction.EnableRetryOnFailure(3);
                     sqlServerAction.CommandTimeout(30);
-                });
+                })
+            .AddInterceptors(interceptor!);
 
             // Only in development environment
             optionsBuilder.EnableDetailedErrors();
             optionsBuilder.EnableSensitiveDataLogging(true);
         });
+
+        services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
 
         services.AddScoped<ApplicationDataSeeder>();
 
@@ -92,6 +102,24 @@ public static class DependencyInjection
                 ValidAudience = configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+            };
+
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) &&
+                        path.StartsWithSegments("/api/hubs/notifications"))
+                    {
+                        context.Token = accessToken;
+                    }
+
+                    return Task.CompletedTask;
+                }
             };
         });
 
@@ -176,6 +204,12 @@ public static class DependencyInjection
         services.Configure<GitOptions>(configuration.GetSection("GitImages"));
 
         services.AddScoped<IPdfService, PdfService>();
+
+        services.AddScoped<INotificationService, NotificationService>();
+
+        services.AddSingleton<IUserConnectionManager, UserConnectionManager>();
+        services.AddSignalR();
+
         return services;
     }
 
@@ -183,6 +217,27 @@ public static class DependencyInjection
     {
         services.AddScoped<IStudentsService, StudentService>();
         services.AddScoped<ISocietiesService, SocietiesService>();
+        return services;
+    }
+
+    public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
+    {
+        services.AddQuartz(config =>
+        {
+            var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+
+            config.AddJob<ProcessOutboxMessagesJob>(jobKey)
+                  .AddTrigger(
+                        trigger => trigger.ForJob(jobKey)
+                                                   .WithSimpleSchedule(schedule =>
+                                                                    schedule.WithIntervalInSeconds(10).RepeatForever())
+                                    );
+
+            config.UseMicrosoftDependencyInjectionJobFactory();
+        });
+
+        services.AddQuartzHostedService();
+
         return services;
     }
 }

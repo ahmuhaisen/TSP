@@ -16,7 +16,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
-import { EventSimpleRequest } from '../../../../api-interfaces/event.types';
+import { EventRequestDecision, EventSimpleRequest } from '../../../../api-interfaces/event.types';
 import { OnInit } from '@angular/core';
 import { EventsService } from '../../../../services/events.service';
 
@@ -193,6 +193,7 @@ export class RequestsTableComponent implements OnInit {
   listOfDisplayData = [...this.eventsRequests];
   ngOnInit(): void {
     this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
+
   }
   reset(): void {
     this.searchValue = '';
@@ -219,11 +220,27 @@ export class RequestsTableComponent implements OnInit {
     }
   }
 
-  cancelAcceptRequest(): void {
+  cancelAcceptRequest(eventId: string): void {
     //this.nzMessageService.info('click cancel');
+
+    // TODO: change the remark
+    const desision: EventRequestDecision = {
+      eventRequestId: eventId,
+      isAccepted: false,
+      Remark: "click cancel"
+    }
+    this.eventService.postEventRequestDecision(desision);
   }
 
-  confirmAcceptRequest(): void {
+  confirmAcceptRequest(eventId: string): void {
+
+    // TODO: change the remark
+    const desision: EventRequestDecision = {
+      eventRequestId: eventId,
+      isAccepted: true,
+      Remark: "Event accepted successfully"
+    }
+    this.eventService.postEventRequestDecision(desision);
     this.nzMessageService.success('Event accepted successfully.');
   }
 

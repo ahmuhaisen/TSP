@@ -40,34 +40,41 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             public async Task<Result<List<EventDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var facultyMember = await _context.FacultyMembers
-                    .Include(f => f.Rank) 
-                    .Include(f => f.SocietiesAdvised)  
+                    .Include(f => f.Rank)
+                    .Include(f => f.SocietiesAdvised)
                     .FirstOrDefaultAsync(y => y.Id == request.UserId);
 
                 if (facultyMember == null)
                 {
                     return Result<List<EventDTO>>.Failure<List<EventDTO>>(Error.NotFound("Faculty Member", request.UserId.ToString()));
                 }
-
+                // TODO: Check when faculty member is dean/dean assistant and advisor at the same time
                 if (facultyMember.Rank != null &&
                    (facultyMember.Rank.Title == "Dean Assistant" || facultyMember.Rank.Title == "Dean"))
                 {
                     Console.WriteLine("second if");
 
                     var data = await _context.EventsApproval
-                        .Where(x => x.AdvisorApproval == true)
+                        .Include(x => x.Event)
+                            .ThenInclude(x => x.Society)
+                        .Where(x => x.AdvisorApproval == true || x.Event.Society.AdvisorId == facultyMember.Id)
                         .OrderByDescending(x => x.Event.StartTime)
                         .Select(x => new EventDTO
                         {
-                            Id = x.Id,
+                            Id = x.EventId,
                             EventName = x.Event.Name,
-                            DateTime = x.Event.StartTime,
+                            StartDateTime = x.Event.StartTime,
                             LocationString = x.Event.LocationString,
-                            Description = x.Event.Description,
                             ApprovalStatus = x.DeanAssistantApproval != null
                                 ? (x.DeanAssistantApproval == true ? "Accepted" : "Rejected")
                                 : "Pending",
-                            SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown"
+                            EventDescription = x.Event.Description,
+                            EventSociety = new EventSocietyBasicDto
+                            {
+                                SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown",
+                                SocietyDescription = x.Event.Society != null ? x.Event.Society.Description : "Unknown",
+                                SocietyLogoId = x.Event.Society != null ? x.Event.Society.LogoId : "Unkown"
+                            }
                         })
                         .ToListAsync();
                     return Result.Success(data);
@@ -79,17 +86,24 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 }
 
                 var result = await _context.EventsApproval
-                    .Where(x => x.Event != null && x.Event.Society != null && x.Event.Society.AdvisorId == request.UserId)
+                    .Include(x => x.Event)
+                    .ThenInclude(x => x.Society)
+                    .Where(x => x.Event.Society.AdvisorId == request.UserId)
                     .OrderByDescending(x => x.Event.StartTime)
                     .Select(x => new EventDTO
                     {
-                        Id = x.Id,
+                        Id = x.EventId,
                         EventName = x.Event.Name,
-                        DateTime = x.Event.StartTime,
+                        StartDateTime = x.Event.StartTime,
                         LocationString = x.Event.LocationString,
-                        Description = x.Event.Description,
                         ApprovalStatus = x.AdvisorApproval == false ? "Rejected" : "Pending",
-                        SocietyName = x.Event.Society.Name
+                        EventDescription = x.Event.Description,
+                        EventSociety = new EventSocietyBasicDto
+                        {
+                            SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown",
+                            SocietyDescription = x.Event.Society != null ? x.Event.Society.Description : "Unknown",
+                            SocietyLogoId = x.Event.Society != null ? x.Event.Society.LogoId : "Unkown"
+                        },
                     })
                     .ToListAsync();
 

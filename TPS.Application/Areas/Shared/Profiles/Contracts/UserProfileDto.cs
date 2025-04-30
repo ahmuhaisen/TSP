@@ -21,3 +21,15 @@ public record MembershipBasicDetailsDto
     public string? Section { get; set; }
     public DateOnly JoinDate { get; set; }
 }
+
+public record CurrentUserDto
+{
+    public Guid Id { get; init; }
+    public string? ProfileImageId { get; set; }
+    public string Number { get; set; } = default!;
+    public string FullName { get; init; } = default!;
+    public string userType { get; init; } = default!;
+    public string Email { get; init; } = default!;
+    public int DepartmentId { get; init; } = default!;
+
+}

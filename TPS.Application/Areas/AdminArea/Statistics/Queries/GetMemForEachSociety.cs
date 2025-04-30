@@ -29,45 +29,52 @@ public class GetMemForEachSociety
             _context = context; 
         }
 
-        public async Task<Result<List<SocietyCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
-        {
-            var l = new List<SocietyCountDTO>();
-            var data = await _context.SocietiesMembers
-                .AsNoTracking()
-                .GroupBy(s => s.Society.Id)
-                .Select(s => new SocietyCountDTO
-                {
-                    Name = s.First().Society.Name,
-                    count = s.Count()
-                })
-                .OrderByDescending(s=>s.count)
-                .ToListAsync();
+       public async Task<Result<List<SocietyMembersCountDTO>>> Handle(Query request, CancellationToken cancellationToken)
+ {
+     var l = new List<SocietyMembersCountDTO>();
+     var data = await _context.Societies
+         .GroupJoin(
+            _context.SocietiesMembers,
+            Society => Society.Id,
+            SocietiesMembers => SocietiesMembers.SocietyId,
+            (Society, SocietiesMembers) => new { Society, SocietiesMembers }
+         )
+         .SelectMany(
+             x => x.SocietiesMembers.DefaultIfEmpty(),
+             (x, SocietiesMembers) => new { x.Society, SocietiesMembers }
+         ).GroupBy(g => new { g.Society.Id, g.Society.Name })
+         .Select(s => new SocietyMembersCountDTO
+         {
+             id = s.Key.Id,
+             Name = s.Key.Name,
+             count = s.Count(x => x.SocietiesMembers != null)
+
+         }).ToListAsync();
+
+     if (data.Count == 0)
+     {
+         return Result.Success(l);
+     }
+
+     var temp = new SocietyMembersCountDTO { Name = "others", count = 0 };
+     int sum = 0;
 
 
+     for (int x = 0; x < data.Count&& x < request.numberOfSocieties; x++)
+     {
+         l.Add(data[x]);
+     }
 
-            if (data.Count == 0)
-            {
-                return Result.Success(l);
-            }
+     for (int x = request.numberOfSocieties; x< data.Count; x++)
+     {
+         sum += data[x].count;
+     }
+     temp.count = sum;
+     l.Add(temp);
 
-            var temp = new SocietyCountDTO { Name = "others", count = 0 };
-            int sum = 0;
-            for (int x = 0; x < data.Count&& x < request.numberOfSocieties; x++)
-            {
-                l.Add(data[x]);
-            }
 
-            for (int x = request.numberOfSocieties; x< data.Count; x++)
-            {
-                sum += data[x].count;
-            }
-            temp.count = sum;
-            l.Add(temp);
-
-            
-            return Result.Success(l);
-        }
-
+     return Result.Success(l);
+ }
 
     }
 }

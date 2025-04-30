@@ -33,14 +33,9 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
             }
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
-                // If the current user is an Advisor => If the advisor decision is made, return 400 // The advisor can't change his decision
-                // If the current user is a Dean or Dean Assistant => If the advisor decision is not made, return 400
-                // If the current user is a Dean or Dean Assistant => If the advisor decision is made => 
-                //     advisor decision is accepted => continue with the dean decision
-                //     advisor decision is rejected => return 400
                 var facultyMember = await _context.FacultyMembers
-                .Include(x => x.Rank)
-                .FirstOrDefaultAsync(x => x.Id == request.UserId);
+                    .Include(x => x.Rank)
+                    .FirstOrDefaultAsync(x => x.Id == request.UserId);
                 //User not found
                 if (facultyMember == null)
                 {
@@ -48,9 +43,9 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                 }
                 //Event not found
                 var eventRequest = await _context.EventsApproval
-                .Include(x => x.Event)
-                .ThenInclude(x => x.Society)
-                .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+                    .Include(x => x.Event)
+                        .ThenInclude(x => x.Society)
+                    .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
                 if (eventRequest == null)
                 {
                     return Result.Failure(Error.NotFound("Event", request.EventRequestId.ToString()));
@@ -84,6 +79,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                         eventRequest.DecisionDate = DateTime.Now;
                         await _context.SaveChangesAsync();
                     }
+                    return Result.Success();
                 }
                 //If the current user is the Advisor
                 if (eventRequest.Event.Society.AdvisorId == facultyMember.Id)
@@ -106,13 +102,10 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                         eventRequest.DecisionDate = DateTime.Now;
                         await _context.SaveChangesAsync();
                     }
+                    return Result.Success();
                 }
                 //If the current User isnt an advisor nor dean/dean assistant
-                else
-                {
-                    return Result.Failure(Error.AccessDenied(request.EventRequestId.ToString()));
-                }
-                return Result.Success();
+                return Result.Failure(Error.AccessDenied(request.EventRequestId.ToString()));
             }
         }
     }

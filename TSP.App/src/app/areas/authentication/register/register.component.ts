@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -15,11 +15,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { RankService } from '../../../common/services/rank.service';
 import { SchoolService } from '../../../common/services/school.service';
 import { Rank, SchoolWithDepartmentsBasicDetails } from '../../../common/types/system-tables.types';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   imports: [
-    RouterLink, NzSelectModule, NzDividerModule,
+    RouterLink, NzSelectModule, NzDividerModule, CommonModule,
     ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule, NzSegmentedModule, NzIconModule
   ],
   templateUrl: './register.component.html',
@@ -29,8 +30,9 @@ export class RegisterComponent {
   passwordVisible = false;
   password?: string;
 
-  selectedUserType: UserType = 'Guest';
+  selectedUserType: UserType = 'Student';
   userTypes = ['Student', 'FacultyMember'];
+  @Output() handleUserTypeChange = new EventEmitter<UserType>();
 
   ranks: Rank[] = [];
   schoolsAndDepartments: SchoolWithDepartmentsBasicDetails[] = [
@@ -144,9 +146,9 @@ export class RegisterComponent {
     this.authService.registerFaculty(facultyRegRequest);
   }
 
-
-  handleUserTypeChange(e: string | number) {
+  onUserTypeChange(e: string | number) {
     this.selectedUserType = e === 'FacultyMember' ? 'FacultyMember' : 'Student';
+    this.handleUserTypeChange.emit(this.selectedUserType);
   }
 }
 
