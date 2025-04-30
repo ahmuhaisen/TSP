@@ -22,4 +22,4 @@ export class EventsService {
     postEventRequestDecision(decision: EventRequestDecision) {
         return this.db.postRequest<string, EventRequestDecision>(`${this.model}/${decision.eventRequestId}`, decision);
     }
-} 
+}

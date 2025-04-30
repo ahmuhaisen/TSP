@@ -58,4 +58,16 @@ public class ProfilesController : ApiController
         var task = _sender.Send(command);
         return await FromResult(task);
     }
+
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> GetCurrentUserInfo()
+    {
+        var query = new GetCurrentUserInfo.Query(GetCurrentUserId()!.Value, GetCurrentUserType()!);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
 }

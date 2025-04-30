@@ -1,15 +1,75 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, Signal } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { SecureLocalStorageService } from './secure-local-storage.service';
 import { DbService } from './db.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Router } from '@angular/router';
 import { LoaderService } from './loader.service';
+import { Observable, catchError, of, tap } from 'rxjs';
+
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+    profileImageId?: string;
+    number?: string;
+    userType?: string;
+    departmentId?: number;
+}
+
+export interface CurrentUserDto {
+    id: string;
+    fullName: string;
+    email: string;
+    number: string;
+    profileImageId?: string;
+    userType: string;
+    departmentId: number;
+}
+
+export type UserType = 'FacultyMember' | 'Student' | 'Guest';
+
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    token: string;
+    userType: string;
+    id: string;
+    fullName: string;
+    email: string;
+    profileImageId: string;
+}
+
+export interface BaseRegisterRequest {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    gender: string;
+    departmentId: number;
+}
+
+export interface FacultyRegisterRequest extends BaseRegisterRequest {
+    employeeNumber: string;
+    rankId: number;
+}
+
+export interface StudentRegisterRequest extends BaseRegisterRequest {
+    universityNumber: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-    currentUser = signal<User | null>(null);
+    private _currentUser = signal<User | null>(null);
+    
+    // Public read-only access to currentUser signal
+    get currentUser(): Signal<User | null> {
+        return this._currentUser.asReadonly();
+    }
 
     model = 'Authentication';
 
@@ -26,7 +86,7 @@ export class AuthService {
     }
 
     isUserIsTheCurrentUser(id: string): boolean {
-        return this.currentUser()!.id === id;
+        return this._currentUser()?.id === id;
     }
 
     login(request: LoginRequest, userType: UserType) {
@@ -46,24 +106,37 @@ export class AuthService {
         });
     }
 
-    tryLogIn() {
+    tryLogIn(): boolean {
         const token = this.localStorageService.getItem('token');
         if (token && !this.jwtHelper.isTokenExpired(token)) {
             try {
-                // Decode token to get user information
+                // First set basic user info from token as a fallback
                 const decodedToken = this.jwtHelper.decodeToken(token);
                 console.log('Decoded token:', decodedToken);
                 
-                // Extract user information from token claims
-                const userInfo = {
+                const basicUserInfo = {
                     id: decodedToken.sub || decodedToken.nameid || '',
                     fullName: decodedToken.name || decodedToken.fullName || 'User',
                     email: decodedToken.email || 'user@example.com',
                     profileImageId: decodedToken.profileImageId || ''
                 };
                 
-                // Set current user from token data
-                this.setCurrentUser(userInfo);
+                // Set current user from token data as initial data
+                this.setCurrentUser(basicUserInfo);
+                
+                // Then fetch more detailed user info from API
+                this.fetchCurrentUserInfo().subscribe({
+                    next: (userInfo) => {
+                        if (userInfo) {
+                            console.log('Fetched detailed user info:', userInfo);
+                            this.setCurrentUserDetailed(userInfo);
+                        }
+                    },
+                    error: (error) => {
+                        console.error('Error fetching current user info:', error);
+                    }
+                });
+                
                 return true;
             } catch (error) {
                 console.error('Error decoding token:', error);
@@ -71,6 +144,29 @@ export class AuthService {
             }
         }
         return false;
+    }
+
+    fetchCurrentUserInfo(): Observable<CurrentUserDto | null> {
+        return this.db.getRequest<CurrentUserDto>('Profiles')
+            .pipe(
+                tap(response => console.log('Current user info response:', response)),
+                catchError(error => {
+                    console.error('Error fetching current user info:', error);
+                    return of(null);
+                })
+            );
+    }
+
+    setCurrentUserDetailed(userInfo: CurrentUserDto) {
+        this._currentUser.set({
+            id: userInfo.id,
+            name: userInfo.fullName,
+            email: userInfo.email,
+            profileImageId: userInfo.profileImageId,
+            number: userInfo.number,
+            userType: userInfo.userType,
+            departmentId: userInfo.departmentId
+        });
     }
 
     registerStudent(request: StudentRegisterRequest) {
@@ -103,12 +199,12 @@ export class AuthService {
 
     logout(){
         this.localStorageService.removeItem('token');
-        this.currentUser.set(null);
+        this._currentUser.set(null);
         this.router.navigate(['authentication']);
     }
 
     setCurrentUser(userInfo: { id: string, fullName: string, email: string, profileImageId?: string }) {
-        this.currentUser.set({
+        this._currentUser.set({
             id: userInfo.id,
             name: userInfo.fullName,
             email: userInfo.email,
@@ -123,8 +219,17 @@ export class AuthService {
     }
 
     setCurrentUserProfileImageId(profileImageId: string) {
-        const currentUser = this.currentUser();
+        const currentUser = this._currentUser();
         if(currentUser) currentUser.profileImageId = profileImageId;
+    }
+
+    // Helper methods to check user type more easily
+    isFacultyMember(): boolean {
+        return this._currentUser()?.userType?.toUpperCase() === 'FACULTY';
+    }
+    
+    isStudent(): boolean {
+        return this._currentUser()?.userType?.toUpperCase() === 'STUDENT';
     }
 
     private navigateToHome(userType: string) {
@@ -138,48 +243,5 @@ export class AuthService {
     private navigateToLogin() {
         this.router.navigate(['authentication/login']);
     }
-
-
 }
-
-export interface LoginRequest {
-    email: string;
-    password: string;
-}
-
-export interface LoginResponse {
-    token: string;
-    userType: string;
-    id: string;
-    fullName: string;
-    email: string;
-    profileImageId: string;
-}
-
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    profileImageId?: string;
-}
-
-export type UserType = 'FacultyMember' | 'Student' | 'Guest';
-
-export interface BaseRegisterRequest {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    gender: string;
-    departmentId: number;
-  }
-  
-  export interface FacultyRegisterRequest extends BaseRegisterRequest {
-    employeeNumber: string;
-    rankId: number;
-  }
-  
-  export interface StudentRegisterRequest extends BaseRegisterRequest {
-    universityNumber: string;
-  }
   

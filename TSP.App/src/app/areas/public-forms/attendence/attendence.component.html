@@ -1,386 +1,47 @@
-<!-- Hero Section with Glassmorphism -->
-<div
-    class="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600">
-    <div class="absolute inset-0 bg-[url('/bg-contest.jpg')] bg-cover bg-center mix-blend-overlay opacity-30"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-transparent backdrop-blur-sm"></div>
+<!-- Hero Section -->
+<app-event-hero [event]="eventDetails"></app-event-hero>
 
-    <!-- Content -->
-    <div class="container relative z-10 mx-auto px-4 md:px-8 text-center text-white">
-        <!-- Site Identity -->
-        <div class="mb-12 flex justify-center items-center">
-            <img src="tsp_logo_white.png" alt="TSP Logo" class="h-12 md:h-16 mr-4">
-            <div class="text-left">
-                <h2 class="text-xl md:text-2xl font-semibold text-white">The Societies Portal</h2>
-                <p class="text-sm md:text-base text-blue-200">Event Registration</p>
-            </div>
-        </div>
-
-        <h1
-            class="text-4xl md:text-6xl font-bold mb-4 animate-slide-up bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100">
-            {{eventDetails.name}}</h1>
-        <p class="text-xl md:text-2xl text-gray-200 mb-6 animate-slide-up-delay">{{eventDetails.type}}</p>
-    </div>
-</div>
-
-<!-- Sticky Event Info Bar -->
-<div class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 transform -translate-y-full" id="stickyInfoBar">
-    <div class="bg-white shadow-md border-b border-gray-200">
-        <div class="container mx-auto px-4 md:px-8 py-3">
-            <!-- Desktop View (md and up) -->
-            <div class="hidden md:flex items-center justify-between">
-                <div class="flex items-center">
-                    <img src="tsp-logo.png" alt="TSP Logo" class="h-8 mr-3">
-                    <h3 class="font-medium text-gray-800 mr-6 line-clamp-1">
-                        Event Registration |
-                        {{eventDetails.name}}
-                    </h3>
-                </div>
-                <div class="flex items-center space-x-6">
-                    <div class="flex items-center">
-                        <i nz-icon nzType="calendar" nzTheme="outline" class="text-purple-600 mr-2"></i>
-                        <span class="text-sm text-gray-600">{{eventDetails.date | date:'mediumDate'}}</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i nz-icon nzType="clock-circle" nzTheme="outline" class="text-pink-600 mr-2"></i>
-                        <span class="text-sm text-gray-600">{{eventDetails.startTime}} - {{eventDetails.endTime}}</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i nz-icon nzType="environment" nzTheme="outline" class="text-indigo-600 mr-2"></i>
-                        <span class="text-sm text-gray-600">{{eventDetails.location}}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mobile View (sm and below) -->
-            <div class="md:hidden">
-                <div class="flex items-center justify-center mb-2">
-                    <img src="tsp-logo.png" alt="TSP Logo" class="h-6 mr-2">
-                    <h3 class="font-medium text-gray-800 text-sm">
-                        Event Registration |
-                        {{eventDetails.name}}
-                    </h3>
-                </div>
-                <div class="grid grid-cols-3 gap-2 text-xs">
-                    <div class="flex items-center">
-                        <i nz-icon nzType="calendar" nzTheme="outline" class="text-purple-600 mr-1 text-xs"></i>
-                        <span class="text-gray-600 truncate">{{eventDetails.date | date:'shortDate'}}</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i nz-icon nzType="clock-circle" nzTheme="outline" class="text-pink-600 mr-1 text-xs"></i>
-                        <span class="text-gray-600 truncate">{{eventDetails.startTime}}</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i nz-icon nzType="environment" nzTheme="outline" class="text-indigo-600 mr-1 text-xs"></i>
-                        <span class="text-gray-600 truncate">{{eventDetails.location}}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Sticky Info Bar -->
+<app-sticky-info-bar [event]="eventDetails"></app-sticky-info-bar>
 
 <!-- Event Info Bar -->
-<div class="relative -mt-8">
-    <div class="container mx-auto px-4 md:px-8">
-        <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6 animate-slide-up border border-white/20">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-purple-50 rounded-lg">
-                        <i nz-icon nzType="calendar" nzTheme="outline" class="text-purple-600"></i>
-                    </div>
-                    <div>
-                        <p class="font-medium text-gray-800">Date</p>
-                        <p class="text-sm text-gray-600">{{eventDetails.date | date:'fullDate'}}</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-pink-50 rounded-lg">
-                        <i nz-icon nzType="clock-circle" nzTheme="outline" class="text-pink-600"></i>
-                    </div>
-                    <div>
-                        <p class="font-medium text-gray-800">Time</p>
-                        <p class="text-sm text-gray-600">{{eventDetails.startTime}} - {{eventDetails.endTime}}</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-indigo-50 rounded-lg">
-                        <i nz-icon nzType="environment" nzTheme="outline" class="text-indigo-600"></i>
-                    </div>
-                    <div>
-                        <p class="font-medium text-gray-800">Location</p>
-                        <p class="text-sm text-gray-600">{{eventDetails.location}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<app-event-info-bar [event]="eventDetails"></app-event-info-bar>
 
 <!-- Main Content -->
 <div class="relative pb-20">
     <div class="container mx-auto px-4 md:px-8">
         <!-- Content Cards -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
-            <!-- Registration Form Card -->
-            <div
-                class="lg:col-span-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 animate-slide-up border border-white/20">
-                @if(!isRegisterSucceeded) {
-                <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Register for the Event</h2>
-                    <p class="text-gray-600">Fill in your details below to secure your spot</p>
-                </div>
-
-                <!-- Registration Type Selection -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-medium text-gray-700 mb-4">Choose Registration Type</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Logged-in User Option -->
-                        <div (click)="selectRegistrationType('account')"
-                            [class.bg-blue-50]="registrationType === 'account'"
-                            [class.border-blue-500]="registrationType === 'account'"
-                            class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-colors duration-300 cursor-pointer">
-                            <div [class.bg-blue-100]="registrationType === 'account'" class="p-3 bg-blue-50 rounded-lg">
-                                <i nz-icon nzType="user" nzTheme="outline" class="text-blue-600 text-xl"></i>
-                            </div>
-                            <div class="text-left">
-                                <h4 class="font-medium text-gray-800">Register with Account</h4>
-                                <p class="text-sm text-gray-600">Use your existing account details</p>
-                            </div>
-                            <div class="ml-auto">
-                                <div class="h-5 w-5 rounded-full border-2"
-                                    [class.bg-blue-500]="registrationType === 'account'"
-                                    [class.border-blue-500]="registrationType === 'account'"
-                                    [class.border-gray-300]="registrationType !== 'account'">
-                                    <i *ngIf="registrationType === 'account'" nz-icon nzType="check"
-                                        class="text-white text-xs flex justify-center items-center h-full"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anonymous Option -->
-                        <div (click)="selectRegistrationType('anonymous')"
-                            [class.bg-blue-50]="registrationType === 'anonymous'"
-                            [class.border-blue-500]="registrationType === 'anonymous'"
-                            class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-blue-400 transition-colors duration-300 cursor-pointer">
-                            <div [class.bg-blue-100]="registrationType === 'anonymous'"
-                                class="p-3 bg-blue-50 rounded-lg">
-                                <i nz-icon nzType="user-add" nzTheme="outline" class="text-blue-600 text-xl"></i>
-                            </div>
-                            <div class="text-left">
-                                <h4 class="font-medium text-gray-800">Register Anonymously</h4>
-                                <p class="text-sm text-gray-600">Fill in your details manually</p>
-                            </div>
-                            <div class="ml-auto">
-                                <div class="h-5 w-5 rounded-full border-2"
-                                    [class.bg-blue-500]="registrationType === 'anonymous'"
-                                    [class.border-blue-500]="registrationType === 'anonymous'"
-                                    [class.border-gray-300]="registrationType !== 'anonymous'">
-                                    <i *ngIf="registrationType === 'anonymous'" nz-icon nzType="check"
-                                        class="text-white text-xs flex justify-center items-center h-full"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                @if(registrationType === 'account') {
-                <!-- Account Registration Summary -->
-                <div class="bg-blue-50 rounded-xl p-6 mb-8">
-                    @if(isLoading) {
-                    <div class="flex justify-center items-center py-12">
-                        <nz-spin nzTip="Loading account details..."></nz-spin>
-                    </div>
-                    } @else {
-                    <h3 class="text-lg font-medium text-gray-800 mb-4">Your Registration Details</h3>
-                    @if(!userDetails) {
-                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
-                        <p class="text-yellow-700">You need to be logged in to use this option.</p>
-                        <button (click)="forceRefreshUserDetails()"
-                            class="mt-3 px-4 py-2 text-sm bg-blue-50 text-blue-600 rounded-lg border border-blue-200 hover:bg-blue-100">
-                            <i nz-icon nzType="reload" class="mr-1"></i> Refresh Login Status
-                        </button>
-                    </div>
-                    } @else {
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm text-gray-600">Your account information</span>
-                        <button (click)="forceRefreshUserDetails()"
-                            class="text-xs text-blue-600 hover:text-blue-800 flex items-center">
-                            <i nz-icon nzType="reload" class="mr-1"></i> Refresh
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-white rounded-lg">
-                                <i nz-icon nzType="user" nzTheme="outline" class="text-blue-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Full Name</p>
-                                <p class="font-medium text-gray-800">{{userDetails?.fullName}}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-white rounded-lg">
-                                <i nz-icon nzType="mail" nzTheme="outline" class="text-blue-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Email</p>
-                                <p class="font-medium text-gray-800">{{userDetails?.email}}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button for Account Registration -->
-                    <div class="flex justify-end mt-6">
-                        <button nz-button nzType="primary" [nzLoading]="isSubmitting" (click)="onSubmit()"
-                            class="w-full md:w-auto px-8 h-12 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                            Register with Account
-                        </button>
-                    </div>
-                    }
-                    }
-                </div>
-                }
-
-                <form nz-form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="space-y-6"
-                    [class.hidden]="registrationType === 'account'">
-                    @if(isLoading) {
-                    <div class="flex justify-center items-center py-12">
-                        <nz-spin nzTip="Loading form..."></nz-spin>
-                    </div>
-                    } @else {
-                    <!-- Form Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Full Name -->
-                        <div class="col-span-2 md:col-span-1">
-                            <nz-form-item>
-                                <nz-form-label nzRequired class="text-gray-700 font-medium">Full Name</nz-form-label>
-                                <nz-form-control nzErrorTip="Please enter your full name">
-                                    <input nz-input formControlName="fullName" placeholder="Enter your full name"
-                                        class="rounded-lg border-gray-200 hover:border-blue-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-200" />
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="col-span-2 md:col-span-1">
-                            <nz-form-item>
-                                <nz-form-label nzRequired class="text-gray-700 font-medium">Email</nz-form-label>
-                                <nz-form-control nzErrorTip="Please enter a valid email">
-                                    <input nz-input formControlName="email" type="email" placeholder="Enter your email"
-                                        class="rounded-lg border-gray-200 hover:border-blue-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-200" />
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-
-                        <!-- University Number -->
-                        <div class="col-span-2 md:col-span-1">
-                            <nz-form-item>
-                                <nz-form-label nzRequired class="text-gray-700 font-medium">University
-                                    Number</nz-form-label>
-                                <nz-form-control nzErrorTip="Please enter your university number">
-                                    <input nz-input formControlName="universityNumber"
-                                        placeholder="Enter your university number"
-                                        class="rounded-lg border-gray-200 hover:border-blue-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-200" />
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-
-                        <!-- School & Major -->
-                        <div class="col-span-2 md:col-span-1">
-                            <nz-form-item>
-                                <nz-form-label nzRequired class="text-gray-700 font-medium">School &
-                                    Major</nz-form-label>
-                                <nz-form-control nzErrorTip="Please select your school and major">
-                                    <nz-cascader [nzOptions]="nzOptions" formControlName="schoolMajor"
-                                        placeholder="Select school and major"
-                                        class="rounded-lg border-gray-200 hover:border-blue-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"></nz-cascader>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="col-span-2">
-                            <nz-form-item>
-                                <nz-form-label class="text-gray-700 font-medium">Additional Notes</nz-form-label>
-                                <nz-form-control>
-                                    <textarea nz-input formControlName="notes" rows="4"
-                                        placeholder="Any special requirements or notes"
-                                        class="rounded-lg border-gray-200 hover:border-blue-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"></textarea>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                    </div>
-                    }
-
-                    <!-- Submit Button -->
-                    <div class="flex justify-end mt-8">
-                        <button nz-button nzType="primary" [nzLoading]="isSubmitting"
-                            [disabled]="registrationType === 'anonymous' && !registrationForm.valid || isLoading"
-                            class="w-full md:w-auto px-8 h-12 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                            Register Now
-                        </button>
-                    </div>
-                </form>
-                } @else {
-                <div class="flex flex-col items-center justify-center py-12">
-                    <nz-result nzStatus="success" nzTitle="Registration Successful!"
-                        nzSubTitle="You have successfully registered for the event. We'll send you a confirmation email shortly.">
-                    </nz-result>
-                </div>
-                }
+            <!-- Registration Form -->
+            <div class="lg:col-span-8">
+                <app-registration-form
+                    [eventId]="eventId"
+                    [userDetails]="userDetails"
+                    [isLoggedIn]="isLoggedIn"
+                    [isLoading]="isLoading"
+                    [isSubmitting]="isSubmitting"
+                    [isRegisterSucceeded]="isRegisterSucceeded"
+                    [registrationType]="registrationType"
+                    [schoolMajorOptions]="nzOptions"
+                    [isFaculty]="authService.isFacultyMember()"
+                    (refreshUserDetailsEvent)="forceRefreshUserDetails()"
+                    (selectRegistrationTypeEvent)="selectRegistrationType($event)"
+                    (submitRegistrationEvent)="onSubmit()">
+                </app-registration-form>
             </div>
-
-            <!-- Event Details Card -->
+            
+            <!-- Event Details -->
             <div class="lg:col-span-4">
-                <div class="sticky top-8 space-y-6">
-                    <!-- Event Info Card -->
-                    <div
-                        class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6 animate-slide-up-delay border border-white/20">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">About this event</h3>
-                        <div class="space-y-5">
-                            <!-- Event Description -->
-                            <p class="text-gray-600">{{eventDetails.description}}</p>
-                            
-                            <!-- Society Information - Moved Below -->
-                            <div class="flex items-center pt-4 border-t border-gray-100">
-                                <nz-avatar 
-                                    [nzSrc]="eventDetails.societyLogo || ''" 
-                                    [nzText]="getSocietyInitials(eventDetails.societyName || 'Event Organizer')"
-                                    [nzSize]="44"
-                                    nzShape="circle"
-                                    class="flex-shrink-0 mr-3 bg-blue-600 text-white">
-                                </nz-avatar>
-                                <div>
-                                    <h4 class="font-medium text-gray-800">{{eventDetails.societyName || 'Event Organizer'}}</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Contact Card -->
-                    <div
-                        class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6 animate-slide-up-delay-2 border border-white/20">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Need Help?</h3>
-                        <p class="text-gray-600 mb-4">If you have any questions about the event, feel free to contact
-                            us.</p>
-                        <button nz-button nzType="default"
-                            class="w-full h-12 rounded-lg border-blue-200 text-blue-600 hover:border-blue-400 hover:text-blue-700 transition-colors duration-300">
-                            <i nz-icon nzType="mail" class="mr-2"></i>
-                            Contact Support
-                        </button>
-                    </div>
-                </div>
+                <app-event-details [event]="eventDetails"></app-event-details>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Footer -->
-<footer class="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600 text-white py-12">
+<footer class="bg-slate-100 py-9 border-t-2">
     <div class="container mx-auto px-4 md:px-8 text-center">
-        <img src="tsp_logo_white.png" alt="Logo" class="w-16 mx-auto mb-6">
-        <p class="text-sm text-gray-300">&copy; {{currentYear}} The Societies Portal. All rights reserved.</p>
+        <img src="tsp-logo.png" alt="Logo" class="w-16 mx-auto mb-6">
+        <p class="text-sm text-gray-700">&copy; {{currentYear}} The Societies Portal.</p>
     </div>
 </footer>

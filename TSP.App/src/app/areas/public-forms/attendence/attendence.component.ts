@@ -24,18 +24,13 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { AuthService } from '../../../common/services/auth.service';
 import { SecureLocalStorageService } from '../../../common/services/secure-local-storage.service';
 
-interface EventDetails {
-  name: string;
-  type: string;
-  description: string;
-  location: string;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  societyName?: string;
-  societyLogo?: string;
-  societyDescription?: string;
-}
+// Import model and components
+import { EventDetails } from './models/event-details.model';
+import { EventHeroComponent } from './components/event-hero/event-hero.component';
+import { StickyInfoBarComponent } from './components/sticky-info-bar/sticky-info-bar.component';
+import { EventInfoBarComponent } from './components/event-info-bar/event-info-bar.component';
+import { EventDetailsComponent } from './components/event-details/event-details.component';
+import { RegistrationFormComponent } from './components/registration-form/registration-form.component';
 
 interface SchoolMajorOption {
   value: string;
@@ -45,6 +40,7 @@ interface SchoolMajorOption {
 
 @Component({
   selector: 'app-attendence',
+  standalone: true,
   imports: [
     NgIf,
     NzIconModule,
@@ -62,7 +58,13 @@ interface SchoolMajorOption {
     NzOptionComponent,
     NzFormModule,
     NzTagModule,
-    DatePipe
+    DatePipe,
+    // Add component imports
+    EventHeroComponent,
+    StickyInfoBarComponent,
+    EventInfoBarComponent,
+    EventDetailsComponent,
+    RegistrationFormComponent
   ],
   templateUrl: './attendence.component.html',
   providers: [
@@ -81,13 +83,13 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
   messageService = inject(NzMessageService);
   authService = inject(AuthService);
   renderer = inject(Renderer2);
+  localStorageService = inject(SecureLocalStorageService);
   isSubmitting = false;
   isRegisterSucceeded = false;
   isFormEnabled = true;
   isLoggedIn = false;
   userDetails: any = null;
   isLoading = false;
-  localStorageService = inject(SecureLocalStorageService);
 
   registrationForm: FormGroup;
   registrationType: 'account' | 'anonymous' = 'anonymous';
@@ -199,13 +201,22 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
       console.log('Current user after tryLogIn:', currentUser);
       
       if (currentUser) {
+        // Check if the user is a faculty member
+        if (this.authService.isFacultyMember()) {
+          this.messageService.error('Faculty members are not allowed to register for events');
+          this.registrationType = 'anonymous';
+          this.isFormEnabled = false;
+          return;
+        }
+        
         // Set userDetails with data from currentUser
         this.userDetails = {
           fullName: currentUser.name,
           email: currentUser.email,
-          universityNumber: currentUser.id,
-          schoolName: 'Your School', // These would need to be fetched from another service
-          departmentName: 'Your Department'
+          universityNumber: currentUser.number || currentUser.id,
+          schoolName: 'Unknown',
+          departmentName: 'Unknown',
+          departmentId: currentUser.departmentId
         };
         console.log('User details set:', this.userDetails);
       } else {
@@ -231,6 +242,12 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    // Check if user is a faculty member
+    if (this.authService.isFacultyMember()) {
+      this.messageService.error('Faculty members are not allowed to register for events');
+      return;
+    }
+
     this.isSubmitting = true;
     
     // For account registration, use the user details directly
@@ -241,7 +258,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
         email: this.userDetails.email,
         universityNumber: this.userDetails.universityNumber,
         phoneNumber: '',
-        departmentId: '', // This would need to be set with actual department ID 
+        departmentId: this.userDetails.departmentId || '', // This would need to be set with actual department ID 
         notes: ''
       };
       
@@ -404,61 +421,106 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Force refresh user details for debugging purposes
   forceRefreshUserDetails() {
     this.isLoading = true;
     console.log('Force refreshing user details...');
     
-    // Try to reinitialize the user from token
-    const loginSuccess = this.authService.tryLogIn();
-    console.log('Try login result:', loginSuccess);
-    
-    // Double check authentication status
+    // Check current authentication status
     this.isLoggedIn = this.authService.isAuthenticated();
     console.log('Authentication check result:', this.isLoggedIn);
     
     if (this.isLoggedIn) {
-      // Get fresh user data from the auth service
-      const currentUser = this.authService.currentUser();
-      console.log('Current user from auth service after refresh:', currentUser);
-      
-      if (currentUser) {
-        this.userDetails = {
-          fullName: currentUser.name || 'Unknown',
-          email: currentUser.email || 'Unknown',
-          universityNumber: currentUser.id || 'Unknown',
-          schoolName: 'Unknown',
-          departmentName: 'Unknown'
-        };
-        console.log('Updated user details:', this.userDetails);
-        
-        // Update the registration type
-        this.registrationType = 'account';
-        
-        // Pre-fill form
-        this.registrationForm.patchValue({
-          fullName: this.userDetails.fullName,
-          email: this.userDetails.email,
-          universityNumber: this.userDetails.universityNumber
-        });
-      } else {
-        console.warn('Still no current user available after refresh');
-        this.userDetails = {
-          fullName: 'Logged In User',
-          email: 'user@example.com',
-          universityNumber: 'Unknown',
-          schoolName: 'Unknown',
-          departmentName: 'Unknown'
-        };
-      }
+      // Directly fetch the current user info from the API
+      this.authService.fetchCurrentUserInfo().subscribe({
+        next: (userInfo) => {
+          if (userInfo) {
+            console.log('Fetched user details:', userInfo);
+            
+            // Check if the user is a faculty member
+            if (userInfo.userType?.toUpperCase() === 'FACULTY') {
+              this.messageService.error('Faculty members are not allowed to register for events');
+              this.registrationType = 'anonymous';
+              this.isFormEnabled = false;
+              this.isLoading = false;
+              return;
+            }
+            
+            this.userDetails = {
+              fullName: userInfo.fullName,
+              email: userInfo.email,
+              universityNumber: userInfo.number,
+              schoolName: 'Unknown',
+              departmentName: 'Unknown',
+              departmentId: userInfo.departmentId
+            };
+            
+            // Update the registration type
+            this.registrationType = 'account';
+            this.isFormEnabled = true;
+            
+            // Pre-fill form
+            this.registrationForm.patchValue({
+              fullName: this.userDetails.fullName,
+              email: this.userDetails.email,
+              universityNumber: this.userDetails.universityNumber,
+              // If we have departmentId, we could try to select the correct department in schoolMajor
+              // but that would require mapping the departmentId to the proper option structure
+            });
+          } else {
+            console.warn('Could not fetch user details from API');
+            // Fall back to using current user from signal
+            const currentUser = this.authService.currentUser();
+            
+            if (currentUser) {
+              // Check if the user is a faculty member
+              if (this.authService.isFacultyMember()) {
+                this.messageService.error('Faculty members are not allowed to register for events');
+                this.registrationType = 'anonymous';
+                this.isFormEnabled = false;
+                this.isLoading = false;
+                return;
+              }
+              
+              this.userDetails = {
+                fullName: currentUser.name || 'Unknown',
+                email: currentUser.email || 'Unknown',
+                universityNumber: currentUser.number || currentUser.id || 'Unknown',
+                schoolName: 'Unknown',
+                departmentName: 'Unknown',
+                departmentId: currentUser.departmentId
+              };
+              
+              // Update the registration type
+              this.registrationType = 'account';
+              this.isFormEnabled = true;
+              
+              // Pre-fill form
+              this.registrationForm.patchValue({
+                fullName: this.userDetails.fullName,
+                email: this.userDetails.email,
+                universityNumber: this.userDetails.universityNumber
+              });
+            } else {
+              console.warn('Still no current user available after refresh');
+              this.userDetails = null;
+              this.registrationType = 'anonymous';
+            }
+          }
+          
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching user details:', error);
+          this.userDetails = null;
+          this.registrationType = 'anonymous';
+          this.isLoading = false;
+        }
+      });
     } else {
       this.userDetails = null;
       this.registrationType = 'anonymous';
-    }
-    
-    setTimeout(() => {
       this.isLoading = false;
-    }, 500);
+    }
   }
 
   /**
