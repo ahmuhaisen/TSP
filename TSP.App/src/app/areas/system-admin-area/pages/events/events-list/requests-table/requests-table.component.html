@@ -43,8 +43,8 @@
                     [nzTooltipTitle]="data.approvalStatus == 'Pending' ? 'Accept' : ''"
                     [disabled]="data.approvalStatus != 'Pending'" nz-popconfirm
                     nzPopconfirmTitle="Are you sure accept the request for: {{ data.eventName }}?"
-                    nzPopconfirmPlacement="top" nzOkText="Yes" (nzOnConfirm)="confirmAcceptRequest()"
-                    (nzOnCancel)="cancelAcceptRequest()">
+                    nzPopconfirmPlacement="top" nzOkText="Yes" (nzOnConfirm)="confirmAcceptRequest(data.id)"
+                    (nzOnCancel)="cancelAcceptRequest(data.id)">
                     <nz-icon nzType="check" />
                 </button>
                 <nz-divider nzType="vertical" />
