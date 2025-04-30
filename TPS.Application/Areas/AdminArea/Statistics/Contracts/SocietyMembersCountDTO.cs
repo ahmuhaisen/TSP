@@ -1,6 +1,6 @@
 ﻿namespace TPS.Application.Areas.AdminArea.Statistics.Contracts;
 
-public class SocietyCountDTO
+public class SocietyMembersCountDTO
 {
     public Guid id {  get; set; }
     public required string Name { get; set; }
