@@ -22,7 +22,7 @@ export class AuthService {
 
     isAuthenticated(): boolean {
         const token = this.localStorageService.getItem('token');
-        return !this.jwtHelper.isTokenExpired(token);
+        return token && !this.jwtHelper.isTokenExpired(token);
     }
 
     isUserIsTheCurrentUser(id: string): boolean {
@@ -44,6 +44,33 @@ export class AuthService {
                 this.loader.hide();
             }
         });
+    }
+
+    tryLogIn() {
+        const token = this.localStorageService.getItem('token');
+        if (token && !this.jwtHelper.isTokenExpired(token)) {
+            try {
+                // Decode token to get user information
+                const decodedToken = this.jwtHelper.decodeToken(token);
+                console.log('Decoded token:', decodedToken);
+                
+                // Extract user information from token claims
+                const userInfo = {
+                    id: decodedToken.sub || decodedToken.nameid || '',
+                    fullName: decodedToken.name || decodedToken.fullName || 'User',
+                    email: decodedToken.email || 'user@example.com',
+                    profileImageId: decodedToken.profileImageId || ''
+                };
+                
+                // Set current user from token data
+                this.setCurrentUser(userInfo);
+                return true;
+            } catch (error) {
+                console.error('Error decoding token:', error);
+                return false;
+            }
+        }
+        return false;
     }
 
     registerStudent(request: StudentRegisterRequest) {
