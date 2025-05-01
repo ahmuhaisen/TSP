@@ -27,10 +27,16 @@ export class DbService {
     relativeRoute: string,
     body: Payload
   ): Observable<Response> {
+    console.log(`Making POST request to: ${this.baseUrl}${relativeRoute}`);
+    console.log('Request payload:', body);
+    
     return this.http
-      .post<ApiResponse>(this.getUrl(relativeRoute), body)
+      .post<ApiResponse>(`${this.baseUrl}${relativeRoute}`, body)
       .pipe(
-        map((response) => response.responseData)
+        map((response) => {
+          console.log('POST response:', response);
+          return response.responseData;
+        })
       );
   }
 

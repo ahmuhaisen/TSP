@@ -13,7 +13,7 @@ export interface PostAttendance {
     fullName: string;
     email: string;
     universityNumber: string;
-    departmentId: number;
+    departmentId: string;
     phoneNumber?: string | null;
     notes?: string | null;
 }

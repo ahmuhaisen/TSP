@@ -14,7 +14,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
             <!-- Registration Form -->
             <div class="lg:col-span-8">
-                <app-registration-form
+                <app-registration-form #registrationFormComponent
                     [eventId]="eventId"
                     [userDetails]="userDetails"
                     [isLoggedIn]="isLoggedIn"

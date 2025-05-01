@@ -14,7 +14,8 @@ export class AttendanceService {
     }
 
     post(attendance: PostAttendance) {
-        return this.db.postRequest<any, PostAttendance>(this.getUrl(), attendance);
+        console.log('AttendanceService.post called with:', attendance);
+        return this.db.postRequest<any, PostAttendance>(this.model, attendance);
     }
 
 

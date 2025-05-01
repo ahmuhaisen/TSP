@@ -101,10 +101,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
               @if(!userDetails) {
                 <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
                   <p class="text-yellow-700">You need to be logged in to use this option.</p>
-                  <button (click)="refreshUserDetails()"
-                    class="mt-3 px-4 py-2 text-sm bg-blue-50 text-blue-600 rounded-lg border border-blue-200 hover:bg-blue-100">
-                    <i nz-icon nzType="reload" class="mr-1"></i> Refresh Login Status
-                  </button>
+                  <p class="text-sm text-yellow-600 mt-2">Please log in to your account to continue.</p>
                 </div>
               } @else {
                 <!-- Faculty Warning - Only shown in account section -->
@@ -121,10 +118,9 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
              
                 <div class="flex justify-between items-center mb-4">
                   <span class="text-sm text-gray-600">Your account information</span>
-                  <button (click)="refreshUserDetails()"
-                    class="text-xs text-blue-600 hover:text-blue-800 flex items-center">
-                    <i nz-icon nzType="reload" class="mr-1"></i> Refresh
-                  </button>
+                  <div class="text-xs text-blue-600 flex items-center" *ngIf="isLoading">
+                    <i nz-icon nzType="loading" class="mr-1"></i> Refreshing...
+                  </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="flex items-center gap-3">
@@ -149,10 +145,10 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
                 
                 <!-- Submit Button for Account Registration -->
                 <div class="flex justify-end mt-6">
-                  <button nz-button nzType="primary" [nzLoading]="isSubmitting" (click)="submitRegistration()"
-                    [disabled]="isFaculty"
+                  <button nz-button nzType="primary" [nzLoading]="isSubmitting || isLoading" (click)="submitRegistration()"
+                    [disabled]="isFaculty || isSubmitting || isLoading"
                     class="w-full md:w-auto px-8 h-12 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                    Register with Account
+                    {{isLoading ? 'Loading Account...' : (isSubmitting ? 'Registering...' : 'Register with Account')}}
                   </button>
                 </div>
               }
@@ -234,8 +230,8 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 
           <!-- Submit Button -->
           <div class="flex justify-end mt-8">
-            <button nz-button nzType="primary" [nzLoading]="isSubmitting" 
-              [disabled]="(registrationType === 'anonymous' && !registrationForm.valid) || isLoading || isFaculty" 
+            <button nz-button nzType="primary" type="submit" [nzLoading]="isSubmitting"
+              [disabled]="isSubmitting || isLoading || isFaculty" 
               class="w-full md:w-auto px-8 h-12 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
               Register Now
             </button>
@@ -287,6 +283,39 @@ export class RegistrationFormComponent {
   }
 
   submitRegistration() {
-    this.submitRegistrationEvent.emit();
+    console.log('RegistrationFormComponent.submitRegistration called');
+    
+    // Validate and mark all fields as touched to show validation errors
+    Object.keys(this.registrationForm.controls).forEach(key => {
+      const control = this.registrationForm.get(key);
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
+      console.log(`Field ${key}: valid=${control?.valid}, value=${JSON.stringify(control?.value)}, errors=`, control?.errors);
+    });
+    
+    // Log form values to debug
+    console.log('Form values before submission:', this.registrationForm.value);
+    console.log('Form validity:', this.registrationForm.valid);
+    
+    // Validate schoolMajor if it's anonymous registration
+    if (this.registrationType === 'anonymous') {
+      const schoolMajorControl = this.registrationForm.get('schoolMajor');
+      if (schoolMajorControl && (!schoolMajorControl.value || !schoolMajorControl.value.length)) {
+        schoolMajorControl.markAsDirty();
+        schoolMajorControl.setErrors({ required: true });
+        schoolMajorControl.updateValueAndValidity();
+        console.log('School Major validation failed:', schoolMajorControl.errors);
+        return;
+      }
+    }
+    
+    // Only emit if the form is valid or if using account-based registration
+    if (this.registrationType === 'account' || this.registrationForm.valid) {
+      // Pass the form values to the parent component
+      sessionStorage.setItem('registrationFormData', JSON.stringify(this.registrationForm.value));
+      this.submitRegistrationEvent.emit();
+    } else {
+      console.log('Form is invalid, not submitting');
+    }
   }
 } 

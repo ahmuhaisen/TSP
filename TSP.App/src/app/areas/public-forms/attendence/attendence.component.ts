@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, inject, OnInit, HostListener, AfterViewInit, Renderer2 } from '@angular/core';
+import { Component, inject, OnInit, HostListener, AfterViewInit, Renderer2, ViewChild, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -71,7 +71,7 @@ interface SchoolMajorOption {
     AttendanceService
   ]
 })
-export class AttendenceComponent implements OnInit, AfterViewInit {
+export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
   eventId = '3FA85F64-5717-4562-B3FC-2C963F66AFA6';
   currentYear = new Date().getFullYear();
   nzOptions: NzCascaderOption[] = [];
@@ -130,6 +130,8 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
     }
   ];
 
+  @ViewChild(RegistrationFormComponent) registrationFormComponent!: RegistrationFormComponent;
+
   constructor() {
     this.registrationForm = this.fb.group({
       fullName: ['', [Validators.required]],
@@ -150,28 +152,34 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
     }
 
     this.fetchSchools();
-    this.checkAuthStatus();
     
-    // Set the default registration type
-    // If user is logged in, default to account registration
-    if (this.isLoggedIn && this.userDetails) {
+    // Check authentication status
+    this.isLoggedIn = this.authService.isAuthenticated();
+    if (this.isLoggedIn) {
+      // If user is logged in, default to account registration
       this.registrationType = 'account';
-      // Pre-fill form with user details
-      setTimeout(() => {
-        this.registrationForm.patchValue({
-          fullName: this.userDetails?.fullName || '',
-          email: this.userDetails?.email || '',
-          universityNumber: this.userDetails?.universityNumber || '',
-          schoolMajor: []
-        });
-      }, 0);
+      
+      // Set up automatic refresh
+      this.setupAutoRefresh();
     } else {
       this.registrationType = 'anonymous';
     }
   }
 
   ngAfterViewInit(): void {
-    // No need to initialize - the CSS will handle it
+    console.log('View initialized, registration form component available:', !!this.registrationFormComponent);
+    
+    // If the form component is available and we're using account registration, ensure forms are synced
+    if (this.registrationFormComponent && this.registrationType === 'account' && this.userDetails) {
+      setTimeout(() => {
+        // Ensure the child form is properly filled with user details
+        this.registrationFormComponent.registrationForm.patchValue({
+          fullName: this.userDetails.fullName,
+          email: this.userDetails.email,
+          universityNumber: this.userDetails.universityNumber
+        });
+      });
+    }
   }
 
   @HostListener('window:scroll', [])
@@ -187,121 +195,127 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
     }
   }
 
-  checkAuthStatus() {
-    // Try to log in using the stored token
-    const loginSuccess = this.authService.tryLogIn();
-    
-    // Check authentication status
-    this.isLoggedIn = this.authService.isAuthenticated();
-    console.log('User is authenticated:', this.isLoggedIn);
-    
-    if (this.isLoggedIn) {
-      // Get user from auth service's currentUser signal
-      const currentUser = this.authService.currentUser();
-      console.log('Current user after tryLogIn:', currentUser);
-      
-      if (currentUser) {
-        // Check if the user is a faculty member
-        if (this.authService.isFacultyMember()) {
-          this.messageService.error('Faculty members are not allowed to register for events');
-          this.registrationType = 'anonymous';
-          this.isFormEnabled = false;
-          return;
-        }
-        
-        // Set userDetails with data from currentUser
-        this.userDetails = {
-          fullName: currentUser.name,
-          email: currentUser.email,
-          universityNumber: currentUser.number || currentUser.id,
-          schoolName: 'Unknown',
-          departmentName: 'Unknown',
-          departmentId: currentUser.departmentId
-        };
-        console.log('User details set:', this.userDetails);
-      } else {
-        console.warn('Authentication successful but currentUser is still null after tryLogIn');
-        // Create a minimal user profile from what we can deduce
-        this.userDetails = {
-          fullName: 'Logged In User',
-          email: 'user@example.com',
-          universityNumber: 'Unknown',
-          schoolName: 'Unknown',
-          departmentName: 'Unknown'
-        };
-      }
-    } else {
-      console.warn('User is not authenticated');
-      this.userDetails = null;
-    }
-  }
-
   onSubmit(): void {
+    console.log('onSubmit called - Starting registration process');
+    console.log('Registration type:', this.registrationType);
+    
+    if (this.registrationFormComponent) {
+      console.log('Child component form valid?', this.registrationFormComponent.registrationForm.valid);
+      console.log('Child component form values:', this.registrationFormComponent.registrationForm.value);
+    } else {
+      console.log('Child component not available');
+    }
+    
     if (this.registrationType === 'account' && !this.isLoggedIn) {
       this.messageService.error('Please log in to register with your account');
+      console.log('Registration failed: User not logged in for account registration');
       return;
     }
 
     // Check if user is a faculty member
     if (this.authService.isFacultyMember()) {
       this.messageService.error('Faculty members are not allowed to register for events');
+      console.log('Registration failed: Faculty member attempted to register');
       return;
     }
 
     this.isSubmitting = true;
+    console.log('isSubmitting set to true');
     
     // For account registration, use the user details directly
     if (this.registrationType === 'account' && this.userDetails) {
-      const attendanceData = {
+      const attendanceData: PostAttendance = {
         eventId: this.eventId,
         fullName: this.userDetails.fullName,
         email: this.userDetails.email,
         universityNumber: this.userDetails.universityNumber,
         phoneNumber: '',
-        departmentId: this.userDetails.departmentId || '', // This would need to be set with actual department ID 
+        departmentId: this.userDetails.departmentId?.toString() || '', // Ensure it's a string
         notes: ''
       };
       
       console.log('Submitting with account details:', attendanceData);
       
-      // Simulate API call
-      setTimeout(() => {
-        this.isSubmitting = false;
-        this.isRegisterSucceeded = true;
-        this.messageService.success('Registration successful!');
-        
-        // Save attendance to local storage for this event
-        this.saveAttendanceToLocalStorage(this.eventId);
-      }, 1500);
+      // Call the actual API endpoint
+      this.attendanceService.post(attendanceData).subscribe({
+        next: _ => {
+          console.log('Registration successful (account)');
+          this.isRegisterSucceeded = true;
+          this.messageService.success('Registration successful!');
+          this.saveAttendanceToLocalStorage(this.eventId);
+        },
+        error: error => {
+          console.error('Registration failed (account):', error);
+          this.messageService.error('Registration failed. Please try again.');
+          this.isSubmitting = false;
+        },
+        complete: () => {
+          console.log('Registration request completed (account)');
+          this.isSubmitting = false;
+        }
+      });
       
       return;
     }
     
     // For anonymous registration, validate the form first
-    if (this.registrationType === 'anonymous' && !this.registrationForm.valid) {
-      Object.values(this.registrationForm.controls).forEach(control => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
-        }
-      });
+    if (this.registrationType === 'anonymous') {
+      console.log('Form validation for anonymous registration');
+      
+      // Check if we have access to the child component form
+      if (this.registrationFormComponent && !this.registrationFormComponent.registrationForm.valid) {
+        console.log('Child component form is invalid');
+        
+        Object.keys(this.registrationFormComponent.registrationForm.controls).forEach(key => {
+          const control = this.registrationFormComponent.registrationForm.get(key);
+          console.log(`Control "${key}" valid: ${control?.valid}, value: ${JSON.stringify(control?.value)}, errors:`, control?.errors);
+          
+          if (control?.invalid) {
+            control.markAsDirty();
+            control.updateValueAndValidity({ onlySelf: true });
+          }
+        });
+        
+        this.messageService.warning('Please fill in all required fields');
+        this.isSubmitting = false;
+        return;
+      }
+    }
+    
+    // Form is valid, proceed with submission
+    const postObject = this.getPostAttendanceObject();
+    console.log('Submitting form data (anonymous):', postObject);
+    
+    if (!postObject.departmentId) {
+      console.error('Department ID is missing');
+      this.messageService.error('Please select a School and Major');
       this.isSubmitting = false;
       return;
     }
     
-    // Form is valid, proceed with submission
-    const formData = this.registrationForm.getRawValue();
-    console.log('Submitting form data:', formData);
-    
-    // Simulate API call
-    setTimeout(() => {
-      this.isSubmitting = false;
-      this.isRegisterSucceeded = true;
-      this.messageService.success('Registration successful!');
-      
-      // Save attendance to local storage for this event
-      this.saveAttendanceToLocalStorage(this.eventId);
-    }, 1500);
+    // Call the actual API endpoint
+    this.attendanceService.post(postObject).subscribe({
+      next: _ => {
+        console.log('Registration successful (anonymous)');
+        this.isRegisterSucceeded = true;
+        this.messageService.success('Registration successful!');
+        this.saveAttendanceToLocalStorage(this.eventId);
+      },
+      error: error => {
+        console.error('Registration failed (anonymous):', error);
+        this.messageService.error('Registration failed. Please try again.');
+        this.isSubmitting = false;
+      },
+      complete: () => {
+        console.log('Registration request completed (anonymous)');
+        if (this.registrationFormComponent) {
+          this.registrationFormComponent.registrationForm.reset();
+        } else {
+          this.registrationForm.reset();
+        }
+        this.isSubmitting = false;
+      }
+    });
   }
 
   fetchSchools(): void {
@@ -326,35 +340,120 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
   }
 
   getPostAttendanceObject() {
+    // Try to get form data directly from the child component
+    if (this.registrationFormComponent) {
+      console.log('Getting form data directly from child component:', 
+        this.registrationFormComponent.registrationForm.value);
+      
+      const childFormValue = this.registrationFormComponent.registrationForm.value;
+      
+      // Get the selected departmentId value from child form
+      let selectedDepartmentId = '';
+      
+      try {
+        const schoolMajor = childFormValue.schoolMajor;
+        console.log('Raw schoolMajor value from child form:', schoolMajor);
+        
+        if (Array.isArray(schoolMajor) && schoolMajor.length > 0) {
+          // Last item in the array should be the department ID
+          selectedDepartmentId = schoolMajor[schoolMajor.length - 1].toString();
+        } else if (schoolMajor && typeof schoolMajor === 'string') {
+          // If it's directly a string value
+          selectedDepartmentId = schoolMajor;
+        }
+      } catch (error) {
+        console.error('Error parsing department ID from child form:', error);
+      }
+        
+      console.log('Selected department ID from child form:', selectedDepartmentId);
+        
+      return {
+        eventId: this.eventId,
+        fullName: childFormValue.fullName || '',
+        email: childFormValue.email || '',
+        universityNumber: childFormValue.universityNumber || '',
+        phoneNumber: '',
+        departmentId: selectedDepartmentId,
+        notes: childFormValue.notes || ''
+      } as PostAttendance;
+    }
+    
+    // Fallback to sessionStorage
+    try {
+      const storedFormData = sessionStorage.getItem('registrationFormData');
+      if (storedFormData) {
+        const formData = JSON.parse(storedFormData);
+        console.log('Retrieved form data from sessionStorage:', formData);
+        
+        // Get the selected departmentId value and ensure it's a string
+        let selectedDepartmentId = '';
+        
+        try {
+          const schoolMajor = formData.schoolMajor;
+          console.log('Raw schoolMajor value from sessionStorage:', schoolMajor);
+          
+          if (Array.isArray(schoolMajor) && schoolMajor.length > 0) {
+            // Last item in the array should be the department ID
+            selectedDepartmentId = schoolMajor[schoolMajor.length - 1].toString();
+          } else if (schoolMajor && typeof schoolMajor === 'string') {
+            // If it's directly a string value
+            selectedDepartmentId = schoolMajor;
+          }
+        } catch (error) {
+          console.error('Error parsing department ID from sessionStorage:', error);
+        }
+          
+        console.log('Selected department ID from sessionStorage:', selectedDepartmentId);
+        
+        // Clear the sessionStorage after use
+        sessionStorage.removeItem('registrationFormData');
+          
+        return {
+          eventId: this.eventId,
+          fullName: formData.fullName || '',
+          email: formData.email || '',
+          universityNumber: formData.universityNumber || '',
+          phoneNumber: '',
+          departmentId: selectedDepartmentId,
+          notes: formData.notes || ''
+        } as PostAttendance;
+      }
+    } catch (e) {
+      console.error('Error reading form data from sessionStorage:', e);
+    }
+    
+    // Fallback to reading from component's form
+    console.log('Falling back to form controls:', this.registrationForm.value);
+    
+    // Get the selected departmentId value and ensure it's a string
+    let selectedDepartmentId = '';
+    
+    try {
+      const schoolMajor = this.registrationForm.value.schoolMajor;
+      console.log('Raw schoolMajor value from form controls:', schoolMajor);
+      
+      if (Array.isArray(schoolMajor) && schoolMajor.length > 0) {
+        // Last item in the array should be the department ID
+        selectedDepartmentId = schoolMajor[schoolMajor.length - 1].toString();
+      } else if (schoolMajor && typeof schoolMajor === 'string') {
+        // If it's directly a string value
+        selectedDepartmentId = schoolMajor;
+      }
+    } catch (error) {
+      console.error('Error parsing department ID from form controls:', error);
+    }
+      
+    console.log('Selected department ID from form controls:', selectedDepartmentId);
+      
     return {
       eventId: this.eventId,
-      fullName: this.registrationForm.value.fullName!,
-      email: this.registrationForm.value.email!,
-      universityNumber: this.registrationForm.value.universityNumber!,
+      fullName: this.registrationForm.value.fullName || '',
+      email: this.registrationForm.value.email || '',
+      universityNumber: this.registrationForm.value.universityNumber || '',
       phoneNumber: '',
-      departmentId: this.registrationForm.value.schoolMajor![1] ?? this.registrationForm.value.schoolMajor![0],
-      notes: this.registrationForm.value.notes
+      departmentId: selectedDepartmentId,
+      notes: this.registrationForm.value.notes || ''
     } as PostAttendance
-  }
-
-  postAttendance(): void {
-    this.isSubmitting = true;
-    const postObject = this.getPostAttendanceObject();
-
-    this.attendanceService.post(postObject).subscribe({
-      next: _ => {
-        this.messageService.success('You have successfully submitted your attendance');
-        this.isRegisterSucceeded = true;
-        this.saveAttendanceToLocalStorage(this.eventId);
-      },
-      error: _ => {
-        this.isSubmitting = false;
-      },
-      complete: () => {
-        this.registrationForm.reset();
-        this.isSubmitting = false;
-      }
-    });
   }
 
   saveAttendanceToLocalStorage(eventId: string) {
@@ -377,6 +476,39 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
     return parsedSavedAttendances.includes(eventId);
   }
 
+  // Set up auto refresh interval for user details when using account registration
+  private setupAutoRefresh() {
+    // Clear any existing interval
+    if (this.refreshIntervalId) {
+      clearInterval(this.refreshIntervalId);
+      this.refreshIntervalId = null;
+    }
+    
+    // If using account registration and logged in, set up auto refresh
+    if (this.registrationType === 'account' && this.isLoggedIn) {
+      // Refresh immediately and then every 30 seconds
+      this.forceRefreshUserDetails();
+      
+      // Set up interval for auto refresh
+      this.refreshIntervalId = setInterval(() => {
+        if (this.registrationType === 'account' && this.isLoggedIn && !this.isSubmitting) {
+          console.log('Auto-refreshing user details...');
+          this.forceRefreshUserDetails(true); // true = silent refresh (no UI indicators)
+        }
+      }, 30000); // 30 seconds
+    }
+  }
+  
+  // Variable to store the refresh interval ID
+  private refreshIntervalId: any = null;
+  
+  ngOnDestroy() {
+    // Clear refresh interval on component destruction
+    if (this.refreshIntervalId) {
+      clearInterval(this.refreshIntervalId);
+    }
+  }
+
   selectRegistrationType(type: 'account' | 'anonymous') {
     if (this.registrationType === type) return; // Don't do anything if it's already selected
     
@@ -392,37 +524,31 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
         return;
       }
       
-      // Small delay to show loading state
-      setTimeout(() => {
-        // Pre-fill form with user details
-        this.registrationForm.patchValue({
-          fullName: this.userDetails?.fullName || '',
-          email: this.userDetails?.email || '',
-          universityNumber: this.userDetails?.universityNumber || '',
-          schoolMajor: []
-        });
-        
-        this.isLoading = false;
-      }, 300);
+      // Set up automatic refresh of user details
+      this.setupAutoRefresh();
     } else {
+      // Clear auto refresh interval if switching to anonymous
+      if (this.refreshIntervalId) {
+        clearInterval(this.refreshIntervalId);
+        this.refreshIntervalId = null;
+      }
+      
       // Small delay to show loading state
       setTimeout(() => {
-        this.registrationForm.enable();
         this.registrationForm.reset();
+        this.registrationForm.enable();
+        // Reset validation state
+        this.registrationForm.markAsUntouched();
+        this.registrationForm.updateValueAndValidity();
         this.isLoading = false;
       }, 300);
     }
   }
 
-  scrollToRegistration() {
-    const registrationForm = document.querySelector('.lg\\:col-span-8');
-    if (registrationForm) {
-      registrationForm.scrollIntoView({ behavior: 'smooth' });
+  forceRefreshUserDetails(silent: boolean = false) {
+    if (!silent) {
+      this.isLoading = true;
     }
-  }
-
-  forceRefreshUserDetails() {
-    this.isLoading = true;
     console.log('Force refreshing user details...');
     
     // Check current authentication status
@@ -438,7 +564,9 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
             
             // Check if the user is a faculty member
             if (userInfo.userType?.toUpperCase() === 'FACULTY') {
-              this.messageService.error('Faculty members are not allowed to register for events');
+              if (!silent) {
+                this.messageService.error('Faculty members are not allowed to register for events');
+              }
               this.registrationType = 'anonymous';
               this.isFormEnabled = false;
               this.isLoading = false;
@@ -446,9 +574,9 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
             }
             
             this.userDetails = {
-              fullName: userInfo.fullName,
-              email: userInfo.email,
-              universityNumber: userInfo.number,
+              fullName: userInfo.fullName || 'Unknown',
+              email: userInfo.email || 'Unknown@Unknown',
+              universityNumber: userInfo.number || 'Unknown',
               schoolName: 'Unknown',
               departmentName: 'Unknown',
               departmentId: userInfo.departmentId
@@ -466,6 +594,19 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
               // If we have departmentId, we could try to select the correct department in schoolMajor
               // but that would require mapping the departmentId to the proper option structure
             });
+            
+            // If we have the child component reference, update its form too
+            if (this.registrationFormComponent) {
+              this.registrationFormComponent.registrationForm.patchValue({
+                fullName: this.userDetails.fullName,
+                email: this.userDetails.email,
+                universityNumber: this.userDetails.universityNumber
+              });
+            }
+            
+            if (!silent) {
+              this.messageService.success('User details refreshed successfully');
+            }
           } else {
             console.warn('Could not fetch user details from API');
             // Fall back to using current user from signal
@@ -474,7 +615,9 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
             if (currentUser) {
               // Check if the user is a faculty member
               if (this.authService.isFacultyMember()) {
-                this.messageService.error('Faculty members are not allowed to register for events');
+                if (!silent) {
+                  this.messageService.error('Faculty members are not allowed to register for events');
+                }
                 this.registrationType = 'anonymous';
                 this.isFormEnabled = false;
                 this.isLoading = false;
@@ -483,7 +626,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
               
               this.userDetails = {
                 fullName: currentUser.name || 'Unknown',
-                email: currentUser.email || 'Unknown',
+                email: currentUser.email || 'Unknown@Unknown',
                 universityNumber: currentUser.number || currentUser.id || 'Unknown',
                 schoolName: 'Unknown',
                 departmentName: 'Unknown',
@@ -500,23 +643,50 @@ export class AttendenceComponent implements OnInit, AfterViewInit {
                 email: this.userDetails.email,
                 universityNumber: this.userDetails.universityNumber
               });
+              
+              // If we have the child component reference, update its form too
+              if (this.registrationFormComponent) {
+                this.registrationFormComponent.registrationForm.patchValue({
+                  fullName: this.userDetails.fullName,
+                  email: this.userDetails.email,
+                  universityNumber: this.userDetails.universityNumber
+                });
+              }
             } else {
               console.warn('Still no current user available after refresh');
+              if (!silent) {
+                this.messageService.error('Could not load user information. Please try logging in again.');
+              }
               this.userDetails = null;
               this.registrationType = 'anonymous';
             }
           }
           
           this.isLoading = false;
+          
+          // Reset validation state
+          this.registrationForm.markAsUntouched();
+          this.registrationForm.updateValueAndValidity();
+          
+          if (this.registrationFormComponent) {
+            this.registrationFormComponent.registrationForm.markAsUntouched();
+            this.registrationFormComponent.registrationForm.updateValueAndValidity();
+          }
         },
         error: (error) => {
           console.error('Error fetching user details:', error);
+          if (!silent) {
+            this.messageService.error('Failed to load user information. Please try again.');
+          }
           this.userDetails = null;
           this.registrationType = 'anonymous';
           this.isLoading = false;
         }
       });
     } else {
+      if (!silent) {
+        this.messageService.warning('You are not logged in. Please log in to use account registration.');
+      }
       this.userDetails = null;
       this.registrationType = 'anonymous';
       this.isLoading = false;
