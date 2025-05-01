@@ -45,7 +45,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                 var eventRequest = await _context.EventsApproval
                     .Include(x => x.Event)
                         .ThenInclude(x => x.Society)
-                    .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+                    .FirstOrDefaultAsync(x => x.Event.Id == request.EventRequestId);
                 if (eventRequest == null)
                 {
                     return Result.Failure(Error.NotFound("Event", request.EventRequestId.ToString()));
