@@ -45,10 +45,11 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                 var eventRequest = await _context.EventsApproval
                     .Include(x => x.Event)
                         .ThenInclude(x => x.Society)
-                    .FirstOrDefaultAsync(x => x.Id == request.EventRequestId);
+                    .FirstOrDefaultAsync(x => x.Event.Id == request.EventRequestId);
                 if (eventRequest == null)
                 {
-                    return Result.Failure(Error.NotFound("Event", request.EventRequestId.ToString()));
+                    return Result.Failure(Error.NotFound("Event", 
+                        request.EventRequestId.ToString()));
                 }
                 //If the current user is dean/dean assistant
                 if (facultyMember.Rank.Title == "Dean" || facultyMember.Rank.Title == "Dean Assistant")
@@ -84,6 +85,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                 //If the current user is the Advisor
                 if (eventRequest.Event.Society.AdvisorId == facultyMember.Id)
                 {
+                    Console.WriteLine("testing betsing");
                     if (eventRequest.AdvisorApproval != null)
                     {
                         return Result.Failure(Error.ValueAlreadyExist("Decision Already Made", request.EventRequestId.ToString()));
