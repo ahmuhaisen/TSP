@@ -43,11 +43,11 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
       <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6 animate-slide-up-delay-2 border border-white/20">
         <h3 class="text-xl font-bold text-gray-800 mb-4">Need Help?</h3>
         <p class="text-gray-600 mb-4">If you have any questions about the event, feel free to contact us.</p>
-        <button nz-button nzType="default" 
-          class="w-full h-12 rounded-lg border-blue-200 text-blue-600 hover:border-blue-400 hover:text-blue-700 transition-colors duration-300">
+        <a href="mailto:{{event?.eventManagerEmail || 'tsp@ju.edu.jo'}}" nz-button nzType="default" 
+          class="flex items-center justify-center w-full h-12 rounded-lg border-blue-200 text-blue-600 hover:border-blue-400 hover:text-blue-700 transition-colors duration-300">
           <i nz-icon nzType="mail" class="mr-2"></i>
-          Contact Support
-        </button>
+          Contact Event Organizers
+        </a>
       </div>
     </div>
   `

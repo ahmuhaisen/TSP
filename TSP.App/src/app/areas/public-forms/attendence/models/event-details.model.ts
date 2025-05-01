@@ -9,4 +9,5 @@ export interface EventDetails {
   societyName?: string;
   societyLogo?: string;
   societyDescription?: string;
-} 
+  eventManagerEmail?: string;
+}

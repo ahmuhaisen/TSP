@@ -702,7 +702,8 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
           endTime: eventDetails.eventRequestDTO?.endTime ? new Date(eventDetails.eventRequestDTO.endTime) : new Date(eventDetails.endDateTime),
           societyName: eventDetails.eventSociety?.societyName || 'Event Organizer',
           societyLogo: eventDetails.eventSociety?.societyLogoId ? `/api/files/${eventDetails.eventSociety.societyLogoId}` : '',
-          societyDescription: eventDetails.eventSociety?.societyDescription || 'No description available'
+          societyDescription: eventDetails.eventSociety?.societyDescription || 'No description available',
+          eventManagerEmail: eventDetails.eventManager.studentEmail || 'tsp@ju.edu.jo'
         };
 
         this.isEventAvailable.set(true);
