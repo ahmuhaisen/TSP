@@ -92,7 +92,11 @@
                     <div class="w-full h-fit">
                         <a [routerLink]="'/admin-area/societies/' + society.id" class="h-fit flex items-center py-1 cursor-pointer rounded-lg shadow">
                             <div class="w-14 p-2 shrink-0">
-                                <img [src]="society.logoUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="society image">
+                               <nz-avatar [nzSrc]="society.logoUrl" nzText="{{ society.societyName.substring(0, 2).toUpperCase()}}" [nzSize]="'large'" [ngClass]="{
+                                    'bg-red-100 text-red-800': $index == 0,
+                                    'bg-blue-100 text-blue-800': $index == 1,
+                                    'bg-green-100 text-green-800': $index == 2
+                                }"></nz-avatar>
                             </div>
                             <div>
                                 <span [ngClass]="{
@@ -104,11 +108,11 @@
                                     #{{ $index + 1 }}
                                 </span>
                                 <p class="font-semibold text-xs mt-2">
-                                    {{ society.name }}
+                                    {{ society.societyName }}
                                 </p>
                                 <div class="flex gap-2 my-2">
-                                    <span class="bg-gray-100 text-gray-800 text-[10px] px-1.5 py-0.5 rounded-full">{{ society.NoOfMembers }} Members</span>
-                                    <span class="bg-gray-100 text-gray-800 text-[10px] px-1.5 py-0.5 rounded-full">{{ society.NoOfEvents }} Events</span>
+                                    <span class="bg-gray-100 text-gray-800 text-[10px] px-1.5 py-0.5 rounded-full">{{ society.members }} Members</span>
+                                    <span class="bg-gray-100 text-gray-800 text-[10px] px-1.5 py-0.5 rounded-full">{{ society.events }} Events</span>
                                 </div>
                             </div>
                         </a>

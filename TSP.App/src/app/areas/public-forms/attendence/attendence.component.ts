@@ -216,7 +216,6 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         error: error => {
           console.error('Registration failed (account):', error);
-          this.messageService.error('Registration failed. Please try again.');
           this.isSubmitting = false;
         },
         complete: () => {
