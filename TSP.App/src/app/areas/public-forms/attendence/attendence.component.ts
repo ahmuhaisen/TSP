@@ -1,35 +1,33 @@
+import { NgIf } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { Component, inject, OnInit, HostListener, AfterViewInit, Renderer2, ViewChild, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, OnInit, HostListener, AfterViewInit, Renderer2, ViewChild, OnDestroy, signal } from '@angular/core';
 
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzButtonComponent } from 'ng-zorro-antd/button';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzCascaderModule, NzCascaderOption } from 'ng-zorro-antd/cascader';
 
 import { PostAttendance } from './attendance.types';
 import { AttendanceService } from './attendance.service';
-import { SchoolService } from '../../../common/services/school.service';
-import { SchoolWithDepartmentsBasicDetails } from '../../../common/types/system-tables.types';
-import { DatePipe, NgIf } from '@angular/common';
-import { NzAlertModule } from 'ng-zorro-antd/alert';
-import { NzOptionComponent } from 'ng-zorro-antd/select';
-import { NzTagModule } from 'ng-zorro-antd/tag';
 import { AuthService } from '../../../common/services/auth.service';
+import { SchoolService } from '../../../common/services/school.service';
+import { EventsService } from '../../system-admin-area/services/events.service';
+import { SchoolWithDepartmentsBasicDetails } from '../../../common/types/system-tables.types';
 import { SecureLocalStorageService } from '../../../common/services/secure-local-storage.service';
 
-// Import model and components
 import { EventDetails } from './models/event-details.model';
 import { EventHeroComponent } from './components/event-hero/event-hero.component';
-import { StickyInfoBarComponent } from './components/sticky-info-bar/sticky-info-bar.component';
-import { EventInfoBarComponent } from './components/event-info-bar/event-info-bar.component';
 import { EventDetailsComponent } from './components/event-details/event-details.component';
+import { EventInfoBarComponent } from './components/event-info-bar/event-info-bar.component';
+import { StickyInfoBarComponent } from './components/sticky-info-bar/sticky-info-bar.component';
 import { RegistrationFormComponent } from './components/registration-form/registration-form.component';
 
 interface SchoolMajorOption {
@@ -46,7 +44,6 @@ interface SchoolMajorOption {
     NzIconModule,
     NzFormModule,
     NzInputModule,
-    NzButtonComponent,
     NzDividerModule,
     NzCascaderModule,
     NzResultModule,
@@ -55,11 +52,8 @@ interface SchoolMajorOption {
     ReactiveFormsModule,
     NzCascaderModule,
     NzAlertModule,
-    NzOptionComponent,
     NzFormModule,
     NzTagModule,
-    DatePipe,
-    // Add component imports
     EventHeroComponent,
     StickyInfoBarComponent,
     EventInfoBarComponent,
@@ -72,7 +66,7 @@ interface SchoolMajorOption {
   ]
 })
 export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
-  eventId = '3FA85F64-5717-4562-B3FC-2C963F66AFA6';
+  eventId = '';
   currentYear = new Date().getFullYear();
   nzOptions: NzCascaderOption[] = [];
 
@@ -84,51 +78,24 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
   authService = inject(AuthService);
   renderer = inject(Renderer2);
   localStorageService = inject(SecureLocalStorageService);
+  eventsService = inject(EventsService);
+
   isSubmitting = false;
   isRegisterSucceeded = false;
   isFormEnabled = true;
   isLoggedIn = false;
   userDetails: any = null;
   isLoading = false;
+  isEventLoading = true;
+  isEventAvailable = signal(false);
+  notAvailableMessage = signal('This event is not available anymore');
 
   registrationForm: FormGroup;
   registrationType: 'account' | 'anonymous' = 'anonymous';
 
-  // Mock event details - in a real app, this would come from a service
-  eventDetails: EventDetails = {
-    name: 'Tech Conference 2024',
-    type: 'Conference',
-    description: 'Join us for an exciting day of technology talks, workshops, and networking opportunities. Learn from industry experts and connect with like-minded professionals.',
-    location: 'University Conference Center, Building A',
-    date: new Date('2024-06-15'),
-    startTime: '09:00 AM',
-    endTime: '05:00 PM',
-    societyName: 'Computer Science Society',
-    societyLogo: '/assets/images/cs-society-logo.png',
-    societyDescription: 'The Computer Science Society aims to foster interest in computer science and technology through workshops, events, and networking opportunities for students.'
-  };
+  eventDetails: EventDetails = {} as EventDetails;
 
-  // Mock school and major options - in a real app, this would come from a service
-  schoolMajorOptions: SchoolMajorOption[] = [
-    {
-      value: 'engineering',
-      label: 'Engineering',
-      children: [
-        { value: 'computer', label: 'Computer Engineering' },
-        { value: 'electrical', label: 'Electrical Engineering' },
-        { value: 'mechanical', label: 'Mechanical Engineering' }
-      ]
-    },
-    {
-      value: 'science',
-      label: 'Science',
-      children: [
-        { value: 'computer-science', label: 'Computer Science' },
-        { value: 'physics', label: 'Physics' },
-        { value: 'mathematics', label: 'Mathematics' }
-      ]
-    }
-  ];
+  schoolMajorOptions: SchoolMajorOption[] = [];
 
   @ViewChild(RegistrationFormComponent) registrationFormComponent!: RegistrationFormComponent;
 
@@ -145,21 +112,24 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
       this.eventId = params.get('eventId')!;
+
+      // Start fetching event details
+      this.fetchEventDetails();
     });
 
-    if(this.isAttendanceSavedToLocalStorage(this.eventId)) {
+    if (this.isAttendanceSavedToLocalStorage(this.eventId)) {
       this.isRegisterSucceeded = true;
     }
 
+    if (this.isRegisterSucceeded)
+      return;
+
     this.fetchSchools();
-    
-    // Check authentication status
+
     this.isLoggedIn = this.authService.isAuthenticated();
     if (this.isLoggedIn) {
-      // If user is logged in, default to account registration
       this.registrationType = 'account';
-      
-      // Set up automatic refresh
+
       this.setupAutoRefresh();
     } else {
       this.registrationType = 'anonymous';
@@ -168,7 +138,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     console.log('View initialized, registration form component available:', !!this.registrationFormComponent);
-    
+
     // If the form component is available and we're using account registration, ensure forms are synced
     if (this.registrationFormComponent && this.registrationType === 'account' && this.userDetails) {
       setTimeout(() => {
@@ -186,7 +156,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
   onWindowScroll() {
     const stickyInfoBar = document.getElementById('stickyInfoBar');
     if (!stickyInfoBar) return;
-    
+
     // Show the sticky header after scrolling down 300px
     if (window.scrollY > 300) {
       this.renderer.setStyle(stickyInfoBar, 'transform', 'translateY(0)');
@@ -198,14 +168,14 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
   onSubmit(): void {
     console.log('onSubmit called - Starting registration process');
     console.log('Registration type:', this.registrationType);
-    
+
     if (this.registrationFormComponent) {
       console.log('Child component form valid?', this.registrationFormComponent.registrationForm.valid);
       console.log('Child component form values:', this.registrationFormComponent.registrationForm.value);
     } else {
       console.log('Child component not available');
     }
-    
+
     if (this.registrationType === 'account' && !this.isLoggedIn) {
       this.messageService.error('Please log in to register with your account');
       console.log('Registration failed: User not logged in for account registration');
@@ -221,7 +191,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.isSubmitting = true;
     console.log('isSubmitting set to true');
-    
+
     // For account registration, use the user details directly
     if (this.registrationType === 'account' && this.userDetails) {
       const attendanceData: PostAttendance = {
@@ -233,9 +203,9 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
         departmentId: this.userDetails.departmentId?.toString() || '', // Ensure it's a string
         notes: ''
       };
-      
+
       console.log('Submitting with account details:', attendanceData);
-      
+
       // Call the actual API endpoint
       this.attendanceService.post(attendanceData).subscribe({
         next: _ => {
@@ -254,45 +224,45 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
           this.isSubmitting = false;
         }
       });
-      
+
       return;
     }
-    
+
     // For anonymous registration, validate the form first
     if (this.registrationType === 'anonymous') {
       console.log('Form validation for anonymous registration');
-      
+
       // Check if we have access to the child component form
       if (this.registrationFormComponent && !this.registrationFormComponent.registrationForm.valid) {
         console.log('Child component form is invalid');
-        
+
         Object.keys(this.registrationFormComponent.registrationForm.controls).forEach(key => {
           const control = this.registrationFormComponent.registrationForm.get(key);
           console.log(`Control "${key}" valid: ${control?.valid}, value: ${JSON.stringify(control?.value)}, errors:`, control?.errors);
-          
+
           if (control?.invalid) {
             control.markAsDirty();
             control.updateValueAndValidity({ onlySelf: true });
           }
         });
-        
+
         this.messageService.warning('Please fill in all required fields');
         this.isSubmitting = false;
         return;
       }
     }
-    
+
     // Form is valid, proceed with submission
     const postObject = this.getPostAttendanceObject();
     console.log('Submitting form data (anonymous):', postObject);
-    
+
     if (!postObject.departmentId) {
       console.error('Department ID is missing');
       this.messageService.error('Please select a School and Major');
       this.isSubmitting = false;
       return;
     }
-    
+
     // Call the actual API endpoint
     this.attendanceService.post(postObject).subscribe({
       next: _ => {
@@ -342,31 +312,25 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
   getPostAttendanceObject() {
     // Try to get form data directly from the child component
     if (this.registrationFormComponent) {
-      console.log('Getting form data directly from child component:', 
+      console.log('Getting form data directly from child component:',
         this.registrationFormComponent.registrationForm.value);
-      
+
       const childFormValue = this.registrationFormComponent.registrationForm.value;
-      
-      // Get the selected departmentId value from child form
+
       let selectedDepartmentId = '';
-      
+
       try {
         const schoolMajor = childFormValue.schoolMajor;
-        console.log('Raw schoolMajor value from child form:', schoolMajor);
-        
+
         if (Array.isArray(schoolMajor) && schoolMajor.length > 0) {
-          // Last item in the array should be the department ID
           selectedDepartmentId = schoolMajor[schoolMajor.length - 1].toString();
         } else if (schoolMajor && typeof schoolMajor === 'string') {
-          // If it's directly a string value
           selectedDepartmentId = schoolMajor;
         }
       } catch (error) {
         console.error('Error parsing department ID from child form:', error);
       }
-        
-      console.log('Selected department ID from child form:', selectedDepartmentId);
-        
+
       return {
         eventId: this.eventId,
         fullName: childFormValue.fullName || '',
@@ -377,37 +341,29 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
         notes: childFormValue.notes || ''
       } as PostAttendance;
     }
-    
-    // Fallback to sessionStorage
+
     try {
       const storedFormData = sessionStorage.getItem('registrationFormData');
       if (storedFormData) {
         const formData = JSON.parse(storedFormData);
         console.log('Retrieved form data from sessionStorage:', formData);
-        
-        // Get the selected departmentId value and ensure it's a string
+
         let selectedDepartmentId = '';
-        
+
         try {
           const schoolMajor = formData.schoolMajor;
-          console.log('Raw schoolMajor value from sessionStorage:', schoolMajor);
-          
+
           if (Array.isArray(schoolMajor) && schoolMajor.length > 0) {
-            // Last item in the array should be the department ID
             selectedDepartmentId = schoolMajor[schoolMajor.length - 1].toString();
           } else if (schoolMajor && typeof schoolMajor === 'string') {
-            // If it's directly a string value
             selectedDepartmentId = schoolMajor;
           }
         } catch (error) {
           console.error('Error parsing department ID from sessionStorage:', error);
         }
-          
-        console.log('Selected department ID from sessionStorage:', selectedDepartmentId);
-        
-        // Clear the sessionStorage after use
+
         sessionStorage.removeItem('registrationFormData');
-          
+
         return {
           eventId: this.eventId,
           fullName: formData.fullName || '',
@@ -421,17 +377,12 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (e) {
       console.error('Error reading form data from sessionStorage:', e);
     }
-    
-    // Fallback to reading from component's form
-    console.log('Falling back to form controls:', this.registrationForm.value);
-    
-    // Get the selected departmentId value and ensure it's a string
+
     let selectedDepartmentId = '';
-    
+
     try {
       const schoolMajor = this.registrationForm.value.schoolMajor;
-      console.log('Raw schoolMajor value from form controls:', schoolMajor);
-      
+
       if (Array.isArray(schoolMajor) && schoolMajor.length > 0) {
         // Last item in the array should be the department ID
         selectedDepartmentId = schoolMajor[schoolMajor.length - 1].toString();
@@ -442,9 +393,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (error) {
       console.error('Error parsing department ID from form controls:', error);
     }
-      
-    console.log('Selected department ID from form controls:', selectedDepartmentId);
-      
+
     return {
       eventId: this.eventId,
       fullName: this.registrationForm.value.fullName || '',
@@ -459,7 +408,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
   saveAttendanceToLocalStorage(eventId: string) {
     // save attendance to local storage, the saved item is an array of events ids which the user successfully registered
     const savedAttendances = localStorage.getItem('savedAttendances');
-    if (!savedAttendances){
+    if (!savedAttendances) {
       localStorage.setItem('savedAttendances', JSON.stringify([eventId]));
       return;
     }
@@ -483,12 +432,12 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
       clearInterval(this.refreshIntervalId);
       this.refreshIntervalId = null;
     }
-    
+
     // If using account registration and logged in, set up auto refresh
     if (this.registrationType === 'account' && this.isLoggedIn) {
       // Refresh immediately and then every 30 seconds
       this.forceRefreshUserDetails();
-      
+
       // Set up interval for auto refresh
       this.refreshIntervalId = setInterval(() => {
         if (this.registrationType === 'account' && this.isLoggedIn && !this.isSubmitting) {
@@ -498,10 +447,10 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
       }, 30000); // 30 seconds
     }
   }
-  
+
   // Variable to store the refresh interval ID
   private refreshIntervalId: any = null;
-  
+
   ngOnDestroy() {
     // Clear refresh interval on component destruction
     if (this.refreshIntervalId) {
@@ -511,10 +460,10 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectRegistrationType(type: 'account' | 'anonymous') {
     if (this.registrationType === type) return; // Don't do anything if it's already selected
-    
+
     this.registrationType = type;
     this.isLoading = true;
-    
+
     if (type === 'account') {
       // Check if user is logged in
       if (!this.isLoggedIn) {
@@ -523,7 +472,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoading = false;
         return;
       }
-      
+
       // Set up automatic refresh of user details
       this.setupAutoRefresh();
     } else {
@@ -532,7 +481,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
         clearInterval(this.refreshIntervalId);
         this.refreshIntervalId = null;
       }
-      
+
       // Small delay to show loading state
       setTimeout(() => {
         this.registrationForm.reset();
@@ -550,18 +499,18 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isLoading = true;
     }
     console.log('Force refreshing user details...');
-    
+
     // Check current authentication status
     this.isLoggedIn = this.authService.isAuthenticated();
     console.log('Authentication check result:', this.isLoggedIn);
-    
+
     if (this.isLoggedIn) {
       // Directly fetch the current user info from the API
       this.authService.fetchCurrentUserInfo().subscribe({
         next: (userInfo) => {
           if (userInfo) {
             console.log('Fetched user details:', userInfo);
-            
+
             // Check if the user is a faculty member
             if (userInfo.userType?.toUpperCase() === 'FACULTY') {
               if (!silent) {
@@ -572,7 +521,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
               this.isLoading = false;
               return;
             }
-            
+
             this.userDetails = {
               fullName: userInfo.fullName || 'Unknown',
               email: userInfo.email || 'Unknown@Unknown',
@@ -581,11 +530,11 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
               departmentName: 'Unknown',
               departmentId: userInfo.departmentId
             };
-            
+
             // Update the registration type
             this.registrationType = 'account';
             this.isFormEnabled = true;
-            
+
             // Pre-fill form
             this.registrationForm.patchValue({
               fullName: this.userDetails.fullName,
@@ -594,7 +543,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
               // If we have departmentId, we could try to select the correct department in schoolMajor
               // but that would require mapping the departmentId to the proper option structure
             });
-            
+
             // If we have the child component reference, update its form too
             if (this.registrationFormComponent) {
               this.registrationFormComponent.registrationForm.patchValue({
@@ -603,15 +552,12 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
                 universityNumber: this.userDetails.universityNumber
               });
             }
-            
-            if (!silent) {
-              this.messageService.success('User details refreshed successfully');
-            }
+
           } else {
             console.warn('Could not fetch user details from API');
             // Fall back to using current user from signal
             const currentUser = this.authService.currentUser();
-            
+
             if (currentUser) {
               // Check if the user is a faculty member
               if (this.authService.isFacultyMember()) {
@@ -623,7 +569,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isLoading = false;
                 return;
               }
-              
+
               this.userDetails = {
                 fullName: currentUser.name || 'Unknown',
                 email: currentUser.email || 'Unknown@Unknown',
@@ -632,18 +578,18 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
                 departmentName: 'Unknown',
                 departmentId: currentUser.departmentId
               };
-              
+
               // Update the registration type
               this.registrationType = 'account';
               this.isFormEnabled = true;
-              
+
               // Pre-fill form
               this.registrationForm.patchValue({
                 fullName: this.userDetails.fullName,
                 email: this.userDetails.email,
                 universityNumber: this.userDetails.universityNumber
               });
-              
+
               // If we have the child component reference, update its form too
               if (this.registrationFormComponent) {
                 this.registrationFormComponent.registrationForm.patchValue({
@@ -661,13 +607,13 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
               this.registrationType = 'anonymous';
             }
           }
-          
+
           this.isLoading = false;
-          
+
           // Reset validation state
           this.registrationForm.markAsUntouched();
           this.registrationForm.updateValueAndValidity();
-          
+
           if (this.registrationFormComponent) {
             this.registrationFormComponent.registrationForm.markAsUntouched();
             this.registrationFormComponent.registrationForm.updateValueAndValidity();
@@ -700,23 +646,76 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   getSocietyInitials(societyName: string): string {
     if (!societyName) return 'EO'; // Default to "EO" for "Event Organizer"
-    
+
     // Split the name into words
     const words = societyName.split(' ').filter(word => word.length > 0);
-    
+
     if (words.length === 0) return 'EO';
-    
+
     // Get first letter of first word
     const firstInitial = words[0][0].toUpperCase();
-    
+
     // If there's a second word, get its first letter too
     if (words.length > 1) {
       const secondInitial = words[1][0].toUpperCase();
       return firstInitial + secondInitial;
     }
-    
+
     // If only one word, return the first letter only
     return firstInitial;
+  }
+
+  // Fetch event details from the API
+  fetchEventDetails() {
+    this.isEventLoading = true;
+
+    this.eventsService.getEventDetails(this.eventId).subscribe({
+      next: (eventDetails) => {
+        this.isEventLoading = false;
+        console.log('Event details fetched:', eventDetails);
+
+        // Check if the event is not ended
+        const currentDate = new Date();
+        const eventEndDate = new Date(eventDetails.endDateTime);
+        if (eventEndDate < currentDate) {
+          this.isEventAvailable.set(false);
+          this.notAvailableMessage.set('Event has ended.');
+          return;
+        }
+
+        // check if the event has IsAttendeesFormEnabled or not
+        console.log('isAttendeesFormEnabled', eventDetails.eventRequestDTO?.isAttendeesFormEnabled);
+        if (!eventDetails.eventRequestDTO.isAttendeesFormEnabled) {
+          this.isEventAvailable.set(false);
+          this.notAvailableMessage.set('Event is not available for registration.');
+          return;
+        }
+
+        // Map the API response to our EventDetails model
+        this.eventDetails = {
+          name: eventDetails.eventName || 'Event',
+          type: eventDetails.type || 'N/A',
+          description: eventDetails.eventDescription || 'No description available',
+          location: eventDetails.locationString || 'TBD',
+          date: new Date(eventDetails.startDateTime),
+          startTime: eventDetails.eventRequestDTO?.startTime ? new Date(eventDetails.eventRequestDTO.startTime) : new Date(eventDetails.startDateTime),
+          endTime: eventDetails.eventRequestDTO?.endTime ? new Date(eventDetails.eventRequestDTO.endTime) : new Date(eventDetails.endDateTime),
+          societyName: eventDetails.eventSociety?.societyName || 'Event Organizer',
+          societyLogo: eventDetails.eventSociety?.societyLogoId ? `/api/files/${eventDetails.eventSociety.societyLogoId}` : '',
+          societyDescription: eventDetails.eventSociety?.societyDescription || 'No description available'
+        };
+
+        this.isEventAvailable.set(true);
+      },
+      error: (error) => {
+        console.error('Error fetching event details:', error);
+
+        this.isEventAvailable.set(false);
+        this.notAvailableMessage.set('Event not found.');
+
+        this.isEventLoading = false;
+      }
+    });
   }
 }
 

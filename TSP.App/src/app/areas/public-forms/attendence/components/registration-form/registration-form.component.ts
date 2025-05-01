@@ -240,7 +240,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
       } @else {
         <div class="flex flex-col items-center justify-center py-12">
           <nz-result nzStatus="success" nzTitle="Registration Successful!"
-            nzSubTitle="You have successfully registered for the event. We'll send you a confirmation email shortly.">
+            nzSubTitle="You have successfully registered for this event.">
           </nz-result>
         </div>
       }

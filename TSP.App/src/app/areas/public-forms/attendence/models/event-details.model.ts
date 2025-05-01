@@ -4,8 +4,8 @@ export interface EventDetails {
   description: string;
   location: string;
   date: Date;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
   societyName?: string;
   societyLogo?: string;
   societyDescription?: string;

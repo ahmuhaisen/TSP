@@ -32,7 +32,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
               </div>
               <div>
                 <p class="font-medium text-gray-800">Time</p>
-                <p class="text-sm text-gray-600">{{event?.startTime}} - {{event?.endTime}}</p>
+                <p class="text-sm text-gray-600">{{event?.startTime | date: 'shortTime'}} - {{event?.endTime | date:'shortTime'}}</p>
               </div>
             </div>
 

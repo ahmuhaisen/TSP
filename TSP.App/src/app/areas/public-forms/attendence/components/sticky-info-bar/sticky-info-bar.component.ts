@@ -33,7 +33,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
               </div>
               <div class="flex items-center">
                 <i nz-icon nzType="clock-circle" nzTheme="outline" class="text-pink-600 mr-2"></i>
-                <span class="text-sm text-gray-600">{{event?.startTime}} - {{event?.endTime}}</span>
+                <span class="text-sm text-gray-600">{{event?.startTime | date: 'shortTime'}} - {{event?.endTime | date:'shortTime'}}</span>
               </div>
               <div class="flex items-center">
                 <i nz-icon nzType="environment" nzTheme="outline" class="text-indigo-600 mr-2"></i>
