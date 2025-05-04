@@ -9,7 +9,8 @@ using TSP.Domain.Primitives;
 namespace TPS.Infrastructure.Data;
 
 
-public class ApplicationDbContext(DbContextOptions options, IPublisher _publisher) : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
+public class ApplicationDbContext(DbContextOptions options)
+    : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
 
     public DbSet<Student> Students { get; set; }
@@ -25,9 +26,7 @@ public class ApplicationDbContext(DbContextOptions options, IPublisher _publishe
     public DbSet<MembershipRequest> MembershipsRequests { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
-
-
-
+    public DbSet<FeedbackAnswer> FeedbackAnswers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

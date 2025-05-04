@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TPS.Infrastructure.Data;
 
@@ -12,11 +11,9 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250419121149_Added_OutboxMessages")]
-    partial class Added_OutboxMessages
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,7 +125,7 @@ namespace TPS.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TPS.Infrastructure.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("TPS.Infrastructure.Data.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -459,6 +456,33 @@ namespace TPS.Infrastructure.Migrations
                     b.ToTable("EventsApproval");
                 });
 
+            modelBuilder.Entity("TSP.Domain.Entities.FeedbackAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.Property<decimal>("Rating")
+                        .HasPrecision(2, 1)
+                        .HasColumnType("decimal(2,1)");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("FeedbackAnswers");
+                });
+
             modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -509,7 +533,7 @@ namespace TPS.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2025, 4, 19, 15, 11, 47, 430, DateTimeKind.Local).AddTicks(5652));
+                        .HasDefaultValue(new DateTime(2025, 5, 4, 20, 3, 29, 47, DateTimeKind.Local).AddTicks(432));
 
                     b.Property<string>("ImageId")
                         .HasMaxLength(250)
@@ -954,6 +978,17 @@ namespace TPS.Infrastructure.Migrations
                     b.Navigation("FacultyMember");
                 });
 
+            modelBuilder.Entity("TSP.Domain.Entities.FeedbackAnswer", b =>
+                {
+                    b.HasOne("TSP.Domain.Entities.Event", "Event")
+                        .WithMany("FeedbackAnswers")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
                 {
                     b.HasOne("TSP.Domain.Entities.Society", "Society")
@@ -1048,6 +1083,8 @@ namespace TPS.Infrastructure.Migrations
             modelBuilder.Entity("TSP.Domain.Entities.Event", b =>
                 {
                     b.Navigation("Attendees");
+
+                    b.Navigation("FeedbackAnswers");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.School", b =>

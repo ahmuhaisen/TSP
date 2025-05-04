@@ -12,6 +12,7 @@ using TPS.Application;
 using TPS.Application.Abstractions;
 using TPS.Application.Areas.AdminArea.Societies.Commands;
 using TPS.Application.Areas.Authentication;
+using TPS.Application.Areas.Feedback;
 using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
@@ -202,6 +203,10 @@ public static class DependencyInjection
         services.AddHttpClient<GitHubService>();
         services.AddTransient<IGitHubService, GitHubService>();
         services.Configure<GitOptions>(configuration.GetSection("GitImages"));
+
+        services.Configure<EventFeedbackOptions>(
+            configuration.GetSection("EventFeedback"));
+        services.AddScoped<IFeedbackService, FeedbackService>();
 
         services.AddScoped<IPdfService, PdfService>();
 

@@ -26,5 +26,6 @@ namespace TSP.Domain.Entities
         public Student Student { get; set; } = null!;
 
         public ICollection<Attendee> Attendees { get; set; } = new List<Attendee>();
+        public ICollection<FeedbackAnswer> FeedbackAnswers { get; set; } = new List<FeedbackAnswer>();
     }
 }

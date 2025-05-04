@@ -12,8 +12,8 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250408073609_ClassUpdate")]
-    partial class ClassUpdate
+    [Migration("20250504170329_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -126,6 +126,34 @@ namespace TPS.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("TPS.Infrastructure.Data.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OccuredOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ProcessedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.ApplicationRole", b =>
@@ -404,11 +432,9 @@ namespace TPS.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("AdvisorApproval")
-                        .IsRequired()
                         .HasColumnType("bit");
 
                     b.Property<bool?>("DeanAssistantApproval")
-                        .IsRequired()
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("DecisionDate")
@@ -431,6 +457,33 @@ namespace TPS.Infrastructure.Migrations
                     b.HasIndex("FacultyMemberId");
 
                     b.ToTable("EventsApproval");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.FeedbackAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.Property<decimal>("Rating")
+                        .HasPrecision(2, 1)
+                        .HasColumnType("decimal(2,1)");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("FeedbackAnswers");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
@@ -468,6 +521,46 @@ namespace TPS.Infrastructure.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("MembershipsRequests");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Body")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 5, 4, 20, 3, 29, 47, DateTimeKind.Local).AddTicks(432));
+
+                    b.Property<string>("ImageId")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsSeen")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("SeenAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.Rank", b =>
@@ -888,6 +981,17 @@ namespace TPS.Infrastructure.Migrations
                     b.Navigation("FacultyMember");
                 });
 
+            modelBuilder.Entity("TSP.Domain.Entities.FeedbackAnswer", b =>
+                {
+                    b.HasOne("TSP.Domain.Entities.Event", "Event")
+                        .WithMany("FeedbackAnswers")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
                 {
                     b.HasOne("TSP.Domain.Entities.Society", "Society")
@@ -905,6 +1009,17 @@ namespace TPS.Infrastructure.Migrations
                     b.Navigation("Society");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("TSP.Domain.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.SocietiesMembers", b =>
@@ -971,6 +1086,8 @@ namespace TPS.Infrastructure.Migrations
             modelBuilder.Entity("TSP.Domain.Entities.Event", b =>
                 {
                     b.Navigation("Attendees");
+
+                    b.Navigation("FeedbackAnswers");
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.School", b =>
