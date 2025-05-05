@@ -51,7 +51,8 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                     return Result.Failure(Error.NotFound("Event", request.EventRequestId.ToString()));
                 }
                 //If the current user is dean/dean assistant
-                if (facultyMember.Rank.Title == "Dean" || facultyMember.Rank.Title == "Dean Assistant")
+                if (facultyMember.Rank.Title == "Dean" || facultyMember.Rank.Title == "Dean Assistant" &&
+                    eventRequest.AdvisorApproval == true)
                 {
                     if (eventRequest.DeanAssistantApproval != null)
                     {
@@ -65,20 +66,17 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                     {
                         return Result.Failure(Error.AccessDenied(request.EventRequestId.ToString()));
                     }
-                    else if(eventRequest.AdvisorApproval==true)
+                    if (request.isAccepted == true)
                     {
-                        if (request.isAccepted == true)
-                        {
-                            eventRequest.DeanAssistantApproval = true;
-                        }
-                        else if (request.isAccepted == false)
-                        {
-                            eventRequest.DeanAssistantApproval = false;
-                            eventRequest.Remarks = request.Remark;
-                        }
-                        eventRequest.DecisionDate = DateTime.Now;
-                        await _context.SaveChangesAsync();
+                        eventRequest.DeanAssistantApproval = true;
                     }
+                    else if (request.isAccepted == false)
+                    {
+                        eventRequest.DeanAssistantApproval = false;
+                        eventRequest.Remarks = request.Remark;
+                    }
+                    eventRequest.DecisionDate = DateTime.Now;
+                    await _context.SaveChangesAsync();
                     return Result.Success();
                 }
                 //If the current user is the Advisor

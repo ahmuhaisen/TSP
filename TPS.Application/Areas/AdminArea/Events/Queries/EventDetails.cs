@@ -55,10 +55,10 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     StartDateTime = tempEvent.StartTime,
                     LocationString = tempEvent.LocationString,
                     EventDescription = tempEvent.Description,
-                    ApprovalStatus = !(eventRequest.AdvisorApproval == true && eventRequest.DeanAssistantApproval == null)
+                    ApprovalStatus = (eventRequest.AdvisorApproval != false&&eventRequest.DeanAssistantApproval!=false)
                             ? (eventRequest.AdvisorApproval == true && eventRequest.DeanAssistantApproval == true
-                            ? "Accepted" : "Rejected")
-                            : "Pending",
+                            ? "Accepted" : "Pending")
+                            : "Rejected",
                     EventSociety = new EventSocietyBasicDto
                     {
                         SocietyName = tempEvent.Society.Name,
