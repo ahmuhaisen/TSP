@@ -52,7 +52,6 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                 if (facultyMember.Rank != null &&
                    (facultyMember.Rank.Title == "Dean Assistant" || facultyMember.Rank.Title == "Dean"))
                 {
-                    Console.WriteLine("second if");
 
                     var data = await _context.EventsApproval
                         .Include(x => x.Event)
