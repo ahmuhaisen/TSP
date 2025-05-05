@@ -118,7 +118,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             {
                 return "Pending";
             }
-            if (advisorStatus == false||deanAssistantStatus==false)
+            if (advisorStatus == false || deanAssistantStatus == false)
             {
                 return "Rejected";
             }
