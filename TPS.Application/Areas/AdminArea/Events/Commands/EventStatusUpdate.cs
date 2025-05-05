@@ -83,7 +83,6 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                 //If the current user is the Advisor
                 if (eventRequest.Event.Society.AdvisorId == facultyMember.Id)
                 {
-                    Console.WriteLine("testing betsing");
                     if (eventRequest.AdvisorApproval != null)
                     {
                         return Result.Failure(Error.ValueAlreadyExist("Decision Already Made", request.EventRequestId.ToString()));

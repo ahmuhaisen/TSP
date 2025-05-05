@@ -23,8 +23,6 @@ public class EventsController : ApiController
     {
 
         var query = EventRequest.Query.Create(GetCurrentUserId()!.Value);
-        Console.WriteLine(GetCurrentUserId()!.Value);
-
         var task = _sender.Send(query);
         return await FromResult(task);
     }

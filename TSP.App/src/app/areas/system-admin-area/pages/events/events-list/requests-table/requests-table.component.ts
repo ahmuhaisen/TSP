@@ -236,11 +236,15 @@ export class RequestsTableComponent implements OnInit {
     this.eventService.postEventRequestDecision(desision).subscribe({
       next: (response) => {
         console.log('Decision response:', response);
+        this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
       },
       error: (err) => {
         console.error('Error submitting decision:', err);
       }
     });
+
+
+
     this.nzMessageService.success('Event accepted successfully.');
   }
 
@@ -254,15 +258,20 @@ export class RequestsTableComponent implements OnInit {
   }
 
   handleOkReject() {
-
-
-
     const decision: EventRequestDecision = {
       eventRequestId: this.selectedEventRequestForDecision.id,
       isAccepted: false,
       Remark: this.rejectForm.get("reason")?.value || ""
     }
-    this.eventService.postEventRequestDecision(decision);
+    this.eventService.postEventRequestDecision(decision).subscribe({
+      next: (response) => {
+        console.log('Decision response:', response);
+        this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
+      },
+      error: (err) => {
+        console.error('Error submitting decision:', err);
+      }
+    });;
     this.nzMessageService.success("Event Request rejected")
     this.isRejectPopupVisible = false;
   }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Bogus;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TPS.Application.Abstractions.Messaging;
@@ -64,9 +65,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                             EventName = x.Event.Name,
                             StartDateTime = x.Event.StartTime,
                             LocationString = x.Event.LocationString,
-                            ApprovalStatus = x.DeanAssistantApproval != null
-                                ? (x.DeanAssistantApproval == true ? "Accepted" : "Rejected")
-                                : "Pending",
+                            ApprovalStatus = getEventStatus(x),
                             EventDescription = x.Event.Description,
                             EventSociety = new EventSocietyBasicDto
                             {
@@ -110,5 +109,21 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             }
 
         }
+        static private string getEventStatus(EventApproval eventApproval)
+        {
+            bool? advisorStatus = eventApproval.AdvisorApproval;
+            bool? deanAssistantStatus = eventApproval.DeanAssistantApproval;
+
+            if (deanAssistantStatus == null && (advisorStatus == true || advisorStatus == null))
+            {
+                return "Pending";
+            }
+            if (advisorStatus == false||deanAssistantStatus==false)
+            {
+                return "Rejected";
+            }
+            return "Accepted";
+        }
+
     }
 }
