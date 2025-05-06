@@ -7,6 +7,7 @@ import { NzPaginationComponent } from 'ng-zorro-antd/pagination';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NzEmptyComponent } from 'ng-zorro-antd/empty';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-users',
@@ -25,6 +26,7 @@ import { NzEmptyComponent } from 'ng-zorro-antd/empty';
 export class UsersComponent {
   accountService = inject(AccountsService);
   loadingService = inject(LoaderService);
+  nzMessageService = inject(NzMessageService);
 
   selectedUserTypeToShowRequests: 'faculty' | 'student' = 'faculty';
 
@@ -119,11 +121,11 @@ export class UsersComponent {
     this.loadingService.show();
     this.accountService.acceptRequest(id, userType).subscribe({
       next: () => {
+        this.nzMessageService.success(`${userType} request accepted successfully!`);
         this.fetchPendingRequests();
         this.loadingService.hide();
       },
       error: (err) => {
-        console.error('Error approving request:', err);
         this.loadingService.hide();
       }
     });
@@ -133,6 +135,7 @@ export class UsersComponent {
     this.loadingService.show();
     this.accountService.rejectRequest(id, userType).subscribe({
       next: () => {
+        this.nzMessageService.success(`${userType} request rejected successfully!`);
         this.fetchPendingRequests();
         this.loadingService.hide();
       },
