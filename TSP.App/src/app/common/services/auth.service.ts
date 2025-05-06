@@ -27,7 +27,7 @@ export interface CurrentUserDto {
     departmentId: number;
 }
 
-export type UserType = 'FacultyMember' | 'Student' | 'Guest';
+export type UserType = 'FacultyMember' | 'Student' | 'Guest' | 'SuperAdmin';
 
 export interface LoginRequest {
     email: string;
@@ -235,8 +235,11 @@ export class AuthService {
     private navigateToHome(userType: string) {
         if(userType === 'FacultyMember') {
             this.router.navigate(['admin-area']);
-        }else {
+        }else if(userType === 'Student') {
             this.router.navigate(['student-area']);
+        }
+        else if(userType === 'SuperAdmin') {
+            this.router.navigate(['super-admin']);
         }
     }
 

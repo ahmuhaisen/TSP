@@ -46,7 +46,7 @@ public class ApplicationDataSeeder(ApplicationDbContext _context, UserManager<Ap
             Id = new Guid("61d92acd-a738-4555-8974-381becf89194"),
             FirstName = "admin",
             LastName = "1",
-            Email = "admin@tsp.org",
+            Email = "admin@tsp.app",
             UserName = "admin",
             DepartmentId = 1,
             Gender = Gender.Unspecified,

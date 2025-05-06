@@ -19,12 +19,13 @@ export class UserTypeGuardService implements CanActivate {
     localStorageService = inject(SecureLocalStorageService);
 
     canActivate(route: ActivatedRouteSnapshot): boolean {
-
         const expectedUserRole = route.data['expectedUserRole'];
         const token = this.localStorageService.getItem('token');
 
+        console.log(expectedUserRole)
+
         if (!token) {
-            this.navigateToLogin();
+            this.navigateToLogin(expectedUserRole);
             return false;
         }
 
@@ -34,7 +35,7 @@ export class UserTypeGuardService implements CanActivate {
             !this.authService.isAuthenticated()
             || tokenPayload.rle !== expectedUserRole
         ) {
-            this.navigateToLogin();
+            this.navigateToLogin(expectedUserRole);
             return false;
         }
 
@@ -47,7 +48,13 @@ export class UserTypeGuardService implements CanActivate {
         return true;
     }
 
-    navigateToLogin(): void {
+    navigateToLogin(expectedUserRole: string | null = null): void {
+        if (expectedUserRole == 'SuperAdmin') {
+            console.log('redirecting to super admin login');
+            this.router.navigate(['/authentication/super-admin/login']);
+            return;
+        }
+
         this.router.navigate(['/authentication/login']);
     }
 }

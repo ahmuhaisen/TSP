@@ -10,15 +10,22 @@ export const routes: Routes = [
         path: 'admin-area',
         loadComponent: () => import('./areas/system-admin-area/system-admin-area.component').then(m => m.SystemAdminAreaComponent),
         loadChildren: () => import('./areas/system-admin-area/system-admin-area.routes').then(m => m.routes),
-        data: { breadcrumb: 'Admin Area', expectedUserRole: 'Faculty' },
+        data: { expectedUserRole: 'Faculty' },
         canActivate: [ UserTypeGuard ]
     },
     {
         path: 'student-area',
         loadComponent: () => import('./areas/student-area/student-area.component').then(m => m.StudentAreaComponent),
         loadChildren: () => import('./areas/student-area/student-area.routes').then(m => m.routes),
-        data: { breadcrumb: 'Student Area', expectedUserRole: 'Student' },
+        data: { expectedUserRole: 'Student' },
         canActivate: [ UserTypeGuard ],
+    },
+    {
+        path: 'super-admin',
+        loadComponent: () => import('./areas/super-admin/super-admin.component').then(m => m.SuperAdminComponent),
+        loadChildren: () => import('./areas/super-admin/super-admin.routes').then(m => m.superAdminRoutes),
+        data: { expectedUserRole: 'SuperAdmin' },
+        canActivate: [ UserTypeGuard ]
     },
     {
         path: 'authentication',

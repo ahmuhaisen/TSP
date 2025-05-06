@@ -70,12 +70,26 @@ public class AccountsService(ApplicationDbContext _context, IEmailService _email
 
     public async Task<Result> RejectAccountAsync(Guid id, UserType userType)
     {
-        var user = _context.Users.FirstOrDefault(x => x.Id == id);
+        if(userType == UserType.FacultyMember)
+        {
+            var facultyMember = await _context.FacultyMembers.FirstOrDefaultAsync(x => x.Id == id);
 
-        if (user is null)
-            return Result.Failure(Error.NotFound(nameof(ApplicationUser)));
+            if (facultyMember is null)
+                return Result.Failure(Error.NotFound(nameof(FacultyMember)));
 
-        _context.Users.Remove(user);
+            _context.FacultyMembers.Remove(facultyMember);
+        }
+        else if(userType == UserType.Student)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (student is null)
+                return Result.Failure(Error.NotFound(nameof(Student)));
+
+            _context.SocietiesMembers.RemoveRange(_context.SocietiesMembers.Where(x => x.StudentId == student.Id));
+
+            _context.Students.Remove(student);
+        }
 
         await _context.SaveChangesAsync();
 
