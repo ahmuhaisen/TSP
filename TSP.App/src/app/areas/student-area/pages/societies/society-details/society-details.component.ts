@@ -15,7 +15,8 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-
+import { MembershipRequestDTO, UpdateMembershipRequest } from '../../../api-interfaces/membership.types';
+import { SocietiesService } from '../../../services/societies.service';
 @Component({
   selector: 'app-society-details',
   imports: [
@@ -33,7 +34,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
     NgIf,
     NgFor,
     GenSocietyDetailsComponent
-],
+  ],
   templateUrl: './society-details.component.html',
   styleUrl: './society-details.component.css'
 })
@@ -45,14 +46,16 @@ export class SocietyDetailsComponent {
   isMembershipRequestModalVisible = false;
 
   window = window; // Make window available to template
-
+  constructor(
+    private socitiesService: SocietiesService
+  ) { }
   ngOnInit() {
     this.activatedRoute.url.subscribe(url => {
       this.societyId.set(this.activatedRoute.snapshot.params['id']);
-      if(url.some(u => u.path === 'manage')){
+      if (url.some(u => u.path === 'manage')) {
         this.pageMode.set('STUDENT_MANAGE');
       }
-      else{
+      else {
         this.pageMode.set('VIEW_ONLY');
       }
     })
@@ -60,136 +63,50 @@ export class SocietyDetailsComponent {
 
 
 
-  membershipRequests: MembershipRequest[] = [
-    {
-      id: '1',
-      studentName: 'John Smith',
-      studentId: 'STD001',
-      section: 'Programming Team',
-      requestedOn: new Date('2024-03-20T14:30:00'),
-      reason: 'I have been coding for 2 years and would love to contribute to the programming team. I have experience in Python and JavaScript, and Im eager to learn from other members.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John'
-    },
-    {
-      id: '2',
-      studentName: 'Sarah Johnson',
-      studentId: 'STD002',
-      section: 'Design Team',
-      requestedOn: new Date('2024-03-19T09:15:00'),
-      reason: 'I am passionate about UI/UX design and have completed several courses on web design. I would like to help improve the society\'s digital presence.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'
-    },
-    {
-      id: '3',
-      studentName: 'Michael Chen',
-      studentId: 'STD003',
-      section: 'Events Team',
-      requestedOn: new Date('2024-03-18T16:45:00'),
-      reason: 'I have experience organizing college events and would love to help plan and execute society activities. I am good at coordination and have strong communication skills.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael'
-    },
-    {
-      id: '4',
-      studentName: 'Sarah Johnson',
-      studentId: 'STD002',
-      section: 'Design Team',
-      requestedOn: new Date('2024-03-19T09:15:00'),
-      reason: 'I am passionate about UI/UX design and have completed several courses on web design. I would like to help improve the society\'s digital presence.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'
-    },
-    {
-      id: '5',
-      studentName: 'Michael Chen',
-      studentId: 'STD003',
-      section: 'Events Team',
-      requestedOn: new Date('2024-03-18T16:45:00'),
-      reason: 'I have experience organizing college events and would love to help plan and execute society activities. I am good at coordination and have strong communication skills.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael'
-    },
-    {
-      id: '6',
-      studentName: 'Sarah Johnson',
-      studentId: 'STD002',
-      section: 'Design Team',
-      requestedOn: new Date('2024-03-19T09:15:00'),
-      reason: 'I am passionate about UI/UX design and have completed several courses on web design. I would like to help improve the society\'s digital presence.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'
-    },
-    {
-      id: '7',
-      studentName: 'Michael Chen',
-      studentId: 'STD003',
-      section: 'Events Team',
-      requestedOn: new Date('2024-03-18T16:45:00'),
-      reason: 'I have experience organizing college events and would love to help plan and execute society activities. I am good at coordination and have strong communication skills.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael'
-    },
-    {
-      id: '8',
-      studentName: 'Sarah Johnson',
-      studentId: 'STD002',
-      section: 'Design Team',
-      requestedOn: new Date('2024-03-19T09:15:00'),
-      reason: 'I am passionate about UI/UX design and have completed several courses on web design. I would like to help improve the society\'s digital presence.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'
-    },
-    {
-      id: '9',
-      studentName: 'Michael Chen',
-      studentId: 'STD003',
-      section: 'Events Team',
-      requestedOn: new Date('2024-03-18T16:45:00'),
-      reason: 'I have experience organizing college events and would love to help plan and execute society activities. I am good at coordination and have strong communication skills.',
-      status: 'PENDING',
-      profilePictureUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael'
-    }
-  ];
-
+  membershipRequests: MembershipRequestDTO[] = []
 
   isRequestDetailsVisible = false;
-  selectedRequest: MembershipRequest | null = null;
+  selectedRequest: MembershipRequestDTO | null = null;
+  showSocietyRequests(): void {
+    this.isMembershipRequestModalVisible = true;
 
-  showRequestDetails(request: MembershipRequest): void {
+    this.socitiesService.getJoinRequests(this.activatedRoute.snapshot.params['id'] || "notworking")
+      .subscribe({
+        next: (requests: MembershipRequestDTO[]) => {
+          this.membershipRequests = requests;
+          console.log(JSON.stringify(this.membershipRequests, null, 2))
+
+        }, error: (error: Error) => {
+          console.log(JSON.stringify(error))
+        }
+      });
+  }
+  showRequestDetails(request: MembershipRequestDTO): void {
     this.selectedRequest = request;
     this.isRequestDetailsVisible = true;
   }
 
   acceptRequest(requestId: string): void {
-    // For development/demo purposes
+
     const request = this.membershipRequests.find(r => r.id === requestId);
-    if (request) {
-      request.status = 'ACCEPTED';
-      // In real implementation, make API call here
-      console.log(`Accepted request ${requestId}`);
+    const parsedRequest: UpdateMembershipRequest = {
+      SocietyId: this.activatedRoute.snapshot.params['id'],
+      MembershipRequestId: request?.id || "",
+      isAccepted: true
     }
+    this.socitiesService.updateMembershipRequests(parsedRequest).subscribe();
   }
 
   rejectRequest(requestId: string): void {
-    // For development/demo purposes
     const request = this.membershipRequests.find(r => r.id === requestId);
-    if (request) {
-      request.status = 'REJECTED';
-      // In real implementation, make API call here
-      console.log(`Rejected request ${requestId}`);
+    const parsedRequest: UpdateMembershipRequest = {
+      SocietyId: this.activatedRoute.snapshot.params['id'],
+      MembershipRequestId: request?.id || "",
+      isAccepted: false
     }
+
+    this.socitiesService.updateMembershipRequests(parsedRequest).subscribe();
+
   }
 }
 
-export interface MembershipRequest {
-  id: string;
-  studentName: string;
-  studentId: string;
-  section: string;
-  requestedOn: Date;
-  reason: string;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
-  profilePictureUrl?: string;
-}

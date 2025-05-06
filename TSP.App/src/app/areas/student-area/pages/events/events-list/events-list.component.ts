@@ -21,6 +21,10 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { MemberAssociatedSociety } from '../../../api-interfaces/society.types';
+import { StudentsService } from '../../../services/students.service';
+import { AddEventRequest, MemberEventDetailsDTO } from '../../../api-interfaces/event.types';
+import { EventsService } from '../../../services/events.service';
 
 @Component({
   selector: 'app-events-list',
@@ -48,6 +52,7 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
     NzDrawerModule,
     FormsModule
   ],
+  providers: [EventsService],
   templateUrl: './events-list.component.html',
   styleUrl: './events-list.component.css',
   styles: [`
@@ -67,10 +72,13 @@ export class EventsListComponent {
 
   isEventRequestModalVisible = false;
   currentStep = 0;
-  selectedSocietyId: number = 0;
-
+  selectedSocietyId: string = "";
+  studentsService = inject(StudentsService);
   messageService = inject(NzMessageService);
+  eventsService = inject(EventsService);
 
+
+  committeeSocieties: MemberAssociatedSociety[] = [];
   today = new Date();
   timeDefaultValue = setHours(new Date(), 8);
   currentDate = new Date();
@@ -201,48 +209,7 @@ export class EventsListComponent {
     }
   ];
 
-  eventRequests = [
-    {
-      id: 1,
-      title: 'Cybersecurity Workshop',
-      society: 'ACM University of Jordan Student Chapter',
-      startDate: new Date('2024-04-15T09:00:00'),
-      endDate: new Date('2024-04-15T15:00:00'),
-      location: 'Computer Lab 2',
-      type: 'Workshop',
-      status: 'pending_advisor',
-      description: 'Hands-on workshop covering cybersecurity fundamentals and best practices.',
-      societyAdvisorApproval: null,
-      deanApproval: null
-    },
-    {
-      id: 2,
-      title: 'Data Science Bootcamp',
-      society: 'IEEE CS JU',
-      startDate: new Date('2024-04-20T10:00:00'),
-      endDate: new Date('2024-04-20T16:00:00'),
-      location: 'Innovation Hub',
-      type: 'Training',
-      status: 'pending_dean',
-      description: 'Intensive training on data science tools and techniques.',
-      societyAdvisorApproval: true,
-      deanApproval: null
-    },
-    {
-      id: 3,
-      title: 'Software Engineering Best Practices',
-      society: 'Waves JU',
-      startDate: new Date('2024-04-25T11:00:00'),
-      endDate: new Date('2024-04-25T13:00:00'),
-      location: 'Engineering Building Room 205',
-      type: 'Seminar',
-      status: 'approved',
-      description: 'Learn about modern software engineering practices and methodologies.',
-      societyAdvisorApproval: true,
-      deanApproval: true
-    }
-  ];
-
+  eventRequests: MemberEventDetailsDTO[] = [];
   selectedEvent: any = null;
   isEventDetailsVisible = false;
   isEventModalVisible = false;
@@ -258,6 +225,11 @@ export class EventsListComponent {
 
   constructor() {
     this.initForm();
+    this.eventsService.getCommitteeEventsRequests().subscribe(data => {
+      this.eventRequests = data
+      
+    })
+
   }
 
   private initForm(): void {
@@ -277,7 +249,7 @@ export class EventsListComponent {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() + 1);
     startDate.setHours(9, 0, 0, 0);
-    
+
     // Set default end time to same day at 11:00 AM
     const endDate = new Date(startDate);
     endDate.setHours(11, 0, 0, 0);
@@ -285,7 +257,10 @@ export class EventsListComponent {
     this.eventRequestForm.patchValue({
       dateRange: [startDate, endDate]
     });
-    
+    this.studentsService.getCommitteeSocieties().subscribe(
+      data => this.committeeSocieties = data
+    )
+    console.log(this.committeeSocieties)
     this.isEventRequestModalVisible = true;
   }
 
@@ -313,20 +288,21 @@ export class EventsListComponent {
   done(): void {
     if (this.eventRequestForm.valid) {
       const formValue = this.eventRequestForm.value;
-      
-      const eventRequest = {
+
+      const eventRequest: AddEventRequest = {
         societyId: formValue.societyId,
+        committeeId: "",
         title: formValue.title,
         description: formValue.description,
         location: formValue.location,
         type: formValue.eventType,
         startDate: formValue.dateRange[0],
         endDate: formValue.dateRange[1],
-        hasAttendanceForm: formValue.hasAttendanceForm
+        isAttendanceFormEnabled: formValue.hasAttendanceForm
       };
-
+      this.eventsService.postEvent(eventRequest).subscribe();
       console.log('Event Request:', eventRequest);
-      
+
       this.isEventRequestModalVisible = false;
       this.messageService.success('Event request submitted successfully');
       this.resetForm();
@@ -341,14 +317,14 @@ export class EventsListComponent {
     }
   }
 
-  selectSociety(societyId: number) {
+  selectSociety(societyId: string) {
     this.selectedSocietyId = societyId;
     this.eventRequestForm.patchValue({ societyId });
   }
 
   private resetForm(): void {
     this.currentStep = 0;
-    this.selectedSocietyId = 0;
+    this.selectedSocietyId = "";
     this.eventRequestForm.reset();
     this.initForm();
   }
@@ -378,8 +354,8 @@ export class EventsListComponent {
     return this.upcomingEvents.filter(event => {
       const eventDate = new Date(event.startDate);
       return eventDate.getDate() === date.getDate() &&
-             eventDate.getMonth() === date.getMonth() &&
-             eventDate.getFullYear() === date.getFullYear();
+        eventDate.getMonth() === date.getMonth() &&
+        eventDate.getFullYear() === date.getFullYear();
     });
   }
 
@@ -387,14 +363,14 @@ export class EventsListComponent {
     const events = this.upcomingEvents.filter(event => {
       const eventDate = new Date(event.startDate);
       return eventDate.getMonth() === date.getMonth() &&
-             eventDate.getFullYear() === date.getFullYear();
+        eventDate.getFullYear() === date.getFullYear();
     });
     return events.length || null;
   }
 
   showEventDetails(event: any): void {
     console.log('Selected Event:', event);
-    this.selectedEvent = {...event};
+    this.selectedEvent = { ...event };
     this.isEventDetailsVisible = true;
     // Force change detection
     setTimeout(() => {
@@ -425,8 +401,8 @@ export class EventsListComponent {
   isToday(date: Date): boolean {
     const today = new Date();
     return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
   }
 
   openEventModal(date: Date): void {
@@ -448,4 +424,5 @@ export class EventsListComponent {
     console.log('Registering for event:', event);
     // You can also show a success message or perform any other action
   }
+
 }

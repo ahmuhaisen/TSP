@@ -61,8 +61,7 @@ public class GetMemberEventsRequests
                     e.DeanAssistantApproval = tempData.DeanAssistantApproval;
                 }
             }
-
-
+          
             return Result.Success(data);
         }
     }

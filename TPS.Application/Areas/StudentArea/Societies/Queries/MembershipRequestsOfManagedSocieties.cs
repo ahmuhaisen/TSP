@@ -31,10 +31,10 @@ namespace TPS.Application.Areas.StudentArea.Societies.Queries
         {
             public async Task<Result<List<MembershipRequestDTO>>> Handle(Query request, CancellationToken cancellation)
             {
-                if (await context.Societies
+                if (!(await context.Societies
                     .Include(x=>x.SocietiesMembers)
                     .AnyAsync(s => s.SocietiesMembers
-                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId)))
+                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId))))
                     return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
 
                 var data = await context.MembershipsRequests
@@ -42,9 +42,11 @@ namespace TPS.Application.Areas.StudentArea.Societies.Queries
                     .Where(x => x.SocietyId == request.SocietyId)
                     .Select(x => new MembershipRequestDTO
                     {
+                        Id = x.Id,
                         Section = x.Section,
                         ReasonForJoining = x.Motivation,
                         Status = x.Status,
+                        RequestedOn = x.RequestedOn,
                         StudentBasicDTO = new StudentBasicDTO
                         {
                             Id = x.Id,

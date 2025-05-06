@@ -13,11 +13,12 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { SocietiesService, MemberAssociatedSociety, Society, SocietyJoinRequest } from '../../../services/societies.service';
+import { SocietiesService } from '../../../services/societies.service';
+import { MemberAssociatedSociety, SocietyJoinRequest, Society, JoinSocietyRequest } from '../../../api-interfaces/society.types';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TruncatePipe } from "../../../../../common/pipes/truncate.pipe";
+import { StudentsService } from '../../../services/students.service';
 import { HttpClientModule } from '@angular/common/http';
-
 @Component({
     selector: 'app-societies-list',
     standalone: true,
@@ -56,6 +57,7 @@ export class SocietiesListComponent implements OnInit {
 
     constructor(
         private societiesService: SocietiesService,
+        private studentsService: StudentsService,
         private fb: FormBuilder,
         private message: NzMessageService
     ) {
@@ -72,7 +74,7 @@ export class SocietiesListComponent implements OnInit {
     }
 
     private loadSocieties(): void {
-        this.societiesService.getBelongingSocieties().subscribe({
+        this.studentsService.getBelongingSocieties().subscribe({
             next: (societies: MemberAssociatedSociety[]) => {
                 this.belongingSocieties = societies;
             },
@@ -82,7 +84,7 @@ export class SocietiesListComponent implements OnInit {
             }
         });
 
-        this.societiesService.getOtherSocieties().subscribe({
+        this.studentsService.getOtherSocieties().subscribe({
             next: (societies: Society[]) => {
                 this.otherSocieties = societies;
             },
@@ -94,9 +96,10 @@ export class SocietiesListComponent implements OnInit {
     }
 
     private loadJoinRequests(): void {
-        this.societiesService.getJoinRequests().subscribe({
+        this.studentsService.getJoinRequests().subscribe({
             next: (requests: SocietyJoinRequest[]) => {
                 this.joinRequests = requests;
+                console.log(this.joinRequests)
             },
             error: (error: Error) => {
                 this.message.error('Failed to load join requests');
@@ -117,7 +120,7 @@ export class SocietiesListComponent implements OnInit {
     handleJoinSociety(): void {
         if (this.joinSocietyForm.valid) {
             this.isJoinSocietyLoading = true;
-            const formValue = this.joinSocietyForm.value;
+            const formValue: JoinSocietyRequest = this.joinSocietyForm.value;
             this.societiesService.joinSociety(formValue).subscribe({
                 next: () => {
                     this.message.success('Join request submitted successfully');
@@ -139,10 +142,13 @@ export class SocietiesListComponent implements OnInit {
     leaveSociety(society: MemberAssociatedSociety): void {
         this.societyToLeave = society;
         this.isLeaveSocietyPopupVisible = true;
+
     }
 
     handleCancelLeaveSociety(): void {
         this.isLeaveSocietyPopupVisible = false;
+        this.societiesService.leaveSociety(this.societyToLeave?.id || "").subscribe();
+
         this.societyToLeave = null;
     }
 
@@ -173,11 +179,11 @@ export class SocietiesListComponent implements OnInit {
 
     getStatusColor(status: string): string {
         switch (status) {
-            case 'pending':
+            case 'Pending':
                 return 'processing';
-            case 'approved':
+            case 'Approved':
                 return 'success';
-            case 'rejected':
+            case 'Rejected':
                 return 'error';
             default:
                 return 'default';

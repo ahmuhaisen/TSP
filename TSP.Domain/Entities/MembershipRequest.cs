@@ -5,10 +5,10 @@ namespace TSP.Domain.Entities;
 public class MembershipRequest : Entity
 {
     public Guid SocietyId { get; set; }
-    public Society Society { get; set; } = new();
+    public Society Society { get; set; } = null!;
 
     public Guid StudentId { get; set; }
-    public Student Student { get; set; } = new();
+    public Student Student { get; set; } = null!;
 
     public string Section { get; set; } = null!;
     public string Motivation { get; set; } = null!;
