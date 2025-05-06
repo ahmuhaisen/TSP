@@ -18,7 +18,7 @@ public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
 
         builder.Property(a => a.Gender)
                .HasConversion<string>()
-               .HasMaxLength(6)
+               .HasMaxLength(15)
                .IsRequired();
 
         builder.Property(a => a.ProfileImageId)
@@ -29,5 +29,13 @@ public class ApplicationUserConfig : IEntityTypeConfiguration<ApplicationUser>
                .WithMany(d => d.Users)
                .HasForeignKey(a => a.DepartmentId)
                .IsRequired(false);
+
+        builder.Property(a => a.IsActive)
+                .HasDefaultValue(false)
+                .IsRequired();
+
+        builder.Property(a => a.RegisteredAt)
+                .HasDefaultValueSql("getdate()")
+                .IsRequired();
     }
 }

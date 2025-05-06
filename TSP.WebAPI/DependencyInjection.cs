@@ -15,6 +15,7 @@ using TPS.Application.Areas.Authentication;
 using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
+using TPS.Application.Areas.SuperAdmin;
 using TPS.Application.Services;
 using TPS.Application.SignalR;
 using TPS.Infrastructure.BackgroundJobs;
@@ -209,6 +210,8 @@ public static class DependencyInjection
 
         services.AddSingleton<IUserConnectionManager, UserConnectionManager>();
         services.AddSignalR();
+
+        services.AddScoped<IAccountsService, AccountsService>();
 
         return services;
     }

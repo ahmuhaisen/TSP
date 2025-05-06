@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TSP.Domain.Entities;
+using TSP.Domain.Enums;
 
 namespace TPS.Infrastructure.Data.DataGenerators;
 
-public class ApplicationDataSeeder(ApplicationDbContext _context, RoleManager<ApplicationRole> _roleManager)
+public class ApplicationDataSeeder(ApplicationDbContext _context, UserManager<ApplicationUser> _userManager, RoleManager<ApplicationRole> _roleManager)
 {
     public async Task Seed()
     {
         await seedRoles();
+        await seedSuperAdmin();
         await seedFacultyMembers();
         await seedSocieties();
         await seedStudents();
@@ -20,7 +22,7 @@ public class ApplicationDataSeeder(ApplicationDbContext _context, RoleManager<Ap
         if (_context.Roles.Any())
             return;
 
-        string[] roles = { "Student", "Faculty" };
+        string[] roles = { "Student", "Faculty", "SuperAdmin" };
 
         foreach (var role in roles)
         {
@@ -29,6 +31,41 @@ public class ApplicationDataSeeder(ApplicationDbContext _context, RoleManager<Ap
                 await _roleManager.CreateAsync(new ApplicationRole { Name = role });
             }
         }
+    }
+
+    private async Task seedSuperAdmin()
+    {
+        // check if the super admin already exists by role
+        var superAdmins = await _userManager.GetUsersInRoleAsync("SuperAdmin");
+
+        if(superAdmins.Any())
+            return;
+
+        var superAdmin = new ApplicationUser
+        {
+            Id = new Guid("61d92acd-a738-4555-8974-381becf89194"),
+            FirstName = "admin",
+            LastName = "1",
+            Email = "admin@tsp.org",
+            UserName = "admin",
+            DepartmentId = 1,
+            Gender = Gender.Unspecified,
+            PasswordHash = "AQAAAAIAAYagAAAAELIhT49xTHOXI0y72eDfBfyjO2rS+RgWK4USYS3KSxFT8aC2IR8o0MsLuc7n/o+Mxg==",
+            SecurityStamp = "76ZUI2EVMGSBUF7NWRTDDMRYSD3P2OZA"
+        };
+
+        superAdmin.PasswordHash = passwordHasher(superAdmin);
+        superAdmin.NormalizedEmail = superAdmin.Email.ToUpperInvariant();
+        superAdmin.NormalizedUserName = superAdmin.UserName.ToUpperInvariant();
+        superAdmin.EmailConfirmed = true;
+
+        _context.Users.Add(superAdmin);
+        await _context.SaveChangesAsync();
+
+        var superAdminRole = await _roleManager.FindByNameAsync("SuperAdmin");
+
+        if (superAdminRole is not null)
+            await _userManager.AddToRoleAsync(superAdmin, superAdminRole.Name!);
     }
 
     private async Task seedFacultyMembers()

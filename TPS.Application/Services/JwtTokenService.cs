@@ -23,7 +23,7 @@ public class JwtTokenService : IJwtTokenService
         _userManager = userManager;
     }
 
-    public async Task<string> GenerateAsync(ApplicationUser user)
+    public async Task<string> GenerateAsync(ApplicationUser user, string? userRole = null)
     {
         var claims = new List<Claim>
         {
@@ -34,6 +34,9 @@ public class JwtTokenService : IJwtTokenService
             new Claim("pid", user.ProfileImageId ?? string.Empty),
             new Claim("pic", user.ProfileImageId ?? string.Empty),
         };
+
+        if (userRole != null)
+            claims.Add(new Claim("role", userRole));
 
         var roles = await _userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim("rle", role)));

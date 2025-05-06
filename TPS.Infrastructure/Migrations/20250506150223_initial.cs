@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TPS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class intitial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +25,22 @@ namespace TPS.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OutboxMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OccuredOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProcessedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Error = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutboxMessages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -106,6 +122,8 @@ namespace TPS.Infrastructure.Migrations
                     Gender = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
                     ProfileImageId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -242,6 +260,30 @@ namespace TPS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Body = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    IsSeen = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    SeenAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ImageId = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Students",
                 columns: table => new
                 {
@@ -314,7 +356,7 @@ namespace TPS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MembershipRequest",
+                name: "MembershipsRequests",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -327,14 +369,14 @@ namespace TPS.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MembershipRequest", x => x.Id);
+                    table.PrimaryKey("PK_MembershipsRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MembershipRequest_Societies_SocietyId",
+                        name: "FK_MembershipsRequests_Societies_SocietyId",
                         column: x => x.SocietyId,
                         principalTable: "Societies",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_MembershipRequest_Students_StudentId",
+                        name: "FK_MembershipsRequests_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id");
@@ -402,10 +444,10 @@ namespace TPS.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AdvisorApproval = table.Column<bool>(type: "bit", nullable: false),
-                    DeanAssistantApproval = table.Column<bool>(type: "bit", nullable: false),
+                    AdvisorApproval = table.Column<bool>(type: "bit", nullable: true),
+                    DeanAssistantApproval = table.Column<bool>(type: "bit", nullable: true),
                     Remarks = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
-                    DecisionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DecisionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FacultyMemberId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -564,14 +606,19 @@ namespace TPS.Infrastructure.Migrations
                 column: "RankId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MembershipRequest_SocietyId",
-                table: "MembershipRequest",
+                name: "IX_MembershipsRequests_SocietyId",
+                table: "MembershipsRequests",
                 column: "SocietyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MembershipRequest_StudentId",
-                table: "MembershipRequest",
+                name: "IX_MembershipsRequests_StudentId",
+                table: "MembershipsRequests",
                 column: "StudentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Societies_AdvisorId",
@@ -609,7 +656,13 @@ namespace TPS.Infrastructure.Migrations
                 name: "EventsApproval");
 
             migrationBuilder.DropTable(
-                name: "MembershipRequest");
+                name: "MembershipsRequests");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "OutboxMessages");
 
             migrationBuilder.DropTable(
                 name: "SocietiesMembers");
