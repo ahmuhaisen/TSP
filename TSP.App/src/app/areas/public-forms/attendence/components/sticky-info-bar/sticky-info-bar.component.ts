@@ -22,7 +22,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
             <div class="flex items-center">
               <img src="tsp-logo.png" alt="TSP Logo" class="h-8 mr-3">
               <h3 class="font-medium text-gray-800 mr-6 line-clamp-1">
-                Event Registration |
+              {{ title }} |
                 {{event?.name}}
               </h3>
             </div>
@@ -47,7 +47,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
             <div class="flex items-center justify-center mb-2">
               <img src="tsp-logo.png" alt="TSP Logo" class="h-6 mr-2">
               <h3 class="font-medium text-gray-800 text-sm">
-                Event Registration |
+                {{ title }} |
                 {{event?.name}}
               </h3>
             </div>
@@ -73,6 +73,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 })
 export class StickyInfoBarComponent implements AfterViewInit {
   @Input() event: EventDetails | undefined;
+  @Input() title: string | undefined;
   
   constructor(private renderer: Renderer2) {}
   

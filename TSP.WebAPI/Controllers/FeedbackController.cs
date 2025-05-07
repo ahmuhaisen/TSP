@@ -1,7 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Abstractions;
+using TPS.Application.Areas.AdminArea.Events.Contracts;
+using TPS.Application.Areas.AdminArea.Events.Queries;
 using TPS.Application.Areas.Feedback.Contracts;
+using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers;
 
@@ -21,6 +24,16 @@ public class FeedbackController(ISender sender, IFeedbackService _feedbackServic
     public async Task<IActionResult> IsFeedbackOpen(Guid eventId)
     {
         var task = _feedbackService.IsFeedbackOpenAsync(eventId);
+
+        return await FromResult(task);
+    }
+
+    [HttpGet("events/{eventRequestId}")]
+    public async Task<IActionResult> GetEventDetails([FromRoute] Guid eventRequestId)
+    {
+        var query = EventDetails.Query.Create(eventRequestId);
+
+        var task = _sender.Send(query);
 
         return await FromResult(task);
     }

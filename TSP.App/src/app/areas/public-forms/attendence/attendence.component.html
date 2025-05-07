@@ -19,13 +19,13 @@
 <!-- Main Content (shown only when event is loaded) -->
 <ng-container *ngIf="!isEventLoading && isEventAvailable()">
     <!-- Hero Section -->
-    <app-event-hero [event]="eventDetails"></app-event-hero>
+    <app-event-hero [event]="eventDetails" [theme]="'blue'" [PageTitle]="'Event Registration'" />
 
     <!-- Sticky Info Bar -->
-    <app-sticky-info-bar [event]="eventDetails"></app-sticky-info-bar>
+    <app-sticky-info-bar [event]="eventDetails" [title]="'Event Registration'" />
 
     <!-- Event Info Bar -->
-    <app-event-info-bar [event]="eventDetails"></app-event-info-bar>
+    <app-event-info-bar [event]="eventDetails" />
 
     <!-- Main Content -->
     <div class="relative pb-20">
