@@ -35,6 +35,10 @@ export const routes: Routes = [
         loadComponent: () => import('./components/coming-soon.component').then(m => m.ComingSoonComponent)
     },
     {
+        path: 'qr-viewer',
+        loadComponent: () => import('./areas/public/qr-viewer/qr-viewer.component').then(m => m.QrViewerComponent),
+    },
+    {
         path: '',
         redirectTo: 'admin-area',
         pathMatch: 'full'

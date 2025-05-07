@@ -12,10 +12,14 @@
         <h2 class="text-lg font-bold text-gray-700"> {{eventDetailsDTO.eventName}}</h2>
         <p class="text-sm text-gray-600">{{eventDetailsDTO.type}}</p>
     </div>
-    <div class="mt-3 md:mt-0">
+    <div class="mt-3 md:mt-0 flex gap-2 justify-center md:justify-end">
         <button nz-button nzType="primary" (click)="showEventRequestModal()">
             <nz-icon nzType="reconciliation" nzTheme="outline" />
             View event request
+        </button>
+        <button nz-button (click)="redirectToFeedbackQrLinkView()">
+            <nz-icon nzType="qrcode" nzTheme="outline" />
+            View Feedback QR code
         </button>
     </div>
 </div>

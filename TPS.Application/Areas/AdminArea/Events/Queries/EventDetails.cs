@@ -28,7 +28,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
             public async Task<Result<EventDetailsDTO>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var eventRequest = await _context.EventsApproval
-                    .FirstOrDefaultAsync(x => x.EventId == request.EventRequestId);
+                    .FirstOrDefaultAsync(x => x.EventId == request.EventRequestId || x.Id == request.EventRequestId);
 
                 if (eventRequest == null)
                     return Result.Failure<EventDetailsDTO>(Error.NotFound(nameof(EventRequest), request.EventRequestId.ToString()));

@@ -11,9 +11,11 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { EventsService } from '../../../services/events.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EventDetailsDTO } from '../../../api-interfaces/event.types';
 import { CommonModule } from '@angular/common';
+import { EventFeedbackService } from '../../../../public-forms/event-feedback/event-feedback.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
 @Component({
   selector: 'app-event-details',
   imports: [
@@ -38,7 +40,9 @@ export class EventDetailsComponent implements OnInit {
   eventService = inject(EventsService);
   activatedRoute = inject(ActivatedRoute);
   eventDetailsDTO!: EventDetailsDTO;
-
+  feedbackService = inject(EventFeedbackService);
+  nzMessageService = inject(NzMessageService);
+  router = inject(Router);
 
   tabs = [];
 
@@ -65,5 +69,32 @@ export class EventDetailsComponent implements OnInit {
 
   handleEventRequestModalOk() {
     this.isEventRequestModalVisible = false;
+  }
+
+  redirectToFeedbackQrLinkView() {
+    const isFeedbackFormOpen = false;
+
+    this.feedbackService.isFeedbackOpen(this.eventDetailsDTO.id).subscribe({
+      next: res => {
+        if (res) {
+          const link = `public-forms/event-feedback/${this.eventDetailsDTO.id}`;
+          const isInternal = true;
+          const description = `Feedback for ${this.eventDetailsDTO.eventName}`;
+
+          const queryParams = new URLSearchParams({
+            link: link,
+            isInternal: String(isInternal),
+            description: description
+          });
+  
+          const fullUrl = `${window.location.origin}/qr-viewer?${queryParams.toString()}`;
+  
+          window.open(fullUrl, '_blank');
+        }
+        else {
+          this.nzMessageService.info('The feedback form is not available yet');
+        }
+      }
+    })
   }
 }

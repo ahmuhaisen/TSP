@@ -1,0 +1,60 @@
+<div class="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white">
+  <div class="flex-grow flex flex-col items-center justify-center p-8 max-w-4xl mx-auto text-center">
+    <div class="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden p-6 mb-8 border border-gray-100">
+      <h2 class="mb-6 text-2xl font-semibold text-gray-800 border-b pb-3" *ngIf="description">{{description}}</h2>
+      
+      <div #qrcodeContainer class="flex justify-center items-center my-8" *ngIf="link">
+        <qrcode #qrcode [qrdata]="link" [width]="320" [errorCorrectionLevel]="'M'" class="transition-all hover:scale-105"></qrcode>
+      </div>
+      
+      <div class="flex justify-center mb-6" *ngIf="link">
+        <button 
+          nz-button 
+          nz-dropdown 
+          [nzDropdownMenu]="menu" 
+          nzType="primary"
+          nzTrigger="click"
+          nzPlacement="bottomCenter"
+          nzShape="round"
+          class="flex items-center"
+          nz-tooltip
+          nzTooltipTitle="Download QR Code">
+          <span nz-icon nzType="download"></span>
+          <span class="ml-2">Export</span>
+        </button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <li nz-menu-item (click)="downloadAsPNG()">
+              <div class="flex items-center">
+                <span nz-icon nzType="picture" nzTheme="outline" class="mr-2 text-blue-500"></span>
+                <span>PNG Image</span>
+              </div>
+            </li>
+            <li nz-menu-item (click)="downloadAsPDF()">
+              <div class="flex items-center">
+                <span nz-icon nzType="file-pdf" nzTheme="outline" class="mr-2 text-red-500"></span>
+                <span>PDF Document</span>
+              </div>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </div>
+      
+      <p class="mt-4 break-all text-sm text-gray-600" *ngIf="link">
+        <span class="block mb-1 text-xs uppercase font-semibold text-gray-500">Link:</span>
+        <a [href]="link" target="_blank" class="text-blue-600 hover:underline transition-colors">{{fullLink()}}</a>
+      </p>
+      
+      <div class="p-4 mt-6 text-red-700 bg-red-50 border border-red-200 rounded-md flex items-center" *ngIf="!link">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+        No link provided. Please add a link parameter to the URL.
+      </div>
+    </div>
+  </div>
+  
+  <div class="mt-auto">
+    <app-footer />
+  </div>
+</div>

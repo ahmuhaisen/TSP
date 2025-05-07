@@ -58,7 +58,18 @@ public class FeedbackService : IFeedbackService
             .AsNoTracking()
             .FirstOrDefaultAsync(e => e.Id == eventId);
 
-        if (@event == null)
+        if (@event is null)
+        {
+            var eventRequest = await _context.EventsApproval
+                .AsNoTracking()
+                .Include(e => e.Event)
+                .FirstOrDefaultAsync(e => e.Id == eventId);
+
+            if (eventRequest != null)
+                @event = eventRequest.Event;
+        }
+
+        if (@event is null)
             return Result.Failure<bool>(Error.NotFound(nameof(Event), eventId.ToString()));
 
         var now = DateTime.Now;
