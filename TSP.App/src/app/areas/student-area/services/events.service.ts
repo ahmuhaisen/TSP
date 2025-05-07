@@ -1,6 +1,6 @@
 import { DbService } from "../../../common/services/db.service";
 import { inject } from "@angular/core";
-import { AddEventRequest, MemberEventDetailsDTO } from "../api-interfaces/event.types";
+import { AddEventRequest, MemberEventDetailsDTO, EventSimpleDTO } from "../api-interfaces/event.types";
 import { AuthService } from "../../../common/services/auth.service";
 import { Injectable } from "@angular/core";
 
@@ -19,6 +19,10 @@ export class EventsService {
     }
     getCommitteeEventsRequests() {
         return this.db.getRequest<MemberEventDetailsDTO[]>(`${this.model}/Requests`);
+    }
+    getEventsByMonth() {
+        const date = new Date().toISOString().split('T')[0];
+        return this.db.getRequest<EventSimpleDTO[]>(`${this.model}?date=${date}`);
     }
 
 }

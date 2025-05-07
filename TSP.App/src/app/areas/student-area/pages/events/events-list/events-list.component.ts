@@ -23,8 +23,9 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { MemberAssociatedSociety } from '../../../api-interfaces/society.types';
 import { StudentsService } from '../../../services/students.service';
-import { AddEventRequest, MemberEventDetailsDTO } from '../../../api-interfaces/event.types';
+import { AddEventRequest, EventSimpleDTO, MemberEventDetailsDTO } from '../../../api-interfaces/event.types';
 import { EventsService } from '../../../services/events.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-events-list',
@@ -50,7 +51,8 @@ import { EventsService } from '../../../services/events.service';
     NzCalendarModule,
     NzBadgeModule,
     NzDrawerModule,
-    FormsModule
+    FormsModule,
+    RouterModule
   ],
   providers: [EventsService],
   templateUrl: './events-list.component.html',
@@ -118,96 +120,7 @@ export class EventsListComponent {
   eventRequestForm!: FormGroup;
   private fb = inject(FormBuilder);
 
-  upcomingEvents = [
-    {
-      id: 1,
-      title: 'Introduction to AI Workshop',
-      society: 'IEEE CS JU',
-      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 15, 10, 0),
-      endDate: new Date(new Date().getFullYear(), new Date().getMonth(), 15, 12, 0),
-      location: 'Progressoft Lab',
-      type: 'Workshop',
-      description: 'Learn the basics of Artificial Intelligence and its applications.',
-      hasAttendanceForm: true
-    },
-    {
-      id: 10,
-      title: '.NET Workshop',
-      society: 'ACM University of Jordan Student Chapter',
-      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 15, 10, 0),
-      endDate: new Date(new Date().getFullYear(), new Date().getMonth(), 15, 12, 0),
-      location: 'Progressoft Lab',
-      type: 'Workshop',
-      description: 'Learn the basics of Artificial Intelligence and its applications.',
-      hasAttendanceForm: true
-    },
-    {
-      id: 2,
-      title: 'Web Development Bootcamp',
-      society: 'ACM University of Jordan Student Chapter',
-      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 17, 9, 0),
-      endDate: new Date(new Date().getFullYear(), new Date().getMonth(), 17, 15, 0),
-      location: 'Computer Lab 3',
-      type: 'Training',
-      description: 'Intensive bootcamp covering modern web development technologies including React',
-      hasAttendanceForm: true
-    },
-    {
-      id: 3,
-      title: 'Competitive Programming Contest',
-      society: 'ACM University of Jordan Student Chapter',
-      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 20, 13, 0),
-      endDate: new Date(new Date().getFullYear(), new Date().getMonth(), 20, 17, 0),
-      location: 'King Hussein School for Computing',
-      type: 'Contest',
-      description: 'Monthly programming contest to enhance problem-solving skills.',
-      hasAttendanceForm: true
-    },
-    {
-      id: 4,
-      title: 'Cloud Computing Seminar',
-      society: 'IEEE CS JU',
-      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 22, 11, 0),
-      endDate: new Date(new Date().getFullYear(), new Date().getMonth(), 22, 13, 0),
-      location: 'Engineering Auditorium',
-      type: 'Seminar',
-      description: 'Learn about cloud computing platforms and their applications in modern software development.',
-      hasAttendanceForm: true
-    },
-    {
-      id: 5,
-      title: 'Mobile App Development Workshop',
-      society: 'Waves JU',
-      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 25, 10, 0),
-      endDate: new Date(new Date().getFullYear(), new Date().getMonth(), 25, 14, 0),
-      location: 'Innovation Lab',
-      type: 'Workshop',
-      description: 'Hands-on workshop on building mobile applications using Flutter.',
-      hasAttendanceForm: false
-    },
-    {
-      id: 6,
-      title: 'Tech Talk: Future of AI',
-      society: 'IEEE CS JU',
-      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 28, 12, 0),
-      endDate: new Date(new Date().getFullYear(), new Date().getMonth(), 28, 14, 0),
-      location: 'Engineering Conference Room',
-      type: 'Conference',
-      description: 'Industry experts discuss the future of AI and its impact on various sectors.',
-      hasAttendanceForm: true
-    },
-    {
-      id: 6,
-      title: 'Tech Talk: Future of AI',
-      society: 'IEEE CS JU',
-      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 28, 12, 0),
-      endDate: new Date(new Date().getFullYear(), new Date().getMonth(), 28, 14, 0),
-      location: 'Engineering Conference Room',
-      type: 'Conference',
-      description: 'Industry experts discuss the future of AI and its impact on various sectors.',
-      hasAttendanceForm: true
-    }
-  ];
+  upcomingEvents: EventSimpleDTO[] = [];
 
   eventRequests: MemberEventDetailsDTO[] = [];
   selectedEvent: any = null;
@@ -224,10 +137,15 @@ export class EventsListComponent {
   }
 
   constructor() {
+
     this.initForm();
     this.eventsService.getCommitteeEventsRequests().subscribe(data => {
       this.eventRequests = data
-      
+
+    })
+
+    this.eventsService.getEventsByMonth().subscribe(data => {
+      this.upcomingEvents = data;
     })
 
   }
@@ -352,7 +270,7 @@ export class EventsListComponent {
   getDayEvents(date: Date): any[] {
     if (!date) return []; // Return an empty array if date is null
     return this.upcomingEvents.filter(event => {
-      const eventDate = new Date(event.startDate);
+      const eventDate = new Date(event.startTime);
       return eventDate.getDate() === date.getDate() &&
         eventDate.getMonth() === date.getMonth() &&
         eventDate.getFullYear() === date.getFullYear();
@@ -361,7 +279,7 @@ export class EventsListComponent {
 
   getMonthData(date: Date): number | null {
     const events = this.upcomingEvents.filter(event => {
-      const eventDate = new Date(event.startDate);
+      const eventDate = new Date(event.startTime);
       return eventDate.getMonth() === date.getMonth() &&
         eventDate.getFullYear() === date.getFullYear();
     });
@@ -383,7 +301,7 @@ export class EventsListComponent {
     this.isEventDetailsVisible = false;
   }
 
-  getEventBadgeStatus(eventDate: Date): string {
+  getEventBadgeStatus(eventDate: string): string {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const eventDay = new Date(eventDate);

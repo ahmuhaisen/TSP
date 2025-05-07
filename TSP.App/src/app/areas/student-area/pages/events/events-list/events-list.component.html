@@ -35,7 +35,7 @@
         <ng-container *nzDateCell="let date">
           <div class="events" (click)="openEventModal(date)">
             <ng-container *ngFor="let event of getDayEvents(date)">
-              <nz-badge [nzStatus]="getEventBadgeStatus(event.startDate)" [nzText]="event.title"
+              <nz-badge [nzStatus]="getEventBadgeStatus(event.startDate)" [nzText]="event.name"
                 class="event-badge cursor-pointer hover:text-primary-dark" />
             </ng-container>
 
@@ -49,27 +49,29 @@
         <nz-card *ngFor="let event of upcomingEvents"
           class="shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
           <div class="flex items-center mb-2">
-            <img src="https://robohash.org/society?bgset=bg2" alt="{{ event.society }}"
+            <img src="https://robohash.org/society?bgset=bg2" alt="{{ event.societyName }}"
               class="w-12 h-12 rounded-full mr-2" />
             <div>
-              <h3 class="text-md font-semibold text-gray-800">{{ event.title }}</h3>
-              <p class="text-xs text-gray-600">{{ event.society }}</p>
+              <h3 class="text-md font-semibold text-gray-800">{{ event.name }}</h3>
+              <p class="text-xs text-gray-600">{{ event.societyName }}</p>
             </div>
           </div>
           <p class="text-xs text-gray-500">
-            <nz-badge [nzStatus]="getEventBadgeStatus(event.startDate)"
+            <nz-badge [nzStatus]="getEventBadgeStatus(event.startTime)"
               class="cursor-pointer hover:text-primary-dark" />
-            {{ event.startDate | date:'MMM d, y, h:mm a' }} - {{ event.endDate |
+            {{ event.startTime | date:'MMM d, y, h:mm a' }} - {{ event.endTime |
             date:'MMM d, y, h:mm a' }}
           </p>
           <p class="text-xs text-gray-600">{{ event.location }}</p>
           <p class="mt-2 text-gray-600">{{ event.description }}</p>
 
-          @if (event.hasAttendanceForm) {
-          <button nz-button nzType="default" class="mt-4 w-full">
-            <nz-icon nzType="form"></nz-icon>
-            Register
-          </button>
+          @if (event.isAttendeesFormEnabled) {
+          <a [routerLink]="'../../public-forms/attendance/'+event.id">
+            <button nz-button nzType="default" class="mt-4 w-full">
+              <nz-icon nzType="form"></nz-icon>
+              Register
+            </button>
+          </a>
           }
         </nz-card>
       </div>

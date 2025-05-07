@@ -7,6 +7,8 @@ export interface StudentEvent {
     logoId: string;
     isActiveMember: boolean;
 }
+
+
 export interface AddEventRequest {
     societyId: string;
     committeeId: string;
@@ -31,4 +33,15 @@ export interface MemberEventDetailsDTO {
     endDate: string;
     advisorApproval?: boolean;
     deanAssistantApproval?: boolean;
+}
+
+export interface EventSimpleDTO {
+    id: string;
+    name: string;
+    societyName: string;
+    startTime: string;
+    endTime: string;
+    description: string;
+    location: string;
+    isAttendeesFormEnabled: boolean;
 }

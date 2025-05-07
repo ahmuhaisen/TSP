@@ -24,8 +24,7 @@ import { TruncatePipe } from "../../../../common/pipes/truncate.pipe";
     NzAvatarModule,
     BaseChartDirective,
     ContainerBlockComponent,
-    TruncatePipe
-],
+  ],
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.css'
 })
@@ -70,7 +69,7 @@ export class StatisticsComponent implements OnInit {
   private loadTopEventsByAttendance() {
     this.statisticsService.getTopEventsByAttendance(5).subscribe(data => {
       this.isBarChartEmpty = data.length === 0 || data.every(item => item.count === 0);
-  
+
       this.barChartData = {
         labels: data.map(item => item.eventName),
         datasets: [
@@ -80,7 +79,7 @@ export class StatisticsComponent implements OnInit {
           }
         ]
       };
-  
+
       this.chart?.update();
     });
   }

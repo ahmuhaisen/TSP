@@ -131,6 +131,7 @@ export class SocietiesListComponent implements OnInit {
                 error: (error: Error) => {
                     this.message.error('Failed to submit join request');
                     console.error('Error submitting join request:', error);
+                    this.isJoinSocietyLoading = false;
                 },
                 complete: () => {
                     this.isJoinSocietyLoading = false;
@@ -165,6 +166,7 @@ export class SocietiesListComponent implements OnInit {
                 error: (error: Error) => {
                     this.message.error('Failed to leave the society');
                     console.error('Error leaving society:', error);
+                    this.isLeaveSocietyLoading = false;
                 },
                 complete: () => {
                     this.isLeaveSocietyLoading = false;
