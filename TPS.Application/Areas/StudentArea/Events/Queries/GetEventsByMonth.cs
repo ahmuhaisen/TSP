@@ -1,5 +1,4 @@
-﻿using iText.Kernel.Pdf.Canvas.Parser.ClipperLib;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.StudentArea.Events.Contracts;
 using TPS.Infrastructure.Data;

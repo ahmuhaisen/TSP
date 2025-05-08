@@ -208,7 +208,7 @@ public static class DependencyInjection
             configuration.GetSection("EventFeedback"));
         services.AddScoped<IFeedbackService, FeedbackService>();
 
-        services.AddScoped<IPdfService, PdfService>();
+        //services.AddScoped<IPdfService, PdfService>();
 
         services.AddScoped<INotificationService, NotificationService>();
 
