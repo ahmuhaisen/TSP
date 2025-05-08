@@ -27,6 +27,7 @@ public class ApplicationDbContext(DbContextOptions options)
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
     public DbSet<FeedbackAnswer> FeedbackAnswers { get; set; }
+    public DbSet<FeedbackSummary> FeedbackSummaries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

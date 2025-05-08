@@ -7,5 +7,6 @@ public interface IFeedbackService
 {
     Task<Result> SubmitFeedbackAsync(FeedbackAnswerRequest dto);
     Task<Result<bool>> IsFeedbackOpenAsync(Guid eventId);
+    Task UpdateSummaryForEventAsync(Guid eventId);
 }
 

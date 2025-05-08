@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TPS.Infrastructure.AiClient;
 using TPS.Infrastructure.Data;
 using TPS.Infrastructure.Data.DataGenerators;
 using TPS.Infrastructure.Emailing;
@@ -9,7 +10,7 @@ namespace TSP.WebAPI.Controllers;
 
 [ApiController]
 [Route($"api/[controller]")]
-public class TestsController(ApplicationDbContext _context, IEmailService emailService, IGitHubService gitHubService) : ControllerBase
+public class TestsController(ApplicationDbContext _context, IEmailService emailService, IGitHubService gitHubService, IAiClientService _aiClientService) : ControllerBase
 {
     [HttpPost("GenerateFakeData")]
     public async Task<IActionResult> GenerateFakeData(int number = 5)
@@ -41,5 +42,18 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
         return Ok();
     }
 
-   
+    [HttpGet("ai/ask")]
+    public async Task<IActionResult> AskAiAsync(string prompt)
+    {
+        try
+        {
+            return Ok(await _aiClientService.GetResponseAsync(prompt));
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+
+        return Ok();
+    }
 }

@@ -1,10 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Bogus.Bson;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Quartz.Logging;
 using System.Runtime;
+using System.Text.Json;
 using TPS.Application.Abstractions;
 using TPS.Application.Areas.Feedback.Contracts;
+using TPS.Infrastructure.AiClient;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
 using TSP.Domain.Shared.Options;
 
@@ -15,11 +21,15 @@ public class FeedbackService : IFeedbackService
 {
     private readonly ApplicationDbContext _context;
     private readonly EventFeedbackOptions _options;
+    private readonly IAiClientService _aiClientService;
+    private readonly ILogger<FeedbackService> _logger;
 
-    public FeedbackService(ApplicationDbContext context, IOptions<EventFeedbackOptions> options)
+    public FeedbackService(ApplicationDbContext context, IOptions<EventFeedbackOptions> options, IAiClientService aiClientService, ILogger<FeedbackService> logger)
     {
         _context = context;
         _options = options.Value;
+        _aiClientService = aiClientService;
+        _logger = logger;
     }
 
 
@@ -47,6 +57,9 @@ public class FeedbackService : IFeedbackService
         };
 
         _context.FeedbackAnswers.Add(feedback);
+
+        feedback.RaiseDomainEvent(new FeedbackSubmittedDomainEvent(Guid.NewGuid(), feedback.EventId, feedback.EventId, feedback.Rating, feedback.Notes));
+
         await _context.SaveChangesAsync();
 
         return Result.Success();
@@ -74,5 +87,107 @@ public class FeedbackService : IFeedbackService
 
         var now = DateTime.Now;
         return Result.Success(@event.EndTime <= now && now <= @event.EndTime.AddDays(_options.DurationDays));
+    }
+
+    public async Task UpdateSummaryForEventAsync(Guid eventId)
+    {
+        var feedbacks = await _context.FeedbackAnswers
+            .Where(f => f.EventId == eventId)
+            .ToListAsync();
+
+        var average = feedbacks.Average(f => f.Rating);
+        var total = feedbacks.Count;
+        var notes = feedbacks
+            .Where(f => !string.IsNullOrWhiteSpace(f.Notes))
+            .Select(f => f.Notes!)
+            .ToList();
+
+        var feedbackText = string.Join("\n- ", notes);
+
+        var prompt = """
+        You are an AI assistant that analyzes student feedback from university events.
+
+        You will receive a list of anonymous text feedback comments related to a single event. Your task is to analyze these and return a structured JSON response that reflects:
+
+        ### TASKS:
+
+        1. **Sentiment Classification**:
+           - Classify the overall sentiment of the feedback using one of the following exact values:
+             - "Positive"
+             - "Mixed"
+             - "Negative"
+           - Choose the one that best describes the general tone and balance of the feedback.
+
+        2. **Topic Extraction**:
+           - Identify up to 5 recurring topics or themes mentioned in the feedback.
+           - Return them as a comma-separated string using capitalized keywords (e.g., "Speaker, Venue, Timing").
+
+        3. **Summary Text**:
+           - Write a short natural language summary (5-6 sentences) that captures the overall strengths and weaknesses mentioned in the feedback.
+
+        ### FORMAT:
+
+        Return a JSON object that exactly matches the following structure:
+
+        {{
+          "Sentiment": "Positive",
+          "Topics": "Speaker, Venue, Timing",
+          "Summary": "Students appreciated the engaging speaker and informative content. A few mentioned the event started late but overall enjoyed the experience."
+        }}
+
+        ### INPUT FEEDBACK:
+        - {feedbackText}
+        """;
+
+        prompt = prompt.Replace("{feedbackText}", feedbackText);
+
+        var jsonResult = await _aiClientService.GetResponseAsync(prompt);
+
+        jsonResult = SenetizeJsonResponse(jsonResult);
+
+        _logger.LogInformation("AI response: {JsonResult}", jsonResult);
+
+        var aiResult = JsonSerializer.Deserialize<FeedbackAnalysisResult>(jsonResult, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        var existing = await _context.FeedbackSummaries
+            .FirstOrDefaultAsync(f => f.EventId == eventId);
+
+        if (existing is null)
+        {
+            var summary = new FeedbackSummary
+            {
+                EventId = eventId,
+                AverageRating = average,
+                TotalResponses = total,
+                Sentiment = aiResult.Sentiment,
+                Topics = aiResult.Topics,
+                AiSummary = aiResult.Summary,
+                CalculatedAt = DateTime.UtcNow
+            };
+            _context.FeedbackSummaries.Add(summary);
+        }
+        else
+        {
+            existing.AverageRating = average;
+            existing.TotalResponses = total;
+            existing.Sentiment = aiResult.Sentiment;
+            existing.Topics = aiResult.Topics;
+            existing.AiSummary = aiResult.Summary;
+            existing.CalculatedAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+
+    string SenetizeJsonResponse(string text)
+    {
+        var firstIndexOfPracet = text.IndexOf("{");
+        var lastIndexOfPracet = text.LastIndexOf("}");
+
+        return text.Substring(firstIndexOfPracet, lastIndexOfPracet - firstIndexOfPracet + 1);
     }
 }

@@ -4,7 +4,7 @@ using TSP.Domain.Entities;
 
 namespace TPS.Infrastructure.Data.Configurations;
 
-public class FeedbackAnswerConfiguration : IEntityTypeConfiguration<FeedbackAnswer>
+public class FeedbackAnswerConfig : IEntityTypeConfiguration<FeedbackAnswer>
 {
     public void Configure(EntityTypeBuilder<FeedbackAnswer> builder)
     {
