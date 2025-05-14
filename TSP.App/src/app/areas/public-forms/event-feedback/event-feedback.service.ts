@@ -9,6 +9,27 @@ export interface EventFeedback {
   notes: string;
 }
 
+export interface EventFeedbackSummary {
+  event: {
+    id: string;
+    name: string;
+  };
+  summary: {
+    summaryId: string;
+    averageRating: number;
+    totalResponses: number;
+    sentiment: string;
+    topics: string;
+    aiSummary: string;
+    calculatedAt: string;
+  };
+  feedbacks: Array<{
+    rating: number;
+    notes: string;
+    submittedAt: string;
+  }>;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -27,5 +48,9 @@ export class EventFeedbackService {
 
   getEventDetails(eventRequestId: string) {
     return this.db.getRequest<EventDetailsDTO>(`${this.model}/events/${eventRequestId}`);
+  }
+  
+  getEventFeedbackSummary(eventId: string) {
+    return this.db.getRequest<EventFeedbackSummary>(`${this.model}/events/${eventId}/summary`);
   }
 } 

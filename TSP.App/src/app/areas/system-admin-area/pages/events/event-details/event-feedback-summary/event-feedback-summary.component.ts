@@ -15,28 +15,14 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { EventFeedbackService, EventFeedbackSummary } from '../../../../../public-forms/event-feedback/event-feedback.service';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { catchError, finalize, of } from 'rxjs';
 
 interface EventFeedback {
   rating: number;
   notes: string;
   submittedAt: string;
-}
-
-interface EventFeedbackSummary {
-  event: {
-    id: string;
-    name: string;
-  };
-  summary: {
-    summaryId: string;
-    averageRating: number;
-    totalResponses: number;
-    sentiment: string;
-    topics: string;
-    aiSummary: string;
-    calculatedAt: string;
-  };
-  feedbacks: EventFeedback[];
 }
 
 @Component({
@@ -66,6 +52,8 @@ interface EventFeedbackSummary {
 })
 export class EventFeedbackSummaryComponent implements OnInit {
   route = inject(ActivatedRoute);
+  feedbackService = inject(EventFeedbackService);
+  messageService = inject(NzMessageService);
   
   eventId: string = '';
   feedbackData: EventFeedbackSummary | null = null;
@@ -93,54 +81,25 @@ export class EventFeedbackSummaryComponent implements OnInit {
     this.showAllFeedbacks = !this.showAllFeedbacks;
   }
   
-  // This method will be replaced with actual API call
   private fetchFeedbackData(eventId: string): void {
-    // Simulating API call with mock data
-    setTimeout(() => {
-      this.feedbackData = {
-        "event": {
-          "id": "e6b7d1b7-5262-417e-92c0-2b4f29fc43ce",
-          "name": "GitHub Workshop"
-        },
-        "summary": {
-          "summaryId": "462d6b55-c8e4-441c-9ba1-08dd8e4ca2b4",
-          "averageRating": 2.85,
-          "totalResponses": 10,
-          "sentiment": "Mixed",
-          "topics": "Speaker, Organization, Timing",
-          "aiSummary": "While students found the workshop to be of interest and appreciated its timing in being on a nice day, there are significant concerns about the quality of the speaker's performance. Additionally, negative feedback highlighted issues with event organization, including an ill-timed start that led to distractions from other attendees.",
-          "calculatedAt": "2025-05-08T19:23:15.5166667"
-        },
-        "feedbacks": [
-          {
-            "rating": 4,
-            "notes": "Great workshop, but the organization is bad, late start, student stalks too much, so i couldnt focus",
-            "submittedAt": "2025-05-08T19:27:08.3126124"
-          },
-          {
-            "rating": 2.5,
-            "notes": "it was nice",
-            "submittedAt": "2025-05-08T19:24:40.7905223"
-          },
-          {
-            "rating": 1.5,
-            "notes": "The workshop was nice, but the instructor is not good",
-            "submittedAt": "2025-05-08T19:22:39.6388029"
-          },
-          {
-            "rating": 2,
-            "notes": "it was a nice workshop, very important topic, but the instructor was not that good.",
-            "submittedAt": "2025-05-08T19:16:48.2583622"
-          },
-          {
-            "rating": 2.5,
-            "notes": "The event was nice, but the speaker was not that good, please dont let him give a lecture at out beloved university again, thanks.",
-            "submittedAt": "2025-05-08T19:13:50.202507"
-          }
-        ]
-      };
-      this.isLoading = false;
-    }, 500);
+    this.isLoading = true;
+    
+    this.feedbackService.getEventFeedbackSummary(eventId)
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching feedback summary:', error);
+          this.messageService.error('Could not load feedback data. Please try again later.');
+          return of(null);
+        }),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe(data => {
+        if (data) {
+          this.feedbackData = data;
+        }
+      });
   }
 
   getSentimentColor(sentiment: string): string {
@@ -154,6 +113,11 @@ export class EventFeedbackSummaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.eventId = this.route.snapshot.paramMap.get('id') || '';
-    this.fetchFeedbackData(this.eventId);
+    if (this.eventId) {
+      this.fetchFeedbackData(this.eventId);
+    } else {
+      this.isLoading = false;
+      this.messageService.warning('No event ID provided.');
+    }
   }
 }
