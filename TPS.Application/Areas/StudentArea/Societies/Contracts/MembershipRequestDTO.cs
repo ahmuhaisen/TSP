@@ -10,9 +10,11 @@ namespace TPS.Application.Areas.StudentArea.Societies.Contracts
 {
     public class MembershipRequestDTO
     {
+        public Guid Id { get; set; }
         public string Section { get; set; } = null!;
         public string ReasonForJoining { get; set; } = null!;
         public RequestStatus Status { get; set; }
+        public DateTime RequestedOn { get; set; }
         public required StudentBasicDTO StudentBasicDTO { get; set; }
     }
 }

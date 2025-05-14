@@ -19,15 +19,13 @@
         {{ currentDate | date:'MMMM yyyy' }}
       </div>
       <div class="flex items-center gap-2">
-        <button nzType="default" nzShape="circle" nz-button
-        class="flex items-center justify-center"
+        <button nzType="default" nzShape="circle" nz-button class="flex items-center justify-center"
           (click)="setViewType('calendar')">
-          <nz-icon nzType="calendar"/>
+          <nz-icon nzType="calendar" />
         </button>
 
-        <button nzType="default" nzShape="circle" nz-button
-         (click)="setViewType('cards')">
-          <nz-icon nzType="appstore"/>
+        <button nzType="default" nzShape="circle" nz-button (click)="setViewType('cards')">
+          <nz-icon nzType="appstore" />
         </button>
       </div>
     </div>
@@ -37,12 +35,10 @@
         <ng-container *nzDateCell="let date">
           <div class="events" (click)="openEventModal(date)">
             <ng-container *ngFor="let event of getDayEvents(date)">
-              <nz-badge 
-                [nzStatus]="getEventBadgeStatus(event.startDate)" 
-                [nzText]="event.title"
+              <nz-badge [nzStatus]="getEventBadgeStatus(event.startDate)" [nzText]="event.name"
                 class="event-badge cursor-pointer hover:text-primary-dark" />
             </ng-container>
-            
+
           </div>
         </ng-container>
       </nz-calendar>
@@ -53,27 +49,29 @@
         <nz-card *ngFor="let event of upcomingEvents"
           class="shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
           <div class="flex items-center mb-2">
-            <img src="https://robohash.org/society?bgset=bg2" alt="{{ event.society }}"
+            <img src="https://robohash.org/society?bgset=bg2" alt="{{ event.societyName }}"
               class="w-12 h-12 rounded-full mr-2" />
             <div>
-              <h3 class="text-md font-semibold text-gray-800">{{ event.title }}</h3>
-              <p class="text-xs text-gray-600">{{ event.society }}</p>
+              <h3 class="text-md font-semibold text-gray-800">{{ event.name }}</h3>
+              <p class="text-xs text-gray-600">{{ event.societyName }}</p>
             </div>
           </div>
           <p class="text-xs text-gray-500">
-            <nz-badge 
-                [nzStatus]="getEventBadgeStatus(event.startDate)" 
-                class="cursor-pointer hover:text-primary-dark" />
-            {{ event.startDate | date:'MMM d, y, h:mm a' }} - {{ event.endDate |
-            date:'MMM d, y, h:mm a' }}</p>
+            <nz-badge [nzStatus]="getEventBadgeStatus(event.startTime)"
+              class="cursor-pointer hover:text-primary-dark" />
+            {{ event.startTime | date:'MMM d, y, h:mm a' }} - {{ event.endTime |
+            date:'MMM d, y, h:mm a' }}
+          </p>
           <p class="text-xs text-gray-600">{{ event.location }}</p>
           <p class="mt-2 text-gray-600">{{ event.description }}</p>
 
-          @if (event.hasAttendanceForm) {
-          <button nz-button nzType="default" class="mt-4 w-full">
-            <nz-icon nzType="form"></nz-icon>
-            Register
-          </button>
+          @if (event.isAttendeesFormEnabled) {
+          <a [routerLink]="'../../public-forms/attendance/'+event.id">
+            <button nz-button nzType="default" class="mt-4 w-full">
+              <nz-icon nzType="form"></nz-icon>
+              Register
+            </button>
+          </a>
           }
         </nz-card>
       </div>
@@ -125,14 +123,14 @@
     <nz-empty nzDescription="No event requests found"></nz-empty>
     } @else {
     <div class="grid grid-cols-2 gap-4">
-      @for (request of eventRequests; track request.id) {
+      @for (request of eventRequests; track request.eventId) {
       <nz-card class="w-full shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
         <div class="flex flex-col md:flex-row md:items-center justify-between">
           <div class="flex-grow">
             <div class="flex items-start gap-4">
               <div class="flex-grow">
                 <h3 class="text-md font-semibold text-gray-800">{{ request.title }}</h3>
-                <p class="text-xs text-gray-600">{{ request.society }}</p>
+                <!-- <p class="text-xs text-gray-600">{{ request.society }}</p> -->
               </div>
               <div class="flex items-center gap-2">
                 <nz-tag [nzColor]="'blue'">{{ request.type }}</nz-tag>
@@ -158,9 +156,9 @@
           <div class="flex items-center gap-4">
             <div class="flex items-center">
               <span class="text-xs font-medium text-gray-500 mr-2">Society Advisor:</span>
-              @if (request.societyAdvisorApproval === null) {
+              @if (request.advisorApproval==null) {
               <nz-tag nzSize="small" [nzColor]="'gold'">Pending</nz-tag>
-              } @else if (request.societyAdvisorApproval) {
+              } @else if (request.advisorApproval) {
               <nz-tag nzSize="small" [nzColor]="'success'">Approved</nz-tag>
               } @else {
               <nz-tag nzSize="small" [nzColor]="'error'">Rejected</nz-tag>
@@ -169,9 +167,9 @@
 
             <div class="flex items-center">
               <span class="text-xs font-medium text-gray-500 mr-2">Dean Office:</span>
-              @if (request.deanApproval === null) {
+              @if (request.deanAssistantApproval == null) {
               <nz-tag nzSize="small" [nzColor]="'gold'">Pending</nz-tag>
-              } @else if (request.deanApproval) {
+              } @else if (request.deanAssistantApproval) {
               <nz-tag nzSize="small" [nzColor]="'success'">Approved</nz-tag>
               } @else {
               <nz-tag nzSize="small" [nzColor]="'error'">Rejected</nz-tag>
@@ -198,23 +196,14 @@
     </nz-steps>
 
     @if(currentStep === 0) {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      <div (click)="selectSociety(1)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
-                hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 1}">
-        <img src="https://robohash.org/society?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
-        <p class="text-sm text-center font-semibold text-gray-700 mt-3">IEEE CS JU</p>
-      </div>
-
-      <div (click)="selectSociety(2)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
-                hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 2}">
-        <img src="https://robohash.org/society2?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
-        <p class="text-sm text-center font-semibold text-gray-700 mt-3">ACM University of Jordan Student Chapter</p>
-      </div>
-
-      <div (click)="selectSociety(3)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
-                hover:cursor-pointer hover:shadow-md transition-all" [ngClass]="{'selected': selectedSocietyId === 3}">
-        <img src="https://robohash.org/society3?bgset=bg2" class="w-16 h-16 rounded-lg" alt="profile image">
-        <p class="text-sm text-center font-semibold text-gray-700 mt-3">Waves JU</p>
+    <div *ngFor="let society of committeeSocieties">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div (click)="selectSociety(society.id)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
+                hover:cursor-pointer hover:shadow-md transition-all"
+          [ngClass]="{'selected': selectedSocietyId === society.id}">
+          <img [src]="society.logoId" class="w-16 h-16 rounded-lg" alt="profile image">
+          <p class="text-sm text-center font-semibold text-gray-700 mt-3">{{society.name}}</p>
+        </div>
       </div>
     </div>
     }

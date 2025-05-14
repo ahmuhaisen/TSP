@@ -31,6 +31,7 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
     {
         try
         {
+
             //await emailService.SendWelcomingEmail("ahmuhaisen03@gmail.com", "Ahmad Muhaisen", UserType.FacultyMember);
             //await emailService.SendWelcomingEmail("yasmeenalmohtaseb@gmail.com", "Yasmin Almohtaseb", UserType.Student);
             //await emailService.SendCommitteeChangesAlert("yasmeenalmohtaseb@gmail.com", "Yasmin Almohtaseb", UserType.Student,"ACM JU","Yasmin Almohtaseb",true);
@@ -52,6 +53,8 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
             //await emailService.SendSocietyJoinRequestDecisionMade("yasmeenalmohtaseb@gmail.com", "Yasmin Almohtaseb", UserType.Student, "ACM JU",false);
             //await emailService.SendSocietyJoinRequestDecisionMade("yasmeenalmohtaseb@gmail.com", "Yasmin Almohtaseb", UserType.Student, "ACM JU",true);
 
+
+            await emailService.SendWelcomingEmail("suhibsaleh@outlook.com", "Suhib Saleh", UserType.FacultyMember);
         }
         catch (Exception ex)
         {

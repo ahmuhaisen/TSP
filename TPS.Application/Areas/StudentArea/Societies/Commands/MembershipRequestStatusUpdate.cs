@@ -51,18 +51,27 @@ namespace TPS.Application.Areas.StudentArea.Societies.Commands
                     return Result.Failure(Error.NotFound("Membership Request", request.MembershipRequestId.ToString()));
                 }
                 //User is not authorized for this action
-                if (await context.Societies
+                if (!(await context.Societies
                     .AnyAsync(s => s.SocietiesMembers
-                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId && x.IsCommittee==true)))
+                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId && x.IsCommittee==true))))
                     return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
+   
 
                 if (request.isAccepted == false)
                 {
                     membershipRequest.Status = RequestStatus.Rejected;
+                    var checkChanges = context.SaveChanges();
+                    if (checkChanges <= 0)
+                    {
+                        return Result.Failure<Guid>(Error.InternalServerError("could not save record"));
+                    }
                 }
                 else if (request.isAccepted == true)
                 {
                     membershipRequest.Status = RequestStatus.Accepted;
+                    
+                    context.MembershipsRequests.Update(membershipRequest);
+
                     var newMember = new SocietiesMembers
                     {
                         SocietyId = request.SocietyId,

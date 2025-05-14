@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +18,14 @@ public class GetMemberSocieties
     public sealed class Query : IQuery<Result<List<SocietyListDTO>>>
     {
         public Guid MemberId { get; set; }
-
-        private Query(Guid id)
+        public bool ForCommittee { get; set; }
+        private Query(Guid id, bool forCommittee)
         {
             MemberId = id;
+            ForCommittee = forCommittee;
         }
 
-        public static Query Create(Guid MemberId) => new Query(MemberId);
+        public static Query Create(Guid MemberId, bool ForCommittee) => new Query(MemberId, ForCommittee);
     }
 
     public sealed class Handler : IQueryHandler<Query, Result<List<SocietyListDTO>>>
@@ -48,13 +50,15 @@ public class GetMemberSocieties
             var memberSocieties = await _context.SocietiesMembers
                 .AsNoTracking()
                 .Include(s => s.Society)
-                .Where(s => s.StudentId == request.MemberId)
+                .Where(s => (request.ForCommittee && s.IsCommittee && s.StudentId == request.MemberId) ||
+    (!request.ForCommittee && s.StudentId == request.MemberId))
+
                 .Select(s => new SocietyListDTO
                 {
-                 Id = s.SocietyId,
-                 Name = s.Society.Name,
-                 LogoId = s.Society.LogoId,
-                 CreationDate = s.Society.CreationDate,
+                    Id = s.SocietyId,
+                    Name = s.Society.Name,
+                    LogoId = s.Society.LogoId,
+                    CreationDate = s.Society.CreationDate,
 
                 })
                 .ToListAsync();
@@ -62,4 +66,6 @@ public class GetMemberSocieties
             return Result.Success(memberSocieties);
         }
     }
+
+
 }

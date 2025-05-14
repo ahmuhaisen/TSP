@@ -2,35 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { environment } from '../../../../environments/environment';
+import { DbService } from '../../../common/services/db.service';
+import { StudentEvent } from '../api-interfaces/event.types';
+import { HomeStatistics } from '../api-interfaces/statistics.types';
 
-export interface StudentEvent {
-  id: string;
-  title: string;
-  society: string;
-  date: Date;
-  location: string;
-  imageUrl: string;
-  isMember: boolean;
-}
-
-export interface HomeStatistics {
-  NumSocieties: number;
-  NumAttendedEvents: number;
-  // Add other statistics as needed
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class HomeService {
-  private http = inject(HttpClient);
-  private baseUrl = `${environment.apiURL}studentArea/home`;
+
+  private db = inject(DbService);
+  model = "StudentArea/home";
 
   getRecentEvents() {
-    return this.http.get<StudentEvent[]>(`${this.baseUrl}/recentEvents`);
+    return this.db.getRequest<StudentEvent[]>(`${this.model}/recentEvents`);
   }
 
   getHomeStatistics() {
-    return this.http.get<HomeStatistics>(`${this.baseUrl}/homeStatistics`);
+    return this.db.getRequest<HomeStatistics>(`${this.model}/homeStatistics`);
   }
 }

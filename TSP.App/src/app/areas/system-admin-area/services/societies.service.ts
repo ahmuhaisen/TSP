@@ -28,8 +28,7 @@ export class SocietiesService {
     return this.db.getRequest<SocietyMember[]>(`AdminArea/Societies/${id}/Members?isCommittee=${isCommittee}`);
   }
 
-  removeCommitteeMember(societyId: string, memberId: string)
-  {
+  removeCommitteeMember(societyId: string, memberId: string) {
     return this.db.deleteRequest(`AdminArea/Societies/${societyId}/Members/${memberId}/Committee`);
   }
 
@@ -45,7 +44,7 @@ export class SocietiesService {
     return this.db.postRequest<PostSociety, PostSociety>(this.getUrl(), society);
   }
 
-  update(id: string, society: { 
+  update(id: string, society: {
     id: string;
     name: string;
     description: string;
@@ -72,7 +71,7 @@ export class SocietiesService {
   }
 
   removeMember(societyId: string, memberId: string) {
-    return this.db.deleteRequest(`StudentArea/Societies/${societyId}/Members/${memberId}`);
+    return this.db.deleteRequest(`StudentArea/Societies/${societyId}/Members/${memberId}/kick`);
   }
 
   searchNonMemberStudents(societyId: string, searchTerm: string) {
