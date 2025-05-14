@@ -42,6 +42,17 @@ public class FeedbackService : IFeedbackService
             .FirstOrDefaultAsync(e => e.Id == dto.EventId);
 
         if (@event is null)
+        {
+            var eventRequest = await _context.EventsApproval
+                .AsNoTracking()
+                .Include(e => e.Event)
+                .FirstOrDefaultAsync(e => e.Id == dto.EventId || e.EventId == dto.EventId);
+
+            if (eventRequest != null)
+                @event = eventRequest.Event;
+        }
+
+        if (@event is null)
             return Result.Failure(Error.NotFound(nameof(Event), dto.EventId.ToString()));
 
         var now = DateTime.Now;
@@ -52,7 +63,7 @@ public class FeedbackService : IFeedbackService
 
         var feedback = new FeedbackAnswer
         {
-            EventId = dto.EventId,
+            EventId = @event.Id,
             Rating = dto.Rating,
             Notes = dto.Notes,
             SubmittedAt = now
@@ -186,9 +197,7 @@ public class FeedbackService : IFeedbackService
 
     public async Task<Result<EventFeedbackResponseDto>> GetEventFeedbackAsync(Guid eventId)
     {
-        var @event = await _context.Events
-            .AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id == eventId);
+        var @event = await GetEventAsync(eventId);
 
         if (@event is null)
             return Result.Failure<EventFeedbackResponseDto>(Error.NotFound(nameof(Event), eventId.ToString()));
@@ -201,14 +210,14 @@ public class FeedbackService : IFeedbackService
 
         var feedbacks = await _context.FeedbackAnswers
             .AsNoTracking()
-            .Where(f => f.EventId == eventId)
+            .Where(f => f.EventId == @event.Id)
             .OrderByDescending(f => f.SubmittedAt)
             //.Take(numberOfFeedbackAnswers)
             .ToListAsync();
 
         var summary = await _context.FeedbackSummaries
             .AsNoTracking()
-            .FirstOrDefaultAsync(f => f.EventId == eventId);
+            .FirstOrDefaultAsync(f => f.EventId == @event.Id);
 
         if (summary is null)
             return Result.Failure<EventFeedbackResponseDto>(Error.NotFound(nameof(FeedbackSummary), eventId.ToString()));
@@ -247,6 +256,26 @@ public class FeedbackService : IFeedbackService
         var lastIndexOfPracet = text.LastIndexOf("}");
 
         return text.Substring(firstIndexOfPracet, lastIndexOfPracet - firstIndexOfPracet + 1);
+    }
+
+    async Task<Event> GetEventAsync(Guid id)
+    {
+        var @event = await _context.Events
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (@event is null)
+        {
+            var eventRequest = await _context.EventsApproval
+                .AsNoTracking()
+                .Include(e => e.Event)
+                .FirstOrDefaultAsync(e => e.Id == id || e.EventId == id);
+
+            if (eventRequest != null)
+                @event = eventRequest.Event;
+        }
+
+        return @event;
     }
 }
 

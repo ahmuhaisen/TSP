@@ -17,9 +17,25 @@
             <p class="text-xs text-gray-400 font-normal">Requests from societies you advise are listed here</p>
         </div>
     </div>
-    <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="Export Requests">
+    <button nz-button nzType="default" nz-dropdown [nzDropdownMenu]="exportMenu" nz-tooltip nzTooltipTitle="Export Options">
         <nz-icon nzType="download" nzTheme="outline" />
     </button>
+    <nz-dropdown-menu #exportMenu="nzDropdownMenu">
+        <ul nz-menu>
+            <li nz-menu-item (click)="exportToPdf()">
+                <div class="flex items-center">
+                    <span nz-icon nzType="file-pdf" nzTheme="outline" class="mr-2 text-red-500"></span>
+                    <span>Export as PDF</span>
+                </div>
+            </li>
+            <li nz-menu-item (click)="exportToCsv()">
+                <div class="flex items-center">
+                    <span nz-icon nzType="file-excel" nzTheme="outline" class="mr-2 text-green-500"></span>
+                    <span>Export as CSV</span>
+                </div>
+            </li>
+        </ul>
+    </nz-dropdown-menu>
 </div>
 
 <app-requests-table />
