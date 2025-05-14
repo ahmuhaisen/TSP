@@ -7,9 +7,11 @@ using System.Runtime;
 using System.Text.Json;
 using TPS.Application.Abstractions;
 using TPS.Application.Areas.Feedback.Contracts;
+using TPS.Application.Areas.Shared.Events.Contracts;
 using TPS.Infrastructure.AiClient;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Enums;
 using TSP.Domain.Events;
 using TSP.Domain.Shared;
 using TSP.Domain.Shared.Options;
@@ -182,6 +184,62 @@ public class FeedbackService : IFeedbackService
         await _context.SaveChangesAsync();
     }
 
+    public async Task<Result<EventFeedbackResponseDto>> GetEventFeedbackAsync(Guid eventId)
+    {
+        var @event = await _context.Events
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == eventId);
+
+        if (@event is null)
+            return Result.Failure<EventFeedbackResponseDto>(Error.NotFound(nameof(Event), eventId.ToString()));
+
+        var now = DateTime.Now;
+        var feedbackStartDate = @event.StartTime;
+
+        if(now < feedbackStartDate)
+            return Result.Failure<EventFeedbackResponseDto>(Error.CustomError("Feedback is not yet available."));
+
+        var feedbacks = await _context.FeedbackAnswers
+            .AsNoTracking()
+            .Where(f => f.EventId == eventId)
+            .OrderByDescending(f => f.SubmittedAt)
+            //.Take(numberOfFeedbackAnswers)
+            .ToListAsync();
+
+        var summary = await _context.FeedbackSummaries
+            .AsNoTracking()
+            .FirstOrDefaultAsync(f => f.EventId == eventId);
+
+        if (summary is null)
+            return Result.Failure<EventFeedbackResponseDto>(Error.NotFound(nameof(FeedbackSummary), eventId.ToString()));
+
+        var response = new EventFeedbackResponseDto
+        {
+            Event = new EventBasicDTO
+            {
+                Id = @event.Id,
+                Name = @event.Name,
+            },
+            Summary = new FeedbackSummaryDto
+            {
+                SummaryId = summary.Id,
+                AverageRating = summary.AverageRating,
+                TotalResponses = summary.TotalResponses,
+                Sentiment = summary.Sentiment,
+                Topics = summary.Topics,
+                AiSummary = summary.AiSummary,
+                CalculatedAt = summary.CalculatedAt
+            },
+            Feedbacks = feedbacks.Select(f => new FeedbackAnswerDto
+            {
+                Rating = f.Rating,
+                Notes = f.Notes,
+                SubmittedAt = f.SubmittedAt
+            }).ToList()
+        };
+
+        return Result.Success(response);
+    }
 
     string SenetizeJsonResponse(string text)
     {
@@ -190,4 +248,29 @@ public class FeedbackService : IFeedbackService
 
         return text.Substring(firstIndexOfPracet, lastIndexOfPracet - firstIndexOfPracet + 1);
     }
+}
+
+public class EventFeedbackResponseDto
+{
+    public EventBasicDTO Event { get; set; } = null!;
+    public FeedbackSummaryDto Summary { get; set; } = null!;
+    public List<FeedbackAnswerDto> Feedbacks { get; set; } = null!;
+}
+
+public class FeedbackSummaryDto
+{
+    public Guid SummaryId { get; set; }
+    public decimal AverageRating { get; set; }
+    public int TotalResponses { get; set; }
+    public Sentiment? Sentiment { get; set; }
+    public string? Topics { get; set; }
+    public string? AiSummary { get; set; }
+    public DateTime CalculatedAt { get; set; }
+}
+
+public class FeedbackAnswerDto
+{
+    public decimal Rating { get; set; }
+    public string? Notes { get; set; }
+    public DateTime SubmittedAt { get; set; }
 }

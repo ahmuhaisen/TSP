@@ -11,6 +11,11 @@ export const routes: Routes = [
         data: { breadcrumb: { alias: 'eventName' } }
     },
     {
+        path: ':id/feedback-summary',
+        loadComponent: () => import('./event-details/event-feedback-summary/event-feedback-summary.component').then(m => m.EventFeedbackSummaryComponent),
+        data: { breadcrumb: 'Feedback Summary' }
+    },
+    {
         path: '**',
         loadComponent: () => import('./events.component').then(m => m.EventsComponent)
     }

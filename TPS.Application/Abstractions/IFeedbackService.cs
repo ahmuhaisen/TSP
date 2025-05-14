@@ -1,4 +1,5 @@
-﻿using TPS.Application.Areas.Feedback.Contracts;
+﻿using TPS.Application.Areas.Feedback;
+using TPS.Application.Areas.Feedback.Contracts;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Abstractions;
@@ -8,5 +9,6 @@ public interface IFeedbackService
     Task<Result> SubmitFeedbackAsync(FeedbackAnswerRequest dto);
     Task<Result<bool>> IsFeedbackOpenAsync(Guid eventId);
     Task UpdateSummaryForEventAsync(Guid eventId);
+    Task<Result<EventFeedbackResponseDto>> GetEventFeedbackAsync(Guid eventId);
 }
 

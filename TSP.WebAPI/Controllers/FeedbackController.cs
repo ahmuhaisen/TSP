@@ -37,4 +37,13 @@ public class FeedbackController(ISender sender, IFeedbackService _feedbackServic
 
         return await FromResult(task);
     }
+
+    [HttpGet("events/{eventId}/summary")]
+    public async Task<IActionResult> GetEventFeedback([FromRoute] Guid eventId)
+    {
+        var task = _feedbackService.GetEventFeedbackAsync(eventId);
+
+        return await FromResult(task);
+    }
+
 }

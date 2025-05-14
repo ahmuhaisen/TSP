@@ -9,6 +9,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { EventsService } from '../../../services/events.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -29,6 +31,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
     NzEmptyModule,
     NzTagModule,
     NzStepsModule,
+    NzDropDownModule,
+    NzMenuModule,
     CommonModule,
   ],
   templateUrl: './event-details.component.html',
@@ -96,5 +100,9 @@ export class EventDetailsComponent implements OnInit {
         }
       }
     })
+  }
+
+  navigateToFeedbackSummary() {
+    this.router.navigate(['feedback-summary'], { relativeTo: this.activatedRoute });
   }
 }
