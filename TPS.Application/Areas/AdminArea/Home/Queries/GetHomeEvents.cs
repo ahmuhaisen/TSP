@@ -32,12 +32,12 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
                 var today = DateTime.Now;
                 var no = 4;
                 var allEventsQuery = _context.EventsApproval;
-
+       
                 var finishedEvent = await allEventsQuery
                     .Include(s => s.Event)
-                    .ThenInclude(s=>s.Society)
-                    .Where(s => s.AdvisorApproval==true
-                            && s.DeanAssistantApproval==true
+                    .ThenInclude(s => s.Society)
+                    .Where(s => s.AdvisorApproval == true
+                            && s.DeanAssistantApproval == true
                             && s.FacultyMemberId == request.LoggedInUser
                             && s.Event.EndTime < today)
                     .OrderByDescending(s => s.Event.EndTime)
@@ -53,16 +53,20 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
                         isFinished = true
                     })
                     .FirstOrDefaultAsync();
+                Console.WriteLine("this is check if null");
+
                 if (finishedEvent != null)
                 {
+                    Console.WriteLine("this is null");
+
                     resultEvents.Add(finishedEvent);
                     --no;
                 }
 
                 var upcomingEvent = await allEventsQuery
                     .Include(s => s.Event)
-                    .ThenInclude(s=> s.Society)
-                    .Where(s => s.AdvisorApproval == true && s.DeanAssistantApproval==true
+                    .ThenInclude(s => s.Society)
+                    .Where(s => s.AdvisorApproval == true && s.DeanAssistantApproval == true
                             && s.Event.StartTime > today)
                     .OrderBy(s => s.Event.StartTime)
                     .Take(no)
@@ -78,6 +82,8 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
                         isFinished = false
                     })
                     .ToListAsync();
+
+
                 return Result.Success(resultEvents);
             }
         }

@@ -11,7 +11,6 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 @Component({
   selector: 'app-account-details',
   imports: [
-    NgIf,
     NzIconModule,
     NzDropDownModule,
     NzAvatarModule,

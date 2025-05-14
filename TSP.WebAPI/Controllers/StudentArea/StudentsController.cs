@@ -24,10 +24,19 @@ public class StudentsController : ApiController
     [HttpGet("AllSocieties")]
     public async Task<IActionResult> getMemberSocieties()
     {
-        var query = GetMemberSocieties.Query.Create(GetCurrentUserId()!.Value);
+        var query = GetMemberSocieties.Query.Create(GetCurrentUserId()!.Value,false);
         var task = _sender.Send(query);
         return await FromResult(task);
     }
+    [HttpGet("AllCommitteeSocieties")]
+    public async Task<IActionResult> getCommitteeSocities()
+    {
+        var query = GetMemberSocieties.Query.Create(GetCurrentUserId()!.Value,true);
+        var task = _sender.Send(query);
+        return await FromResult(task);
+    }
+
+
 
     [HttpGet("MembershipRequests")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]

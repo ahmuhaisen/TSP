@@ -31,7 +31,7 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
     {
         try
         {
-            await emailService.SendWelcomingEmail("ahmuhaisen03@gmail.com", "Ahmad Muhaisen", UserType.FacultyMember);
+            await emailService.SendWelcomingEmail("suhibsaleh@outlook.com", "Suhib Saleh", UserType.FacultyMember);
         }
         catch (Exception ex)
         {
