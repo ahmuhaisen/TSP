@@ -83,12 +83,9 @@ export class ProfileComponent {
     this.activatedRoute.params.subscribe(params => {
       const id = params['id'];
       const userType = this.activatedRoute.snapshot.queryParamMap.get('userType') ?? 'Student';
+      console.log(userType)
       console.table(userType, id);
-      console.log("userType")
-      console.log("userType")
-      console.log("userType")
-      console.log("userType")
-      console.log("userType")
+
 
       this.isLoading = true;
       this.profilesService.find(id, userType).subscribe({

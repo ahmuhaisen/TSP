@@ -86,9 +86,10 @@ export class EventsListComponent {
   currentDate = new Date();
 
   disabledDate = (current: Date): boolean => {
-    const currentMonth = this.currentDate.getMonth();
-    const currentYear = this.currentDate.getFullYear();
-    return current.getMonth() !== currentMonth || current.getFullYear() !== currentYear;
+    // const currentMonth = this.currentDate.getMonth();
+    // const currentYear = this.currentDate.getFullYear();
+    // return current.getMonth() !== currentMonth || current.getFullYear() !== currentYear;
+    return false
   };
 
   disabledRangeTime: DisabledTimeFn = (_value, type?: DisabledTimePartial) => {
@@ -218,10 +219,18 @@ export class EventsListComponent {
         endDate: formValue.dateRange[1],
         isAttendanceFormEnabled: formValue.hasAttendanceForm
       };
-      this.eventsService.postEvent(eventRequest).subscribe();
+      this.eventsService.postEvent(eventRequest).subscribe(e => {
+        this.eventsService.getCommitteeEventsRequests().subscribe(data => {
+          this.eventRequests = data
+
+        })
+
+      });
       console.log('Event Request:', eventRequest);
 
       this.isEventRequestModalVisible = false;
+
+
       this.messageService.success('Event request submitted successfully');
       this.resetForm();
     } else {

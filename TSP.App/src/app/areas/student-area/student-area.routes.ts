@@ -24,6 +24,12 @@ export const routes: Routes = [
         data: { breadcrumb: 'Events' }
     },
     {
+        path: 'users',
+        loadComponent: () => import('./pages/users/users.component').then(m => m.UsersComponent),
+        loadChildren: () => import('./pages/users/users.routes').then(m => m.routes),
+        data: { breadcrumb: 'Users' }
+    },
+    {
         path: '**',
         loadComponent: () => import('../../components/not-found.component').then(m => m.NotFoundComponent),
         data: { breadcrumb: { skip: true } }

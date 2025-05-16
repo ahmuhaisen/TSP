@@ -183,7 +183,7 @@ export class SocietiesListComponent implements OnInit {
         switch (status) {
             case 'Pending':
                 return 'processing';
-            case 'Approved':
+            case 'Accepted':
                 return 'success';
             case 'Rejected':
                 return 'error';

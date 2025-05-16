@@ -61,10 +61,10 @@ public class SocietiesController : ApiController
     {
 
 
-        var command = JoinSociety.Command.Create(request.StudentId,
+        var command = JoinSociety.Command.Create(base.GetCurrentUserId()!.Value,
                                                SocietyId,
-                                               request.Motivation,
-                                               request.Section);
+                                               request.Section,
+                                               request.Motivation);
         var task = _sender.Send(command);
         return await FromResult(task);
     }

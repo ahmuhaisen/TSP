@@ -20,7 +20,6 @@
         <ul class="py-1 text-gray-500 " aria-labelledby="dropdown">
             <li (click)="toggleAccountDetailsDropdown()">
                 <a routerLink="/admin-area/users/{{ userInfo()?.id }}" [queryParams]="{ userType: 'Faculty' }"
-                
                     class="block py-2 px-4 text-sm rounded-lg hover:bg-gray-100 cursor-pointer">
                     <nz-icon nzType="user" nzTheme="outline" class="mr-1" />
                     My profile

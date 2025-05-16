@@ -36,10 +36,10 @@ namespace TPS.Application.Areas.StudentArea.Societies.Commands
         {
             public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
             {
+
                 
-                if (await context.Societies
-                    .AnyAsync(s => s.SocietiesMembers
-                        .Any(x => x.StudentId == request.StudentId && x.SocietyId == request.SocietyId), cancellationToken: cancellationToken))
+                if (await context.SocietiesMembers.AnyAsync(
+                    s=>s.StudentId == request.StudentId&&s.SocietyId==request.SocietyId))
                     return Result.Failure<Guid>(Error.ValueAlreadyExist("Student Already A Member", request.StudentId.ToString()));
 
                 var membership = new MembershipRequest
