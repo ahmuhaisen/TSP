@@ -2,7 +2,7 @@
   <h1 class="text-xl font-extrabold text-gray-700 mt-2">
     <nz-icon nzType="project" class="mr-2" />Events
   </h1>
-  <div>
+  <div *ngIf="isCurrentStudentACommitteeMemberOfASociety()">
     <button nz-button nzType="primary" (click)="openEventRequestModal()">
       <nz-icon nzType="reconciliation" />
       Request a new event
@@ -118,7 +118,7 @@
     </nz-drawer>
   </nz-tab>
 
-  <nz-tab nzTitle="My Event Requests">
+  <nz-tab nzTitle="My Event Requests" *ngIf="isCurrentStudentACommitteeMemberOfASociety()">
     @if (eventRequests.length === 0) {
     <nz-empty nzDescription="No event requests found"></nz-empty>
     } @else {

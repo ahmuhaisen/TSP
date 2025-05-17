@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.StudentArea.Societies.Queries;
 using TPS.Application.Areas.StudentArea.Students.Queries;
 using TSP.Domain.Shared;
@@ -7,10 +8,8 @@ namespace TSP.WebAPI.Controllers.StudentArea;
 
 [ApiController]
 [Route($"api/{Constants.APIAreas.Student}/[controller]")]
-public class StudentsController : ApiController
+public class StudentsController(ISender sender, IStudentsService studentsService)  : ApiController(sender)
 {
-    public StudentsController(ISender sender) : base(sender)
-    { }
     [HttpGet("OtherSocieties")]
     public async Task<IActionResult> GetOtherSocieties()
     {
@@ -45,6 +44,16 @@ public class StudentsController : ApiController
     {
         var query = MembershipRequestsOfStudent.Query.Create(base.GetCurrentUserId()!.Value);
         var task = _sender.Send(query);
+        return await FromResult(task);
+    }
+
+
+    [HttpGet("{studentId}/isCommittee")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> IsStudentACommitteeMember(Guid studentId)
+    {
+        var task = studentsService.IsStudentACommitteeMemberAsync(studentId);
         return await FromResult(task);
     }
 }

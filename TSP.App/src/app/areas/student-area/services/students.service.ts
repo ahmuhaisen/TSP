@@ -1,11 +1,9 @@
-import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { environment } from "../../../../environments/environment";
 import { Observable } from "rxjs";
 import { DbService } from "../../../common/services/db.service";
-import { SocietyWithAdvisor } from "../../system-admin-area/api-interfaces/society.types";
-import { MemberAssociatedSociety, SocietyJoinRequest, JoinSocietyRequest, Society } from "../api-interfaces/society.types";
+import { MemberAssociatedSociety, SocietyJoinRequest, Society } from "../api-interfaces/society.types";
 import { AuthService } from "../../../common/services/auth.service";
+
 @Injectable({
     providedIn: 'root'
 })
@@ -29,4 +27,7 @@ export class StudentsService {
         return this.db.getRequest<MemberAssociatedSociety[]>(`${this.baseUrl}/AllCommitteeSocieties`)
     }
 
+    isStudentACommitteeMember(studentId: string): Observable<boolean> {
+        return this.db.getRequest<boolean>(`${this.baseUrl}/${studentId}/isCommittee`);
+    }
 }

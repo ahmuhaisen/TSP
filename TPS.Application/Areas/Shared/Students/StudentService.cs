@@ -111,4 +111,14 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
 
         return Result.Success(data);
     }
+
+
+    public async Task<Result<bool>> IsStudentACommitteeMemberAsync(Guid studentId)
+    {
+        var isCommittee = await context.SocietiesMembers
+            .AsNoTracking()
+            .AnyAsync(s => s.StudentId == studentId && s.IsCommittee);
+
+        return Result.Success(isCommittee);
+    }
 }

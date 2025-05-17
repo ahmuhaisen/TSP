@@ -1,7 +1,7 @@
-import { CommonModule, NgClass, NgStyle } from '@angular/common';
-import { Component, inject, HostListener } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, HostListener, signal } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { DisabledTimeFn, DisabledTimePartial, NzDatePickerModule, NzRangePickerComponent } from 'ng-zorro-antd/date-picker';
+import { DisabledTimeFn, DisabledTimePartial, NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -9,7 +9,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
-import { differenceInCalendarDays, setHours } from 'date-fns';
+import { setHours } from 'date-fns';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
@@ -26,6 +26,7 @@ import { StudentsService } from '../../../services/students.service';
 import { AddEventRequest, EventSimpleDTO, MemberEventDetailsDTO } from '../../../api-interfaces/event.types';
 import { EventsService } from '../../../services/events.service';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../../../../common/services/auth.service';
 
 @Component({
   selector: 'app-events-list',
@@ -75,10 +76,11 @@ export class EventsListComponent {
   isEventRequestModalVisible = false;
   currentStep = 0;
   selectedSocietyId: string = "";
+  authService = inject(AuthService);
   studentsService = inject(StudentsService);
   messageService = inject(NzMessageService);
   eventsService = inject(EventsService);
-
+  isCurrentStudentACommitteeMemberOfASociety = signal(false);
 
   committeeSocieties: MemberAssociatedSociety[] = [];
   today = new Date();
@@ -140,9 +142,13 @@ export class EventsListComponent {
   constructor() {
 
     this.initForm();
+
+    this.studentsService.isStudentACommitteeMember(this.authService.currentUser()!.id).subscribe(data => {
+      this.isCurrentStudentACommitteeMemberOfASociety.set(data);
+    })
+
     this.eventsService.getCommitteeEventsRequests().subscribe(data => {
       this.eventRequests = data
-
     })
 
     this.eventsService.getEventsByMonth().subscribe(data => {
