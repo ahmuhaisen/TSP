@@ -82,8 +82,8 @@ export class GenSocietyDetailsComponent {
           return;
         }
 
-        if(this.pageMode() === 'ADMIN_MANAGE') {
-          if(this.authService.currentUser()?.id !== society.advisor.id){
+        if (this.pageMode() === 'ADMIN_MANAGE') {
+          if (this.authService.currentUser()?.id !== society.advisor.id) {
             this.router.navigate(['forbidden']);
             return;
           }
@@ -102,18 +102,24 @@ export class GenSocietyDetailsComponent {
       }
     });
 
+    this.societyService.societyMembers(this.societyId(), true).subscribe({
+      next: members => {
+        this.committee.set(members);
+        this.isCommitteeLoading = false;
+
+        if (this.pageMode() === 'STUDENT_MANAGE') {
+          if (!members.some(member => member.id === this.authService.currentUser()?.id)) {
+            this.router.navigate(['forbidden']);
+            return;
+          }
+        }
+      }
+    });
 
     this.societyService.societyMembers(this.societyId(), false).subscribe({
       next: members => {
         this.members.set(members);
         this.isMembersLoading = false;
-      }
-    });
-
-    this.societyService.societyMembers(this.societyId(), true).subscribe({
-      next: members => {
-        this.committee.set(members);
-        this.isCommitteeLoading = false;
       }
     });
   }
@@ -152,7 +158,7 @@ export class GenSocietyDetailsComponent {
         this.messageService.success('Society info updated successfully.');
         this.isEditSocietyInfoPopupVisible = false;
         this.editSocietyInfoFormComponent!.createSocietyForm?.reset();
-        
+
         // Refresh society details
         this.societyService.find(this.societyId()).subscribe({
           next: society => {
@@ -193,8 +199,8 @@ export class GenSocietyDetailsComponent {
 
     // Format date as yyyy-MM-dd
     const date = new Date(formValue.startDate);
-    const formattedDate = date.getFullYear() + '-' + 
-      String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+    const formattedDate = date.getFullYear() + '-' +
+      String(date.getMonth() + 1).padStart(2, '0') + '-' +
       String(date.getDate()).padStart(2, '0');
 
     this.societyService.addCommittee(this.societyId(), formValue.studentId, {
@@ -204,11 +210,11 @@ export class GenSocietyDetailsComponent {
       next: () => {
         this.messageService.success('Committee member added successfully');
         this.isAddCommitteePopupVisible = false;
-        
+
         // Remove member from members list
         const updatedMembers = this.members().filter(member => member.id !== formValue.studentId);
         this.members.set(updatedMembers);
-        
+
         // Refresh committee list
         this.societyService.societyMembers(this.societyId(), true).subscribe({
           next: members => {
@@ -245,8 +251,8 @@ export class GenSocietyDetailsComponent {
 
     // Format date as yyyy-MM-dd
     const date = new Date(formValue.startDate);
-    const formattedDate = date.getFullYear() + '-' + 
-      String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+    const formattedDate = date.getFullYear() + '-' +
+      String(date.getMonth() + 1).padStart(2, '0') + '-' +
       String(date.getDate()).padStart(2, '0');
 
     const data = {
@@ -276,10 +282,10 @@ export class GenSocietyDetailsComponent {
   }
 
   handleCommitteeChange(newCommittee: SocietyMember[]) {
-    const removedMembers = this.committee().filter(member => 
+    const removedMembers = this.committee().filter(member =>
       !newCommittee.some(newMember => newMember.id === member.id)
     );
-    
+
     // Add removed committee members to the members list
     if (removedMembers.length > 0) {
       const updatedMembers = [...this.members(), ...removedMembers.map(member => ({
@@ -288,7 +294,7 @@ export class GenSocietyDetailsComponent {
       }))];
       this.members.set(updatedMembers);
     }
-    
+
     // Update committee list
     this.committee.set(newCommittee);
   }

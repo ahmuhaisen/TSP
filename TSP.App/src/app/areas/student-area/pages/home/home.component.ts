@@ -12,6 +12,7 @@ import { HomeService } from '../../services/home.service';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { StudentEvent } from '../../api-interfaces/event.types';
 import { HomeStatistics } from '../../api-interfaces/statistics.types';
+import { environment } from '../../../../../environments/environment';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -29,6 +30,7 @@ import { HomeStatistics } from '../../api-interfaces/statistics.types';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+  societiesPicturesBaseUrl = environment.gitHubSocietiesPicturesURL;
   private authService = inject(AuthService);
   private homeService = inject(HomeService);
 

@@ -42,7 +42,8 @@
             <a [routerLink]="'/admin-area/events/' + event.id"
                 class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
                 <div class="w-16 p-2 shrink-0">
-                    <img [src]="event.logoId" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                    <nz-avatar class="w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
+                    [nzSrc]="societiesPicturesBaseUrl + event.logoId" [nzText]="event.eventName.substring(0, 2).toUpperCase()"></nz-avatar>
                 </div>
                 <div class="p-2 w-full">
                     <div class="w-full flex items-center justify-between flex-wrap sm:flex-nowrap">
@@ -106,27 +107,6 @@
                 </div>
                 <p class="text-base font-semibold text-gray-700">{{ statistics?.numAttendedEvents || 0 }} events</p>
             </div>
-
-            <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
-                <div class="flex justify-between items-center pb-1">
-                    <p class="text-xs text-gray-500 flex items-center mb-1">
-                        <nz-icon nzType="user" class="mr-1" />
-                        Activity
-                    </p>
-                </div>
-                <p class="text-base font-semibold text-gray-700">N/A</p>
-            </div>
-
-            <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
-                <div class="flex justify-between items-center pb-1">
-                    <p class="text-xs text-gray-500 flex items-center mb-1">
-                        <nz-icon nzType="user" class="mr-1" />
-                        Activity
-                    </p>
-                </div>
-                <p class="text-base font-semibold text-gray-700">N/A</p>
-            </div>
-
         </div>
     </div>
 </div>
