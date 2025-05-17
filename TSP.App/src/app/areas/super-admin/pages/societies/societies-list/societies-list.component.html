@@ -2,7 +2,11 @@
     <h1 class="text-xl font-extrabold text-gray-700 mt-2">
         <nz-icon nzType="appstore" class="mr-2" />Societies Management
     </h1>
-    <div>
+    <div class="flex gap-2">
+        <button nz-button nzType="default" (click)="exportToCsv()">
+            <nz-icon nzType="download" />
+            Export as CSV
+        </button>
         <a routerLink="./create" nz-button nzType="primary">
             <nz-icon nzType="plus" />
             Create new society
@@ -126,5 +130,12 @@
 
     <div *ngIf="societies.length === 0" class="mt-4 text-center">
         <nz-empty [nzNotFoundContent]="'No societies found.'" />
+    </div>
+    
+    <div *ngIf="societies.length > 0" class="mt-4 flex justify-center md:hidden">
+        <button nz-button nzType="default" (click)="exportToCsv()" class="w-full">
+            <nz-icon nzType="download" />
+            Export as CSV
+        </button>
     </div>
 </div> 
