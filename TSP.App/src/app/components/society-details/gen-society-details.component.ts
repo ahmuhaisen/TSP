@@ -39,7 +39,6 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
     NzModalModule,
     NzSkeletonModule,
     AddCommitteeMemberFormComponent,
-    AddMemberFormComponent,
     MembershipRequestsComponent
 ],
   templateUrl: './gen-society-details.component.html',

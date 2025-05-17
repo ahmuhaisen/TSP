@@ -1,9 +1,7 @@
-import { NgIf } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { Router, RouterLink, UrlTree } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { IUserBasicDetails } from '../../common/types/user.types';
-import { AuthService, User, UserType } from '../../common/services/auth.service';
+import { AuthService, UserType } from '../../common/services/auth.service';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { environment } from '../../../environments/environment';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
