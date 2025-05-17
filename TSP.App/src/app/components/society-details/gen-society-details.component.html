@@ -7,13 +7,6 @@
             <p>About</p>
         </div>
     </div>
-    <div>
-        @if(pageMode() === 'STUDENT_MANAGE' || pageMode() === 'ADMIN_MANAGE'){
-            <button nz-button nzType="primary" nzShape="circle" (click)="openEditSocietyInfoPopup()">
-                <nz-icon nzType="edit" nzTheme="outline" />
-            </button>
-        }
-    </div>
 </div>
 
 @if(isSocietyLoading){
@@ -30,7 +23,7 @@
                 </p>
             </div>
         </div>
-    
+
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 mt-9">
             <div class="grid gap-y-1.5">
                 <p class="text-xs text-gray-500 flex items-center">
@@ -125,17 +118,6 @@
 
 
 @if(pageMode() === 'ADMIN_MANAGE' || pageMode() === 'STUDENT_MANAGE'){
-<!-- Edit Society Info Popup -->
-<nz-modal [(nzVisible)]="isEditSocietyInfoPopupVisible"
-        nzTitle="Edit Society Info" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isEditSocietyInfoLoading" nzOkText="Save" [nzBodyStyle]="{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }"
-        (nzOnCancel)="handleCancelEditSociety()" (nzOnOk)="handleOkEditSociety()"
-        >
-    <ng-container *nzModalContent>
-        <app-edit-society-info-form [society]="society!"/>
-    </ng-container>
-</nz-modal>
-
 <!-- Add Committee Member Popup -->
 <nz-modal [(nzVisible)]="isAddCommitteePopupVisible"
         nzTitle="Add Committee Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
