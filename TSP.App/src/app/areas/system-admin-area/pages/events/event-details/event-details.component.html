@@ -169,11 +169,29 @@
 
         <nz-divider class="my-2" />
 
-        <div class="mt-4">
-            <nz-steps [nzCurrent]="1" nzStatus="process" nzSize="small" nzDirection="vertical">
-                <nz-step nzTitle="Submitted"></nz-step>
-                <nz-step nzTitle="Advisor approval" nzDescription="Waiting for advisor approval."></nz-step>
-                <nz-step nzTitle="Dean Assistant approval"></nz-step>
+        <div class="mt-4" *ngIf="eventDetailsDTO">
+            <nz-steps 
+                [nzCurrent]="getApplicationHistoryStep()" 
+                [nzStatus]="getApplicationHistoryStatus()" 
+                nzSize="small" 
+                nzDirection="vertical">
+                <nz-step 
+                    nzTitle="Submitted" 
+                    [nzDescription]="(eventDetailsDTO.eventRequestDTO?.requestTime | date:'MMM d, yyyy h:mm a') ?? 'Date not available'">
+                </nz-step>
+                <nz-step 
+                    nzTitle="Advisor approval" 
+                    [nzDescription]="getAdvisorApprovalDescription()">
+                </nz-step>
+                <nz-step 
+                    nzTitle="Dean Assistant approval" 
+                    [nzDescription]="getDeanAssistantApprovalDescription()">
+                </nz-step>
+                <nz-step 
+                    *ngIf="isEventFullyApproved()"
+                    nzTitle="Event Ready" 
+                    [nzDescription]="'Event fully approved and ready to proceed'">
+                </nz-step>
             </nz-steps>
         </div>
     </div>
