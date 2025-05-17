@@ -4,5 +4,5 @@ namespace TPS.Application.Abstractions;
 
 public interface IJwtTokenService
 {
-    Task<string> GenerateAsync(ApplicationUser user);
+    Task<string> GenerateAsync(ApplicationUser user, string? userRole = null);
 }

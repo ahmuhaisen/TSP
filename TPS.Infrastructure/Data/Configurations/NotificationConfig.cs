@@ -22,7 +22,7 @@ public class NotificationConfig : IEntityTypeConfiguration<Notification>
             .IsRequired(false);
 
         builder.Property(n => n.CreatedAt)
-           .HasDefaultValue(DateTime.Now)
+           .HasDefaultValueSql("getdate()")
            .IsRequired();
 
         builder.Property(n => n.SeenAt)

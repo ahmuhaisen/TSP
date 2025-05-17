@@ -47,4 +47,13 @@ public class AuthenticationController : ApiController
         var task = _authService.LoginStudent(request);
         return await FromResult(task);
     }
+
+    // Super Admin endpoints
+
+    [HttpPost("SuperAdmin/Login")]
+    public async Task<IActionResult> LoginSuperAdmin([FromBody] LoginRequest request)
+    {
+        var task = _authService.LoginSuperAdmin(request);
+        return await FromResult(task);
+    }
 }

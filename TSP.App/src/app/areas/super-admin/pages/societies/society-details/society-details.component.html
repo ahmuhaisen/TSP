@@ -1,0 +1,25 @@
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="appstore" class="mr-2" />Edit Society
+    </h1>
+    <div class="flex gap-2">
+        <button nz-button nzType="default" (click)="cancelForm()">
+            Cancel
+        </button>
+        <button nz-button nzType="primary" (click)="submitForm()" [disabled]="isSubmitting">
+            <span *ngIf="isSubmitting">Saving...</span>
+            <span *ngIf="!isSubmitting">Save</span>
+        </button>
+    </div>
+</div>
+
+<nz-divider />
+
+<nz-spin [nzSpinning]="isLoading">
+    <ng-container *ngIf="society">
+        <app-edit-society-info-form [society]="society"></app-edit-society-info-form>
+    </ng-container>
+    <div *ngIf="!society && !isLoading" class="p-4 bg-red-50 text-red-700 rounded">
+        No society data available. Please try again.
+    </div>
+</nz-spin> 
