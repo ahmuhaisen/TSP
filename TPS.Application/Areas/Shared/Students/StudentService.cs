@@ -54,7 +54,7 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
         }
 
         context.SocietiesMembers.Remove(data);
-        var changes = context.SaveChanges();
+        var changes = await context.SaveChangesAsync();
         if (changes <= 0)
         {
             return Result.Failure(Error.InternalServerError("Something wrong happend in the process"));

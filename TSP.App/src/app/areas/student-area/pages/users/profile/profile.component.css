@@ -1,0 +1,67 @@
+.avatar-uploader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.avatar-uploader nz-avatar {
+  cursor: pointer;
+}
+
+.avatar-uploader .relative:hover .opacity-0 {
+  opacity: 1 !important;
+}
+
+:host ::ng-deep .ant-upload.ant-upload-select-picture-card {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+:host ::ng-deep .ant-upload-list-picture-card-container {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.avatar-uploader .relative {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.avatar-uploader .relative:hover {
+  transform: scale(1.05);
+}
+
+/* Popover styling */
+:host ::ng-deep .ant-popover-inner-content {
+  padding: 0;
+}
+
+:host ::ng-deep .ant-popover-arrow {
+  display: none;
+}
+
+:host ::ng-deep .ant-btn-text.ant-btn-dangerous {
+  color: #ff4d4f;
+}
+
+:host ::ng-deep .ant-btn-text.ant-btn-dangerous:hover {
+  background-color: #fff1f0;
+}
+
+/* Form styling */
+:host ::ng-deep .ant-form-item-label {
+  text-align: left;
+}
+
+:host ::ng-deep .ant-form-vertical .ant-form-item-label {
+  padding-bottom: 4px;
+}
+
+:host ::ng-deep .ant-form-vertical .ant-form-item {
+  margin-bottom: 16px;
+}

@@ -41,8 +41,7 @@
 
                     <td>{{request.requestedOn|date:'medium'}}</td>
                     <td>
-                        <nz-tag
-                            [nzColor]="request.status === 'Pending' ? 'blue' : request.status === 'Accepted' ? 'green' : 'red'">
+                        <nz-tag [nzColor]="getStatusColor(request.status)">
                             {{request.status}}
                         </nz-tag>
                     </td>
@@ -109,7 +108,7 @@
                 <label class="text-gray-600 font-medium">Status</label>
                 <p>
                     <nz-tag
-                        [nzColor]="selectedRequest?.status === 'PENDING' ? 'blue' : selectedRequest?.status === 'ACCEPTED' ? 'green' : 'red'">
+                        [nzColor]="selectedRequest?.status === 'Pending' ? 'blue' : selectedRequest?.status === 'Accepted' ? 'green' : 'red'">
                         {{selectedRequest?.status}}
                     </nz-tag>
                 </p>

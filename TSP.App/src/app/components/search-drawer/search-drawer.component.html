@@ -21,6 +21,7 @@
                 nzSize="large"
                 nzPlaceHolder="Search by"
                 class="w-full sm:w-[130px]"
+                [(ngModel)]="selectedSearchType"
               >
                 <nz-option [nzLabel]="'Societies'" [nzValue]="'1'"></nz-option>
                 <nz-option [nzLabel]="'Members'" [nzValue]="'2'"></nz-option>

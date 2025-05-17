@@ -94,7 +94,18 @@ export class SocietyDetailsComponent {
       MembershipRequestId: request?.id || "",
       isAccepted: true
     }
-    this.socitiesService.updateMembershipRequests(parsedRequest).subscribe();
+    this.socitiesService.updateMembershipRequests(parsedRequest).subscribe(
+      (data) => {
+        this.membershipRequests = this.membershipRequests.map(r => {
+          if (r.id === requestId) {
+            return {
+              ...r,
+              status: 'Accepted'
+            };
+          }
+          return r;
+        });
+      });
   }
 
   rejectRequest(requestId: string): void {
@@ -105,8 +116,31 @@ export class SocietyDetailsComponent {
       isAccepted: false
     }
 
-    this.socitiesService.updateMembershipRequests(parsedRequest).subscribe();
+    this.socitiesService.updateMembershipRequests(parsedRequest).subscribe((data) => {
+      this.membershipRequests = this.membershipRequests.map(r => {
+        if (r.id === requestId) {
+          return {
+            ...r,
+            status: 'Reject'
+          };
+        }
+        return r;
+      });
+    });
 
   }
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'Pending':
+        return 'processing';
+      case 'Accepted':
+        return 'success';
+      case 'Reject':
+        return 'error';
+      default:
+        return 'default';
+    }
+  }
+
 }
 

@@ -39,12 +39,12 @@ public class GetEventsPerMonth
                    Date =  ""+g.Key.Year+"-"+g.Key.Month+"-01",
                    Events = g.Count()
                })
-               .OrderByDescending(s=>s.Date)
+               .OrderBy(s=>s.Date)
                .Take(request.numberOfMonths)
                .Select(s => new EventsPerMonthDTO
                 {
-                    Date = DateOnly.Parse(s.Date).ToString(),
-                    Events = s.Events
+                    Date = DateOnly.Parse(s.Date).ToString("yyyy/MM"),
+                   Events = s.Events
                 })
                .ToListAsync();
 

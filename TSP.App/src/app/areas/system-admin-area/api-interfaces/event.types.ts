@@ -58,3 +58,4 @@ export interface EventRequestDecision {
     isAccepted: boolean;
     Remark: string;
 }
+
