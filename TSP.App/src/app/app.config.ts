@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withViewTransitions, withRouterConfig } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withRouterConfig } from '@angular/router';
 import { routes } from './app.routes';
 import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideNzI18n(en_US),
     importProvidersFrom(FormsModule, TimeagoModule.forRoot()),
     provideAnimationsAsync(),
-    provideCharts(withDefaultRegisterables()), // TODO: Consider including a minimal configuration
+    provideCharts(withDefaultRegisterables()),
     provideHttpClient(
       withInterceptors([errorInterceptor, authInterceptor]),
       withInterceptorsFromDi()

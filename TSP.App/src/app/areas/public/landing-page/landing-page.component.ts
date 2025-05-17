@@ -1,17 +1,20 @@
 import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NgOptimizedImage, NgIf, NgFor, NgClass } from '@angular/common';
+import { NgIf, NgFor, NgClass } from '@angular/common';
 import { interval, Subscription } from 'rxjs';
+import { SharedFooterComponent } from '../../../components/shared-footer.component';
+import { SharedHeaderComponent } from '../../../components/shared-header.component';
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
   imports: [
     RouterLink,
-    NgOptimizedImage,
     NgIf,
     NgFor,
-    NgClass
+    NgClass,
+    SharedFooterComponent,
+    SharedHeaderComponent
   ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css'

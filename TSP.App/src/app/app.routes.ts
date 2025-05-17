@@ -8,6 +8,14 @@ export const routes: Routes = [
         loadComponent: () => import('./areas/public/landing-page/landing-page.component').then(m => m.LandingPageComponent),
     },
     {
+        path: 'privacy-policy',
+        loadComponent: () => import('./areas/public/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent),
+    },
+    {
+        path: 'terms-of-use',
+        loadComponent: () => import('./areas/public/terms-of-use/terms-of-use.component').then(m => m.TermsOfUseComponent),
+    },
+    {
         path: 'admin-area',
         loadComponent: () => import('./areas/system-admin-area/system-admin-area.component').then(m => m.SystemAdminAreaComponent),
         loadChildren: () => import('./areas/system-admin-area/system-admin-area.routes').then(m => m.routes),
