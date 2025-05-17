@@ -8,7 +8,7 @@ export const routes: Routes = [
     },
     {
         path: ':id',
-        loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent),
+        loadComponent: () => import('../../../../components/gen-profile/gen.profile.component').then(m => m.GenProfileComponent),
         data: {
             breadcrumb: 'Profile',
         }

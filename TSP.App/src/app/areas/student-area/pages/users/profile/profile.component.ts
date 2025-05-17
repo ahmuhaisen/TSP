@@ -21,6 +21,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Observable, Observer } from 'rxjs';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { environment } from '../../../../../../environments/environment';
+import { GenProfileComponent } from '../../../../../components/gen-profile/gen.profile.component';
 
 export interface SuggestedPerson {
   id: string;
@@ -51,8 +52,9 @@ export interface SuggestedPerson {
     NzDividerComponent,
     ReactiveFormsModule,
     ContainerBlockComponent,
-    RouterModule
-  ],
+    RouterModule,
+    GenProfileComponent
+],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
