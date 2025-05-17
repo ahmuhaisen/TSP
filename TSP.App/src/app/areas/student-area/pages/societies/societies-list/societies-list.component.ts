@@ -109,7 +109,23 @@ export class SocietiesListComponent implements OnInit {
     }
 
     showJoinSocietyModal(): void {
+        // Check if there are available societies to join
+        if (this.getAvailableSocieties().length === 0) {
+            this.message.info('You have already requested to join all available societies');
+            return;
+        }
+        this.joinSocietyForm.reset();
         this.isJoinSocietyModalVisible = true;
+    }
+
+    getAvailableSocieties(): Society[] {
+        if (!this.joinRequests || !this.otherSocieties) {
+            return this.otherSocieties || [];
+        }
+
+        const requestedSocietyNames = this.joinRequests.map(request => request.societyName);
+
+        return this.otherSocieties.filter(society => !requestedSocietyNames.includes(society.name));
     }
 
     handleCancelJoinSociety(): void {
@@ -118,6 +134,13 @@ export class SocietiesListComponent implements OnInit {
     }
 
     handleJoinSociety(): void {
+        // Check if there are available societies to join
+        if (this.getAvailableSocieties().length === 0) {
+            this.message.info('No available societies to join');
+            this.isJoinSocietyModalVisible = false;
+            return;
+        }
+        
         if (this.joinSocietyForm.valid) {
             this.isJoinSocietyLoading = true;
             const formValue: JoinSocietyRequest = this.joinSocietyForm.value;
