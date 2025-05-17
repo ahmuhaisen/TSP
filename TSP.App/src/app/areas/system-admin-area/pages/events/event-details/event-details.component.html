@@ -73,7 +73,7 @@
                 </ng-template>
                 {{eventDetailsDTO.eventDescription}}
             </nz-tab>
-            <nz-tab [nzTitle]="titleTemplateT2">
+            <nz-tab [nzTitle]="titleTemplateT2" *ngIf="eventDetailsDTO.eventRequestDTO.isAttendeesFormEnabled">
                 <ng-template #titleTemplateT2>
                     <nz-icon nzType="team" />
                     Participants
@@ -234,33 +234,28 @@
                 <p class="text-gray-600">Authorized advisor to approve:</p>
                 <p class="text-gray-700 font-semibold">
                     {{eventDetailsDTO.advisor.advisorName}}
-                    <a [href]="'mailto:'" class="text-blue-400 text-xs font-normal">
+                    <a [href]="'mailto:' + ''" class="text-blue-400 text-xs font-normal">
                         <nz-icon nzType="mail" />
                     </a>
                 </p>
             </div>
             <div class="col-span-2">
                 <p class="text-gray-600">Authorized faculty administration members to approve:</p>
-                <span class="text-gray-700 font-semibold">
-                    Dean, Prof. Basel Ali Mahafzah
-                    <a href="mailto:suhaib@ju.edu.jo.com" class="text-blue-400 text-xs font-normal">
-                        <nz-icon nzType="mail" />
-                    </a>
-                </span>
-                or
-                <span class="text-gray-700 font-semibold">
-                    Dean Assistant, Dr. Abdelbaset Jamal Assaf
-                    <a href="mailto:suhaib@ju.edu.jo.com" class="text-blue-400 text-xs font-normal">
-                        <nz-icon nzType="mail" />
-                    </a>
-                </span>
+                @for(admin of eventDetailsDTO.eventRequestDTO.admins; track $index){
+                    <span class="text-gray-700 font-semibold">
+                        {{ admin.rank }}, {{ admin.facultyMemberName }}
+                        <a [href]="'mailto:' + admin.facultyMemberEmail" class="text-blue-400 text-xs font-normal">
+                            <nz-icon nzType="mail" />
+                        </a>
+                    </span>
+                }
             </div>
-            <div class="">
+            <div>
                 <p class="text-gray-600">
                     Attendees form:
-                    <nz-tag class="ml-1 text-[9px]" [nzColor]="false ? 'success' : 'error'">
-                        <nz-icon [nzType]="false ? 'check-circle' : 'close-circle'" />
-                        {{ false ? 'Enabled' : 'Disabled' }}
+                    <nz-tag class="ml-1 text-[9px]" [nzColor]="eventDetailsDTO.eventRequestDTO.isAttendeesFormEnabled ? 'success' : 'error'">
+                        <nz-icon [nzType]="eventDetailsDTO.eventRequestDTO.isAttendeesFormEnabled ? 'check-circle' : 'close-circle'" />
+                        {{ eventDetailsDTO.eventRequestDTO.isAttendeesFormEnabled ? 'Enabled' : 'Disabled' }}
                     </nz-tag>
                 </p>
             </div>
