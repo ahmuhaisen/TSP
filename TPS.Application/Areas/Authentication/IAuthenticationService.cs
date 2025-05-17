@@ -9,4 +9,5 @@ public interface IAuthenticationService
     Task<Result<LoginResponse>> LoginStudent(LoginRequest request);
     Task<Result> RegisterFacultyMember(FacultyRegisterRequest request);
     Task<Result> RegisterStudent(StudentRegisterRequest request);
+    Task<Result<LoginResponse>> LoginSuperAdmin(LoginRequest request);
 }

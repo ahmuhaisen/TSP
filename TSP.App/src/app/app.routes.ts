@@ -21,6 +21,13 @@ export const routes: Routes = [
         canActivate: [UserTypeGuard],
     },
     {
+        path: 'super-admin',
+        loadComponent: () => import('./areas/super-admin/super-admin.component').then(m => m.SuperAdminComponent),
+        loadChildren: () => import('./areas/super-admin/super-admin.routes').then(m => m.superAdminRoutes),
+        data: { expectedUserRole: 'SuperAdmin' },
+        canActivate: [ UserTypeGuard ]
+    },
+    {
         path: 'authentication',
         loadComponent: () => import('./areas/authentication/authentication.component').then(m => m.AuthenticationComponent),
         loadChildren: () => import('./areas/authentication/authentication.routes').then(m => m.routes)

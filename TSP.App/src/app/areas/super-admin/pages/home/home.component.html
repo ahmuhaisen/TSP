@@ -1,0 +1,40 @@
+<h1 class="font-bold text-lg flex items-center">
+    <nz-icon nzType="setting" class="mr-2" />
+    Super Admin Home Page
+</h1>
+<p class="text-gray-500">You can manage the application settings and user roles from here.</p>
+
+<!-- Cards for each functionality admin can make -->
+<section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+    <div class="flex flex-col sm:flex-row gap-4 mt-4">
+        <div
+            class="w-full p-4 text-gray-700 shadow rounded-lg border-t-2 border-green-400 min-h-[120px] bg-white hover:bg-gray-50 transition duration-200 ease-in-out">
+            <div class="flex justify-between items-center pb-1">
+                <p class="text-xs text-green-500 flex items-center mb-1">
+                    <nz-icon nzType="team" class="mr-1" />
+                </p>
+                <a routerLink="../users" class="text-xs text-green-500 hover:text-green-700">Manage</a>
+            </div>
+            <div class="h-full flex flex-col justify-center">
+                <p class="text-lg font-bold">User Requests</p>
+                <p class="text-xs text-gray-500">Accept, reject and see user accounts.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row gap-4 mt-4">
+        <div
+            class="w-full p-4 text-gray-700 shadow rounded-lg border-t-2 border-blue-400 min-h-[120px] bg-white hover:bg-gray-50 transition duration-200 ease-in-out">
+            <div class="flex justify-between items-center pb-1">
+                <p class="text-xs text-blue-500 flex items-center mb-1">
+                    <nz-icon nzType="appstore" class="mr-1" />
+                </p>
+                <a routerLink="../societies" class="text-xs text-blue-500 hover:text-blue-700">Manage</a>
+            </div>
+            <div class="h-full flex flex-col justify-center">
+                <p class="text-lg font-bold">Society Management</p>
+                <p class="text-xs text-gray-500">Create, update and manage all societies.</p>
+            </div>
+        </div>
+    </div>
+</section>

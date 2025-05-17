@@ -38,7 +38,7 @@ public class AuthenticationService(UserManager<ApplicationUser> _userManager,
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
 
-        if (user is not FacultyMember || !await _userManager.CheckPasswordAsync(user, request.Password))
+        if (user is not FacultyMember || !user.IsActive || !await _userManager.CheckPasswordAsync(user, request.Password))
             return Result.Failure<LoginResponse>(Error.InvalidCredentials());
 
         var token = await _tokenService.GenerateAsync(user);
@@ -82,7 +82,7 @@ public class AuthenticationService(UserManager<ApplicationUser> _userManager,
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
 
-        if (user is not Student || !await _userManager.CheckPasswordAsync(user, request.Password))
+        if (user is not Student || !user.IsActive || !await _userManager.CheckPasswordAsync(user, request.Password))
             return Result.Failure<LoginResponse>(Error.InvalidCredentials());
 
         var token = await _tokenService.GenerateAsync(user);
@@ -98,13 +98,29 @@ public class AuthenticationService(UserManager<ApplicationUser> _userManager,
 
         return Result.Success(response);
     }
-}
 
-public record LoginResponse(
-    string Token,
-    string UserType,
-    Guid Id,
-    string fullName,
-    string email,
-    string profileImageId
-);
+    public async Task<Result<LoginResponse>> LoginSuperAdmin(LoginRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+
+        if (user is null || !await _userManager.CheckPasswordAsync(user, request.Password))
+            return Result.Failure<LoginResponse>(Error.InvalidCredentials());
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        if (!roles.Contains("SuperAdmin"))
+            return Result.Failure<LoginResponse>(Error.InvalidCredentials());
+
+        var token = await _tokenService.GenerateAsync(user, "SuperAdmin");
+        var response = new LoginResponse(
+            token,
+            "SuperAdmin",
+            user.Id,
+            $"{user.FirstName} {user.LastName}",
+            user.Email!,
+            user.ProfileImageId!
+        );
+
+        return Result.Success(response);
+    }
+}

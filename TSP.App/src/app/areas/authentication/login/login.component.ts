@@ -8,7 +8,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 import { AuthService, LoginRequest, UserType } from '../../../common/services/auth.service';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { RouterEvent, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
