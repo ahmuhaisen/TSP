@@ -85,7 +85,7 @@
     [nzMaskClosable]="false" nzOkText="Reject" (nzOnCancel)="handleCancelReject()" (nzOnOk)="handleOkReject()">
     <ng-container *nzModalContent>
         <nz-alert nzType="error" class="mb-6"
-            [nzMessage]="'Request for (' + selectedEventRequestForDecision?.eventName + '), Are you sure you want to reject this request?'"></nz-alert>
+            [nzMessage]="'Request for (' + selectedEventRequestForDecision.eventName + '), Are you sure you want to reject this request?'"></nz-alert>
 
         <form nz-form [formGroup]="rejectForm">
             <nz-form-item class="flex items-start">

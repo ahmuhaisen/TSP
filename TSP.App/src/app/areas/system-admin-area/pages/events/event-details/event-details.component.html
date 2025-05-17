@@ -177,7 +177,7 @@
                 nzDirection="vertical">
                 <nz-step 
                     nzTitle="Submitted" 
-                    [nzDescription]="(eventDetailsDTO.eventRequestDTO?.requestTime | date:'MMM d, yyyy h:mm a') ?? 'Date not available'">
+                    [nzDescription]="(eventDetailsDTO.eventRequestDTO.requestTime | date:'MMM d, yyyy h:mm a') ?? 'Date not available'">
                 </nz-step>
                 <nz-step 
                     nzTitle="Advisor approval" 

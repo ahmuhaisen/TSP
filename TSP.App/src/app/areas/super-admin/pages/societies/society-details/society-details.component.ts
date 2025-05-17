@@ -17,7 +17,6 @@ import { EditSocietyInfoFormComponent } from '../../../../../components/society-
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NzButtonModule,
     NzIconModule,
     NzDividerModule,

@@ -32,7 +32,6 @@ import { SocietiesService } from '../../../services/societies.service';
     NzAvatarModule,
     RouterLink,
     NgIf,
-    NgFor,
     GenSocietyDetailsComponent
   ],
   templateUrl: './society-details.component.html',

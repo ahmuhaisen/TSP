@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -16,7 +15,6 @@ import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 @Component({
   selector: 'app-login',
   imports: [
-    RouterLink,
     CommonModule,
     ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule,NzSegmentedModule, NzIconModule
   ],

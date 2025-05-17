@@ -1,5 +1,5 @@
 import { Component, inject, ViewChild } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -17,7 +17,6 @@ import { EditSocietyInfoFormComponent } from '../../../../../components/society-
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NzButtonModule,
     NzIconModule,
     NzDividerModule,
