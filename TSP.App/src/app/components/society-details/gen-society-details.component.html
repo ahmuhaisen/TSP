@@ -95,7 +95,7 @@
     </div>
     <div class="flex gap-2">
         @if(pageMode() === 'STUDENT_MANAGE' || pageMode() === 'ADMIN_MANAGE'){
-        <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="Export as CSV">
+        <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="Export as CSV" (click)="downloadMembersAsCSV()">
             <nz-icon nzType="download" nzTheme="outline" />
         </button>
         <button nz-button nzType="primary" nzShape="circle" (click)="showSocietyRequests()" nz-tooltip nzTooltipTitle="Membership Requests">

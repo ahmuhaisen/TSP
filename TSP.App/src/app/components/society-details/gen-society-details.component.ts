@@ -251,4 +251,44 @@ export class GenSocietyDetailsComponent {
   showSocietyRequests(){
     this.membershipRequestsComponent?.showSocietyRequests();
   }
+
+  downloadMembersAsCSV(): void {
+    const members = this.members();
+    if (!members.length) {
+      this.messageService.warning('No members to export');
+      return;
+    }
+
+    // Define CSV headers
+    const headers = ['First Name', 'Last Name', 'Position', 'Join Date'];
+    
+    // Convert members data to CSV rows
+    const csvRows = members.map(member => [
+      member.firstName,
+      member.lastName,
+      member.position,
+      new Date(member.joinDate).toLocaleDateString()
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...csvRows.map(row => row.join(','))
+    ].join('\n');
+
+    // Create blob and download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    // Set download attributes
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${this.society?.name || 'society'}_members.csv`);
+    link.style.visibility = 'hidden';
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }
