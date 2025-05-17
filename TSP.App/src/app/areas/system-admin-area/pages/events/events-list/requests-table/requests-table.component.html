@@ -1,3 +1,10 @@
+<nz-button-group class="mb-4 flex justify-end">
+    <button nz-button nzType="default" (click)="exportToCsv()" nz-tooltip nzTooltipTitle="Export to CSV">
+        <nz-icon nzType="download"></nz-icon>
+        Export to CSV
+    </button>
+</nz-button-group>
+
 <nz-table #requestsTable class="mt-5" [nzData]="eventsRequests" nzPaginationType="small" [nzPageSize]="5"
     [nzLoading]="false" nzBordered="true" [nzScroll]="{ x: '1000px' }" nzSize="small">
     <thead>

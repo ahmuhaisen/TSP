@@ -275,4 +275,45 @@ export class RequestsTableComponent implements OnInit {
     this.nzMessageService.success("Event Request rejected")
     this.isRejectPopupVisible = false;
   }
+
+  exportToCsv(): void {
+    if (!this.eventsRequests || this.eventsRequests.length === 0) {
+      this.nzMessageService.warning('No data to export');
+      return;
+    }
+
+    // Define headers for CSV
+    const headers = ['Event Name', 'Society', 'Date & Time', 'Location', 'Status', 'Description'];
+    
+    // Map data to CSV format
+    const data = this.eventsRequests.map(request => [
+      request.eventName,
+      request.eventSociety.societyName,
+      new Date(request.startDateTime).toLocaleString(),
+      request.locationString,
+      request.approvalStatus,
+      request.eventDescription || 'No description'
+    ]);
+    
+    // Create CSV content with headers and data
+    const csvContent = [
+      headers.join(','),
+      ...data.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+    
+    // Create a Blob with the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    // Create a download link and trigger download
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `events-requests-${new Date().toISOString().slice(0, 10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    this.nzMessageService.success('CSV exported successfully');
+  }
 }
