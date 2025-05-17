@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz.Logging;
+using System.Linq;
 using System.Runtime;
 using System.Text.Json;
 using TPS.Application.Abstractions;
@@ -208,19 +209,19 @@ public class FeedbackService : IFeedbackService
         if(now < feedbackStartDate)
             return Result.Failure<EventFeedbackResponseDto>(Error.CustomError("Feedback is not yet available."));
 
-        var feedbacks = await _context.FeedbackAnswers
-            .AsNoTracking()
-            .Where(f => f.EventId == @event.Id)
-            .OrderByDescending(f => f.SubmittedAt)
-            //.Take(numberOfFeedbackAnswers)
-            .ToListAsync();
-
         var summary = await _context.FeedbackSummaries
             .AsNoTracking()
             .FirstOrDefaultAsync(f => f.EventId == @event.Id);
 
         if (summary is null)
             return Result.Failure<EventFeedbackResponseDto>(Error.NotFound(nameof(FeedbackSummary), eventId.ToString()));
+
+        var feedbacks = await _context.FeedbackAnswers
+            .AsNoTracking()
+            .Where(f => f.EventId == @event.Id)
+            .OrderByDescending(f => f.SubmittedAt)
+            .Take(summary.TotalResponses)
+            .ToListAsync();
 
         var response = new EventFeedbackResponseDto
         {
