@@ -20,6 +20,8 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { Router } from '@angular/router';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { AuthService } from '../../common/services/auth.service';
+import { MembershipRequestsComponent } from "./membership-requests/membership-requests.component";
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
   selector: 'app-gen-society-details',
@@ -30,6 +32,7 @@ import { AuthService } from '../../common/services/auth.service';
     NzDividerModule,
     NzIconModule,
     NzTableModule,
+    NzToolTipModule,
     NzAvatarModule,
     MembersTableComponent,
     CommitteeTableComponent,
@@ -37,7 +40,8 @@ import { AuthService } from '../../common/services/auth.service';
     NzSkeletonModule,
     AddCommitteeMemberFormComponent,
     AddMemberFormComponent,
-  ],
+    MembershipRequestsComponent
+],
   templateUrl: './gen-society-details.component.html',
   styleUrl: './gen-society-details.component.css'
 })
@@ -124,16 +128,8 @@ export class GenSocietyDetailsComponent {
     });
   }
 
-  openEditSocietyInfoPopup() {
-    this.isEditSocietyInfoPopupVisible = true;
-  }
 
-  handleCancelEditSociety() {
-    this.isEditSocietyInfoPopupVisible = false;
-    this.editSocietyInfoFormComponent!.createSocietyForm?.reset();
-  }
-
-  handleOkEditSociety() {
+ handleOkEditSociety() {
     if (this.editSocietyInfoFormComponent!.createSocietyForm!.invalid) {
       this.editSocietyInfoFormComponent!.messageService.error('Please fill in all required fields.');
       this.editSocietyInfoFormComponent!.createSocietyForm?.markAllAsTouched();
@@ -232,55 +228,6 @@ export class GenSocietyDetailsComponent {
     });
   }
 
-  openAddMemberPopup() {
-    this.isAddMemberPopupVisible = true;
-  }
-
-  handleCancelAddMember() {
-    this.isAddMemberPopupVisible = false;
-  }
-
-  handleOkAddMember() {
-    if (!this.addMemberForm?.isFormValid()) {
-      this.messageService.error('Please fill in all required fields.');
-      return;
-    }
-
-    const formValue = this.addMemberForm.getFormValue();
-    this.isAddMemberLoading = true;
-
-    // Format date as yyyy-MM-dd
-    const date = new Date(formValue.startDate);
-    const formattedDate = date.getFullYear() + '-' +
-      String(date.getMonth() + 1).padStart(2, '0') + '-' +
-      String(date.getDate()).padStart(2, '0');
-
-    const data = {
-      ...formValue,
-      startDate: formattedDate
-    };
-
-    this.societyService.addMember(this.societyId(), data).subscribe({
-      next: () => {
-        this.messageService.success('Member added successfully');
-        this.isAddMemberPopupVisible = false;
-        // Refresh members list
-        this.societyService.societyMembers(this.societyId(), false).subscribe({
-          next: members => {
-            this.members.set(members);
-          }
-        });
-      },
-      error: (error: unknown) => {
-        this.messageService.error('Failed to add member');
-        console.error('Error adding member:', error);
-      },
-      complete: () => {
-        this.isAddMemberLoading = false;
-      }
-    });
-  }
-
   handleCommitteeChange(newCommittee: SocietyMember[]) {
     const removedMembers = this.committee().filter(member =>
       !newCommittee.some(newMember => newMember.id === member.id)
@@ -297,5 +244,11 @@ export class GenSocietyDetailsComponent {
 
     // Update committee list
     this.committee.set(newCommittee);
+  }
+
+  @ViewChild(MembershipRequestsComponent) membershipRequestsComponent: MembershipRequestsComponent | undefined;
+
+  showSocietyRequests(){
+    this.membershipRequestsComponent?.showSocietyRequests();
   }
 }
