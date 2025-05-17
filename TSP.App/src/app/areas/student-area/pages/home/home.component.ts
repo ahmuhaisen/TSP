@@ -8,9 +8,10 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
 import { AuthService, User } from '../../../../common/services/auth.service';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { HomeService, HomeStatistics, StudentEvent } from '../../services/home.service';
+import { HomeService } from '../../services/home.service';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
-
+import { StudentEvent } from '../../api-interfaces/event.types';
+import { HomeStatistics } from '../../api-interfaces/statistics.types';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -33,12 +34,16 @@ export class HomeComponent {
 
   userInfo = signal<User | null>(null);
   events: StudentEvent[] = [];
-  statistics : HomeStatistics | null = null;
+  statistics: HomeStatistics | null = null;
 
   ngOnInit() {
     this.userInfo.set(this.authService.currentUser());
 
-    this.homeService.getRecentEvents().subscribe(res => this.events = res);
+    this.homeService.getRecentEvents().subscribe(res => {
+      this.events = res
+      console.log(this.events)
+
+    });
     this.homeService.getHomeStatistics().subscribe(res => this.statistics = res);
 
     console.log('Statistics:', this.statistics, 'Events:', this.events);

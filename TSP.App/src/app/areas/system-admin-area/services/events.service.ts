@@ -20,6 +20,11 @@ export class EventsService {
 
     //TODO: test
     postEventRequestDecision(decision: EventRequestDecision) {
-        return this.db.postRequest<string, EventRequestDecision>(`${this.model}/${decision.eventRequestId}`, decision);
+
+
+        return this.db.putRequest<string, EventRequestDecision>(
+            `${this.model}/${decision.eventRequestId}/Decision?isAccepted=${decision.isAccepted}&Remark=${encodeURIComponent(decision.Remark ?? '')}`,
+            decision
+        );
     }
 }

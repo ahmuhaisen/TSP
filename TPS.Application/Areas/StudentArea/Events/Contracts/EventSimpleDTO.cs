@@ -14,5 +14,6 @@ public class EventSimpleDTO
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string Description { get; set; } = null!;
+    public string Location { get; set; } = null!;
     public bool IsAttendeesFormEnabled { get; set; }
 }

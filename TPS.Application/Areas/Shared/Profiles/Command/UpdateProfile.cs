@@ -122,7 +122,11 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
                     }
                     student.ProfileImageId = result.Data;
                 }
-                _context.Students.Update(student);
+                else
+                {
+                    student.ProfileImageId= null;
+                }
+                    _context.Students.Update(student);
                 await _context.SaveChangesAsync();
                 return Result.Success(student.Id);
             }
@@ -169,7 +173,11 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
                     facultyMember.ProfileImageId = result.Data;
                     //Strategy
                 }
-                _context.FacultyMembers.Update(facultyMember);
+                else
+                {
+                    facultyMember.ProfileImageId = null;
+                }
+                    _context.FacultyMembers.Update(facultyMember);
                 await _context.SaveChangesAsync();
                 return Result.Success(facultyMember.Id);
             }

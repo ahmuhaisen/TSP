@@ -88,6 +88,7 @@ export class RequestsTableComponent implements OnInit {
   visible = false;
   expandSet = new Set<string>();
   eventService = inject(EventsService);
+  decision?: EventRequestDecision;
 
   constructor(private nzMessageService: NzMessageService) { }
 
@@ -189,7 +190,7 @@ export class RequestsTableComponent implements OnInit {
   });
 
   eventsRequests: EventSimpleRequest[] = []
-
+  selectedEventRequestForDecision!: EventSimpleRequest;
   listOfDisplayData = [...this.eventsRequests];
   ngOnInit(): void {
     this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
@@ -220,31 +221,35 @@ export class RequestsTableComponent implements OnInit {
     }
   }
 
-  cancelAcceptRequest(eventId: string): void {
-    //this.nzMessageService.info('click cancel');
+  cancelAcceptRequest(): void {
 
-    // TODO: change the remark
-    const desision: EventRequestDecision = {
-      eventRequestId: eventId,
-      isAccepted: false,
-      Remark: "click cancel"
-    }
-    this.eventService.postEventRequestDecision(desision);
   }
 
-  confirmAcceptRequest(eventId: string): void {
+  confirmAcceptRequest(selectedEventRequest: EventSimpleRequest): void {
 
-    // TODO: change the remark
     const desision: EventRequestDecision = {
-      eventRequestId: eventId,
+      eventRequestId: selectedEventRequest.id,
       isAccepted: true,
       Remark: "Event accepted successfully"
     }
-    this.eventService.postEventRequestDecision(desision);
+
+    this.eventService.postEventRequestDecision(desision).subscribe({
+      next: (response) => {
+        console.log('Decision response:', response);
+        this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
+      },
+      error: (err) => {
+        console.error('Error submitting decision:', err);
+      }
+    });
+
+
+
     this.nzMessageService.success('Event accepted successfully.');
   }
 
-  openRejectPopup() {
+  openRejectPopup(selectedEventRequest: EventSimpleRequest) {
+    this.selectedEventRequestForDecision = selectedEventRequest;
     this.isRejectPopupVisible = true;
   }
 
@@ -253,6 +258,21 @@ export class RequestsTableComponent implements OnInit {
   }
 
   handleOkReject() {
+    const decision: EventRequestDecision = {
+      eventRequestId: this.selectedEventRequestForDecision.id,
+      isAccepted: false,
+      Remark: this.rejectForm.get("reason")?.value || ""
+    }
+    this.eventService.postEventRequestDecision(decision).subscribe({
+      next: (response) => {
+        console.log('Decision response:', response);
+        this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
+      },
+      error: (err) => {
+        console.error('Error submitting decision:', err);
+      }
+    });;
+    this.nzMessageService.success("Event Request rejected")
     this.isRejectPopupVisible = false;
   }
 }
