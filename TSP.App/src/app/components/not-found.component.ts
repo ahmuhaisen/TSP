@@ -13,7 +13,7 @@ import { BackButtonComponent } from "./back-button.component";
     BackButtonComponent
   ],
   template: `
-  <section class="flex items-center">
+  <section class="flex items-center min-h-screen p-16 bg-gray-50">
     <div class="container mx-auto px-4 py-16">
       <div class="max-w-2xl mx-auto text-center">
         <div class="relative">

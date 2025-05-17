@@ -38,7 +38,7 @@
         </div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Total Members</h3>
-            <p class="text-3xl">{{ homeStatistics?.totalMembers }}</p>
+            <p class="text-3xl">{{ homeStatistics?.totalMembers ?? 'N/A' }}</p>
         </div>
     </div>
     <div class="flex items-center bg-white border rounded overflow-hidden shadow">
@@ -47,7 +47,7 @@
         </div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Total Societies</h3>
-            <p class="text-3xl">{{ homeStatistics?.totalSocieties }}</p>
+            <p class="text-3xl">{{ homeStatistics?.totalSocieties ?? 'N/A' }}</p>
         </div>
     </div>
     <div class="flex items-center bg-white border rounded overflow-hidden shadow">
@@ -56,7 +56,7 @@
         </div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Completed Events</h3>
-            <p class="text-3xl">{{ homeStatistics?.totalCompletedEvents }}</p>
+            <p class="text-3xl">{{ homeStatistics?.totalCompletedEvents ?? 'N/A' }}</p>
         </div>
     </div>
     <div class="flex items-center bg-white border rounded overflow-hidden shadow">
@@ -65,7 +65,7 @@
         </div>
         <div class="px-4 text-gray-700">
             <h3 class="text-sm tracking-wider">Total Attendees</h3>
-            <p class="text-3xl">N/A</p>
+            <p class="text-3xl">{{ homeStatistics?.totalAttendees ?? 'N/A' }}</p>
         </div>
     </div>
 </div>
