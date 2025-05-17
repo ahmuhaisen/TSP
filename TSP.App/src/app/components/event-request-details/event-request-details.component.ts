@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -10,17 +10,15 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { EventsService } from '../../../services/events.service';
 import { ActivatedRoute } from '@angular/router';
-import { EventDetailsDTO } from '../../../api-interfaces/event.types';
 import { CommonModule } from '@angular/common';
-import { EventRequestDetailsComponent } from "../../../../../components/event-request-details/event-request-details.component";
+import { EventsService } from '../../areas/system-admin-area/services/events.service';
+import { EventDetailsDTO } from '../../areas/system-admin-area/api-interfaces/event.types';
 
-// NzStatusType is used in nzStatus
 type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
 
 @Component({
-  selector: 'app-event-details',
+  selector: 'app-event-request-details',
   imports: [
     NzIconModule,
     NzBreadCrumbModule,
@@ -33,32 +31,28 @@ type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
     NzTagModule,
     NzStepsModule,
     CommonModule,
-    EventRequestDetailsComponent
-],
-  templateUrl: './event-details.component.html',
-  styleUrl: './event-details.component.css'
+  ],
+  templateUrl: './event-request-details.component.html',
+  styleUrl: './event-request-details.component.css'
 })
-export class EventDetailsComponent implements OnInit {
-
+export class EventRequestDetailsComponent {
   breadcrumbService = inject(BreadcrumbService);
   eventService = inject(EventsService);
   activatedRoute = inject(ActivatedRoute);
   eventDetailsDTO!: EventDetailsDTO;
-
 
   tabs = [];
 
   isEventRequestModalVisible = false;
   constructor(private route: ActivatedRoute) {
     var eventRequestId = this.route.snapshot.paramMap.get('id')!;
-    console.log(eventRequestId)
-    this.eventService.getEventDetails(eventRequestId).subscribe(
-      data => this.eventDetailsDTO = data
-    );
-  }
-  ngOnInit() {
 
-    this.breadcrumbService.set('@eventName', 'Junior to Solver 6.0');
+    this.eventService.getEventDetails(eventRequestId).subscribe({
+      next: data => {
+        this.eventDetailsDTO = data;
+        this.breadcrumbService.set('@eventName', data.eventName);
+      }
+    });
   }
 
   showEventRequestModal(): void {
@@ -76,7 +70,7 @@ export class EventDetailsComponent implements OnInit {
   // Application History methods
   getApplicationHistoryStep(): number {
     if (!this.eventDetailsDTO) return 0;
-    
+
     if (this.isEventFullyApproved()) {
       return 3; // All steps completed, event ready
     } else if (this.eventDetailsDTO.isDeanAssistantApproved) {
@@ -102,7 +96,7 @@ export class EventDetailsComponent implements OnInit {
 
   getAdvisorApprovalDescription(): string {
     if (!this.eventDetailsDTO) return '';
-    
+
     if (this.eventDetailsDTO.isAdvisorApproved) {
       return 'Approved by ' + this.eventDetailsDTO.advisor.advisorName;
     } else {
@@ -112,7 +106,7 @@ export class EventDetailsComponent implements OnInit {
 
   getDeanAssistantApprovalDescription(): string {
     if (!this.eventDetailsDTO) return '';
-    
+
     if (this.eventDetailsDTO.isDeanAssistantApproved) {
       return 'Approved';
     } else if (this.eventDetailsDTO.isAdvisorApproved) {
@@ -124,8 +118,8 @@ export class EventDetailsComponent implements OnInit {
 
   isEventFullyApproved(): boolean {
     if (!this.eventDetailsDTO) return false;
-    
-    return this.eventDetailsDTO.isDeanAssistantApproved === true && 
-           this.eventDetailsDTO.isAdvisorApproved === true;
+
+    return this.eventDetailsDTO.isDeanAssistantApproved === true &&
+      this.eventDetailsDTO.isAdvisorApproved === true;
   }
 }
