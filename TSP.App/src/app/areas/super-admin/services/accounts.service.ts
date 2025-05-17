@@ -7,7 +7,7 @@ import { DbService } from '../../../common/services/db.service';
 export class AccountsService {
 
   dbService = inject(DbService);
-  model = 'accounts';
+  model = 'SuperAdmin/accounts';
 
   getAllPendingRequests() {
     return this.dbService.getRequest<PendingAccountRequest[]>(`${this.model}/pending`);

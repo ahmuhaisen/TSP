@@ -1,8 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
+using TSP.Domain.Shared.Options;
 
 namespace TPS.Application.Areas.AdminArea.Societies.Commands;
 
@@ -28,7 +30,7 @@ public sealed class UpdateSociety
         }
     }
 
-    public sealed class Handler(ApplicationDbContext context, IGitHubService _FileManager) : ICommandHandler<Command, Result<Guid>>
+    public sealed class Handler(ApplicationDbContext context, IGitHubService _FileManager, IOptions<GitOptions> _options) : ICommandHandler<Command, Result<Guid>>
     {
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
@@ -37,7 +39,7 @@ public sealed class UpdateSociety
             if (data is null)
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
 
-if (!request.Logo.IsNullOrEmpty())
+            if (!request.Logo.IsNullOrEmpty())
             {
                 var result = await _FileManager.updateFile($"{nameof(Society)}/{data.LogoId}", request.Logo);
 
@@ -46,6 +48,7 @@ if (!request.Logo.IsNullOrEmpty())
                     return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
                 }
                 string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
+                LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
                 if (string.IsNullOrEmpty(LogoId))
                 {
                     return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));

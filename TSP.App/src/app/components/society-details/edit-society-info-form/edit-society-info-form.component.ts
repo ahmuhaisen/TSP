@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, OnChanges, SimpleChanges } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -72,7 +72,7 @@ import { SocietiesService } from '../../../areas/system-admin-area/services/soci
     }
   `]
 })
-export class EditSocietyInfoFormComponent {
+export class EditSocietyInfoFormComponent implements OnChanges {
 
   society = input<SocietyWithAdvisor>();
 
@@ -83,6 +83,7 @@ export class EditSocietyInfoFormComponent {
   createSocietyForm: FormGroup | undefined;
 
   ngOnInit() {
+    console.log('EditSocietyInfoFormComponent ngOnInit called');
     this.createSocietyForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       description: ['', [Validators.required, Validators.maxLength(200)]],
@@ -92,31 +93,69 @@ export class EditSocietyInfoFormComponent {
       advisorId: [null, [Validators.required]]
     });
 
-    if (this.society()) {
+    // Load faculty members first
+    this.facultyMembersService.all().subscribe(res => {
+      console.log('Faculty members loaded:', res.length);
+      this.facultyMembers = res;
+      this.displayedFacultyMembers = [...this.facultyMembers];
+      
+      // Apply society values after faculty members are loaded
+      if (this.society()) {
+        console.log('Setting form values after faculty members loaded');
+        this.setFormValues();
+      }
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('EditSocietyInfoFormComponent ngOnChanges:', changes);
+    if (changes['society'] && this.createSocietyForm) {
+      console.log('Society changed, updating form values');
       this.setFormValues();
     }
-
-    this.facultyMembersService.all().subscribe(res => this.facultyMembers = res)
   }
 
   isFacultyMembersLoading = false;
 
   facultyMembers: facultyMemberBasicDetails[] = [];
 
-  displayedFacultyMembers = [...this.facultyMembers];
+  displayedFacultyMembers: facultyMemberBasicDetails[] = [];
 
   setFormValues() {
-    this.createSocietyForm!.get('name')?.setValue(this.society()!.name);
-    this.createSocietyForm!.get('description')?.setValue(this.society()!.description);
-    this.createSocietyForm!.get('creationDate')?.setValue(this.society()!.creationDate);
-    this.createSocietyForm!.get('themeColor')?.setValue(this.society()!.themeColor);
-    this.createSocietyForm!.get('logo')?.setValue(this.society()!.logoId);
-    this.createSocietyForm!.get('advisorId')?.setValue(this.society()!.advisor.id);
+    if (!this.society() || !this.createSocietyForm) {
+      console.log('Cannot set form values: society or form is not available');
+      return;
+    }
+    
+    const societyData = this.society()!;
+    console.log('Setting form values with society data:', societyData);
+    console.log('Advisor ID to set:', societyData.advisor?.id);
+    
+    this.createSocietyForm.get('name')?.setValue(societyData.name);
+    this.createSocietyForm.get('description')?.setValue(societyData.description);
+    this.createSocietyForm.get('creationDate')?.setValue(societyData.creationDate);
+    this.createSocietyForm.get('themeColor')?.setValue(societyData.themeColor);
+    this.createSocietyForm.get('logo')?.setValue(societyData.logoId);
+    
+    if (societyData.advisor && societyData.advisor.id) {
+      console.log('Setting advisor ID to:', societyData.advisor.id);
+      this.createSocietyForm.get('advisorId')?.setValue(societyData.advisor.id);
+      
+      // Force form update after a brief delay to ensure the UI catches up
+      setTimeout(() => {
+        this.createSocietyForm?.get('advisorId')?.updateValueAndValidity({ onlySelf: false, emitEvent: true });
+        console.log('Current advisor value after update:', this.createSocietyForm?.get('advisorId')?.value);
+      }, 100);
+    } else {
+      console.log('No advisor data found in society');
+    }
   }
 
   onSearchFacultyMembers(value: string): void {
-    //this.isFacultyMembersLoading = true;
-    this.displayedFacultyMembers = this.facultyMembers.filter(member => member.fullName.toLowerCase().includes(value.toLowerCase()));
+    console.log('Searching faculty members:', value);
+    this.displayedFacultyMembers = this.facultyMembers.filter(
+      member => member.fullName.toLowerCase().includes(value.toLowerCase())
+    );
   }
 
   removeLogo(): void {

@@ -1,0 +1,157 @@
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="appstore" class="mr-2" />Create New Society
+    </h1>
+    <div class="flex gap-2">
+        <button nz-button nzType="default" (click)="cancelForm()">
+            Cancel
+        </button>
+        <button nz-button nzType="primary" (click)="submitForm()" [disabled]="isSubmitting">
+            <span *ngIf="isSubmitting">Saving...</span>
+            <span *ngIf="!isSubmitting">Save</span>
+        </button>
+    </div>
+</div>
+
+<nz-divider />
+
+<!-- Info button to open workflow modal -->
+<div class="mb-6">
+    <button nz-button nzType="default" (click)="showWorkflowModal()">
+        <nz-icon nzType="solution"></nz-icon>
+        <span>View Society Creation Workflow</span>
+    </button>
+</div>
+
+<!-- Workflow Modal -->
+<nz-modal
+    [(nzVisible)]="isWorkflowModalVisible"
+    [nzTitle]="modalTitle"
+    [nzFooter]="null"
+    (nzOnCancel)="handleModalCancel()"
+    [nzWidth]="700"
+    [nzCentered]="true"
+    [nzBodyStyle]="{ padding: '0' }"
+>
+    <ng-container *nzModalContent>
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6">
+            <!-- Modern stepped process -->
+            <div class="flow-root mb-6">
+                <ul class="-mb-8">
+                    <!-- Step 1 -->
+                    <li>
+                        <div class="relative pb-8">
+                            <!-- Vertical line connecting steps -->
+                            <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gradient-to-b from-blue-400 to-indigo-500" aria-hidden="true"></span>
+                            <div class="relative flex items-start space-x-4">
+                                <!-- Step circle -->
+                                <div class="relative">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center ring-4 ring-white shadow">
+                                        <span class="text-white font-bold">1</span>
+                                    </div>
+                                </div>
+                                <!-- Step content -->
+                                <div class="min-w-0 flex-1 bg-white px-4 py-3 rounded-lg shadow-sm">
+                                    <h4 class="text-md font-semibold text-gray-800">Super Admin Creates Society</h4>
+                                    <p class="text-xs text-gray-600">You're creating the foundation by setting up the society and assigning a faculty advisor to oversee its activities.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <!-- Step 2 -->
+                    <li>
+                        <div class="relative pb-8">
+                            <!-- Vertical line connecting steps -->
+                            <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gradient-to-b from-indigo-500 to-purple-500" aria-hidden="true"></span>
+                            <div class="relative flex items-start space-x-4">
+                                <!-- Step circle -->
+                                <div class="relative">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 flex items-center justify-center ring-4 ring-white shadow">
+                                        <span class="text-white font-bold">2</span>
+                                    </div>
+                                </div>
+                                <!-- Step content -->
+                                <div class="min-w-0 flex-1 bg-white px-4 py-3 rounded-lg shadow-sm">
+                                    <h4 class="text-md font-semibold text-gray-800">Advisor Builds Committee</h4>
+                                    <p class="text-xs text-gray-600">The faculty advisor selects and appoints students to form the committee that will lead the society.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <!-- Step 3 -->
+                    <li>
+                        <div class="relative pb-8">
+                            <!-- Vertical line connecting steps -->
+                            <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gradient-to-b from-purple-500 to-pink-500" aria-hidden="true"></span>
+                            <div class="relative flex items-start space-x-4">
+                                <!-- Step circle -->
+                                <div class="relative">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center ring-4 ring-white shadow">
+                                        <span class="text-white font-bold">3</span>
+                                    </div>
+                                </div>
+                                <!-- Step content -->
+                                <div class="min-w-0 flex-1 bg-white px-4 py-3 rounded-lg shadow-sm">
+                                    <h4 class="text-md font-semibold text-gray-800">Students Request to Join</h4>
+                                    <p class="text-xs text-gray-600">Interested students submit membership requests to become part of the society.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <!-- Step 4 -->
+                    <li>
+                        <div class="relative">
+                            <div class="relative flex items-start space-x-4">
+                                <!-- Step circle -->
+                                <div class="relative">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-pink-500 to-pink-600 flex items-center justify-center ring-4 ring-white shadow">
+                                        <span class="text-white font-bold">4</span>
+                                    </div>
+                                </div>
+                                <!-- Step content -->
+                                <div class="min-w-0 flex-1 bg-white px-4 py-3 rounded-lg shadow-sm">
+                                    <h4 class="text-md font-semibold text-gray-800">Committee Reviews Requests</h4>
+                                    <p class="text-xs text-gray-600">The committee reviews and approves membership requests, building the society's membership base.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- <div class="flex justify-end mt-6">
+                <button nz-button nzType="primary" (click)="handleModalCancel()">Got it!</button>
+            </div> -->
+        </div>
+    </ng-container>
+</nz-modal>
+
+<ng-template #modalTitle>
+    <div class="flex items-center px-2 py-1">
+        <nz-icon nzType="solution" class="mr-2 text-blue-500"></nz-icon>
+        <span class="font-bold">Society Creation Workflow</span>
+    </div>
+</ng-template>
+
+<app-edit-society-info-form></app-edit-society-info-form>
+
+<style>
+    ::ng-deep .custom-collapse .ant-collapse-header {
+        padding: 0 !important;
+    }
+    
+    ::ng-deep .custom-collapse .ant-collapse-content-box {
+        padding: 0 !important;
+    }
+    
+    ::ng-deep .custom-collapse {
+        background: transparent !important;
+        border: none !important;
+    }
+    
+    ::ng-deep .custom-collapse .ant-collapse-item {
+        border: none !important;
+    }
+</style> 

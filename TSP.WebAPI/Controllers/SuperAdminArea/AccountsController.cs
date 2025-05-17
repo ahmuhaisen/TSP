@@ -9,7 +9,7 @@ namespace TSP.WebAPI.Controllers.SuperAdminArea;
 
 [ApiController]
 [Authorize(Roles = "SuperAdmin")]
-[Route($"api/[controller]")]
+[Route($"api/{Constants.APIAreas.SuperAdmin}/[controller]")]
 public class AccountsController(ISender sender, IAccountsService _accountsService) : ApiController(sender)
 {
 
