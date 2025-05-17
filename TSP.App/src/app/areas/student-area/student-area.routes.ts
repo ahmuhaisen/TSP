@@ -28,15 +28,5 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/users/users.component').then(m => m.UsersComponent),
         loadChildren: () => import('./pages/users/users.routes').then(m => m.routes),
         data: { breadcrumb: 'Users' }
-    },
-    {
-        path: '**',
-        loadComponent: () => import('../../components/not-found.component').then(m => m.NotFoundComponent),
-        data: { breadcrumb: { skip: true } }
     }
-    // {
-    //     path: '**',
-    //     loadComponent: () => import('../../components/access-denied.component').then(m => m.AccessDeniedComponent),
-    //     data: { breadcrumb: { skip: true } }
-    // }
 ];

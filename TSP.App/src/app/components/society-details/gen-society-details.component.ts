@@ -14,11 +14,12 @@ import { AddCommitteeMemberFormComponent } from "./add-committee-member-form/add
 import { AddMemberFormComponent } from "./add-member-form/add-member-form.component";
 import { PageMode } from '../../common/types/presentaion.types';
 import { SocietiesService } from '../../areas/system-admin-area/services/societies.service';
-import { Member, SocietyMember, SocietyWithAdvisor } from '../../areas/system-admin-area/api-interfaces/society.types';
+import { SocietyMember, SocietyWithAdvisor } from '../../areas/system-admin-area/api-interfaces/society.types';
 import { DatePipe } from '@angular/common';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { Router } from '@angular/router';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { AuthService } from '../../common/services/auth.service';
 
 @Component({
   selector: 'app-gen-society-details',
@@ -34,7 +35,6 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
     CommitteeTableComponent,
     NzModalModule,
     NzSkeletonModule,
-    EditSocietyInfoFormComponent,
     AddCommitteeMemberFormComponent,
     AddMemberFormComponent,
   ],
@@ -48,6 +48,7 @@ export class GenSocietyDetailsComponent {
   society: SocietyWithAdvisor | null = null;
   members = signal<SocietyMember[]>([]);
   committee = signal<SocietyMember[]>([]);
+  authService = inject(AuthService);
 
   isSocietyLoading = false;
   isCommitteeLoading = false;
@@ -79,6 +80,13 @@ export class GenSocietyDetailsComponent {
       next: society => {
         if (!society) {
           return;
+        }
+
+        if(this.pageMode() === 'ADMIN_MANAGE') {
+          if(this.authService.currentUser()?.id !== society.advisor.id){
+            this.router.navigate(['forbidden']);
+            return;
+          }
         }
 
         console.table(society);

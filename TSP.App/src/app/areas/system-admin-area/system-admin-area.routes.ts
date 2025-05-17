@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { NotFoundComponent } from '../../components/not-found.component';
 
 export const routes: Routes = [
     {
@@ -35,8 +36,7 @@ export const routes: Routes = [
         data: { breadcrumb: 'Users' }
     },
     {
-        path: '**',
-        loadComponent: () => import('../../components/not-found.component').then(m => m.NotFoundComponent),
-        data: { breadcrumb: { skip: true } }
+        path: 'forbidden',
+        loadComponent: () => import('../../components/access-denied.component').then(m => m.AccessDeniedComponent),
     }
 ];

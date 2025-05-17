@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -9,23 +8,51 @@ import { BackButtonComponent } from "./back-button.component";
 @Component({
   selector: 'app-not-found',
   imports: [
-    RouterLink,
     NzButtonModule,
     NzIconModule,
     BackButtonComponent
-],
+  ],
   template: `
-  <section class="bg-white">
-      <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-          <div class="mx-auto max-w-screen-sm text-center">
-              <h1 class="mb-4 text-7xl tracking-tight font-extrabold lg:text-9xl bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">401</h1>
-              <p class="mb-4 text-3xl tracking-tight font-bold text-primary-dark md:text-4xl">Access Denied</p>
-              <p class="mb-4 text-md font-light text-gray-500">Sorry, you don't have access to this page.</p>
-              <app-back-button class="mr-2"/>
-          </div>
+  <section class="bg-gradient-to-b from-white to-gray-50 min-h-screen flex items-center">
+    <div class="container mx-auto px-4 py-16">
+      <div class="max-w-2xl mx-auto text-center">
+        <div class="relative">
+          <h1 class="text-9xl font-black tracking-tighter bg-gradient-to-r from-red-500 to-pink-600 bg-clip-text text-transparent 
+                     animate-pulse">401</h1>
+          <div class="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-pink-600 opacity-70"></div>
+        </div>
+        
+        <h2 class="mt-8 text-3xl font-bold text-gray-800">Access Denied</h2>
+        
+        <p class="mt-4 text-gray-500 max-w-md mx-auto">
+          Sorry, you don't have permission to access this page. Please contact your administrator if you need assistance.
+        </p>
+        
+        <div class="mt-10 flex justify-center items-center space-x-4">
+          <app-back-button />
+        </div>
       </div>
+    </div>
   </section>
   `,
+  styles: [`
+    :host {
+      display: block;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+  `]
 })
 export class AccessDeniedComponent {
 }

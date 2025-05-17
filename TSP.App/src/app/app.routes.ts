@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { UserTypeGuardService as UserTypeGuard } from './common/services/user-type-guard.service';
+import { NotFoundComponent } from './components/not-found.component';
 
 export const routes: Routes = [
     {
@@ -47,8 +48,12 @@ export const routes: Routes = [
         pathMatch: 'full'
     },
     {
+        path: 'forbidden',
+        loadComponent: () => import('./components/access-denied.component').then(m => m.AccessDeniedComponent),
+    },
+    {
         path: '**',
-        loadComponent: () => import('./components/not-found.component').then(m => m.NotFoundComponent),
+        component: NotFoundComponent,
         data: { breadcrumb: { skip: true } }
     }
 ];

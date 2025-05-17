@@ -17,9 +17,5 @@ export const routes: Routes = [
     {
         path: 'super-admin/login',
         loadComponent: () => import('./super-admin/login/login.component').then(m => m.LoginComponent)
-    },
-    {
-        path: '**',
-        loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
     }
 ];
