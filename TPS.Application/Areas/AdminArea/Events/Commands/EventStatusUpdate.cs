@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
+using TPS.Application.Areas.AdminArea.Events.Queries;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Enums;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.AdminArea.Events.Commands
@@ -70,11 +73,19 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                     if (request.isAccepted == true)
                     {
                         eventRequest.DeanAssistantApproval = true;
+                        RaiseStatusUpdateDomainEvent(eventRequest, true, null);
+                        eventRequest.RaiseDomainEvent(new NewEventScheduledDomainEvent(
+                            Guid.NewGuid(),
+                            eventRequest.Event.SocietyId,
+                            eventRequest.Event.Society.Name,
+                            eventRequest.Event.Name
+                            ));
                     }
                     else if (request.isAccepted == false)
                     {
                         eventRequest.DeanAssistantApproval = false;
                         eventRequest.Remarks = request.Remark;
+                        RaiseStatusUpdateDomainEvent(eventRequest, false, request.Remark);
                     }
                     eventRequest.DecisionDate = DateTime.Now;
                     await _context.SaveChangesAsync();
@@ -92,11 +103,29 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                         if (request.isAccepted == true)
                         {
                             eventRequest.AdvisorApproval = true;
+                            var deanAssistant = await _context.FacultyMembers
+                                .Include(x=>x.Rank)
+                                .FirstOrDefaultAsync(x => x.Rank.Title == "Dean" || x.Rank.Title == "Dean Assistant");
+
+                            if (deanAssistant is null)
+                            {
+                                throw new InvalidOperationException("No Dean or Dean Assistant found.");
+                            }
+
+                            eventRequest.RaiseDomainEvent(new NewEventRequestSubmittedDomainEvent(
+                                Guid.NewGuid(),
+                                eventRequest.Event.SocietyId,
+                                deanAssistant.Id,
+                                UserType.FacultyMember,
+                                eventRequest.Event.Society.Name,
+                                eventRequest.Event.Name
+                                ));
                         }
                         else if (request.isAccepted == false)
                         {
                             eventRequest.AdvisorApproval = false;
                             eventRequest.Remarks = request.Remark;
+                            RaiseStatusUpdateDomainEvent(eventRequest, false, request.Remark);
                         }
                         eventRequest.DecisionDate = DateTime.Now;
                         await _context.SaveChangesAsync();
@@ -105,6 +134,20 @@ namespace TPS.Application.Areas.AdminArea.Events.Commands
                 }
                 //If the current User isnt an advisor nor dean/dean assistant
                 return Result.Failure(Error.AccessDenied(request.EventRequestId.ToString()));
+            }
+            private void RaiseStatusUpdateDomainEvent(EventApproval eventRequest, bool isAccepted, string? remark)
+            {
+                var domainEvent = new EventRequestStatusUpdateDomainEvent(
+                    Guid.NewGuid(),
+                    eventRequest.Event.StudentId,
+                    eventRequest.Event.SocietyId,
+                    eventRequest.Event.Society.Name,
+                    eventRequest.Event.Name,
+                    isAccepted,
+                    remark
+                );
+
+                eventRequest.RaiseDomainEvent(domainEvent);
             }
         }
     }

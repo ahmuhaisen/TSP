@@ -8,6 +8,8 @@ using TPS.Application.Areas.StudentArea.Events.Contracts;
 using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Enums;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.StudentArea.Events.Commands;
@@ -75,6 +77,23 @@ public class CreateEventRequest
             await context.SaveChangesAsync();
             await context.AddAsync(newEventApprovalRecord);
             await context.SaveChangesAsync();
+
+            tempEvent.RaiseDomainEvent(new NewEventRequestSubmittedDomainEvent(
+                Guid.NewGuid(),
+                tempEvent.SocietyId,
+                tempEvent.Society.AdvisorId,
+                UserType.FacultyMember,
+                tempEvent.Society.Name,
+                tempEvent.Name
+                ));
+            tempEvent.RaiseDomainEvent(new NewEventRequestSubmittedDomainEvent(
+                Guid.NewGuid(),
+                tempEvent.SocietyId,
+                tempEvent.StudentId,
+                UserType.Student,
+                tempEvent.Society.Name,
+                tempEvent.Name
+                ));
             return Result.Success(tempEvent.Id);
         }
     }

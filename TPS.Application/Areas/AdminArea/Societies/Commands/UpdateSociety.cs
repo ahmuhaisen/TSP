@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
 using TSP.Domain.Shared.Options;
 
@@ -12,20 +13,31 @@ public sealed class UpdateSociety
 {
     public sealed class Command : ICommand<Result<Guid>>
     {
+        public Guid Id { get; private init; }
         public string Name { get; private init; } = null!;
         public string Description { get; private init; } = null!;
         public string Logo { get; private init; } = null!;
         public string? ThemeColor { get; private init; }
-        public Guid Id { get; private init; }
-        public static Command Create(string name, string description, string logo, string? themeColor, Guid Id)
+        public DateOnly CreationDate { get; private init; }
+        public Guid AdvisorId { get; private init; }
+        public static Command Create(
+            Guid Id,
+            string name,
+            string description,
+            string logo,
+            string? themeColor,
+            DateOnly creationDate,
+            Guid advisorId)
         {
             return new Command
             {
+                Id = Id,
                 Name = name.Trim(),
                 Description = description.Trim(),
                 Logo = logo,
                 ThemeColor = themeColor,
-                Id = Id
+                CreationDate = creationDate,
+                AdvisorId = advisorId
             };
         }
     }
@@ -55,13 +67,20 @@ public sealed class UpdateSociety
                 }
                 data.LogoId = LogoId;
             }
-
-
-
+            
             data.Name = request.Name;
             data.Description = request.Description;
             data.ThemeColor = request.ThemeColor;
-
+            if (data.AdvisorId != request.AdvisorId)
+            {
+                data.RaiseDomainEvent(new SocietyAdvisorChangedDomainEvent(
+                    Guid.NewGuid(),
+                    data.Id,
+                    data.AdvisorId,
+                    data.Name
+                    ));
+                data.AdvisorId=request.AdvisorId;
+            }
 
 
             var saveResult = await context.SaveChangesAsync(cancellationToken);
