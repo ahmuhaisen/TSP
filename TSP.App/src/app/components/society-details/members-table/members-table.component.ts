@@ -19,6 +19,7 @@ import { EditMemberFormComponent } from "./edit-member-form/edit-member-form.com
 import { Member, SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
+import { environment } from '../../../../environments/environment';
 
 interface ColumnItem {
   name: string;
@@ -67,7 +68,7 @@ export class MembersTableComponent implements OnInit {
 
   messageService = inject(NzMessageService);
   societiesService = inject(SocietiesService);
-
+  baseUserUmage:string = environment.gitHubUsersPicturesURL
   isEditMemberPopupVisible = false;
   isEditMemberLoading = false;
   memberToEdit: SocietyMember | null = null;

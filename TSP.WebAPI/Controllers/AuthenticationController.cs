@@ -28,6 +28,8 @@ public class AuthenticationController : ApiController
     [HttpPost("FacultyMember/Login")]
     public async Task<IActionResult> LoginFacultyMember([FromBody] LoginRequest request)
     {
+        Console.WriteLine(request.Email);
+        Console.WriteLine(request.Password);
         var task = _authService.LoginFacultyMember(request);
         return await FromResult(task);
     }

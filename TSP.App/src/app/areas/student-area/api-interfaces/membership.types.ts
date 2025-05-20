@@ -8,6 +8,7 @@ export interface MembershipRequestDTO {
     id: string;
     section: string;
     reasonForJoining: string;
+    societyLogo: string;
     status: string;
     requestedOn: string;
     studentBasicDTO: StudentBasicDTO;

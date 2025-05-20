@@ -14,8 +14,8 @@
 <div class="mt-5">
     <div class="flex items-center gap-4 mt-3">
         <!-- <img class="w-14 h-14  rounded-full ring-1 ring-gray-200" src="slogo.jpg" alt="organizers" /> -->
-        <nz-avatar class="w-11 h-11 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center"
-            [nzSrc]="society!.logoId" [nzText]="society!.name.substring(0, 2).toUpperCase()" />
+        <nz-avatar class="w-11 h-11 rounded-full flex items-center justify-center"
+            [nzSrc]="baseSocietyImage+society!.logoId" [nzText]="society!.name.substring(0, 2).toUpperCase()" />
         <div class="">
             <p class="text-sm font-bold text-gray-700 mt-2">{{ society!.name }}</p>
             <p class="text-[12px] text-gray-600">
@@ -95,10 +95,12 @@
     </div>
     <div class="flex gap-2">
         @if(pageMode() === 'STUDENT_MANAGE' || pageMode() === 'ADMIN_MANAGE'){
-        <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="Export as CSV" (click)="downloadMembersAsCSV()">
+        <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="Export as CSV"
+            (click)="downloadMembersAsCSV()">
             <nz-icon nzType="download" nzTheme="outline" />
         </button>
-        <button nz-button nzType="primary" nzShape="circle" (click)="showSocietyRequests()" nz-tooltip nzTooltipTitle="Membership Requests">
+        <button nz-button nzType="primary" nzShape="circle" (click)="showSocietyRequests()" nz-tooltip
+            nzTooltipTitle="Membership Requests">
             <nz-icon nzType="reconciliation" />
         </button>
         }

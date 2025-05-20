@@ -57,7 +57,7 @@ export interface SuggestedPerson {
 })
 export class GenProfileComponent {
   baseProfileImageUrl = environment.gitHubUsersPicturesURL;
-
+  baseSocietyImage: string = environment.gitHubSocietiesPicturesURL;
 
   profilesService = inject(ProfilesService);
   authService = inject(AuthService);

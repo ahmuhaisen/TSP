@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
-using TPS.Application.Areas.Shared.Events.Contracts;
 using TPS.Application.Areas.Shared.Search;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Shared;
 
-namespace TPS.Application.Areas.Shared.Events.Queries;
+namespace TPS.Application.Areas.Shared.Students;
 
-public class SearchEvent
+public class SearchMembers
 {
     public sealed class Query : IQuery<Result<List<SearchBasicDTO>>>
     {
@@ -20,30 +19,20 @@ public class SearchEvent
         }
         public static Query Create(string? searchTerm) => new Query(searchTerm);
     }
-    public sealed class Handler : IQueryHandler<Query, Result<List<SearchBasicDTO>>>
+
+    public sealed class Handler(ApplicationDbContext _context) : IQueryHandler<Query, Result<List<SearchBasicDTO>>>
     {
-        private ApplicationDbContext _context { get; }
-
-        public Handler(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<Result<List<SearchBasicDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
-
-            var data = await _context.Events
+            var data = await _context.Users
                 .AsNoTracking()
-                .Where(
-                s => s.Name.Contains(request.SearchTerm ?? "")||
-                     s.Description.Contains(request.SearchTerm??"")
-                )
+                .Where(s => (s.FirstName+" "+s.LastName+" "+s.Email).Contains(request.SearchTerm??""))
                 .Select(s => new SearchBasicDTO
                 {
                     Id = s.Id,
-                    Name = s.Name,
-                    Description = s.Description,
-                    LogoId = ""
+                    Name = $"{s.FirstName} {s.LastName}",
+                    Description = "",
+                    LogoId = s.ProfileImageId,
                 })
                 .ToListAsync();
 

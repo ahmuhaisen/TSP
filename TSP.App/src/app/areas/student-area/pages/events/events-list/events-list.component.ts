@@ -27,6 +27,7 @@ import { AddEventRequest, EventSimpleDTO, MemberEventDetailsDTO } from '../../..
 import { EventsService } from '../../../services/events.service';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../../../common/services/auth.service';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-events-list',
@@ -81,17 +82,17 @@ export class EventsListComponent {
   messageService = inject(NzMessageService);
   eventsService = inject(EventsService);
   isCurrentStudentACommitteeMemberOfASociety = signal(false);
-
+  baseSocietyImage: string = environment.gitHubSocietiesPicturesURL;
   committeeSocieties: MemberAssociatedSociety[] = [];
   today = new Date();
   timeDefaultValue = setHours(new Date(), 8);
   currentDate = new Date();
 
   disabledDate = (current: Date): boolean => {
-    // const currentMonth = this.currentDate.getMonth();
-    // const currentYear = this.currentDate.getFullYear();
-    // return current.getMonth() !== currentMonth || current.getFullYear() !== currentYear;
-    return false
+    const currentMonth = this.currentDate.getMonth();
+    const currentYear = this.currentDate.getFullYear();
+    return current.getMonth() !== currentMonth || current.getFullYear() !== currentYear;
+
   };
 
   disabledRangeTime: DisabledTimeFn = (_value, type?: DisabledTimePartial) => {

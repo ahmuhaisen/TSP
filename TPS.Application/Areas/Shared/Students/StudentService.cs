@@ -106,6 +106,7 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
                 FirstName = s.Student.FirstName,
                 LastName = s.Student.LastName,
                 Position = s.Position,
+                ProfileImageId = s.Student.ProfileImageId,
                 JoinDate = s.JoinDate,
             }).ToListAsync();
 

@@ -13,6 +13,7 @@ import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { StudentEvent } from '../../api-interfaces/event.types';
 import { HomeStatistics } from '../../api-interfaces/statistics.types';
 import { environment } from '../../../../../environments/environment';
+import { SearchDrawerComponent } from '../../../../components/search-drawer/search-drawer.component';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -24,13 +25,15 @@ import { environment } from '../../../../../environments/environment';
     NzDividerModule,
     NzAvatarModule,
     NzTagModule,
-    NzPopoverModule
+    NzPopoverModule,
+    SearchDrawerComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
   societiesPicturesBaseUrl = environment.gitHubSocietiesPicturesURL;
+  baseProfileImageUrl = environment.gitHubUsersPicturesURL
   private authService = inject(AuthService);
   private homeService = inject(HomeService);
 
@@ -40,7 +43,7 @@ export class HomeComponent {
 
   ngOnInit() {
     this.userInfo.set(this.authService.currentUser());
-
+    console.log(this.authService.currentUser())
     this.homeService.getRecentEvents().subscribe(res => {
       this.events = res
       console.log(this.events)
@@ -50,39 +53,9 @@ export class HomeComponent {
 
     console.log('Statistics:', this.statistics, 'Events:', this.events);
   }
+  isSearchVisible = false;
+  openSearch(): void {
+    this.isSearchVisible = true;
+  }
 
-  users = [
-    {
-      id: '3yz-4ab-5cd-6ef',
-      name: 'Suhaib Saleh',
-      department: 'Computer Science',
-      imageUrl: 'https://robohash.org/suhaib@ju.edu.jo?bgset=bg2',
-      joinDate: '2024-12-15',
-      societies: ['Waves JU', 'ACM University of Jordan Student Chapter', 'IEEE CS JU']
-    },
-    {
-      id: '1ab-2cd-3ef-4gh',
-      name: 'Ahmad Muhaisen',
-      department: 'Computer Science',
-      imageUrl: 'https://robohash.org/ahmad@ju.edu.jo?bgset=bg2',
-      joinDate: '2024-11-20',
-      societies: ['ACM University of Jordan Student Chapter', 'IEEE CS JU']
-    },
-    {
-      id: '5ij-6kl-7mn-8op',
-      name: 'Rana Alsharif',
-      department: 'Information Technology',
-      imageUrl: 'https://robohash.org/Sara@ju.edu.jo?bgset=bg2',
-      joinDate: '2024-11-15',
-      societies: ['Waves JU', 'IEEE CIS JU']
-    },
-    {
-      id: '9qr-0st-1uv-2wx',
-      name: 'Mohammad Alzoubi',
-      department: 'Computer Engineering',
-      imageUrl: 'https://robohash.org/Mohammad@ju.edu.jo?bgset=bg1',
-      joinDate: '2024-08-01',
-      societies: ['Linux Society JU']
-    }
-  ]
 }
