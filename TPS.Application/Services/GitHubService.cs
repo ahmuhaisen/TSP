@@ -123,7 +123,10 @@ public class GitHubService : IGitHubService
     public async Task<Result<string>> updateFile(string path, string base64Content)
     {
         string[]args = path.Split('/');
-       Console.WriteLine("TESTING PATH "+path);
+        Console.WriteLine("TESTING PATH " + path);
+        Console.WriteLine("TESTING PATH " + path);
+        Console.WriteLine("TESTING PATH " + path);
+
         if (args[1].IsNullOrEmpty())
         {
             Console.WriteLine("TESTING PATH " + path);

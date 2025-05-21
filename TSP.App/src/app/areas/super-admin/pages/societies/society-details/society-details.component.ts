@@ -28,7 +28,7 @@ import { EditSocietyInfoFormComponent } from '../../../../../components/society-
 })
 export class SocietyDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild(EditSocietyInfoFormComponent) societyForm!: EditSocietyInfoFormComponent;
-  
+
   isSubmitting = false;
   isLoading = true;
   societyId = '';
@@ -65,6 +65,7 @@ export class SocietyDetailsComponent implements OnInit, AfterViewInit {
         console.log('Advisor data:', society.advisor);
         this.society = society;
         this.isLoading = false;
+
       },
       error: (err) => {
         console.error('Failed to load society details:', err);
@@ -76,12 +77,12 @@ export class SocietyDetailsComponent implements OnInit, AfterViewInit {
 
   submitForm(): void {
     console.log('Submitting form, checking validity');
-    
+
     if (!this.societyForm || this.societyForm.createSocietyForm?.invalid) {
       if (this.societyForm?.createSocietyForm) {
         console.log('Form is invalid, marking dirty fields');
         console.log('Form errors:', this.societyForm.createSocietyForm.errors);
-        
+
         Object.keys(this.societyForm.createSocietyForm.controls).forEach(key => {
           const control = this.societyForm.createSocietyForm?.get(key);
           console.log(`Control ${key} valid:`, control?.valid, 'errors:', control?.errors);
@@ -97,25 +98,30 @@ export class SocietyDetailsComponent implements OnInit, AfterViewInit {
     }
 
     this.isSubmitting = true;
-    
+
     const formValues = this.societyForm.createSocietyForm?.value;
     if (!formValues) {
       this.message.error('Form values are missing');
       this.isSubmitting = false;
       return;
     }
-    
+
     console.log('Form values to submit:', formValues);
-    
+
     // If there's a creation date in the form, format it properly
     let creationDate = undefined;
     if (formValues.creationDate) {
       const date = formValues.creationDate;
-      creationDate = date instanceof Date ? 
-        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` : 
+      creationDate = date instanceof Date ?
+        `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` :
         undefined;
     }
-    
+    console.log(formValues.logo)
+    console.log(formValues.logo)
+    console.log(formValues.logo)
+    console.log(formValues.logo)
+    console.log(formValues.logo)
+
     const society = {
       id: this.societyId,
       name: formValues.name,

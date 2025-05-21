@@ -38,6 +38,7 @@ namespace TPS.Application.Areas.StudentArea.Societies.Queries
                     return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
 
                 var data = await context.MembershipsRequests
+                    .Include(x=>x.Society)
                     .Include(x=>x.Student)
                     .Where(x => x.SocietyId == request.SocietyId)
                     .Select(x => new MembershipRequestDTO
@@ -47,6 +48,7 @@ namespace TPS.Application.Areas.StudentArea.Societies.Queries
                         ReasonForJoining = x.Motivation,
                         Status = x.Status,
                         RequestedOn = x.RequestedOn,
+                        SocietyLogo = x.Society.LogoId,
                         StudentBasicDTO = new StudentBasicDTO
                         {
                             Id = x.Id,

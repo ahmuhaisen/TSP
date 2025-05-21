@@ -4,6 +4,7 @@ using TPS.Application.Areas.AdminArea.Societies.Contracts;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
 using TPS.Application.Areas.Shared.Events.Contracts;
 using TPS.Application.Areas.Shared.Events.Queries;
+using TPS.Application.Areas.Shared.Search;
 using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
 using TSP.Domain.Shared;
@@ -16,12 +17,12 @@ public class SearchController(ISender sender) : ApiController(sender)
 {
 
 
-    [HttpGet("Students")]
-    [ProducesResponseType(typeof(List<StudentBasicDTO>), StatusCodes.Status200OK)]
+    [HttpGet("Members")]
+    [ProducesResponseType(typeof(List<SearchBasicDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> searchStudentByName([FromQuery] string? searchTerm)
     {
-        var query = SearchStudent.Query.Create(searchTerm);
+        var query = SearchMembers.Query.Create(searchTerm);
 
         var task = _sender.Send(query);
 
@@ -30,7 +31,7 @@ public class SearchController(ISender sender) : ApiController(sender)
 
 
     [HttpGet("Events")]
-    [ProducesResponseType(typeof(List<EventBasicDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SearchBasicDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> searchEvent([FromQuery] string? searchTerm)
     {
@@ -43,7 +44,7 @@ public class SearchController(ISender sender) : ApiController(sender)
 
 
     [HttpGet("Societies")]
-    [ProducesResponseType(typeof(List<SocietyListDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SearchBasicDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> searchSociety([FromQuery] string? searchTerm)
     {

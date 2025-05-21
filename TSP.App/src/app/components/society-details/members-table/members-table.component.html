@@ -30,7 +30,7 @@
         <tr>
             <td class="flex items-center justify-center">
                 <!-- <img class="w-7 h-7 rounded-full ring-1 ring-gray-200" [src]="data.profileImageId" alt="organizers" /> -->
-                <nz-avatar class="w-7 h-7 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="data.profileImageId" [nzText]="data ? (data.firstName[0] + data.lastName[0]).toUpperCase() : ''" />
+                <nz-avatar class="w-7 h-7 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="baseUserUmage+data.profileImageId" [nzText]="data ? (data.firstName[0] + data.lastName[0]).toUpperCase() : ''" />
             </td>
             <td>{{ data.firstName }} {{ data.lastName }}</td>
             <td>{{ data.position }}</td>

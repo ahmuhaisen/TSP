@@ -48,7 +48,8 @@ public sealed class UpdateSociety
                     return Result.Failure<Guid>(Error.ValueInvalid(result.Error.Message));
                 }
                 string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
-                LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
+                
+                //LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
                 if (string.IsNullOrEmpty(LogoId))
                 {
                     return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));

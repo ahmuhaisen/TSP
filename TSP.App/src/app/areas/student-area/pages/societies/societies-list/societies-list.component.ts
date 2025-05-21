@@ -19,6 +19,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { TruncatePipe } from "../../../../../common/pipes/truncate.pipe";
 import { StudentsService } from '../../../services/students.service';
 import { HttpClientModule } from '@angular/common/http';
+import { environment } from '../../../../../../environments/environment';
 @Component({
     selector: 'app-societies-list',
     standalone: true,
@@ -53,6 +54,7 @@ export class SocietiesListComponent implements OnInit {
     isJoinSocietyLoading = false;
     societyToLeave: MemberAssociatedSociety | null = null;
     joinSocietyForm: FormGroup;
+    baseSocietiesUrl:string= environment.gitHubSocietiesPicturesURL
     suggestedSections = ['Academic', 'Sports', 'Cultural', 'Technical', 'Social', 'Other'];
 
     constructor(

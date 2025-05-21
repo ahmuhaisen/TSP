@@ -34,7 +34,10 @@ namespace TPS.Application.Areas.StudentArea.Students.Queries
                         Section = x.Section,
                         SubmissionDate = DateOnly.FromDateTime(x.RequestedOn),
                         Status = x.Status,
-                        SocietyName = x.Society.Name
+                        societyLogo = x.Society.LogoId,
+                        SocietyName = x.Society.Name,
+                     
+                       
                     })
                     .ToListAsync();
                 return Result.Success(data);

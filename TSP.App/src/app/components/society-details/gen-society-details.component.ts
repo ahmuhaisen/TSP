@@ -22,6 +22,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { AuthService } from '../../common/services/auth.service';
 import { MembershipRequestsComponent } from "./membership-requests/membership-requests.component";
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-gen-society-details',
@@ -40,7 +41,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
     NzSkeletonModule,
     AddCommitteeMemberFormComponent,
     MembershipRequestsComponent
-],
+  ],
   templateUrl: './gen-society-details.component.html',
   styleUrl: './gen-society-details.component.css'
 })
@@ -52,6 +53,9 @@ export class GenSocietyDetailsComponent {
   members = signal<SocietyMember[]>([]);
   committee = signal<SocietyMember[]>([]);
   authService = inject(AuthService);
+
+  baseUserImage: string = environment.gitHubUsersPicturesURL;
+  baseSocietyImage: string = environment.gitHubSocietiesPicturesURL;
 
   isSocietyLoading = false;
   isCommitteeLoading = false;
@@ -128,7 +132,7 @@ export class GenSocietyDetailsComponent {
   }
 
 
- handleOkEditSociety() {
+  handleOkEditSociety() {
     if (this.editSocietyInfoFormComponent!.createSocietyForm!.invalid) {
       this.editSocietyInfoFormComponent!.messageService.error('Please fill in all required fields.');
       this.editSocietyInfoFormComponent!.createSocietyForm?.markAllAsTouched();
@@ -247,7 +251,7 @@ export class GenSocietyDetailsComponent {
 
   @ViewChild(MembershipRequestsComponent) membershipRequestsComponent: MembershipRequestsComponent | undefined;
 
-  showSocietyRequests(){
+  showSocietyRequests() {
     this.membershipRequestsComponent?.showSocietyRequests();
   }
 
@@ -260,7 +264,7 @@ export class GenSocietyDetailsComponent {
 
     // Define CSV headers
     const headers = ['First Name', 'Last Name', 'Position', 'Join Date'];
-    
+
     // Convert members data to CSV rows
     const csvRows = members.map(member => [
       member.firstName,
@@ -279,12 +283,12 @@ export class GenSocietyDetailsComponent {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     // Set download attributes
     link.setAttribute('href', url);
     link.setAttribute('download', `${this.society?.name || 'society'}_members.csv`);
     link.style.visibility = 'hidden';
-    
+
     // Trigger download
     document.body.appendChild(link);
     link.click();
