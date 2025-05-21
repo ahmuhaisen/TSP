@@ -45,8 +45,8 @@ using (var scope = app.Services.CreateScope())
     // context.Database.Migrate();
 
     //Execute the seeder
-    // var seeder = services.GetRequiredService<ApplicationDataSeeder>();
-    // await seeder.Seed();
+     var seeder = services.GetRequiredService<ApplicationDataSeeder>();
+    await seeder.Seed();
 }
 
 app.UseStaticFiles();

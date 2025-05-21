@@ -10,10 +10,13 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EventsService } from '../../areas/system-admin-area/services/events.service';
 import { EventDetailsDTO } from '../../areas/system-admin-area/api-interfaces/event.types';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { EventFeedbackService } from '../../areas/public-forms/event-feedback/event-feedback.service';
 
 type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
 
@@ -27,6 +30,7 @@ type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
     NzAvatarModule,
     NzTabsModule,
     NzModalModule,
+    NzDropDownModule,
     NzEmptyModule,
     NzTagModule,
     NzStepsModule,
@@ -40,6 +44,9 @@ export class EventRequestDetailsComponent {
   eventService = inject(EventsService);
   activatedRoute = inject(ActivatedRoute);
   eventDetailsDTO!: EventDetailsDTO;
+  nzMessageService = inject(NzMessageService);
+  feedbackService = inject(EventFeedbackService);
+  router = inject(Router);
 
   tabs = [];
 
@@ -65,6 +72,37 @@ export class EventRequestDetailsComponent {
 
   handleEventRequestModalOk() {
     this.isEventRequestModalVisible = false;
+  }
+
+   redirectToFeedbackQrLinkView() {
+    const isFeedbackFormOpen = false;
+
+    this.feedbackService.isFeedbackOpen(this.eventDetailsDTO.id).subscribe({
+      next: res => {
+        if (res) {
+          const link = `public-forms/event-feedback/${this.eventDetailsDTO.id}`;
+          const isInternal = true;
+          const description = `Feedback for ${this.eventDetailsDTO.eventName}`;
+
+          const queryParams = new URLSearchParams({
+            link: link,
+            isInternal: String(isInternal),
+            description: description
+          });
+  
+          const fullUrl = `${window.location.origin}/qr-viewer?${queryParams.toString()}`;
+  
+          window.open(fullUrl, '_blank');
+        }
+        else {
+          this.nzMessageService.info('The feedback form is not available yet');
+        }
+      }
+    })
+  }
+
+  navigateToFeedbackSummary() {
+    this.router.navigate(['feedback-summary'], { relativeTo: this.activatedRoute });
   }
 
   // Application History methods
