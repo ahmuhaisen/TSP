@@ -32,7 +32,7 @@ export class AccountDetailsComponent {
         'admin-area',
         'users',
         this.userInfo()?.id
-      ], { queryParams: { userType: 'Faculty' } });
+      ], { queryParams: { userType: 'FacultyMember' } });
     }
     return this.router.createUrlTree([
       'student-area',
