@@ -28,7 +28,7 @@ export class SocietiesService {
     return this.db.postRequest<PostSociety, PostSociety>(this.getUrl(), society);
   }
 
-  update(id: string, society: { 
+  update(id: string, society: {
     id: string;
     name: string;
     description: string;
@@ -37,6 +37,9 @@ export class SocietiesService {
     creationDate?: string;
     advisorId?: string;
   }) {
+    if (!society.logoBase64.startsWith("data")) {
+      society.logoBase64 = "";
+    }
     return this.db.putRequest<any, any>(this.getUrlWithId(id), society);
   }
 

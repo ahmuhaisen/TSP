@@ -5,6 +5,7 @@ import { AuthService, UserType } from '../../common/services/auth.service';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { environment } from '../../../environments/environment';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-account-details',
@@ -21,11 +22,15 @@ export class AccountDetailsComponent {
   userType = input<UserType>('FacultyMember');
   baseProfileImageUrl = environment.gitHubUsersPicturesURL;
   isAccountDetailsDropdownOpen = false;
-
+  profileImageId: string = "";
   authService = inject(AuthService);
   router = inject(Router);
   userInfo = this.authService.currentUser;
-
+  constructor(
+    private cookieSerivce: CookieService
+  ) {
+    this.profileImageId = this.cookieSerivce.get("profile_image") || "";
+  }
   profileLink = computed<UrlTree>(() => {
     if (this.userType() === 'FacultyMember') {
       return this.router.createUrlTree([

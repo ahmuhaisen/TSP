@@ -84,11 +84,17 @@ export class EditSocietyInfoFormComponent implements OnChanges {
 
   ngOnInit() {
     console.log('EditSocietyInfoFormComponent ngOnInit called');
+    let tempThemeColor: string = "";
+    if (this.society() == null || this.society()?.themeColor == null) {
+      tempThemeColor = "#030000";
+    } else {
+      tempThemeColor = this.society()?.themeColor || "";
+    }
     this.createSocietyForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       description: ['', [Validators.required, Validators.maxLength(200)]],
       creationDate: [new Date(), [Validators.required]],
-      themeColor: ['#1677ff', []],
+      themeColor: [tempThemeColor, []],
       logo: ['', [Validators.required]],
       advisorId: [null, [Validators.required]]
     });
@@ -98,7 +104,7 @@ export class EditSocietyInfoFormComponent implements OnChanges {
       console.log('Faculty members loaded:', res.length);
       this.facultyMembers = res;
       this.displayedFacultyMembers = [...this.facultyMembers];
-      
+      console.log(this.displayedFacultyMembers)
       // Apply society values after faculty members are loaded
       if (this.society()) {
         console.log('Setting form values after faculty members loaded');
@@ -126,21 +132,22 @@ export class EditSocietyInfoFormComponent implements OnChanges {
       console.log('Cannot set form values: society or form is not available');
       return;
     }
-    
+
     const societyData = this.society()!;
     console.log('Setting form values with society data:', societyData);
     console.log('Advisor ID to set:', societyData.advisor?.id);
-    
+
     this.createSocietyForm.get('name')?.setValue(societyData.name);
     this.createSocietyForm.get('description')?.setValue(societyData.description);
     this.createSocietyForm.get('creationDate')?.setValue(societyData.creationDate);
     this.createSocietyForm.get('themeColor')?.setValue(societyData.themeColor);
     this.createSocietyForm.get('logo')?.setValue(societyData.logoId);
-    
+    console.log()
+
     if (societyData.advisor && societyData.advisor.id) {
       console.log('Setting advisor ID to:', societyData.advisor.id);
       this.createSocietyForm.get('advisorId')?.setValue(societyData.advisor.id);
-      
+
       // Force form update after a brief delay to ensure the UI catches up
       setTimeout(() => {
         this.createSocietyForm?.get('advisorId')?.updateValueAndValidity({ onlySelf: false, emitEvent: true });

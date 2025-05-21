@@ -54,7 +54,7 @@ export class SocietiesListComponent implements OnInit {
     isJoinSocietyLoading = false;
     societyToLeave: MemberAssociatedSociety | null = null;
     joinSocietyForm: FormGroup;
-    baseSocietiesUrl:string= environment.gitHubSocietiesPicturesURL
+    baseSocietiesUrl: string = environment.gitHubSocietiesPicturesURL
     suggestedSections = ['Academic', 'Sports', 'Cultural', 'Technical', 'Social', 'Other'];
 
     constructor(
@@ -79,6 +79,20 @@ export class SocietiesListComponent implements OnInit {
         this.studentsService.getBelongingSocieties().subscribe({
             next: (societies: MemberAssociatedSociety[]) => {
                 this.belongingSocieties = societies;
+                console.log(this.belongingSocieties)
+            },
+            error: (error: Error) => {
+                this.message.error('Failed to load societies');
+                console.error('Error loading societies:', error);
+            }
+        });
+
+        this.studentsService.getCommitteeSocieties().subscribe({
+            next: (societies: MemberAssociatedSociety[]) => {
+
+                societies.forEach(e => e.isCommittee = true)
+                this.belongingSocieties.push(...societies);
+                console.log(this.belongingSocieties)
             },
             error: (error: Error) => {
                 this.message.error('Failed to load societies');
@@ -142,7 +156,7 @@ export class SocietiesListComponent implements OnInit {
             this.isJoinSocietyModalVisible = false;
             return;
         }
-        
+
         if (this.joinSocietyForm.valid) {
             this.isJoinSocietyLoading = true;
             const formValue: JoinSocietyRequest = this.joinSocietyForm.value;

@@ -25,7 +25,9 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
         <div *ngFor="let item of searchResults" class="bg-white rounded shadow p-4">
           <div class="flex items-center space-x-4">
-            <img [src]="baseUrl+item.logoId" alt="Logo" class="w-12 h-12 rounded-full object-cover" />
+
+            <nz-avatar [nzSrc]="baseUrl+item.logoId" [nzText]="item.name.substr(0,2).toUpperCase()"></nz-avatar>
+
             <div>
               <h3 class="text-lg font-semibold">{{ item.name }}</h3>
               <p class="text-sm text-gray-600">{{ item.description }}</p>

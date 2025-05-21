@@ -19,10 +19,10 @@
     @for(society of advisorSocieties; track society.id) {
     <div
         class="relative flex flex-col mt-6 max-h-72 text-gray-700 shadow rounded-lg border-b-2 border-secondary bg-clip-border">
-        <div
-            class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden bg-white bg-clip-border rounded-2xl shadow-md">
-            <nz-avatar [nzSrc]="society.logoId" class="object-contain bg-secondary w-full h-full flex items-center justify-center"
-            [nzIcon]="'product'" nzShape="square" nzSize="large" />
+        <div class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden bg-white bg-clip-border rounded-2xl shadow-md">
+            <nz-avatar [nzSrc]="baseSocietyUrl+society.logoId"
+                class="object-contain bg-secondary w-full h-full flex items-center justify-center" [nzIcon]="'product'"
+                nzShape="square" nzSize="large" />
         </div>
         <div class="p-6 flex-grow">
             <h5
@@ -34,17 +34,15 @@
             </p>
         </div>
         <div class="p-6 pt-0">
-            <button [routerLink]="'/admin-area/societies/' + society.id + '/manage'"
-                    nz-button nzType="primary"
-                    class="bg-secondary hover:bg-secondary/85 focus:bg-secondary/95 rounded-lg border-0"
-            >
+            <button [routerLink]="'/admin-area/societies/' + society.id + '/manage'" nz-button nzType="primary"
+                class="bg-secondary hover:bg-secondary/85 focus:bg-secondary/95 rounded-lg border-0">
                 <nz-icon nzType="setting" />
                 Manage
             </button>
         </div>
     </div>
     }@empty {
-        <nz-empty class="col-span-4" [nzNotFoundContent]="'You are not an advisor of any societies.'"/>
+    <nz-empty class="col-span-4" [nzNotFoundContent]="'You are not an advisor of any societies.'" />
     }
 </div>
 
@@ -62,20 +60,21 @@
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
     @for(society of otherSocieties; track society.id) {
-        <div class="w-full ">
-            <a [routerLink]="'/admin-area/societies/' + society.id" class="flex flex-wrap sm:flex-nowrap items-center py-2 cursor-pointer shadow rounded-lg border-b-2 border-primary-light">
-                <div class="w-16 p-2 shrink-0">
-                    <nz-avatar [nzSrc]="society.logoId" class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
-                               [nzIcon]="'product'" nzShape="square" nzSize="large" />
-                </div>
-                <div>
-                    <p class="font-semibold text-xs">{{ society.name  | truncate: 35 }}</p>
-                    <span class="text-gray-600 text-xs block">{{ society.description | truncate: 40 }}</span>
-                </div>
-            </a>
-        </div>
+    <div class="w-full ">
+        <a [routerLink]="'/admin-area/societies/' + society.id"
+            class="flex flex-wrap sm:flex-nowrap items-center py-2 cursor-pointer shadow rounded-lg border-b-2 border-primary-light">
+            <div class="w-16 p-2 shrink-0">
+                <nz-avatar [nzSrc]="society.logoId"
+                    class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
+                    [nzIcon]="'product'" nzShape="square" nzSize="large" />
+            </div>
+            <div>
+                <p class="font-semibold text-xs">{{ society.name | truncate: 35 }}</p>
+                <span class="text-gray-600 text-xs block">{{ society.description | truncate: 40 }}</span>
+            </div>
+        </a>
+    </div>
     }@empty {
-        <nz-empty class="col-span-3" [nzNotFoundContent]="'No societies found.'"/>
+    <nz-empty class="col-span-3" [nzNotFoundContent]="'No societies found.'" />
     }
 </div>
-

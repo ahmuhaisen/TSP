@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { inject } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '../../../environments/environment';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+
 @Component({
   selector: 'app-search-drawer',
   imports: [
@@ -23,7 +25,8 @@ import { environment } from '../../../environments/environment';
     NzSelectModule,
     NzEmptyComponent,
     FormsModule,
-    CommonModule
+    CommonModule,
+    NzAvatarModule
   ],
   templateUrl: './search-drawer.component.html',
   styleUrl: './search-drawer.component.css'
@@ -56,6 +59,9 @@ export class SearchDrawerComponent {
       case "2": searchType = "Members"; this.baseUrl = environment.gitHubUsersPicturesURL; break;
       case "3": searchType = "Events"; break;
       default: this.messageService.error("please select the search category"); return;
+    }
+    if (this.searchTerm.length < 1) {
+      return;
     }
     this.searchService.getSearchResults(searchType, this.searchTerm).subscribe(data => {
       this.searchResults = data

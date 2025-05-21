@@ -51,7 +51,7 @@ public class GetMemberSocieties
                 .AsNoTracking()
                 .Include(s => s.Society)
                 .Where(s => (request.ForCommittee && s.IsCommittee && s.StudentId == request.MemberId) ||
-    (!request.ForCommittee && s.StudentId == request.MemberId))
+    (!request.ForCommittee&&!s.IsCommittee && s.StudentId == request.MemberId))
 
                 .Select(s => new SocietyListDTO
                 {

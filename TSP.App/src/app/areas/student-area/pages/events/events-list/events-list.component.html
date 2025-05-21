@@ -272,9 +272,8 @@
         <nz-form-label nzRequired>Date and time</nz-form-label>
         <nz-form-control nzErrorTip="Please select event date and time">
           <nz-range-picker class="w-full" formControlName="dateRange" [nzDisabledDate]="disabledDate"
-            [nzDisabledTime]="disabledRangeTime"
-            [nzShowTime]="{ nzHideDisabledOptions: true, nzDefaultOpenValue: timeDefaultValue }"
-            nzFormat="yyyy-MM-dd HH:mm">
+            [nzDisabledTime]="disabledRangeTime" nzShowTime nzFormat="yyyy-MM-dd HH:mm">>
+
           </nz-range-picker>
         </nz-form-control>
       </nz-form-item>
