@@ -7,6 +7,7 @@ using TPS.Application.Areas.Shared.Notifications.Contracts;
 using TPS.Application.SignalR;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Enums;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Services;
@@ -137,7 +138,7 @@ public class NotificationService(ApplicationDbContext _context,
                 ImageId = n.ImageId,
             })
             .ToListAsync();
-        
+
         return Result.Success(notifications);
     }
 
@@ -174,5 +175,95 @@ public class NotificationService(ApplicationDbContext _context,
         await _context.SaveChangesAsync();
 
         return Result.Success();
+    }
+
+    public async Task SendNotificationToUser(Guid userId, UserType userType, string subject, string body)
+    {
+        if (userType == UserType.Student)
+        {
+            var student = await _context.Students
+                .Where(x => x.Id == userId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+            var notification = new Notification
+            {
+                Id = Guid.NewGuid(),
+                UserId = student.Id,
+                Subject = subject.Trim(),
+                Body = body.Trim(),
+                CreatedAt = DateTime.Now
+            };
+            await _context.Notifications.AddAsync(notification);
+            var connection = _connectionManager.GetConnections(student.Id.ToString());
+            foreach(var connectionId in connection)
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync(ReceiveNotificationKey, new
+                {
+                    Subject = subject.Trim(),
+                    Body = body.Trim(),
+                    CreatedAt = DateTime.Now
+                });
+            }
+        }
+        if (userType == UserType.FacultyMember)
+        {
+            var facultyMember = await _context.FacultyMembers
+                .Where(x => x.Id == userId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+            var notification = new Notification
+            {
+                Id = Guid.NewGuid(),
+                UserId = facultyMember.Id,
+                Subject = subject.Trim(),
+                Body = body.Trim(),
+                CreatedAt = DateTime.Now
+            };
+            await _context.Notifications.AddAsync(notification);
+            var connection = _connectionManager.GetConnections(facultyMember.Id.ToString());
+            foreach(var connectionId in connection)
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync(ReceiveNotificationKey, new
+                {
+                    Subject = subject.Trim(),
+                    Body = body.Trim(),
+                    CreatedAt = DateTime.Now
+                });
+            }
+        }
+    }
+
+    public async Task SendNotificationToSocietyMembers(Guid societyId, string subject, string body)
+    {
+        var societyMembers = await _context.SocietiesMembers
+            .Where(x => societyId == x.SocietyId)
+            .AsNoTracking()
+            .ToListAsync();
+
+        var notifications = societyMembers.Select(std => new Notification
+        {
+            Id = Guid.NewGuid(),
+            UserId = std.StudentId,
+            Subject = subject.Trim(),
+            Body = body.Trim(),
+            CreatedAt = DateTime.Now
+        }).ToList();
+
+        await _context.Notifications.AddRangeAsync(notifications);
+
+        foreach (var std in societyMembers)
+        {
+            var connections = _connectionManager.GetConnections(std.StudentId.ToString());
+
+            foreach (var connectionId in connections)
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync(ReceiveNotificationKey, new
+                {
+                    Subject = subject.Trim(),
+                    Body = body.Trim(),
+                    CreatedAt = DateTime.Now
+                });
+            }
+        }
     }
 }

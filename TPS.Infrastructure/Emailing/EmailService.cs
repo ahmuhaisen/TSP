@@ -71,7 +71,13 @@ public class EmailService : IEmailService
         await Send(to, subject, body);
     }
 
-    public async Task SendCommitteeChangesAlert(string to, string userName, UserType userType, string societyName, string committeeName, bool isSameUser)
+    public async Task SendCommitteeChangesAlert(
+        string to,
+        string userName,
+        UserType userType,
+        string societyName,
+        string committeeName,
+        bool isSameUser)
     {
         string body;
         if (userType == UserType.Student)
@@ -129,7 +135,13 @@ public class EmailService : IEmailService
 
         await Send(to, subject, body);
     }
-    public async Task SendEventRequestDecisionMade(string to, string userName, UserType userType, string societyName, string eventName, bool decision,string? remark)
+    public async Task SendEventRequestDecisionMade(string to,
+                                                   string userName, 
+                                                   UserType userType, 
+                                                   string societyName, 
+                                                   string eventName, 
+                                                   bool decision,
+                                                   string? remark)
     {
         string body;
 

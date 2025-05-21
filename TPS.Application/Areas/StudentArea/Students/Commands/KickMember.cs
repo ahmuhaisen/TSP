@@ -1,14 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TPS.Application.Abstractions.Messaging;
-using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Infrastructure.Data;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
-
 
 public class KickMember
 {
@@ -51,6 +45,15 @@ public class KickMember
 
             context.SocietiesMembers.Remove(memberRecord);
             var result = await context.SaveChangesAsync();
+
+            var userData = await context.Societies.FirstOrDefaultAsync(x => x.Id == memberRecord.SocietyId);
+
+            userData.RaiseDomainEvent(new MemberLeftSocietyDomainEvent(
+                Guid.NewGuid(),
+                userData.Id,
+                userData.Name,
+                memberRecord.Student.FirstName + " " + memberRecord.Student.LastName
+                ));
             if (result <= 0)
             {
                 return Result.Failure(Error.CustomError("Something wrong in kicking proccess"));

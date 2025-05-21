@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.Shared.Profiles.Command;
 using TPS.Application.Areas.Shared.Profiles.Contracts.Requests;
 using TPS.Application.Areas.Shared.Profiles.Queries;
+using TSP.Domain.Enums;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers;
@@ -18,7 +19,7 @@ public class ProfilesController : ApiController
 
 
     [HttpGet("{userId}")]
-    public async Task<IActionResult> Get(Guid userId, [FromQuery] string userType)
+    public async Task<IActionResult> Get(Guid userId, [FromQuery] UserType userType)
     {
         var query = new GetUserProfile.Query(userId, userType);
 

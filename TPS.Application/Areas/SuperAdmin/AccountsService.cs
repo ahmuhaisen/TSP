@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TPS.Application.Abstractions;
 using TPS.Application.Areas.SuperAdmin.Contracts;
 using TPS.Infrastructure.Data;
 using TPS.Infrastructure.Emailing;
@@ -9,7 +10,11 @@ using TSP.Domain.Shared;
 namespace TPS.Application.Areas.SuperAdmin;
 
 
-public class AccountsService(ApplicationDbContext _context, IEmailService _emailService) : IAccountsService
+public class AccountsService(
+    ApplicationDbContext _context,
+    IEmailService _emailService,
+    INotificationService _notificationService
+    ) : IAccountsService
 {
     public async Task<Result<List<PendingAccountBasicDto>>> GetPendingAccountsAsync()
     {
@@ -64,6 +69,12 @@ public class AccountsService(ApplicationDbContext _context, IEmailService _email
         await _context.SaveChangesAsync();
 
         await _emailService.SendWelcomingEmail(user.Email!, $"{user.FirstName} {user.LastName}", userType);
+        await _notificationService.SendNotificationToUser(
+            user.Id,
+            userType,
+            $"Welcome to The Societies Portal",
+            $"{user.FirstName + ' ' + user.LastName}"
+            );
 
         return Result.Success();
     }

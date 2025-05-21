@@ -4,11 +4,12 @@ namespace TPS.Application.Areas.AdminArea.Societies.Contracts.Requests;
 
 public class UpdateSocietyRequest
 {
-    public Guid Id { get; set; }
     public required string Name { get; set; }
     public required string Description { get; set; }
     public required string LogoBase64 { get; set; }
     public string? ThemeColor { get; set; }
+    public DateOnly CreationDate { get; set; }
+    public Guid AdvisorId { get; set; }
 }
 
 public class UpdateSocietyRequestValidator : AbstractValidator<UpdateSocietyRequest>
@@ -31,5 +32,6 @@ public class UpdateSocietyRequestValidator : AbstractValidator<UpdateSocietyRequ
        .Matches(@"^#[0-9A-Fa-f]{6}$")
        .When(r => !string.IsNullOrEmpty(r.ThemeColor));
 
+        RuleFor(r => r.CreationDate);
     }
 }

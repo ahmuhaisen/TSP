@@ -15,6 +15,7 @@ using TPS.Application.Areas.Authentication;
 using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
+using TPS.Application.Areas.Shared.Users;
 using TPS.Application.Areas.SuperAdmin;
 using TPS.Application.Services;
 using TPS.Application.SignalR;
@@ -220,6 +221,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IStudentsService, StudentService>();
         services.AddScoped<ISocietiesService, SocietiesService>();
+        services.AddScoped<IUserService, UserService>();
         return services;
     }
 
