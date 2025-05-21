@@ -119,9 +119,11 @@ namespace TPS.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     ProfileImageId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -266,7 +268,7 @@ namespace TPS.Infrastructure.Migrations
                     Subject = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Body = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     IsSeen = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2025, 5, 4, 20, 3, 29, 47, DateTimeKind.Local).AddTicks(432)),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     SeenAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ImageId = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true)
                 },
@@ -485,6 +487,30 @@ namespace TPS.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "FeedbackSummaries",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AverageRating = table.Column<decimal>(type: "decimal(3,2)", precision: 3, scale: 2, nullable: false),
+                    TotalResponses = table.Column<int>(type: "int", nullable: false),
+                    Sentiment = table.Column<int>(type: "int", nullable: true),
+                    Topics = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    AiSummary = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    CalculatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeedbackSummaries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FeedbackSummaries_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Ranks",
                 columns: new[] { "Id", "Title" },
@@ -630,6 +656,11 @@ namespace TPS.Infrastructure.Migrations
                 column: "EventId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FeedbackSummaries_EventId",
+                table: "FeedbackSummaries",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MembershipsRequests_SocietyId",
                 table: "MembershipsRequests",
                 column: "SocietyId");
@@ -681,6 +712,9 @@ namespace TPS.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "FeedbackAnswers");
+
+            migrationBuilder.DropTable(
+                name: "FeedbackSummaries");
 
             migrationBuilder.DropTable(
                 name: "MembershipsRequests");
