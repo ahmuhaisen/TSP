@@ -668,7 +668,7 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
   fetchEventDetails() {
     this.isEventLoading = true;
 
-    this.eventsService.getEventDetails(this.eventId).subscribe({
+    this.attendanceService.getEventDetails(this.eventId).subscribe({
       next: (eventDetails) => {
         this.isEventLoading = false;
         console.log('Event details fetched:', eventDetails);

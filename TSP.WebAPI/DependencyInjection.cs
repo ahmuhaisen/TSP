@@ -3,6 +3,7 @@ using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.AI;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Quartz;
@@ -12,6 +13,7 @@ using TPS.Application;
 using TPS.Application.Abstractions;
 using TPS.Application.Areas.AdminArea.Societies.Commands;
 using TPS.Application.Areas.Authentication;
+using TPS.Application.Areas.Feedback;
 using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.Shared.Societies;
 using TPS.Application.Areas.Shared.Students;
@@ -19,6 +21,7 @@ using TPS.Application.Areas.Shared.Users;
 using TPS.Application.Areas.SuperAdmin;
 using TPS.Application.Services;
 using TPS.Application.SignalR;
+using TPS.Infrastructure.AiClient;
 using TPS.Infrastructure.BackgroundJobs;
 using TPS.Infrastructure.Data;
 using TPS.Infrastructure.Data.DataGenerators;
@@ -205,7 +208,17 @@ public static class DependencyInjection
         services.AddTransient<IGitHubService, GitHubService>();
         services.Configure<GitOptions>(configuration.GetSection("GitImages"));
 
-        services.AddScoped<IPdfService, PdfService>();
+        services.Configure<EventFeedbackOptions>(
+            configuration.GetSection("EventFeedback"));
+        services.AddScoped<IFeedbackService, FeedbackService>();
+
+        //services.AddScoped<IPdfService, PdfService>();
+
+        services.AddScoped<IAiClientService, AiClientService>();
+        services.Configure<OllamaOptions>(configuration.GetSection("Ollama"));
+
+        services.AddChatClient(new OllamaChatClient(new Uri(configuration["Ollama:InnerClientUri"]!), configuration["Ollama:DefaultModel"]!));
+
 
         services.AddScoped<INotificationService, NotificationService>();
 

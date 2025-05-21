@@ -1,0 +1,180 @@
+<div class="container mx-auto px-4 py-6">
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center min-h-[400px]">
+        <nz-spin nzSize="large"></nz-spin>
+        <p class="mt-4 text-gray-600">Loading feedback data...</p>
+    </div>
+
+    <!-- Content when data is loaded -->
+    <div *ngIf="!isLoading && feedbackData" class="transition-all duration-300 ease-in-out">
+        <!-- Header -->
+        <div class="mb-6 pb-4 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-extrabold text-gray-700">
+                        <nz-icon nzType="comment" class="mr-2"></nz-icon>Feedback Summary
+                    </h1>
+                    <h2 class="text-lg font-bold text-gray-700 mt-1">{{ feedbackData.event.name }}</h2>
+                </div>
+                <button nz-button nzType="default" routerLink="../" class="hover:shadow-md transition-all duration-300">
+                    <nz-icon nzType="arrow-left"></nz-icon>Back to Event Details
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <!-- Average Rating Card -->
+            <div class="bg-white rounded-lg shadow-md p-4 border-t-4 border-blue-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                <div class="flex flex-col items-center">
+                    <div class="text-sm text-gray-500 mb-3 uppercase tracking-wide font-medium">Average Rating</div>
+                    <div class="flex items-center">
+                        <span class="text-4xl font-bold mr-2 text-blue-600">{{ feedbackData.summary.averageRating | number:'1.1-1' }}</span>
+                        <nz-rate [ngModel]="feedbackData.summary.averageRating" nzDisabled nzAllowHalf></nz-rate>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-3">out of 5.0</div>
+                </div>
+            </div>
+
+            <!-- Total Responses Card -->
+            <div class="bg-white rounded-lg shadow-md p-4 border-t-4 border-teal-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                <div class="flex flex-col items-center">
+                    <div class="text-sm text-gray-500 mb-3 uppercase tracking-wide font-medium">Total Responses</div>
+                    <div class="text-4xl font-bold text-teal-600">{{ feedbackData.summary.totalResponses }}</div>
+                    <div class="text-xs text-gray-500 mt-3">attendees provided feedback</div>
+                </div>
+            </div>
+
+            <!-- Sentiment Card -->
+            <div class="bg-white rounded-lg shadow-md p-4 border-t-4 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                 [ngClass]="{
+                    'border-green-500': feedbackData.summary.sentiment === 'Positive',
+                    'border-red-500': feedbackData.summary.sentiment === 'Negative',
+                    'border-yellow-500': feedbackData.summary.sentiment === 'Mixed'
+                 }">
+                <div class="flex flex-col items-center">
+                    <div class="text-sm text-gray-500 mb-3 uppercase tracking-wide font-medium">Overall Sentiment</div>
+                    <nz-tag [nzColor]="getSentimentColor(feedbackData.summary.sentiment)" class="text-lg px-5 py-2">
+                        {{ feedbackData.summary.sentiment }}
+                    </nz-tag>
+                    <div class="text-xs text-gray-500 mt-3">based on attendee comments</div>
+                </div>
+            </div>
+
+            <!-- Key Topics Card -->
+            <div class="bg-white rounded-lg shadow-md p-4 border-t-4 border-purple-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                <div class="flex flex-col items-center">
+                    <div class="text-sm text-gray-500 mb-3 uppercase tracking-wide font-medium">Key Topics</div>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <ng-container *ngFor="let topic of feedbackData.summary.topics.split(', ')">
+                            <nz-tag nzColor="processing" class="rounded-full text-xs transition-transform duration-200 hover:scale-105">{{ topic }}</nz-tag>
+                        </ng-container>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-3">mentioned in feedback</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Summary Section -->
+        <div class="bg-white rounded-lg shadow-md mb-8 p-6 border-t-4 border-blue-500 hover:shadow-lg transition-all duration-300">
+            <div>
+                <div class="flex items-center mb-4">
+                    <nz-icon nzType="file-text" class="mr-2 text-blue-500 text-lg"></nz-icon>
+                    <span class="text-lg font-semibold">Feedback Summary</span>
+                    <nz-tag class="ml-2" nzColor="blue">AI Generated</nz-tag>
+                </div>
+                <p class="text-gray-700 italic leading-relaxed">{{ feedbackData.summary.aiSummary }}</p>
+                <p class="text-xs text-gray-500 mt-4 text-right">
+                    Generated on {{ feedbackData.summary.calculatedAt | date:'medium' }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Individual Feedback Section -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold text-gray-700 mb-5 pb-2 border-b-2 border-blue-500 inline-block">
+                <nz-icon nzType="message" class="mr-2"></nz-icon>Latest Feedbacks
+            </h3>
+
+            <div *ngIf="feedbackData?.feedbacks?.length === 0" class="mb-6">
+                <nz-empty nzDescription="No feedback responses available"></nz-empty>
+            </div>
+
+            <div *ngIf="feedbackData?.summary?.totalResponses! > 0" class="space-y-5">
+                <!-- Feedback Timeline -->
+                <div *ngFor="let feedback of displayedFeedbacks; let i = index" 
+                     class="relative pl-8 md:pl-0">
+                    <!-- Mobile Timeline Line -->
+                    <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-gray-200 hidden sm:block md:hidden" 
+                         *ngIf="i < displayedFeedbacks.length - 1"></div>
+                    
+                    <!-- Timeline Item -->
+                    <div class="flex flex-col md:flex-row gap-5 items-start">
+                        <!-- Left Side: Rating + Date -->
+                        <div class="md:w-48 flex-shrink-0 mb-3 md:mb-0">
+                            <div class="flex items-center mb-2 gap-2">
+                                <div class="hidden sm:block md:hidden w-5 h-5 rounded-full bg-blue-500 -ml-10 mr-2 z-10 flex-shrink-0"></div>
+                                <div class="flex flex-col md:items-start">
+                                    <div class="mb-1">
+                                        <nz-rate [ngModel]="feedback.rating" nzDisabled nzAllowHalf></nz-rate>
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        {{ feedback.submittedAt | date:'MMM d, y h:mm a' }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Side: Feedback Content -->
+                        <div class="bg-white rounded-lg shadow-md p-5 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 w-full border-l-4"
+                             [ngClass]="{
+                                'border-green-500': feedback.rating >= 4,
+                                'border-yellow-500': feedback.rating >= 3 && feedback.rating < 4,
+                                'border-orange-500': feedback.rating >= 2 && feedback.rating < 3,
+                                'border-red-500': feedback.rating < 2
+                             }">
+                            <!-- Comment Text -->
+                            <div>
+                                <p class="text-gray-700" [ngClass]="{'italic text-gray-500': !feedback.notes}">
+                                    {{ feedback.notes || 'No comments provided' }}
+                                </p>
+                            </div>
+                            
+                            <!-- Mobile Rating Display (shown on smaller screens) -->
+                            <div class="block md:hidden mt-4 pt-3 border-t border-gray-100">
+                                <div class="text-xs text-gray-500 mb-1">Rating:</div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-lg text-blue-600">{{ feedback.rating }}</span>
+                                    <span>/</span>
+                                    <span class="text-gray-500">5.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- See More / See Less Button -->
+                <div *ngIf="totalFeedbackCount > displayLimit" class="flex justify-center mt-6">
+                    <button nz-button nzType="default" (click)="toggleFeedbacksDisplay()" class="px-6 hover:shadow-md">
+                        <ng-container *ngIf="!showAllFeedbacks">
+                            <nz-icon nzType="down-circle" class="mr-1"></nz-icon>
+                            See All Feedbacks ({{totalFeedbackCount}})
+                        </ng-container>
+                        <ng-container *ngIf="showAllFeedbacks">
+                            <nz-icon nzType="up-circle" class="mr-1"></nz-icon>
+                            Show Less
+                        </ng-container>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- No data available state -->
+    <div *ngIf="!isLoading && !feedbackData" class="flex flex-col items-center justify-center min-h-[400px]">
+        <nz-empty nzDescription="No feedback data available for this event"></nz-empty>
+        <button nz-button nzType="primary" class="mt-4 hover:shadow-md transition-all duration-300" routerLink="../">
+            Return to Event Details
+        </button>
+    </div>
+</div>

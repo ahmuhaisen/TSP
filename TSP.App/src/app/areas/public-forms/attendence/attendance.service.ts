@@ -1,6 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { DbService } from "../../../common/services/db.service";
-import { EventBasicDetails, PostAttendance } from "./attendance.types";
+import { PostAttendance } from "./attendance.types";
+import { EventDetailsDTO } from "../../system-admin-area/api-interfaces/event.types";
 
 @Injectable()
 export class AttendanceService {
@@ -9,8 +10,8 @@ export class AttendanceService {
 
     db = inject(DbService);
 
-    getEvent(id: string) {
-        return this.db.getRequest<EventBasicDetails>(this.getUrlWithId(this.eventModel,id));
+    getEventDetails(eventRequestId: string) {
+        return this.db.getRequest<EventDetailsDTO>(`${this.model}/events/${eventRequestId}`);
     }
 
     post(attendance: PostAttendance) {

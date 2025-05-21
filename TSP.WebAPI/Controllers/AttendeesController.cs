@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TPS.Application.Areas.AdminArea.Events.Queries;
 using TPS.Application.Areas.Attendees.Commands;
 using TPS.Application.Areas.Attendees.Contracts;
 using TPS.Application.Areas.Attendees.Contracts.Requests;
@@ -10,7 +11,6 @@ using TSP.Domain.Shared;
 namespace TSP.WebAPI.Controllers;
 
 [ApiController]
-[Authorize]
 [Route($"api/[controller]")]
 public class AttendeesController : ApiController
 {
@@ -18,6 +18,7 @@ public class AttendeesController : ApiController
     { }
 
     [HttpGet]
+    [Authorize]
     [ProducesResponseType<List<AttendeeBasicDetailsDTO>>(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAttendees(Guid eventId)
@@ -30,9 +31,6 @@ public class AttendeesController : ApiController
     }
 
     [HttpPost]
-    [AllowAnonymous]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateAttendee(CreateEventAttendeeRequest request)
     {
         var command = new CreateEventAttendee.Command(
@@ -46,6 +44,16 @@ public class AttendeesController : ApiController
         );
 
         var task = _sender.Send(command);
+
+        return await FromResult(task);
+    }
+
+    [HttpGet("events/{eventRequestId}")]
+    public async Task<IActionResult> GetEventDetails([FromRoute] Guid eventRequestId)
+    {
+        var query = EventDetails.Query.Create(eventRequestId);
+
+        var task = _sender.Send(query);
 
         return await FromResult(task);
     }

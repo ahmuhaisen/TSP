@@ -7,7 +7,11 @@ export const routes: Routes = [
         pathMatch: 'full'
     },
     {
-        path: 'attendance/:eventId',
+        path: 'event-registration/:eventId',
         loadComponent: () => import('./attendence/attendence.component').then(m => m.AttendenceComponent)
+    },
+    {
+        path: 'event-feedback/:eventId',
+        loadComponent: () => import('./event-feedback/event-feedback.component').then(m => m.EventFeedbackComponent)
     }
 ]

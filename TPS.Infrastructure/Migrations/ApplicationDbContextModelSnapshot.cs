@@ -17,7 +17,11 @@ namespace TPS.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+
+                .HasAnnotation("ProductVersion", "9.0.4")
+
                 .HasAnnotation("ProductVersion", "8.0.11")
+
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -211,6 +215,9 @@ namespace TPS.Infrastructure.Migrations
 
                     b.Property<string>("Gender")
                         .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
@@ -218,6 +225,7 @@ namespace TPS.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -251,10 +259,12 @@ namespace TPS.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+
                     b.Property<DateTime>("RegisteredAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getdate()");
+
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -465,6 +475,74 @@ namespace TPS.Infrastructure.Migrations
 
                     b.ToTable("EventsApproval");
                 });
+
+
+            modelBuilder.Entity("TSP.Domain.Entities.FeedbackAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.Property<decimal>("Rating")
+                        .HasPrecision(2, 1)
+                        .HasColumnType("decimal(2,1)");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("FeedbackAnswers");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.FeedbackSummary", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AiSummary")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<decimal>("AverageRating")
+                        .HasPrecision(3, 2)
+                        .HasColumnType("decimal(3,2)");
+
+                    b.Property<DateTime>("CalculatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Sentiment")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Topics")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("TotalResponses")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("FeedbackSummaries");
+                });
+
 
             modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
                 {
@@ -961,6 +1039,29 @@ namespace TPS.Infrastructure.Migrations
                     b.Navigation("FacultyMember");
                 });
 
+            modelBuilder.Entity("TSP.Domain.Entities.FeedbackAnswer", b =>
+                {
+                    b.HasOne("TSP.Domain.Entities.Event", "Event")
+                        .WithMany("FeedbackAnswers")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("TSP.Domain.Entities.FeedbackSummary", b =>
+                {
+                    b.HasOne("TSP.Domain.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
+
             modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
                 {
                     b.HasOne("TSP.Domain.Entities.Society", "Society")
@@ -1055,6 +1156,10 @@ namespace TPS.Infrastructure.Migrations
             modelBuilder.Entity("TSP.Domain.Entities.Event", b =>
                 {
                     b.Navigation("Attendees");
+
+
+                    b.Navigation("FeedbackAnswers");
+
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.School", b =>

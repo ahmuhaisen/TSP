@@ -29,7 +29,9 @@ import {
   AppstoreOutline,
   ApiOutline,
   MailTwoTone,
-  MailOutline
+  MailOutline,
+  FilePdfOutline,
+  FileExcelOutline
 } from '@ant-design/icons-angular/icons';
 
 export const icons = [
@@ -62,5 +64,7 @@ export const icons = [
   HistoryOutline,
   AppstoreOutline,
   ApiOutline,
-  MailOutline
+  MailOutline,
+  FilePdfOutline,
+  FileExcelOutline
 ];
