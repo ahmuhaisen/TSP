@@ -11,6 +11,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { SocietiesService } from '../../../services/societies.service';
 import { SocietyWithAdvisor } from '../../../../system-admin-area/api-interfaces/society.types';
 import { EditSocietyInfoFormComponent } from '../../../../../components/society-details/edit-society-info-form/edit-society-info-form.component';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-society-details',
@@ -65,6 +66,7 @@ export class SocietyDetailsComponent implements OnInit, AfterViewInit {
         console.log('Advisor data:', society.advisor);
         this.society = society;
         this.isLoading = false;
+        this.society.logoId = environment.gitHubSocietiesPicturesURL + this.society.logoId
 
       },
       error: (err) => {
@@ -116,11 +118,6 @@ export class SocietyDetailsComponent implements OnInit, AfterViewInit {
         `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` :
         undefined;
     }
-    console.log(formValues.logo)
-    console.log(formValues.logo)
-    console.log(formValues.logo)
-    console.log(formValues.logo)
-    console.log(formValues.logo)
 
     const society = {
       id: this.societyId,

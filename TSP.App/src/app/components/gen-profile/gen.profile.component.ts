@@ -20,7 +20,7 @@ import { ContainerBlockComponent } from '../container-block.component';
 import { environment } from '../../../environments/environment';
 import { ProfilesService, UserProfile } from '../../common/services/profiles.service';
 import { AuthService } from '../../common/services/auth.service';
-
+import { CookieService } from 'ngx-cookie-service';
 export interface SuggestedPerson {
   id: string;
   fullName: string;
@@ -77,14 +77,18 @@ export class GenProfileComponent {
   showRemovePhotoPopover = false;
   suggestedPeople: SuggestedPerson[] = [];
   isSuggestedPeopleLoading = false;
+  currentUserId: any;
+  currentUserType: string = "";
+  constructor(private cookieService: CookieService) {
 
+  }
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      const id = params['id'];
-      const userType = this.activatedRoute.snapshot.queryParamMap.get('userType') ?? 'Student';
+      this.currentUserId = params['id'];
+      this.currentUserType = this.activatedRoute.snapshot.queryParamMap.get('userType') ?? 'Student';
 
       this.isLoading = true;
-      this.profilesService.find(id, userType).subscribe({
+      this.profilesService.find(this.currentUserId, this.currentUserType).subscribe({
         next: res => {
           this.userProfile = res;
           console.table(res);
@@ -181,6 +185,17 @@ export class GenProfileComponent {
               this.uploadedImageUrl = null;
               this.fileList = [];
               this.showRemovePhotoPopover = false;
+              this.profilesService.find(this.currentUserId, this.currentUserType).subscribe({
+                next: (cResponse: UserProfile) => {
+                  this.cookieService.set("profile_image", cResponse.profileImageId || "", {
+                    path: '/'
+                  });
+
+                }
+
+              })
+
+
             },
             error: (error) => {
               console.error('Error updating profile:', error);

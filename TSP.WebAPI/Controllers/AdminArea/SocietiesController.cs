@@ -30,51 +30,6 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
-    [HttpPost]
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post(CreateSocietyRequest request)
-    {
-        var command = CreateSociety.Command.Create(request.Name,
-                                                   request.Description,
-                                                   request.LogoBase64,
-                                                   request.CreationDate,
-                                                   request.ThemeColor,
-                                                   request.AdvisorId);
-
-        var task = _sender.Send(command);
-
-        return await FromResult(task);
-    }
-
-    [HttpPut("{societyId}")]
-    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Put(Guid societyId, UpdateSocietyRequest request)
-    {
-        var command = UpdateSociety.Command.Create(societyId,
-                                                   request.Name,
-                                                   request.Description,
-                                                   request.LogoBase64,
-                                                   request.ThemeColor,
-                                                   request.CreationDate,
-                                                   request.AdvisorId
-                                                   );
-        var task = _sender.Send(command);
-
-        return await FromResult(task);
-    }
-
-    [HttpDelete("{societyId}")]
-    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Delete(Guid societyId)
-    {
-        var command = DeleteSociety.Command.Create(societyId);
-        var task = _sender.Send(command);
-        return await FromResult(task);
-    }
-
     // Members
 
     [HttpGet("{societyId}/Members")]

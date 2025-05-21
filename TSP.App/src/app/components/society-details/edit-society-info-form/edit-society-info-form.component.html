@@ -69,8 +69,8 @@
         <nz-form-item>
             <nz-form-label nzRequired>Advisor</nz-form-label>
             <nz-form-control nzHasFeedback [nzErrorTip]="advisorErrorTpl">
-                <nz-select formControlName="advisorId" nzAllowClear="true" nzPlaceHolder="Select an advisor" 
-                          nzShowSearch nzServerSearch (nzOnSearch)="onSearchFacultyMembers($event)">
+                <nz-select formControlName="advisorId" nzAllowClear="true" nzPlaceHolder="Select an advisor"
+                    nzShowSearch nzServerSearch (nzOnSearch)="onSearchFacultyMembers($event)">
                     @if (!isFacultyMembersLoading) {
                     @for (member of displayedFacultyMembers; track member.id) {
                     <nz-option [nzValue]="member.id" [nzLabel]="member.fullName"></nz-option>
@@ -100,20 +100,21 @@
             @if (createSocietyForm!.get('logo')?.value) {
             <img [src]="createSocietyForm!.get('logo')?.value" class="w-36 h-36 object-cover rounded-xl" />
             } @else {
-            <div class="w-36 h-32 bg-gray-100 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors">
+            <div
+                class="w-36 h-32 bg-gray-100 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors">
                 <nz-icon nzType="upload" class="text-3xl"></nz-icon>
                 <div class="mt-2 text-sm">Upload Logo</div>
             </div>
             }
         </nz-upload>
-        
+
         @if (createSocietyForm!.get('logo')?.value) {
         <button nz-button nzType="default" class="mt-4" (click)="removeLogo()">
             <nz-icon nzType="delete" nzTheme="outline"></nz-icon>
             Remove Logo
         </button>
         }
-        
+
         <div class="text-center text-xs text-gray-500">
             Click to upload society logo
         </div>

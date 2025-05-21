@@ -22,6 +22,8 @@ public class GetSocietyById
     {
         public async Task<Result<SocietyDTO>> Handle(Query request, CancellationToken cancellationToken)
         {
+            var temp = await societiesService.getSocietyById(request.Id);
+           
 
             return await societiesService.getSocietyById(request.Id);
         }

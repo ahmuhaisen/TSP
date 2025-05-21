@@ -11,6 +11,7 @@ import { SocietyBasicDetails } from '../../../api-interfaces/society.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { AuthService } from '../../../../../common/services/auth.service';
+import { environment } from '../../../../../../environments/environment';
 
 
 @Component({
@@ -36,7 +37,7 @@ export class SocietiesListComponent {
   otherSocieties: SocietyBasicDetails[] = [];
 
   societiesService = inject(SocietiesService);
-
+  baseSocietyUrl: string = environment.gitHubSocietiesPicturesURL;
   ngOnInit() {
     this.societiesService.advisorSocieties().subscribe(res => this.advisorSocieties = res);
     this.societiesService.otherSocieties().subscribe(res => this.otherSocieties = res);

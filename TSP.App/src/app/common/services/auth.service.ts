@@ -6,7 +6,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Router } from '@angular/router';
 import { LoaderService } from './loader.service';
 import { Observable, catchError, of, tap } from 'rxjs';
-
+import { CookieService } from 'ngx-cookie-service';
 export interface User {
     id: string;
     name: string;
@@ -65,7 +65,7 @@ export interface StudentRegisterRequest extends BaseRegisterRequest {
 export class AuthService {
 
     private _currentUser = signal<User | null>(null);
-    
+    private cookieSerivce = inject(CookieService);
     // Public read-only access to currentUser signal
     get currentUser(): Signal<User | null> {
         return this._currentUser.asReadonly();
@@ -91,14 +91,22 @@ export class AuthService {
 
     login(request: LoginRequest, userType: UserType) {
         this.loader.show();
-        if(userType === 'Guest') return;
+        if (userType === 'Guest') return;
 
         this.db.postRequest<LoginResponse, LoginRequest>(`${this.model}/${userType}/Login`, request).subscribe({
             next: (res) => {
                 this.localStorageService.setItem('token', res.token);
+
+
+
                 this.setCurrentUser(res);
+                this.cookieSerivce.set("profile_image", this.currentUser()?.profileImageId || "", {
+                    path: '/'
+                })
+
                 this.navigateToHome(res.userType);
                 this.loader.hide();
+
             },
             error: (err) => {
                 this.loader.hide();
@@ -113,17 +121,17 @@ export class AuthService {
                 // First set basic user info from token as a fallback
                 const decodedToken = this.jwtHelper.decodeToken(token);
                 console.log('Decoded token:', decodedToken);
-                
+
                 const basicUserInfo = {
                     id: decodedToken.sub || decodedToken.nameid || '',
                     fullName: decodedToken.name || decodedToken.fullName || 'User',
                     email: decodedToken.email || 'user@example.com',
                     profileImageId: decodedToken.profileImageId || ''
                 };
-                
+
                 // Set current user from token data as initial data
                 this.setCurrentUser(basicUserInfo);
-                
+
                 // Then fetch more detailed user info from API
                 this.fetchCurrentUserInfo().subscribe({
                     next: (userInfo) => {
@@ -136,7 +144,7 @@ export class AuthService {
                         console.error('Error fetching current user info:', error);
                     }
                 });
-                
+
                 return true;
             } catch (error) {
                 console.error('Error decoding token:', error);
@@ -197,8 +205,10 @@ export class AuthService {
         });
     }
 
-    logout(){
+    logout() {
         this.localStorageService.removeItem('token');
+        this.cookieSerivce.delete('username', '/');
+
         this._currentUser.set(null);
         this.router.navigate(['authentication']);
     }
@@ -220,25 +230,25 @@ export class AuthService {
 
     setCurrentUserProfileImageId(profileImageId: string) {
         const currentUser = this._currentUser();
-        if(currentUser) currentUser.profileImageId = profileImageId;
+        if (currentUser) currentUser.profileImageId = profileImageId;
     }
 
     // Helper methods to check user type more easily
     isFacultyMember(): boolean {
         return this._currentUser()?.userType?.toUpperCase() === 'FACULTY';
     }
-    
+
     isStudent(): boolean {
         return this._currentUser()?.userType?.toUpperCase() === 'STUDENT';
     }
 
     private navigateToHome(userType: string) {
-        if(userType === 'FacultyMember') {
+        if (userType === 'FacultyMember') {
             this.router.navigate(['admin-area']);
-        }else if(userType === 'Student') {
+        } else if (userType === 'Student') {
             this.router.navigate(['student-area']);
         }
-        else if(userType === 'SuperAdmin') {
+        else if (userType === 'SuperAdmin') {
             this.router.navigate(['super-admin']);
         }
     }
@@ -247,4 +257,3 @@ export class AuthService {
         this.router.navigate(['authentication/login']);
     }
 }
-  

@@ -191,7 +191,7 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
             return userType switch
             {
                 "Student" => new StudentUpdateStrategy(context, FileManager),
-                "Faculty" => new FacultyUpdateStrategy(context, FileManager),
+                "FacultyMember" => new FacultyUpdateStrategy(context, FileManager),
                 _ => throw new ArgumentException($"Unsupported user type: {userType}", nameof(userType))
             };
         }

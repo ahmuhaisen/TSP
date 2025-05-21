@@ -12,7 +12,7 @@ using TPS.Infrastructure.Data;
 namespace TPS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250518135355_InitialCreate")]
+    [Migration("20250521123356_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

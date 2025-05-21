@@ -19,6 +19,7 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { AuthService, User } from '../../../../common/services/auth.service';
 import { SearchDrawerComponent } from "../../../../components/search-drawer/search-drawer.component";
 import { environment } from '../../../../../environments/environment';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-home',
@@ -49,7 +50,8 @@ import { environment } from '../../../../../environments/environment';
 export class HomeComponent {
   baseProfileImageUrl = environment.gitHubUsersPicturesURL;
 
-
+  cookieService = inject(CookieService);
+  profileImageId = this.cookieService.get("profile_image");
   isLoading = false;
   isSearchLoading = false;
   userInfo = signal<User | null>(null);

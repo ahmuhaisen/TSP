@@ -14,6 +14,7 @@ import { StudentEvent } from '../../api-interfaces/event.types';
 import { HomeStatistics } from '../../api-interfaces/statistics.types';
 import { environment } from '../../../../../environments/environment';
 import { SearchDrawerComponent } from '../../../../components/search-drawer/search-drawer.component';
+import { CookieService } from 'ngx-cookie-service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -34,6 +35,8 @@ import { SearchDrawerComponent } from '../../../../components/search-drawer/sear
 export class HomeComponent {
   societiesPicturesBaseUrl = environment.gitHubSocietiesPicturesURL;
   baseProfileImageUrl = environment.gitHubUsersPicturesURL
+  cookieService = inject(CookieService);
+  profileImageId = this.cookieService.get("profile_image");
   private authService = inject(AuthService);
   private homeService = inject(HomeService);
 
