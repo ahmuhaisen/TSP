@@ -56,7 +56,7 @@ public sealed class CreateSociety
           }
 
 
-          LogoId = $"https://raw.githubusercontent.com/%7B_options.Value.UserName%7D/%7B_options.Value.Repo%7D/refs/heads/main/Society/%7BLogoId%7D";
+          LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
           var society = new Society
           {
               Id = Guid.NewGuid(),

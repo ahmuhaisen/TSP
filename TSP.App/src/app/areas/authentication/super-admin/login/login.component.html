@@ -1,0 +1,40 @@
+<div class="text-center mb-6 md:mb-8">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Admin Login</h1>
+</div>
+
+
+<div class="bg-blue-50 p-4 sm:p-6 rounded-lg border border-blue-100">
+    <form nz-form [formGroup]="loginForm" class="space-y-4 md:space-y-5" (ngSubmit)="submitForm()">
+        <nz-form-item>
+            <nz-form-control nzErrorTip="Please enter a valid email!">
+                <nz-input-group nzPrefixIcon="mail" nzSize="large" class="rounded-lg">
+                    <input type="text" nz-input formControlName="email" placeholder="Email" class="py-2 md:py-2.5" />
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-control nzErrorTip="Please enter your Password!">
+                <nz-input-group nzPrefixIcon="lock" nzSize="large" [nzSuffix]="suffixTemplate" class="rounded-lg">
+                    <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="password"
+                        placeholder="Password" [(ngModel)]="password" class="py-2 md:py-2.5" />
+                </nz-input-group>
+                <ng-template #suffixTemplate>
+                    <span nz-icon class="ant-input-password-icon cursor-pointer text-gray-500 hover:text-gray-700"
+                        [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                        (click)="passwordVisible = !passwordVisible"></span>
+                </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+
+        <!-- <div class="flex justify-end">
+            <a class="text-xs md:text-sm text-indigo-600 hover:text-indigo-800 transition-colors duration-300">Forgot password?</a>
+        </div> -->
+
+        <button nz-button
+            class="w-full h-10 md:h-12 rounded-lg shadow-lg transform hover:scale-[1.02] transition-all duration-300 text-white  bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-700 hover:to-indigo-600 border-0 font-medium text-sm md:text-base"
+            [nzSize]="'large'" [nzType]="'primary'">
+            Sign In
+        </button>
+    </form>
+</div>

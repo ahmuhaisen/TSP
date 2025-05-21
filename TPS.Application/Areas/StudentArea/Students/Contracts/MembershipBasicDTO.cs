@@ -13,5 +13,6 @@ namespace TPS.Application.Areas.StudentArea.Students.Contracts
         public DateOnly SubmissionDate { get; set; }
         public RequestStatus Status { get; set; }
         public string SocietyName { get; set; } = null!;
+        public string societyLogo { get; set; } = string.Empty!;
     }
 }

@@ -3,6 +3,7 @@ using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.Shared.Profiles.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Enums;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.Shared.Profiles.Queries;
@@ -12,16 +13,16 @@ public class GetUserProfile
 {
     public class Query : IQuery<Result<UserProfileDto>>
     {
-        public Query(Guid userId, string userType)
+        public Query(Guid userId, UserType userType)
         {
             UserId = userId;
             UserType = userType;
         }
 
         public Guid UserId { get; set; }
-        public string UserType { get; set; }
+        public UserType UserType { get; set; }
 
-        public Query Create(Guid userId, string userType)
+        public Query Create(Guid userId, UserType userType)
         {
             return new Query(userId, userType);
         }
@@ -33,7 +34,7 @@ public class GetUserProfile
 
         public Task<Result<UserProfileDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            if (request.UserType == "Student")
+            if (request.UserType == UserType.Student)
             {
                 var student = _context.Students
                                       .AsNoTracking()
@@ -51,7 +52,7 @@ public class GetUserProfile
                 return Task.FromResult(Result.Success(result));
             }
 
-            if (request.UserType == "Faculty")
+            if (request.UserType == UserType.FacultyMember)
             {
                 var facultyMember = _context.FacultyMembers
                                       .AsNoTracking()
@@ -81,7 +82,7 @@ public class GetUserProfile
                 FullName = student.FirstName + " " + student.LastName,
                 Email = student.Email,
                 ProfileImageId = student.ProfileImageId,
-                userType = "Student",
+                userType = UserType.Student,
                 Department = student.Department?.Name,
                 School = student.Department?.School?.Name,
                 Memberships = student.SocietiesMembers.Select(sm => new MembershipBasicDetailsDto
@@ -103,7 +104,7 @@ public class GetUserProfile
                 FullName = facultyMember.FirstName + " " + facultyMember.LastName,
                 Email = facultyMember.Email,
                 ProfileImageId = facultyMember.ProfileImageId,
-                userType = "Faculty Member",
+                userType = UserType.FacultyMember,
                 Department = facultyMember.Department?.Name,
                 School = facultyMember.Department?.School?.Name,
                 Memberships = facultyMember.SocietiesAdvised.Select(s => new MembershipBasicDetailsDto

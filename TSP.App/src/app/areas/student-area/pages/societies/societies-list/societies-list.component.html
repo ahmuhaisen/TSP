@@ -1,4 +1,4 @@
-<div class="flex justify-between items-center">
+<div class="flex justify-between items-center p-0">
     <h1 class="text-xl font-extrabold text-gray-700 mt-2">
         <nz-icon nzType="product" class="mr-2" />Societies
     </h1>
@@ -16,13 +16,13 @@
     <nz-tab nzTitle="My Societies">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 mt-5">
             @for(society of belongingSocieties; track society.id) {
-            <div
-                class="relative flex flex-col mt-6 max-h-72 text-gray-700 shadow rounded-lg border-b-2 bg-clip-border"
+            <div class="relative flex flex-col mt-6 max-h-72 text-gray-700 shadow rounded-lg border-b-2 bg-clip-border"
                 [ngClass]="society.isCommittee ? 'border-secondary' : 'border-primary-light'">
                 <div
                     class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden bg-white bg-clip-border rounded-2xl shadow-md">
-                    <nz-avatar [nzSrc]="society.logoId" class="object-contain bg-primary-dark-2 w-full h-full flex items-center justify-center"
-                    [nzIcon]="'product'" nzShape="square" nzSize="large" />
+                    <nz-avatar [nzSrc]="baseSocietiesUrl+society.logoId"
+                        class="object-contain bg-primary-dark-2 w-full h-full flex items-center justify-center"
+                        [nzIcon]="'product'" nzShape="square" nzSize="large" />
                 </div>
                 <div class="p-6 flex-grow">
                     <h5
@@ -35,40 +35,32 @@
                 </div>
                 <div class="p-6 pt-0">
                     @if(society.isCommittee){
-                        <a [routerLink]="'./1234' + society.id + '/manage'"
-                            nz-button nzType="primary"
-                            class="bg-secondary hover:bg-secondary/85 focus:bg-secondary/95 rounded-lg border-0"
-                        >
+                    <a [routerLink]="'./' + society.id + '/manage'" nz-button nzType="primary"
+                        class="bg-secondary hover:bg-secondary/85 focus:bg-secondary/95 rounded-lg border-0">
                         <nz-icon nzType="setting" />
                         Manage
                     </a>
                     }@else {
-                        <a [routerLink]="'./1234' + society.id"
-                                nz-button nzType="primary"
-                                class="rounded-lg border-0"
-                        >
-                            <nz-icon nzType="eye" />
-                            Visit
-                        </a>
+                    <a [routerLink]="'./' + society.id" nz-button nzType="primary" class="rounded-lg border-0">
+                        <nz-icon nzType="eye" />
+                        Visit
+                    </a>
 
-                        <button nz-button nzType="primary" nzDanger="true"
-                                class="rounded-lg border-0 ml-1" (click)="leaveSociety(society)"
-                        >
-                            <nz-icon nzType="logout" />
-                            Leave
-                        </button>
+                    <button nz-button nzType="primary" nzDanger="true" class="rounded-lg border-0 ml-1"
+                        (click)="leaveSociety(society)">
+                        <nz-icon nzType="logout" />
+                        Leave
+                    </button>
                     }
                 </div>
             </div>
 
             }@empty {
-                <div class="col-span-4 w-full flex justify-center items-center">
-                    <nz-empty
-                    class="w-full flex flex-col justify-center items-center h-52"
+            <div class="col-span-4 w-full flex justify-center items-center">
+                <nz-empty class="w-full flex flex-col justify-center items-center h-52"
                     nzNotFoundContent="You are not a member of any societies yet."
-                    nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                    />
-                </div>
+                    nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" />
+            </div>
             }
         </div>
     </nz-tab>
@@ -84,27 +76,25 @@
                 </tr>
             </thead>
             <tbody>
+
                 @for(request of requestsTable.data; track request.id) {
-                    <tr>
-                        <td>
-                            <div class="flex items-center gap-3">
-                                <nz-avatar 
-                                    [nzSize]="32" 
-                                    [nzSrc]="request.societyLogo || undefined"
-                                    nzIcon="team"
-                                    [nzText]="request.societyName.substring(0, 2).toUpperCase()"
-                                ></nz-avatar>
-                                <span class="font-medium">{{ request.societyName }}</span>
-                            </div>
-                        </td>
-                        <td>{{ request.section }}</td>
-                        <td>{{ request.submittedAt | date:'MMM d, y' }}</td>
-                        <td>
-                            <nz-tag [nzColor]="getStatusColor(request.status)" class="capitalize">
-                                {{ request.status }}
-                            </nz-tag>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <nz-avatar [nzSize]="32" [nzSrc]="baseSocietiesUrl+request.societyLogo" nzIcon="team"
+                                [nzText]="request.societyName.substring(0, 2).toUpperCase()"></nz-avatar>
+                            <span class="font-medium">{{ request.societyName }}</span>
+                        </div>
+                    </td>
+                    <td>{{ request.section }}</td>
+                    <td>{{ request.submissionDate| date:'medium' }}</td>
+                    <td>
+                        <nz-tag [nzColor]="getStatusColor(request.status)" class="capitalize">
+                            {{ request.status }}
+                        </nz-tag>
+                    </td>
+
+                </tr>
                 }
             </tbody>
         </nz-table>
@@ -113,78 +103,72 @@
     <nz-tab nzTitle="Other Societies">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
             @for(society of otherSocieties; track society.id) {
-                <div class="w-full ">
-                    <a [routerLink]="society.id" class="flex flex-wrap sm:flex-nowrap items-center py-2 cursor-pointer shadow rounded-lg border-b-2 border-primary-light">
-                        <div class="w-16 p-2 shrink-0">
-                            <nz-avatar [nzSrc]="society.logoId" class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
+            <div class="w-full ">
+                <a [routerLink]="society.id"
+                    class="flex flex-wrap sm:flex-nowrap items-center py-2 cursor-pointer shadow rounded-lg border-b-2 border-primary-light">
+                    <div class="w-16 p-2 shrink-0">
+                        <nz-avatar [nzSrc]="baseSocietiesUrl+society.logoId"
+                            class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
                             [nzIcon]="'product'" nzShape="square" nzSize="large" />
-                        </div>
-                        <div>
-                            <p class="font-semibold text-xs">{{ society.name  | truncate: 35 }}</p>
-                            <span class="text-gray-600 text-xs block">Created on {{ society.creationDate | date:'MMM d, y' }}</span>
-                        </div>
-                    </a>
-                </div>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-xs">{{ society.name | truncate: 35 }}</p>
+                        <span class="text-gray-600 text-xs block">Created on {{ society.creationDate | date:'MMM d, y'
+                            }}</span>
+                    </div>
+                </a>
+            </div>
             }
         </div>
     </nz-tab>
 </nz-tabset>
 
 <!-- Leave Society Popup -->
-<nz-modal [(nzVisible)]="isLeaveSocietyPopupVisible"
-        [nzTitle]="'Leave ' + (societyToLeave?.name || '') + '?'" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isLeaveSocietyLoading" nzOkText="Yes"
-        (nzOnCancel)="handleCancelLeaveSociety()" (nzOnOk)="handleOkLeaveSociety()"
-    >
+<nz-modal [(nzVisible)]="isLeaveSocietyPopupVisible" [nzTitle]="'Leave ' + (societyToLeave?.name || '') + '?'"
+    nzCentered [nzClosable]="false" [nzMaskClosable]="false" [nzOkLoading]="isLeaveSocietyLoading" nzOkText="Yes"
+    (nzOnCancel)="handleCancelLeaveSociety()" (nzOnOk)="handleOkLeaveSociety()">
     <ng-container *nzModalContent>
         <p>Are you sure you want to leave <b>{{ societyToLeave?.name }}</b>?</p>
     </ng-container>
 </nz-modal>
 
 <!-- Join Society Modal -->
-<nz-modal [(nzVisible)]="isJoinSocietyModalVisible"
-    nzTitle="Join a Society"
-    [nzOkText]="'Submit Request'"
-    [nzOkLoading]="isJoinSocietyLoading"
-    (nzOnCancel)="handleCancelJoinSociety()"
-    (nzOnOk)="handleJoinSociety()"
+<nz-modal [(nzVisible)]="isJoinSocietyModalVisible" nzTitle="Join a Society" [nzOkText]="'Submit Request'"
+    [nzOkLoading]="isJoinSocietyLoading" (nzOnCancel)="handleCancelJoinSociety()" (nzOnOk)="handleJoinSociety()"
     nzWidth="600px">
     <ng-container *nzModalContent>
         <form [formGroup]="joinSocietyForm" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Select Society</label>
+                @if(getAvailableSocieties().length > 0) {
                 <nz-select class="w-full" formControlName="societyId" nzPlaceHolder="Select a society to join">
-                    @for(society of otherSocieties; track society.id) {
-                        <nz-option [nzValue]="society.id" [nzLabel]="society.name"></nz-option>
+                    @for(society of getAvailableSocieties(); track society.id) {
+                    <nz-option [nzValue]="society.id" [nzLabel]="society.name"></nz-option>
                     }
                 </nz-select>
                 @if(joinSocietyForm.get('societyId')?.touched && joinSocietyForm.get('societyId')?.invalid) {
-                    <div class="mt-1 text-red-500 text-sm">Please select a society</div>
+                <div class="mt-1 text-red-500 text-sm">Please select a society</div>
+                }
+                } @else {
+                <nz-empty
+                    nzNotFoundContent="No available societies to join. You've already requested to join all societies."></nz-empty>
                 }
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Section</label>
-                <input
-                    nz-input
-                    formControlName="section"
-                    placeholder="Enter your preferred section"
-                    class="w-full"
-                />
+                <input nz-input formControlName="section" placeholder="Enter your preferred section" class="w-full" />
                 @if(joinSocietyForm.get('section')?.touched && joinSocietyForm.get('section')?.invalid) {
-                    <div class="mt-1 text-red-500 text-sm">Please enter your preferred section</div>
+                <div class="mt-1 text-red-500 text-sm">Please enter your preferred section</div>
                 }
                 <div class="mt-2">
                     <span class="text-xs text-gray-500 mb-1 block">Suggested sections:</span>
                     <div class="flex flex-wrap gap-2">
                         @for(section of suggestedSections; track section) {
-                            <nz-tag
-                                class="cursor-pointer"
-                                (click)="selectSuggestedSection(section)"
-                                [class.bg-primary-light]="joinSocietyForm.get('section')?.value === section"
-                            >
-                                {{ section }}
-                            </nz-tag>
+                        <nz-tag class="cursor-pointer" (click)="selectSuggestedSection(section)"
+                            [class.bg-primary-light]="joinSocietyForm.get('section')?.value === section">
+                            {{ section }}
+                        </nz-tag>
                         }
                     </div>
                 </div>
@@ -193,21 +177,15 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Motivation</label>
                 <nz-textarea-count [nzMaxCharacterCount]="500">
-                    <textarea
-                        rows="4"
-                        formControlName="motivation"
-                        nz-input
-                        placeholder="Tell us why you want to join this society and what you can contribute (minimum 50 characters)"
-                    ></textarea>
+                    <textarea rows="4" formControlName="motivation" nz-input
+                        placeholder="Tell us why you want to join this society and what you can contribute (minimum 50 characters)"></textarea>
                 </nz-textarea-count>
                 @if(joinSocietyForm.get('motivation')?.touched && joinSocietyForm.get('motivation')?.invalid) {
-                    <div class="mt-1 text-red-500 text-sm">
-                        Please provide a motivation (minimum 50 characters)
-                    </div>
+                <div class="mt-1 text-red-500 text-sm">
+                    Please provide a motivation (minimum 50 characters)
+                </div>
                 }
             </div>
         </form>
     </ng-container>
 </nz-modal>
-
-

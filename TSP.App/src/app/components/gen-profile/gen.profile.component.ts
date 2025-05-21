@@ -1,26 +1,25 @@
 import { Component, inject } from '@angular/core';
 import { NzDividerComponent } from 'ng-zorro-antd/divider';
-import { ContainerBlockComponent } from "../../../../../components/container-block.component";
-import { ProfilesService, UserProfile } from '../../../../../common/services/profiles.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { TruncatePipe } from '../../../../../common/pipes/truncate.pipe';
-import { CapitalizeFirstPipe } from '../../../../../common/pipes/capitalize-first.pipe';
 import { DatePipe } from '@angular/common';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { AuthService } from '../../../../../common/services/auth.service';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzUploadModule, NzUploadFile } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable, Observer } from 'rxjs';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
-import { environment } from '../../../../../../environments/environment';
+import { TruncatePipe } from '../../common/pipes/truncate.pipe';
+import { CapitalizeFirstPipe } from '../../common/pipes/capitalize-first.pipe';
+import { ContainerBlockComponent } from '../container-block.component';
+import { environment } from '../../../environments/environment';
+import { ProfilesService, UserProfile } from '../../common/services/profiles.service';
+import { AuthService } from '../../common/services/auth.service';
 
 export interface SuggestedPerson {
   id: string;
@@ -32,7 +31,7 @@ export interface SuggestedPerson {
 }
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-gen-profile',
   imports: [
     DatePipe,
     TruncatePipe,
@@ -53,12 +52,12 @@ export interface SuggestedPerson {
     ContainerBlockComponent,
     RouterModule
   ],
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  templateUrl: './gen.profile.component.html',
+  styleUrl: './gen.profile.component.css'
 })
-export class ProfileComponent {
+export class GenProfileComponent {
   baseProfileImageUrl = environment.gitHubUsersPicturesURL;
-
+  baseSocietyImage: string = environment.gitHubSocietiesPicturesURL;
 
   profilesService = inject(ProfilesService);
   authService = inject(AuthService);
@@ -83,7 +82,6 @@ export class ProfileComponent {
     this.activatedRoute.params.subscribe(params => {
       const id = params['id'];
       const userType = this.activatedRoute.snapshot.queryParamMap.get('userType') ?? 'Student';
-      console.table(userType, id);
 
       this.isLoading = true;
       this.profilesService.find(id, userType).subscribe({

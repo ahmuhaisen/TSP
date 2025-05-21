@@ -28,13 +28,16 @@ namespace TPS.Application.Areas.StudentArea.Students.Queries
             {
                 var data = await context.MembershipsRequests
                     .Include(x => x.Society)
-                    .Where(x => x.Id == request.LoggedInUser)
+                    .Where(x => x.StudentId == request.LoggedInUser)
                     .Select(x => new MembershipBasicDTO
                     {
                         Section = x.Section,
                         SubmissionDate = DateOnly.FromDateTime(x.RequestedOn),
                         Status = x.Status,
-                        SocietyName = x.Society.Name
+                        societyLogo = x.Society.LogoId,
+                        SocietyName = x.Society.Name,
+                     
+                       
                     })
                     .ToListAsync();
                 return Result.Success(data);

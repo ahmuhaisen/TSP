@@ -12,4 +12,5 @@ namespace TPS.Application.Areas.Shared.Abstractions;
 public interface ISocietiesService
 {
     Task<Result<SocietyDTO>> getSocietyById(Guid SocietyId);
+    Task<Result<List<SocietyDTO>>> getAllSocieties();
 }

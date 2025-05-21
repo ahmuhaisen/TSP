@@ -29,27 +29,42 @@ public class SocietiesController : ApiController
         return await FromResult(task);
     }
 
-    [HttpDelete("{societyId}/Members/{studentId}")]
+    [HttpDelete("{societyId}/Members")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteMemberFromSociety(Guid StudentId, Guid SocietyId)
+    public async Task<IActionResult> DeleteMemberFromSociety([FromRoute] Guid societyId)
     {
-        var query = LeaveSociety.Command.Create(StudentId, SocietyId);
+        var query = LeaveSociety.Command.Create(base.GetCurrentUserId()!.Value, societyId);
+
+        var task = _sender.Send(query);
+
+        return await FromResult(task);
+    }
+    [HttpDelete("{societyId}/Members/{memberId}/kick")]
+    [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> KickMemberFromSociety([FromRoute] Guid societyId,
+                                                            [FromRoute] Guid memberId)
+    {
+        var query = KickMember.Command.Create(societyId,
+            memberId, base.GetCurrentUserId()!.Value);
 
         var task = _sender.Send(query);
 
         return await FromResult(task);
     }
 
-    [HttpPost("{SocietyId}/Members/{StudentId}")]
+    [HttpPost("{SocietyId}/JoinRequest")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostJoinSocietyRequest(JoinSocietyRequest request, Guid StudentId,Guid SocietyId)
+    public async Task<IActionResult> PostJoinSocietyRequest(Guid SocietyId, JoinSocietyRequest request)
     {
-        var command = JoinSociety.Command.Create(request.StudentId,
-                                               request.SocietyId,
-                                               request.Motivation,
-                                               request.Section);
+
+
+        var command = JoinSociety.Command.Create(base.GetCurrentUserId()!.Value,
+                                               SocietyId,
+                                               request.Section,
+                                               request.Motivation);
         var task = _sender.Send(command);
         return await FromResult(task);
     }
@@ -57,7 +72,7 @@ public class SocietiesController : ApiController
     [HttpGet("{SocietyId}/Members/Requests")]
     [ProducesResponseType(typeof(List<MembershipRequestDTO>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetMembershipRequestsOfManagedSociety(Guid SocietyId)
+    public async Task<IActionResult> GetMembershipRequestsOfManagedSociety([FromRoute] Guid SocietyId)
     {
         var query = MembershipRequestsOfManagedSocieties.Query.Create(SocietyId, base.GetCurrentUserId()!.Value);
         var task = _sender.Send(query);
@@ -67,12 +82,15 @@ public class SocietiesController : ApiController
     [HttpPut("{SocietyId}/Members/Requests/{MembershipRequestId}/{isAccepted}")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateMembershipRequestStatus([FromRoute] Guid MembershipRequestId,
-                                                                      [FromQuery] bool isAccpeted,
-                                                                      [FromRoute] Guid SocietyId,
-                                                                      UpdateMembershipRequest request)
+    public async Task<IActionResult> UpdateMembershipRequestStatus([FromRoute] Guid SocietyId,
+                                                                [FromRoute] Guid MembershipRequestId,
+                                                                      [FromRoute] bool isAccepted
+
+                                                                      )
     {
-        var query = MembershipRequestStatusUpdate.Command.Create(MembershipRequestId, SocietyId, isAccpeted, base.GetCurrentUserId()!.Value);
+
+
+        var query = MembershipRequestStatusUpdate.Command.Create(MembershipRequestId, SocietyId, isAccepted, base.GetCurrentUserId()!.Value);
         var task = _sender.Send(query);
         return await FromResult(task);
     }

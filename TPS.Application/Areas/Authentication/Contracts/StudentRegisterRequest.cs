@@ -1,4 +1,4 @@
-﻿using TSP.Domain.Entities;
+﻿using TSP.Domain.Enums;
 
 namespace TPS.Application.Areas.Authentication.Contracts;
 

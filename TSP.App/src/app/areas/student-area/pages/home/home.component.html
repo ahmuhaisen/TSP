@@ -2,21 +2,23 @@
     <h1 class="text-xl font-extrabold text-gray-700 mt-2">
         <nz-icon nzType="home" class="mr-2" />Home
     </h1>
-    <button nz-button nzType="default" nzShape="circle">
+    <button nz-button nzType="default" nzShape="circle" (click)="openSearch()">
         <nz-icon nzType="search" />
     </button>
 </div>
 
 <section class="mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
     <div class="flex gap-3 items-center">
-        <nz-avatar class="w-11 h-11 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="userInfo()!.profileImageId" [nzText]="userInfo()!.name.substring(0, 2).toUpperCase()" />
+        <nz-avatar class="w-11 h-11 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center"
+            [nzSrc]="baseProfileImageUrl+userInfo()!.profileImageId" [nzText]="userInfo()!.name.substring(0, 2).toUpperCase()" />
         <div>
             <h2 class="text-lg font-bold text-gray-700">Welcome, {{ userInfo()!.name }}!</h2>
             <p class="text-sm text-gray-600">Here's a quick overview of your societies.</p>
         </div>
     </div>
     <div class="flex gap-2 justify-center sm:justify-end">
-        <a routerLink="../societies" nz-button nz-popover nzType="primary" nzPopoverContent="See all societies you advise.">
+        <a routerLink="../societies" nz-button nz-popover nzType="primary"
+            nzPopoverContent="See all societies you advise.">
             <nz-icon nzType="product" />Your Societies
         </a>
     </div>
@@ -31,40 +33,43 @@
                 <nz-icon nzType="project" class="mr-2" />
                 Upcoming Events
             </p>
-            <a class="text-primary-light text-xs" [routerLink]="'/admin-area/events'">View all</a>
+            <a class="text-primary-light text-xs" [routerLink]="'/student-area/events'">View all</a>
         </div>
 
         <div class="grid gap-y-1.5">
             @for(event of events || []; track event.id){
-            <a [routerLink]="'/admin-area/events/' + event.id"
+
+            <a [routerLink]="'/student-area/events'"
                 class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
                 <div class="w-16 p-2 shrink-0">
-                    <img [src]="event.imageUrl" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image">
+                    <nz-avatar class="w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
+                        [nzSrc]="societiesPicturesBaseUrl + event.logoId"
+                        [nzText]="event.eventName.substring(0, 2).toUpperCase()"></nz-avatar>
                 </div>
                 <div class="p-2 w-full">
                     <div class="w-full flex items-center justify-between flex-wrap sm:flex-nowrap">
                         <span class="font-semibold text-sm">
-                            {{ event.title }}
+                            {{ event.eventName }}
                         </span>
                         <div>
-                            @if(event.isMember){
-                                <nz-tag class="text-[8px]" [nzColor]="'gold'">
-                                    <nz-icon [nzType]="'star'" />
-                                    <span class="hidden sm:inline">Society you belong to</span>
-                                </nz-tag>
+                            @if(event.isActiveMember){
+                            <nz-tag class="text-[8px]" [nzColor]="'gold'">
+                                <nz-icon [nzType]="'star'" />
+                                <span class="hidden sm:inline">Society you belong to</span>
+                            </nz-tag>
                             }
                         </div>
                     </div>
-                    <span class="text-gray-600 text-xs block truncate">{{ event.society }}</span>
+                    <span class="text-gray-600 text-xs block truncate">{{ event.societyName }}</span>
                     <p class="text-gray-500 mt-2 text-[12px] flex flex-wrap sm:flex-nowrap items-center gap-1">
                         <span class="flex items-center">
                             <nz-icon nzType="calendar" class="mr-1"></nz-icon>
-                            {{ event.date | date: 'MMM d, h:mm a'}}
+                            {{ event.startTime| date: 'MMM d, h:mm a'}}
                         </span>
                         <span class="hidden sm:inline">|</span>
                         <span class="flex items-center">
                             <nz-icon nzType="environment" class="mr-1"></nz-icon>
-                            {{ event.location }}
+                            {{ event.locationString }}
                         </span>
                     </p>
                 </div>
@@ -91,7 +96,7 @@
                         Membership
                     </p>
                 </div>
-                <p class="text-base font-semibold text-gray-700">{{ statistics?.NumSocieties || 0 }} societies</p>
+                <p class="text-base font-semibold text-gray-700">{{ statistics?.numSocieties || 0 }} societies</p>
             </div>
 
             <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
@@ -101,30 +106,10 @@
                         Attendance
                     </p>
                 </div>
-                <p class="text-base font-semibold text-gray-700">{{ statistics?.NumAttendedEvents || 0 }} events</p>
+                <p class="text-base font-semibold text-gray-700">{{ statistics?.numAttendedEvents || 0 }} events</p>
             </div>
-
-            <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
-                <div class="flex justify-between items-center pb-1">
-                    <p class="text-xs text-gray-500 flex items-center mb-1">
-                        <nz-icon nzType="user" class="mr-1" />
-                        Activity
-                    </p>
-                </div>
-                <p class="text-base font-semibold text-gray-700">N/A</p>
-            </div>
-
-            <div class="w-Full p-4 text-gray-700 shadow rounded-lg border-t-2 border-gray-400">
-                <div class="flex justify-between items-center pb-1">
-                    <p class="text-xs text-gray-500 flex items-center mb-1">
-                        <nz-icon nzType="user" class="mr-1" />
-                        Activity
-                    </p>
-                </div>
-                <p class="text-base font-semibold text-gray-700">N/A</p>
-            </div>
-
         </div>
     </div>
 </div>
 
+<app-search-drawer [(visible)]="isSearchVisible" />

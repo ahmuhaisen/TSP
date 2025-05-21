@@ -3,6 +3,7 @@ using TPS.Application.Abstractions.Messaging;
 using TPS.Application.Areas.Shared.Profiles.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Enums;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.Shared.Profiles.Queries;
@@ -11,7 +12,7 @@ public class GetCurrentUserInfo
 {
     public class Query : IQuery<Result<CurrentUserDto>>
     {
-        public Query(Guid userId, string userType)
+        public Query(Guid userId, UserType userType)
         {
             UserId = userId;
             UserType = userType;
@@ -19,9 +20,9 @@ public class GetCurrentUserInfo
 
 
         public Guid UserId { get; set; }
-        public string UserType { get; set; }
+        public UserType UserType { get; set; }
 
-        public Query Create(Guid userId, string userType)
+        public Query Create(Guid userId, UserType userType)
         {
             return new Query(userId, userType);
         }
@@ -32,7 +33,7 @@ public class GetCurrentUserInfo
     {
         public async Task<Result<CurrentUserDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            if(request.UserType == "STUDENT")
+            if(request.UserType == UserType.Student)
             {
                 var student = await _context.Students
                     .Where(x => x.Id == request.UserId)
@@ -52,7 +53,7 @@ public class GetCurrentUserInfo
                     ? Result.Success(student)
                     : Result.Failure<CurrentUserDto>(Error.NotFound(nameof(Student), request.UserId.ToString()));
             }
-            else if(request.UserType == "FACULTY")
+            else if(request.UserType == UserType.FacultyMember)
             {
                 var fmember = await _context.FacultyMembers
                     .Where(x => x.Id == request.UserId)
@@ -73,7 +74,7 @@ public class GetCurrentUserInfo
                     : Result.Failure<CurrentUserDto>(Error.NotFound(nameof(FacultyMember), request.UserId.ToString()));
             }
             
-            return Result.Failure<CurrentUserDto>(Error.ValueInvalid("UserType", request.UserType));
+            return Result.Failure<CurrentUserDto>(Error.ValueInvalid("UserType", request.UserType.ToString()));
         }
 
     }

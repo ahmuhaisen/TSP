@@ -1,8 +1,8 @@
-using TPS.Application.SignalR;
-using TPS.Infrastructure.Data.DataGenerators;
-using TPS.Infrastructure.Data;
-using TSP.WebAPI;
 using Microsoft.EntityFrameworkCore;
+using TPS.Application.SignalR;
+using TPS.Infrastructure.Data;
+using TPS.Infrastructure.Data.DataGenerators;
+using TSP.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,12 +41,12 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    //var context = services.GetRequiredService<ApplicationDbContext>();
-    //context.Database.Migrate();
+    // var context = services.GetRequiredService<ApplicationDbContext>();
+    // context.Database.Migrate();
 
-    // Execute the seeder
-    var seeder = services.GetRequiredService<ApplicationDataSeeder>();
-    await seeder.Seed();
+    //Execute the seeder
+    // var seeder = services.GetRequiredService<ApplicationDataSeeder>();
+    // await seeder.Seed();
 }
 
 app.UseStaticFiles();

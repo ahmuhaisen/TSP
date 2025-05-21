@@ -19,6 +19,7 @@ import { committeePositions } from '../../../common/constants/committee-position
 import { SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-committee-table',
@@ -48,6 +49,8 @@ export class CommitteeTableComponent implements OnInit {
   societyId = input.required<string>();
   committee = input.required<SocietyMember[]>();
   committeeChange = output<SocietyMember[]>();
+  
+  baseUserUmage:string = environment.gitHubUsersPicturesURL
 
   isEditCommitteePopupVisible = false;
   isEditCommitteePopupLoading = false;

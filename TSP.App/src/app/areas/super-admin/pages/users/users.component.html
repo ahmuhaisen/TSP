@@ -1,0 +1,142 @@
+<h1 class="font-bold text-lg flex items-center">
+    <nz-icon nzType="team" class="mr-2" />
+    Manage Users
+</h1>
+<p class="text-gray-500">Accept, reject and see user accounts.</p>
+
+<section>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+        <button [class.bg-green-50]="selectedUserTypeToShowRequests === 'faculty'"
+            [class.border-green-500]="selectedUserTypeToShowRequests === 'faculty'"
+            [class.bg-green-100]="selectedUserTypeToShowRequests === 'faculty'"
+            class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-400 transition-colors duration-300 cursor-pointer"
+            (click)="selectUserTypeToShowRequests('faculty')">
+            <p class="text-xs">
+                <nz-icon nzType="user-add" class="text-green-600 mr-1" />
+                Faculty members account requests
+            </p>
+        </button>
+
+        <button [class.bg-green-50]="selectedUserTypeToShowRequests === 'student'"
+            [class.border-green-500]="selectedUserTypeToShowRequests === 'student'"
+            [class.bg-green-100]="selectedUserTypeToShowRequests === 'student'"
+            class="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-400 transition-colors duration-300 cursor-pointer"
+            (click)="selectUserTypeToShowRequests('student')">
+            <p class="text-xs">
+                <nz-icon nzType="user-add" class="text-green-600 mr-1" />
+                Students account requests
+            </p>
+        </button>
+    </div>
+</section>
+<section>
+    <!-- Search Input -->
+    <div class="my-4">
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearchChange()" placeholder="Search by name..."
+            class="px-4 py-2 border rounded-lg w-full max-w-md" />
+    </div>
+
+    @if(selectedUserTypeToShowRequests === 'faculty'){
+    <div class="overflow-x-auto mt-4">
+        <table class="min-w-full text-sm text-left border border-gray-200 rounded-xl">
+            <thead class="bg-gray-100 text-xs uppercase text-gray-600">
+                <tr>
+                    <th class="px-4 py-3">Full Name</th>
+                    <th class="px-4 py-3">Email</th>
+                    <th class="px-4 py-3">Department</th>
+                    <th class="px-4 py-3">Rank</th>
+                    <th class="px-4 py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (request of filteredFacultyRequests; track $index) {
+                <tr class="border-t text-xs">
+                    <td class="px-4 py-3 font-medium text-gray-900">{{ request.fullName }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ request.email }}</td>
+                    <td class="px-4 py-3">{{ request.departmentName }}</td>
+                    <td class="px-4 py-3">{{ request.rank }}</td>
+                    <td class="px-4 py-3 flex gap-2 justify-center">
+                        <button nz-button nzType="primary" class="rounded"
+                            (click)="acceptRequest(request.id, 'FacultyMember')">
+                            <nz-icon nzType="check" />
+                        </button>
+                        <button nz-button nzDanger="true" class="rounded"
+                            (click)="rejectRequest(request.id, 'FacultyMember')">
+                            <nz-icon nzType="close" />
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        @if (totalFilteredFacultyRequests === 0) {
+        <div class="flex items-center justify-center py-10">
+            <nz-empty [nzNotFoundContent]="'No requests found.'" />
+        </div>
+        }
+
+        <!-- Pagination -->
+        @if (totalFilteredFacultyRequests > pageSize) {
+        <div class="mt-4 flex justify-between items-center">
+            <div class="text-xs text-gray-600">
+                Showing {{ (currentFacultyPage - 1) * pageSize + 1 }} to
+                {{ Math.min(currentFacultyPage * pageSize, totalFilteredFacultyRequests) }} of
+                {{ totalFilteredFacultyRequests }} entries
+            </div>
+            <nz-pagination [nzPageIndex]="currentFacultyPage" [nzTotal]="totalFilteredFacultyRequests"
+                [nzPageSize]="pageSize" (nzPageIndexChange)="onFacultyPageChange($event)" class="mt-4"></nz-pagination>
+        </div>
+        }
+    </div>
+    } @else {
+    <div class="overflow-x-auto mt-4">
+        <table class="min-w-full text-sm text-left border border-gray-200 rounded-xl">
+            <thead class="bg-gray-100 text-xs uppercase text-gray-600">
+                <tr>
+                    <th class="px-4 py-3">Full Name</th>
+                    <th class="px-4 py-3">Email</th>
+                    <th class="px-4 py-3">Department</th>
+                    <th class="px-4 py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (request of filteredStudentRequests; track $index) {
+                <tr class="border-t text-xs">
+                    <td class="px-4 py-3 font-medium text-gray-900">{{ request.fullName }}</td>
+                    <td class="px-4 py-3 text-gray-500">{{ request.email }}</td>
+                    <td class="px-4 py-3">{{ request.departmentName }}</td>
+                    <td class="px-4 py-3 flex gap-2 justify-center">
+                        <button nz-button nzType="primary" class="rounded"
+                            (click)="acceptRequest(request.id, 'Student')">
+                            <nz-icon nzType="check" />
+                        </button>
+                        <button nz-button nzDanger="true" class="rounded"
+                            (click)="rejectRequest(request.id, 'Student')">
+                            <nz-icon nzType="close" />
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        @if (totalFilteredStudentRequests === 0) {
+            <div class="flex items-center justify-center py-10">
+                <nz-empty [nzNotFoundContent]="'No requests found.'" />
+            </div>
+            }
+
+        <!-- Pagination -->
+        @if (totalFilteredStudentRequests > pageSize) {
+        <div class="mt-4 flex justify-between items-center">
+            <div class="text-xs text-gray-600">
+                Showing {{ (currentStudentPage - 1) * pageSize + 1 }} to
+                {{ Math.min(currentStudentPage * pageSize, totalFilteredStudentRequests) }} of
+                {{ totalFilteredStudentRequests }} entries
+            </div>
+            <nz-pagination [nzPageIndex]="currentStudentPage" [nzTotal]="totalFilteredStudentRequests"
+                [nzPageSize]="pageSize" (nzPageIndexChange)="onStudentPageChange($event)" class="mt-4"></nz-pagination>
+        </div>
+        }
+    </div>
+    }
+</section>

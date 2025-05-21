@@ -17,7 +17,11 @@ namespace TPS.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+
                 .HasAnnotation("ProductVersion", "9.0.4")
+
+                .HasAnnotation("ProductVersion", "8.0.11")
+
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -214,6 +218,15 @@ namespace TPS.Infrastructure.Migrations
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -245,6 +258,13 @@ namespace TPS.Infrastructure.Migrations
                     b.Property<string>("ProfileImageId")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+
+                    b.Property<DateTime>("RegisteredAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -456,6 +476,7 @@ namespace TPS.Infrastructure.Migrations
                     b.ToTable("EventsApproval");
                 });
 
+
             modelBuilder.Entity("TSP.Domain.Entities.FeedbackAnswer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -521,6 +542,7 @@ namespace TPS.Infrastructure.Migrations
 
                     b.ToTable("FeedbackSummaries");
                 });
+
 
             modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
                 {
@@ -1039,6 +1061,7 @@ namespace TPS.Infrastructure.Migrations
                     b.Navigation("Event");
                 });
 
+
             modelBuilder.Entity("TSP.Domain.Entities.MembershipRequest", b =>
                 {
                     b.HasOne("TSP.Domain.Entities.Society", "Society")
@@ -1134,7 +1157,9 @@ namespace TPS.Infrastructure.Migrations
                 {
                     b.Navigation("Attendees");
 
+
                     b.Navigation("FeedbackAnswers");
+
                 });
 
             modelBuilder.Entity("TSP.Domain.Entities.School", b =>

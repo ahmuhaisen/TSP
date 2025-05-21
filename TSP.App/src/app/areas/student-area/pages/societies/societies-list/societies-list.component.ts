@@ -13,11 +13,13 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { SocietiesService, MemberAssociatedSociety, Society, SocietyJoinRequest } from '../../../services/societies.service';
+import { SocietiesService } from '../../../services/societies.service';
+import { MemberAssociatedSociety, SocietyJoinRequest, Society, JoinSocietyRequest } from '../../../api-interfaces/society.types';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TruncatePipe } from "../../../../../common/pipes/truncate.pipe";
+import { StudentsService } from '../../../services/students.service';
 import { HttpClientModule } from '@angular/common/http';
-
+import { environment } from '../../../../../../environments/environment';
 @Component({
     selector: 'app-societies-list',
     standalone: true,
@@ -52,10 +54,12 @@ export class SocietiesListComponent implements OnInit {
     isJoinSocietyLoading = false;
     societyToLeave: MemberAssociatedSociety | null = null;
     joinSocietyForm: FormGroup;
+    baseSocietiesUrl:string= environment.gitHubSocietiesPicturesURL
     suggestedSections = ['Academic', 'Sports', 'Cultural', 'Technical', 'Social', 'Other'];
 
     constructor(
         private societiesService: SocietiesService,
+        private studentsService: StudentsService,
         private fb: FormBuilder,
         private message: NzMessageService
     ) {
@@ -72,7 +76,7 @@ export class SocietiesListComponent implements OnInit {
     }
 
     private loadSocieties(): void {
-        this.societiesService.getBelongingSocieties().subscribe({
+        this.studentsService.getBelongingSocieties().subscribe({
             next: (societies: MemberAssociatedSociety[]) => {
                 this.belongingSocieties = societies;
             },
@@ -82,7 +86,7 @@ export class SocietiesListComponent implements OnInit {
             }
         });
 
-        this.societiesService.getOtherSocieties().subscribe({
+        this.studentsService.getOtherSocieties().subscribe({
             next: (societies: Society[]) => {
                 this.otherSocieties = societies;
             },
@@ -94,9 +98,10 @@ export class SocietiesListComponent implements OnInit {
     }
 
     private loadJoinRequests(): void {
-        this.societiesService.getJoinRequests().subscribe({
+        this.studentsService.getJoinRequests().subscribe({
             next: (requests: SocietyJoinRequest[]) => {
                 this.joinRequests = requests;
+                console.log(this.joinRequests)
             },
             error: (error: Error) => {
                 this.message.error('Failed to load join requests');
@@ -106,7 +111,23 @@ export class SocietiesListComponent implements OnInit {
     }
 
     showJoinSocietyModal(): void {
+        // Check if there are available societies to join
+        if (this.getAvailableSocieties().length === 0) {
+            this.message.info('You have already requested to join all available societies');
+            return;
+        }
+        this.joinSocietyForm.reset();
         this.isJoinSocietyModalVisible = true;
+    }
+
+    getAvailableSocieties(): Society[] {
+        if (!this.joinRequests || !this.otherSocieties) {
+            return this.otherSocieties || [];
+        }
+
+        const requestedSocietyNames = this.joinRequests.map(request => request.societyName);
+
+        return this.otherSocieties.filter(society => !requestedSocietyNames.includes(society.name));
     }
 
     handleCancelJoinSociety(): void {
@@ -115,9 +136,16 @@ export class SocietiesListComponent implements OnInit {
     }
 
     handleJoinSociety(): void {
+        // Check if there are available societies to join
+        if (this.getAvailableSocieties().length === 0) {
+            this.message.info('No available societies to join');
+            this.isJoinSocietyModalVisible = false;
+            return;
+        }
+        
         if (this.joinSocietyForm.valid) {
             this.isJoinSocietyLoading = true;
-            const formValue = this.joinSocietyForm.value;
+            const formValue: JoinSocietyRequest = this.joinSocietyForm.value;
             this.societiesService.joinSociety(formValue).subscribe({
                 next: () => {
                     this.message.success('Join request submitted successfully');
@@ -128,6 +156,7 @@ export class SocietiesListComponent implements OnInit {
                 error: (error: Error) => {
                     this.message.error('Failed to submit join request');
                     console.error('Error submitting join request:', error);
+                    this.isJoinSocietyLoading = false;
                 },
                 complete: () => {
                     this.isJoinSocietyLoading = false;
@@ -139,10 +168,13 @@ export class SocietiesListComponent implements OnInit {
     leaveSociety(society: MemberAssociatedSociety): void {
         this.societyToLeave = society;
         this.isLeaveSocietyPopupVisible = true;
+
     }
 
     handleCancelLeaveSociety(): void {
         this.isLeaveSocietyPopupVisible = false;
+        this.societiesService.leaveSociety(this.societyToLeave?.id || "").subscribe();
+
         this.societyToLeave = null;
     }
 
@@ -159,6 +191,7 @@ export class SocietiesListComponent implements OnInit {
                 error: (error: Error) => {
                     this.message.error('Failed to leave the society');
                     console.error('Error leaving society:', error);
+                    this.isLeaveSocietyLoading = false;
                 },
                 complete: () => {
                     this.isLeaveSocietyLoading = false;
@@ -173,11 +206,11 @@ export class SocietiesListComponent implements OnInit {
 
     getStatusColor(status: string): string {
         switch (status) {
-            case 'pending':
+            case 'Pending':
                 return 'processing';
-            case 'approved':
+            case 'Accepted':
                 return 'success';
-            case 'rejected':
+            case 'Rejected':
                 return 'error';
             default:
                 return 'default';

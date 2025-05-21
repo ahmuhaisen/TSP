@@ -42,6 +42,7 @@ public class GetEventsByMonth
                     SocietyName = s.Event.Society.Name,
                     StartTime = s.Event.StartTime,
                     EndTime = s.Event.EndTime,
+                    Location = s.Event.LocationString
                 }).ToListAsync();
                 
             return Result.Success(data);

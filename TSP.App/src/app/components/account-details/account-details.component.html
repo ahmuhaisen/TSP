@@ -11,14 +11,15 @@
 
 <!-- Dropdown menu -->
 <nz-dropdown-menu #menu="nzDropdownMenu">
-    <div class="z-50 px-2 w-56 text-base list-none bg-white divide-y divide-gray-100 shadow-lg rounded-xl" id="dropdown">
+    <div class="z-50 px-2 w-56 text-base list-none bg-white divide-y divide-gray-100 shadow-lg rounded-xl"
+        id="dropdown">
         <div class="py-3 px-4">
             <span class="block text-sm font-semibold text-gray-900">{{ userInfo()?.name }}</span>
             <span class="block text-[14px] text-gray-500 truncate">{{ userInfo()?.email }}</span>
         </div>
         <ul class="py-1 text-gray-500 " aria-labelledby="dropdown">
             <li (click)="toggleAccountDetailsDropdown()">
-                <a routerLink="/admin-area/users/{{ userInfo()?.id }}" [queryParams]="{ userType: 'Faculty' }"
+                <a [routerLink]="profileLink()"
                     class="block py-2 px-4 text-sm rounded-lg hover:bg-gray-100 cursor-pointer">
                     <nz-icon nzType="user" nzTheme="outline" class="mr-1" />
                     My profile

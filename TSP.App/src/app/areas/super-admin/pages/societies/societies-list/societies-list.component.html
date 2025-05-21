@@ -1,0 +1,127 @@
+<div class="flex justify-between items-center">
+    <h1 class="text-xl font-extrabold text-gray-700 mt-2">
+        <nz-icon nzType="appstore" class="mr-2" />Societies Management
+    </h1>
+    <div class="flex gap-2">
+        <button nz-button nzType="default" (click)="exportToCsv()">
+            <nz-icon nzType="download" />
+            Export as CSV
+        </button>
+        <a routerLink="./create" nz-button nzType="primary">
+            <nz-icon nzType="plus" />
+            Create new society
+        </a>
+    </div>
+</div>
+
+<nz-divider />
+
+<div *ngIf="loading" class="flex justify-center my-12">
+    <nz-spin nzTip="Loading societies..."></nz-spin>
+</div>
+
+<div *ngIf="!loading">
+    <!-- Desktop table view -->
+    <div class="hidden md:block">
+        <nz-table #table [nzData]="societies" [nzLoading]="false" nzTableLayout="fixed" [nzScroll]="{ x: '1000px' }">
+            <thead>
+                <tr>
+                    <th nzWidth="80px">Logo</th>
+                    <th nzWidth="150px">Name</th>
+                    <th nzWidth="150px">Creation Date</th>
+                    <th nzWidth="200px">Advisor</th>
+                    <th nzWidth="100px">Members</th>
+                    <th nzWidth="100px">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let society of table.data">
+                    <td>
+                        <nz-avatar [nzSrc]="societiesPicturesBaseUrl+society.logoId"
+                            class="object-contain bg-blue-300 flex items-center justify-center" [nzIcon]="'product'"
+                            nzShape="square" nzSize="large" />
+                    </td>
+                    <td>{{ society.name }}</td>
+                    <td>{{ society.creationDate | date:'mediumDate' }}</td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <nz-avatar *ngIf="society.advisor?.logoId" [nzSrc]="society.advisor.logoId"
+                                class="bg-gray-100" nzSize="small">
+                            </nz-avatar>
+                            <nz-avatar *ngIf="!society.advisor?.logoId" nzIcon="user" class="bg-gray-300"
+                                nzSize="small">
+                            </nz-avatar>
+                            <span>
+                                {{ (society.advisor.fullName || 'No advisor') | truncate: 20 }}
+                            </span>
+                        </div>
+                    </td>
+                    <td>{{ society.numberOfMembers }}</td>
+                    <td>
+                        <div class="flex gap-2">
+                            <a [routerLink]="['./', society.id]" nz-button nzType="default"
+                                class="rounded flex items-center justify-center">
+                                <nz-icon nzType="edit" />
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+
+    <!-- Mobile view -->
+    <div class="md:hidden">
+        <div class="space-y-4">
+            <div *ngFor="let society of societies" class="bg-white p-4 rounded shadow-sm border-l-4 border-blue-400">
+                <div class="flex items-center gap-3">
+                    <nz-avatar [nzSrc]="societiesPicturesBaseUrl + society.logoId"
+                        class="object-contain bg-blue-300 flex items-center justify-center" [nzIcon]="'product'"
+                        nzShape="square" nzSize="large" />
+                    <div class="flex-grow">
+                        <h3 class="font-semibold">{{ society.name }}</h3>
+                        <p class="text-xs text-gray-500">Created: {{ society.creationDate | date:'mediumDate' }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                        <span class="text-gray-500 text-xs">Advisor:</span>
+                        <div class="flex items-center gap-1 mt-1">
+                            <nz-avatar *ngIf="society.advisor?.logoId" [nzSrc]="society.advisor.logoId"
+                                class="bg-gray-100" nzSize="small">
+                            </nz-avatar>
+                            <nz-avatar *ngIf="!society.advisor?.logoId" nzIcon="user" class="bg-gray-300"
+                                nzSize="small">
+                            </nz-avatar>
+                            <span>
+                                {{ (society.advisor.fullName || 'No advisor') | truncate: 15 }}
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 text-xs">Members:</span>
+                        <p>{{ society.numberOfMembers }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-3 flex justify-end gap-2">
+                    <a [routerLink]="['./', society.id]" nz-button nzType="primary" nzSize="small" class="rounded">
+                        <nz-icon nzType="edit" /> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="societies.length === 0" class="mt-4 text-center">
+        <nz-empty [nzNotFoundContent]="'No societies found.'" />
+    </div>
+
+    <div *ngIf="societies.length > 0" class="mt-4 flex justify-center md:hidden">
+        <button nz-button nzType="default" (click)="exportToCsv()" class="w-full">
+            <nz-icon nzType="download" />
+            Export as CSV
+        </button>
+    </div>
+</div>

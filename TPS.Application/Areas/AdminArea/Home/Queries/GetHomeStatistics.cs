@@ -36,16 +36,20 @@ namespace TPS.Application.Areas.AdminArea.Home.Queries
 
                 var totalCompletedEvents = await _context.EventsApproval
                     .Include(x => x.Event)
-                    .Where(x => x.AdvisorApproval==true
-                            && x.DeanAssistantApproval==true
+                    .Where(x => x.AdvisorApproval == true
+                            && x.DeanAssistantApproval == true
                             && x.Event.EndTime < DateTime.Now)
                     .CountAsync();
+
+                var totalAttendees = await _context.Attendees
+                .CountAsync();
 
                 var homeStatistics = new HomeStatisticsDTO
                 {
                     TotalMembers = totalMembers,
                     TotalSocieties = totalSocieties,
-                    TotalCompletedEvents = totalCompletedEvents
+                    TotalCompletedEvents = totalCompletedEvents,
+                    TotalAttendees = totalAttendees
                 };
                 return Result.Success(homeStatistics);
             }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using TSP.Domain.Enums;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers;
@@ -91,13 +92,13 @@ public abstract class ApiController : ControllerBase
         return Guid.Parse(userId);
     }
 
-    protected virtual string GetCurrentUserType()
+    protected virtual UserType GetCurrentUserType()
     {
-        var userType = User.FindFirstValue("rle");
+        var userTypeClaim = User.FindFirstValue("rle");
 
-        if (string.IsNullOrEmpty(userType))
-            return null!;
+        if (Enum.TryParse<UserType>(userTypeClaim, ignoreCase: true, out var userType))
+            return userType;
 
-        return userType.ToUpper();
+        throw new UnauthorizedAccessException("Invalid or missing user type.");
     }
 }

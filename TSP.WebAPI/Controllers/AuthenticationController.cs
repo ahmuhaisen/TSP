@@ -28,6 +28,8 @@ public class AuthenticationController : ApiController
     [HttpPost("FacultyMember/Login")]
     public async Task<IActionResult> LoginFacultyMember([FromBody] LoginRequest request)
     {
+        Console.WriteLine(request.Email);
+        Console.WriteLine(request.Password);
         var task = _authService.LoginFacultyMember(request);
         return await FromResult(task);
     }
@@ -45,6 +47,15 @@ public class AuthenticationController : ApiController
     public async Task<IActionResult> LoginStudent([FromBody] LoginRequest request)
     {
         var task = _authService.LoginStudent(request);
+        return await FromResult(task);
+    }
+
+    // Super Admin endpoints
+
+    [HttpPost("SuperAdmin/Login")]
+    public async Task<IActionResult> LoginSuperAdmin([FromBody] LoginRequest request)
+    {
+        var task = _authService.LoginSuperAdmin(request);
         return await FromResult(task);
     }
 }

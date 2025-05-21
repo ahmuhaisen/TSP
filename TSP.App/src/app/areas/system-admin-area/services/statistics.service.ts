@@ -25,8 +25,8 @@ export interface SocietyData {
 }
 
 export interface EventsPerMonth {
-  month: string;
-  eventCount: number;
+  date: string;
+  events: number;
 }
 
 @Injectable({

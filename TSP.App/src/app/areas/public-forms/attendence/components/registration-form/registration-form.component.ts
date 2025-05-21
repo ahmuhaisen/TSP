@@ -284,7 +284,7 @@ export class RegistrationFormComponent {
 
   submitRegistration() {
     console.log('RegistrationFormComponent.submitRegistration called');
-    
+
     // Validate and mark all fields as touched to show validation errors
     Object.keys(this.registrationForm.controls).forEach(key => {
       const control = this.registrationForm.get(key);
@@ -292,11 +292,11 @@ export class RegistrationFormComponent {
       control?.updateValueAndValidity();
       console.log(`Field ${key}: valid=${control?.valid}, value=${JSON.stringify(control?.value)}, errors=`, control?.errors);
     });
-    
+
     // Log form values to debug
     console.log('Form values before submission:', this.registrationForm.value);
     console.log('Form validity:', this.registrationForm.valid);
-    
+
     // Validate schoolMajor if it's anonymous registration
     if (this.registrationType === 'anonymous') {
       const schoolMajorControl = this.registrationForm.get('schoolMajor');
@@ -308,7 +308,7 @@ export class RegistrationFormComponent {
         return;
       }
     }
-    
+
     // Only emit if the form is valid or if using account-based registration
     if (this.registrationType === 'account' || this.registrationForm.valid) {
       // Pass the form values to the parent component

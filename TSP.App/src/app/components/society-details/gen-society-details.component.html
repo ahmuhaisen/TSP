@@ -1,5 +1,4 @@
 @if(society){
-    
 <div class="flex items-center justify-between">
     <div class="flex items-center justify-start text-lg font-semibold text-gray-700">
         <nz-icon nzType="info-circle" class="mr-2" />
@@ -7,56 +6,50 @@
             <p>About</p>
         </div>
     </div>
-    <div>
-        @if(pageMode() === 'STUDENT_MANAGE' || pageMode() === 'ADMIN_MANAGE'){
-            <button nz-button nzType="primary" nzShape="circle" (click)="openEditSocietyInfoPopup()">
-                <nz-icon nzType="edit" nzTheme="outline" />
-            </button>
-        }
-    </div>
 </div>
 
 @if(isSocietyLoading){
-    <nz-skeleton [nzAvatar]="true" [nzLoading]="isSocietyLoading" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+<nz-skeleton [nzAvatar]="true" [nzLoading]="isSocietyLoading" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
 }@else {
-    <div class="mt-5">
-        <div class="flex items-center gap-4 mt-3">
-            <!-- <img class="w-14 h-14  rounded-full ring-1 ring-gray-200" src="slogo.jpg" alt="organizers" /> -->
-            <nz-avatar class="w-11 h-11 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="society!.logoId" [nzText]="society!.name.substring(0, 2).toUpperCase()" />
-            <div class="">
-                <p class="text-sm font-bold text-gray-700 mt-2">{{ society!.name }}</p>
-                <p class="text-[12px] text-gray-600">
-                    {{ society!.description }}
-                </p>
-            </div>
-        </div>
-    
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 mt-9">
-            <div class="grid gap-y-1.5">
-                <p class="text-xs text-gray-500 flex items-center">
-                    <nz-icon nzType="user" class="mr-1" />
-                    Advisor
-                </p>
-                <p class="text-sm font-semibold text-gray-700">{{ society!.advisor.fullName }}</p>
-            </div>
-    
-            <div class="grid gap-y-1.5">
-                <p class="text-xs text-gray-500 flex items-center">
-                    <nz-icon nzType="calendar" class="mr-1" />
-                    Date Created
-                </p>
-                <p class="text-sm font-semibold text-gray-700">{{ society!.creationDate | date }}</p>
-            </div>
-    
-            <div class="grid gap-y-1.5">
-                <p class="text-xs text-gray-500 flex items-center">
-                    <nz-icon nzType="number" class="mr-1" />
-                    No of Members
-                </p>
-                <p class="text-sm font-semibold text-gray-700">{{ members().length + committee().length }}</p>
-            </div>
+<div class="mt-5">
+    <div class="flex items-center gap-4 mt-3">
+        <!-- <img class="w-14 h-14  rounded-full ring-1 ring-gray-200" src="slogo.jpg" alt="organizers" /> -->
+        <nz-avatar class="w-11 h-11 rounded-full flex items-center justify-center"
+            [nzSrc]="baseSocietyImage+society!.logoId" [nzText]="society!.name.substring(0, 2).toUpperCase()" />
+        <div class="">
+            <p class="text-sm font-bold text-gray-700 mt-2">{{ society!.name }}</p>
+            <p class="text-[12px] text-gray-600">
+                {{ society!.description }}
+            </p>
         </div>
     </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 mt-9">
+        <div class="grid gap-y-1.5">
+            <p class="text-xs text-gray-500 flex items-center">
+                <nz-icon nzType="user" class="mr-1" />
+                Advisor
+            </p>
+            <p class="text-sm font-semibold text-gray-700">{{ society!.advisor.fullName }}</p>
+        </div>
+
+        <div class="grid gap-y-1.5">
+            <p class="text-xs text-gray-500 flex items-center">
+                <nz-icon nzType="calendar" class="mr-1" />
+                Date Created
+            </p>
+            <p class="text-sm font-semibold text-gray-700">{{ society!.creationDate | date }}</p>
+        </div>
+
+        <div class="grid gap-y-1.5">
+            <p class="text-xs text-gray-500 flex items-center">
+                <nz-icon nzType="number" class="mr-1" />
+                No of Members
+            </p>
+            <p class="text-sm font-semibold text-gray-700">{{ members().length + committee().length }}</p>
+        </div>
+    </div>
+</div>
 }
 
 
@@ -76,17 +69,14 @@
     </div>
     <div>
         @if(pageMode() === 'ADMIN_MANAGE'){
-            <button nz-button nzType="primary" nzShape="circle" (click)="openAddCommitteePopup()">
-                <nz-icon nzType="plus" nzTheme="outline" />
-            </button>
+        <button nz-button nzType="primary" nzShape="circle" (click)="openAddCommitteePopup()">
+            <nz-icon nzType="plus" nzTheme="outline" />
+        </button>
         }
     </div>
 </div>
 
-<app-committee-table 
-    [committee]="committee()" 
-    [isViewOnly]="pageMode() != 'ADMIN_MANAGE'" 
-    [societyId]="societyId()"
+<app-committee-table [committee]="committee()" [isViewOnly]="pageMode() != 'ADMIN_MANAGE'" [societyId]="societyId()"
     (committeeChange)="handleCommitteeChange($event)" />
 
 <nz-divider />
@@ -105,59 +95,33 @@
     </div>
     <div class="flex gap-2">
         @if(pageMode() === 'STUDENT_MANAGE' || pageMode() === 'ADMIN_MANAGE'){
-            <button nz-button nzType="default" nzShape="circle">
-                <nz-icon nzType="download" nzTheme="outline" />
-            </button>
-            <button nz-button nzType="primary" nzShape="circle" (click)="openAddMemberPopup()">
-                <nz-icon nzType="plus" nzTheme="outline" />
-            </button>
+        <button nz-button nzType="default" nzShape="circle" nz-tooltip nzTooltipTitle="Export as CSV"
+            (click)="downloadMembersAsCSV()">
+            <nz-icon nzType="download" nzTheme="outline" />
+        </button>
+        <button nz-button nzType="primary" nzShape="circle" (click)="showSocietyRequests()" nz-tooltip
+            nzTooltipTitle="Membership Requests">
+            <nz-icon nzType="reconciliation" />
+        </button>
         }
     </div>
 </div>
 
 
-<app-members-table 
-    [isLoading]="isMembersLoading" 
-    [isViewOnly]="pageMode() === 'VIEW_ONLY'" 
-    [allMembers]="members()"
-    [societyId]="societyId()"
-    (membersChange)="members.set($event)"/>
+<app-members-table [isLoading]="isMembersLoading" [isViewOnly]="pageMode() === 'VIEW_ONLY'" [allMembers]="members()"
+    [societyId]="societyId()" (membersChange)="members.set($event)" />
 
 
 @if(pageMode() === 'ADMIN_MANAGE' || pageMode() === 'STUDENT_MANAGE'){
-<!-- Edit Society Info Popup -->
-<nz-modal [(nzVisible)]="isEditSocietyInfoPopupVisible"
-        nzTitle="Edit Society Info" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isEditSocietyInfoLoading" nzOkText="Save" [nzBodyStyle]="{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }"
-        (nzOnCancel)="handleCancelEditSociety()" (nzOnOk)="handleOkEditSociety()"
-        >
-    <ng-container *nzModalContent>
-        <app-edit-society-info-form [society]="society!"/>
-    </ng-container>
-</nz-modal>
-
 <!-- Add Committee Member Popup -->
-<nz-modal [(nzVisible)]="isAddCommitteePopupVisible"
-        nzTitle="Add Committee Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isAddCommitteeLoading" nzOkText="Save"
-        (nzOnCancel)="handleCancelAddCommittee()" (nzOnOk)="handleOkAddCommittee()"
-    >
+<nz-modal [(nzVisible)]="isAddCommitteePopupVisible" nzTitle="Add Committee Member" nzCentered [nzClosable]="false"
+    [nzMaskClosable]="false" [nzOkLoading]="isAddCommitteeLoading" nzOkText="Save"
+    (nzOnCancel)="handleCancelAddCommittee()" (nzOnOk)="handleOkAddCommittee()">
     <ng-container *nzModalContent>
-        <app-add-committee-member-form 
-            [existingCommitteeMembers]="committee()"
-            [societyMembers]="members()"/>
+        <app-add-committee-member-form [existingCommitteeMembers]="committee()" [societyMembers]="members()" />
     </ng-container>
 </nz-modal>
+}
+}
 
-<!-- Add Member Popup -->
-<nz-modal [(nzVisible)]="isAddMemberPopupVisible"
-        nzTitle="Add Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-        [nzOkLoading]="isAddMemberLoading" nzOkText="Save"
-        (nzOnCancel)="handleCancelAddMember()" (nzOnOk)="handleOkAddMember()"
-    >
-    <ng-container *nzModalContent>
-        <app-add-member-form [societyId]="societyId()"/>
-    </ng-container>
-</nz-modal>
-}
-}
+<app-membership-requests />

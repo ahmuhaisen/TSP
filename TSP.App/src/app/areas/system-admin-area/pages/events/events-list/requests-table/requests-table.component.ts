@@ -88,6 +88,7 @@ export class RequestsTableComponent implements OnInit {
   visible = false;
   expandSet = new Set<string>();
   eventService = inject(EventsService);
+  decision?: EventRequestDecision;
 
   constructor(private nzMessageService: NzMessageService) { }
 
@@ -189,7 +190,7 @@ export class RequestsTableComponent implements OnInit {
   });
 
   eventsRequests: EventSimpleRequest[] = []
-
+  selectedEventRequestForDecision!: EventSimpleRequest;
   listOfDisplayData = [...this.eventsRequests];
   ngOnInit(): void {
     this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
@@ -220,31 +221,35 @@ export class RequestsTableComponent implements OnInit {
     }
   }
 
-  cancelAcceptRequest(eventId: string): void {
-    //this.nzMessageService.info('click cancel');
+  cancelAcceptRequest(): void {
 
-    // TODO: change the remark
-    const desision: EventRequestDecision = {
-      eventRequestId: eventId,
-      isAccepted: false,
-      Remark: "click cancel"
-    }
-    this.eventService.postEventRequestDecision(desision);
   }
 
-  confirmAcceptRequest(eventId: string): void {
+  confirmAcceptRequest(selectedEventRequest: EventSimpleRequest): void {
 
-    // TODO: change the remark
     const desision: EventRequestDecision = {
-      eventRequestId: eventId,
+      eventRequestId: selectedEventRequest.id,
       isAccepted: true,
       Remark: "Event accepted successfully"
     }
-    this.eventService.postEventRequestDecision(desision);
+
+    this.eventService.postEventRequestDecision(desision).subscribe({
+      next: (response) => {
+        console.log('Decision response:', response);
+        this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
+      },
+      error: (err) => {
+        console.error('Error submitting decision:', err);
+      }
+    });
+
+
+
     this.nzMessageService.success('Event accepted successfully.');
   }
 
-  openRejectPopup() {
+  openRejectPopup(selectedEventRequest: EventSimpleRequest) {
+    this.selectedEventRequestForDecision = selectedEventRequest;
     this.isRejectPopupVisible = true;
   }
 
@@ -253,6 +258,62 @@ export class RequestsTableComponent implements OnInit {
   }
 
   handleOkReject() {
+    const decision: EventRequestDecision = {
+      eventRequestId: this.selectedEventRequestForDecision.id,
+      isAccepted: false,
+      Remark: this.rejectForm.get("reason")?.value || ""
+    }
+    this.eventService.postEventRequestDecision(decision).subscribe({
+      next: (response) => {
+        console.log('Decision response:', response);
+        this.eventService.getEventRequests().subscribe(data => this.eventsRequests = data);
+      },
+      error: (err) => {
+        console.error('Error submitting decision:', err);
+      }
+    });;
+    this.nzMessageService.success("Event Request rejected")
     this.isRejectPopupVisible = false;
+  }
+
+  exportToCsv(): void {
+    if (!this.eventsRequests || this.eventsRequests.length === 0) {
+      this.nzMessageService.warning('No data to export');
+      return;
+    }
+
+    // Define headers for CSV
+    const headers = ['Event Name', 'Society', 'Date & Time', 'Location', 'Status', 'Description'];
+    
+    // Map data to CSV format
+    const data = this.eventsRequests.map(request => [
+      request.eventName,
+      request.eventSociety.societyName,
+      new Date(request.startDateTime).toLocaleString(),
+      request.locationString,
+      request.approvalStatus,
+      request.eventDescription || 'No description'
+    ]);
+    
+    // Create CSV content with headers and data
+    const csvContent = [
+      headers.join(','),
+      ...data.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+    
+    // Create a Blob with the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    // Create a download link and trigger download
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `events-requests-${new Date().toISOString().slice(0, 10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    this.nzMessageService.success('CSV exported successfully');
   }
 }

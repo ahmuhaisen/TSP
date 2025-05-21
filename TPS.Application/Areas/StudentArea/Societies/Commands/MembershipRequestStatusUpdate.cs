@@ -7,9 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TPS.Application.Abstractions.Messaging;
+using TPS.Application.Areas.Shared.Users.Contracts;
 using TPS.Application.Areas.StudentArea.Societies.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.StudentArea.Societies.Commands
@@ -51,18 +53,34 @@ namespace TPS.Application.Areas.StudentArea.Societies.Commands
                     return Result.Failure(Error.NotFound("Membership Request", request.MembershipRequestId.ToString()));
                 }
                 //User is not authorized for this action
-                if (await context.Societies
+                if (!(await context.Societies
                     .AnyAsync(s => s.SocietiesMembers
-                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId && x.IsCommittee==true)))
+                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId && x.IsCommittee==true))))
                     return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
 
+                var userData = await context.Societies.FirstOrDefaultAsync(x => x.Id == membershipRequest.SocietyId);
                 if (request.isAccepted == false)
                 {
                     membershipRequest.Status = RequestStatus.Rejected;
+                    var checkChanges = context.SaveChanges();
+                    userData.RaiseDomainEvent(new SocietyJoinRequestStatusUpdateDomainEvent(
+                        Guid.NewGuid(),
+                        userData.Id,
+                        membershipRequest.StudentId,
+                        userData.Name,
+                        true
+                        ));
+                    if (checkChanges <= 0)
+                    {
+                        return Result.Failure<Guid>(Error.InternalServerError("could not save record"));
+                    }
                 }
                 else if (request.isAccepted == true)
                 {
                     membershipRequest.Status = RequestStatus.Accepted;
+                    
+                    context.MembershipsRequests.Update(membershipRequest);
+
                     var newMember = new SocietiesMembers
                     {
                         SocietyId = request.SocietyId,
@@ -73,6 +91,20 @@ namespace TPS.Application.Areas.StudentArea.Societies.Commands
                         IsCommittee = false
                     };
                     await context.SocietiesMembers.AddAsync(newMember);
+
+                    userData.RaiseDomainEvent(new MemberJoinedSocietyDomainEvent(
+                        Guid.NewGuid(),
+                        userData.Id,
+                        userData.Name,
+                        membershipRequest.Student.FirstName + " " + membershipRequest.Student.LastName
+                        ));
+                    userData.RaiseDomainEvent(new SocietyJoinRequestStatusUpdateDomainEvent(
+                        Guid.NewGuid(),
+                        userData.Id,
+                        membershipRequest.StudentId,
+                        userData.Name,
+                        true
+                        ));
                     var checkChanges = context.SaveChanges();
                     if (checkChanges <= 0)
                     {

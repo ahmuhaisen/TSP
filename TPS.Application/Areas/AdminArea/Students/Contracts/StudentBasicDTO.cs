@@ -6,3 +6,4 @@ public class StudentBasicDTO
     public required string FullName { get; set; }
     public string? LogoId { get; set; }
 }
+

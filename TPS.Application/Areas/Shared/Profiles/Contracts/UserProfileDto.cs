@@ -1,3 +1,5 @@
+using TSP.Domain.Enums;
+
 namespace TPS.Application.Areas.Shared.Profiles.Contracts;
 
 public record UserProfileDto
@@ -6,7 +8,7 @@ public record UserProfileDto
     public string? ProfileImageId { get; set; }
     public string? Number { get; set; }
     public string? FullName { get; init; }
-    public string? userType { get; init; }
+    public UserType? userType { get; init; }
     public string? Email { get; init; }
     public string? Department { get; init; }
     public string? School { get; init; }
@@ -28,7 +30,7 @@ public record CurrentUserDto
     public string? ProfileImageId { get; set; }
     public string Number { get; set; } = default!;
     public string FullName { get; init; } = default!;
-    public string userType { get; init; } = default!;
+    public UserType userType { get; init; } = default!;
     public string Email { get; init; } = default!;
     public int DepartmentId { get; init; } = default!;
 

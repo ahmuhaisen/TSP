@@ -14,11 +14,15 @@ import { AddCommitteeMemberFormComponent } from "./add-committee-member-form/add
 import { AddMemberFormComponent } from "./add-member-form/add-member-form.component";
 import { PageMode } from '../../common/types/presentaion.types';
 import { SocietiesService } from '../../areas/system-admin-area/services/societies.service';
-import { Member, SocietyMember, SocietyWithAdvisor } from '../../areas/system-admin-area/api-interfaces/society.types';
+import { SocietyMember, SocietyWithAdvisor } from '../../areas/system-admin-area/api-interfaces/society.types';
 import { DatePipe } from '@angular/common';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { Router } from '@angular/router';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { AuthService } from '../../common/services/auth.service';
+import { MembershipRequestsComponent } from "./membership-requests/membership-requests.component";
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-gen-society-details',
@@ -29,14 +33,14 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
     NzDividerModule,
     NzIconModule,
     NzTableModule,
+    NzToolTipModule,
     NzAvatarModule,
     MembersTableComponent,
     CommitteeTableComponent,
     NzModalModule,
     NzSkeletonModule,
-    EditSocietyInfoFormComponent,
     AddCommitteeMemberFormComponent,
-    AddMemberFormComponent,
+    MembershipRequestsComponent
   ],
   templateUrl: './gen-society-details.component.html',
   styleUrl: './gen-society-details.component.css'
@@ -48,6 +52,10 @@ export class GenSocietyDetailsComponent {
   society: SocietyWithAdvisor | null = null;
   members = signal<SocietyMember[]>([]);
   committee = signal<SocietyMember[]>([]);
+  authService = inject(AuthService);
+
+  baseUserImage: string = environment.gitHubUsersPicturesURL;
+  baseSocietyImage: string = environment.gitHubSocietiesPicturesURL;
 
   isSocietyLoading = false;
   isCommitteeLoading = false;
@@ -81,6 +89,13 @@ export class GenSocietyDetailsComponent {
           return;
         }
 
+        if (this.pageMode() === 'ADMIN_MANAGE') {
+          if (this.authService.currentUser()?.id !== society.advisor.id) {
+            this.router.navigate(['forbidden']);
+            return;
+          }
+        }
+
         console.table(society);
         this.society = society;
         this.breadcrumbService.set('@societyName', this.society!.name);
@@ -94,6 +109,19 @@ export class GenSocietyDetailsComponent {
       }
     });
 
+    this.societyService.societyMembers(this.societyId(), true).subscribe({
+      next: members => {
+        this.committee.set(members);
+        this.isCommitteeLoading = false;
+
+        if (this.pageMode() === 'STUDENT_MANAGE') {
+          if (!members.some(member => member.id === this.authService.currentUser()?.id)) {
+            this.router.navigate(['forbidden']);
+            return;
+          }
+        }
+      }
+    });
 
     this.societyService.societyMembers(this.societyId(), false).subscribe({
       next: members => {
@@ -101,23 +129,8 @@ export class GenSocietyDetailsComponent {
         this.isMembersLoading = false;
       }
     });
-
-    this.societyService.societyMembers(this.societyId(), true).subscribe({
-      next: members => {
-        this.committee.set(members);
-        this.isCommitteeLoading = false;
-      }
-    });
   }
 
-  openEditSocietyInfoPopup() {
-    this.isEditSocietyInfoPopupVisible = true;
-  }
-
-  handleCancelEditSociety() {
-    this.isEditSocietyInfoPopupVisible = false;
-    this.editSocietyInfoFormComponent!.createSocietyForm?.reset();
-  }
 
   handleOkEditSociety() {
     if (this.editSocietyInfoFormComponent!.createSocietyForm!.invalid) {
@@ -144,7 +157,7 @@ export class GenSocietyDetailsComponent {
         this.messageService.success('Society info updated successfully.');
         this.isEditSocietyInfoPopupVisible = false;
         this.editSocietyInfoFormComponent!.createSocietyForm?.reset();
-        
+
         // Refresh society details
         this.societyService.find(this.societyId()).subscribe({
           next: society => {
@@ -185,8 +198,8 @@ export class GenSocietyDetailsComponent {
 
     // Format date as yyyy-MM-dd
     const date = new Date(formValue.startDate);
-    const formattedDate = date.getFullYear() + '-' + 
-      String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+    const formattedDate = date.getFullYear() + '-' +
+      String(date.getMonth() + 1).padStart(2, '0') + '-' +
       String(date.getDate()).padStart(2, '0');
 
     this.societyService.addCommittee(this.societyId(), formValue.studentId, {
@@ -196,11 +209,11 @@ export class GenSocietyDetailsComponent {
       next: () => {
         this.messageService.success('Committee member added successfully');
         this.isAddCommitteePopupVisible = false;
-        
+
         // Remove member from members list
         const updatedMembers = this.members().filter(member => member.id !== formValue.studentId);
         this.members.set(updatedMembers);
-        
+
         // Refresh committee list
         this.societyService.societyMembers(this.societyId(), true).subscribe({
           next: members => {
@@ -218,60 +231,11 @@ export class GenSocietyDetailsComponent {
     });
   }
 
-  openAddMemberPopup() {
-    this.isAddMemberPopupVisible = true;
-  }
-
-  handleCancelAddMember() {
-    this.isAddMemberPopupVisible = false;
-  }
-
-  handleOkAddMember() {
-    if (!this.addMemberForm?.isFormValid()) {
-      this.messageService.error('Please fill in all required fields.');
-      return;
-    }
-
-    const formValue = this.addMemberForm.getFormValue();
-    this.isAddMemberLoading = true;
-
-    // Format date as yyyy-MM-dd
-    const date = new Date(formValue.startDate);
-    const formattedDate = date.getFullYear() + '-' + 
-      String(date.getMonth() + 1).padStart(2, '0') + '-' + 
-      String(date.getDate()).padStart(2, '0');
-
-    const data = {
-      ...formValue,
-      startDate: formattedDate
-    };
-
-    this.societyService.addMember(this.societyId(), data).subscribe({
-      next: () => {
-        this.messageService.success('Member added successfully');
-        this.isAddMemberPopupVisible = false;
-        // Refresh members list
-        this.societyService.societyMembers(this.societyId(), false).subscribe({
-          next: members => {
-            this.members.set(members);
-          }
-        });
-      },
-      error: (error: unknown) => {
-        this.messageService.error('Failed to add member');
-        console.error('Error adding member:', error);
-      },
-      complete: () => {
-        this.isAddMemberLoading = false;
-      }
-    });
-  }
-
   handleCommitteeChange(newCommittee: SocietyMember[]) {
-    const removedMembers = this.committee().filter(member => 
+    const removedMembers = this.committee().filter(member =>
       !newCommittee.some(newMember => newMember.id === member.id)
     );
-    
+
     // Add removed committee members to the members list
     if (removedMembers.length > 0) {
       const updatedMembers = [...this.members(), ...removedMembers.map(member => ({
@@ -280,8 +244,54 @@ export class GenSocietyDetailsComponent {
       }))];
       this.members.set(updatedMembers);
     }
-    
+
     // Update committee list
     this.committee.set(newCommittee);
+  }
+
+  @ViewChild(MembershipRequestsComponent) membershipRequestsComponent: MembershipRequestsComponent | undefined;
+
+  showSocietyRequests() {
+    this.membershipRequestsComponent?.showSocietyRequests();
+  }
+
+  downloadMembersAsCSV(): void {
+    const members = this.members();
+    if (!members.length) {
+      this.messageService.warning('No members to export');
+      return;
+    }
+
+    // Define CSV headers
+    const headers = ['First Name', 'Last Name', 'Position', 'Join Date'];
+
+    // Convert members data to CSV rows
+    const csvRows = members.map(member => [
+      member.firstName,
+      member.lastName,
+      member.position,
+      new Date(member.joinDate).toLocaleDateString()
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...csvRows.map(row => row.join(','))
+    ].join('\n');
+
+    // Create blob and download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    // Set download attributes
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${this.society?.name || 'society'}_members.csv`);
+    link.style.visibility = 'hidden';
+
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }

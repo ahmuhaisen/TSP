@@ -52,11 +52,14 @@ public class SocietiesController : ApiController
     [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Put(Guid societyId, UpdateSocietyRequest request)
     {
-        var command = UpdateSociety.Command.Create(request.Name,
+        var command = UpdateSociety.Command.Create(societyId,
+                                                   request.Name,
                                                    request.Description,
                                                    request.LogoBase64,
                                                    request.ThemeColor,
-                                                   societyId);
+                                                   request.CreationDate,
+                                                   request.AdvisorId
+                                                   );
         var task = _sender.Send(command);
 
         return await FromResult(task);

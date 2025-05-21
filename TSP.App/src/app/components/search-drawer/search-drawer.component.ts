@@ -6,7 +6,12 @@ import { NzIconModule, NzIconPatchService } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-
+import { FormsModule } from '@angular/forms';
+import { SearchBasicDTO, SearchService } from '../../common/services/search.service';
+import { CommonModule } from '@angular/common';
+import { inject } from '@angular/core';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-search-drawer',
   imports: [
@@ -16,7 +21,9 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzSpinModule,
     NzInputModule,
     NzSelectModule,
-    NzEmptyComponent
+    NzEmptyComponent,
+    FormsModule,
+    CommonModule
   ],
   templateUrl: './search-drawer.component.html',
   styleUrl: './search-drawer.component.css'
@@ -28,9 +35,35 @@ export class SearchDrawerComponent {
   @Input() visible: boolean = false;
   // This EventEmitter lets the child notify the parent of changes.
   @Output() visibleChange = new EventEmitter<boolean>();
+  constructor(
+    private searchService: SearchService
+  ) {
 
-  doSearch(){
-    this.isSearchLoading.set(true);
+  }
+
+
+  selectedSearchType: string = "";
+  searchTerm: string = "";
+  searchResults: SearchBasicDTO[] = [];
+  messageService = inject(NzMessageService);
+  baseUrl: string = "";
+  doSearch() {
+
+
+    let searchType = ""
+    switch (this.selectedSearchType) {
+      case "1": searchType = "Societies"; this.baseUrl = environment.gitHubSocietiesPicturesURL; break;
+      case "2": searchType = "Members"; this.baseUrl = environment.gitHubUsersPicturesURL; break;
+      case "3": searchType = "Events"; break;
+      default: this.messageService.error("please select the search category"); return;
+    }
+    this.searchService.getSearchResults(searchType, this.searchTerm).subscribe(data => {
+      this.searchResults = data
+
+    });
+    console.log(this.searchResults)
+
+    this.isSearchLoading.set(false);
   }
 
   close() {
@@ -38,3 +71,4 @@ export class SearchDrawerComponent {
     this.visibleChange.emit(this.visible);
   }
 }
+

@@ -4,6 +4,7 @@ using TPS.Application.Areas.Shared.Abstractions;
 using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Events;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.Shared.Students;
@@ -30,6 +31,15 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
         data.Position = request.Position;
         data.JoinDate = request.StartDate;
         var check = context.SaveChanges();
+
+        var userData = await context.Societies.FirstOrDefaultAsync(x => x.Id == data.SocietyId);
+
+        userData.RaiseDomainEvent(new SocietyCommitteeChangedDomainEvent(
+            Guid.NewGuid(),
+            SocietyId,
+            StudentId,
+            userData.Name
+            ));
         if (check > 0)
         {
             return Result.Success(StudentId);
@@ -54,7 +64,16 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
         }
 
         context.SocietiesMembers.Remove(data);
-        var changes = context.SaveChanges();
+        var changes = await context.SaveChangesAsync();
+
+        var userData = await context.Societies.FirstOrDefaultAsync(x => x.Id == data.SocietyId);
+
+        userData.RaiseDomainEvent(new MemberLeftSocietyDomainEvent(
+            Guid.NewGuid(),
+            userData.Id,
+            userData.Name,
+            data.Student.FirstName + " " + data.Student.LastName
+            ));
         if (changes <= 0)
         {
             return Result.Failure(Error.InternalServerError("Something wrong happend in the process"));
@@ -106,9 +125,20 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
                 FirstName = s.Student.FirstName,
                 LastName = s.Student.LastName,
                 Position = s.Position,
+                ProfileImageId = s.Student.ProfileImageId,
                 JoinDate = s.JoinDate,
             }).ToListAsync();
 
         return Result.Success(data);
+    }
+
+
+    public async Task<Result<bool>> IsStudentACommitteeMemberAsync(Guid studentId)
+    {
+        var isCommittee = await context.SocietiesMembers
+            .AsNoTracking()
+            .AnyAsync(s => s.StudentId == studentId && s.IsCommittee);
+
+        return Result.Success(isCommittee);
     }
 }

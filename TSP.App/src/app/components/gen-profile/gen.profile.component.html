@@ -25,9 +25,9 @@
 </div>
 
 <!-- Edit Profile Modal -->
-<nz-modal [(nzVisible)]="isEditProfileModalVisible" [nzVisible]="isEditProfileModalVisible" nzTitle="Edit Profile" nzCentered [nzClosable]="true"
-    [nzMaskClosable]="false" [nzOkLoading]="isEditProfileLoading" nzOkText="Save" [nzWidth]="768"
-    (nzOnCancel)="handleCancelEditProfile()" (nzOnOk)="handleOkEditProfile()">
+<nz-modal [(nzVisible)]="isEditProfileModalVisible" [nzVisible]="isEditProfileModalVisible" nzTitle="Edit Profile"
+    nzCentered [nzClosable]="true" [nzMaskClosable]="false" [nzOkLoading]="isEditProfileLoading" nzOkText="Save"
+    [nzWidth]="768" (nzOnCancel)="handleCancelEditProfile()" (nzOnOk)="handleOkEditProfile()">
     <ng-container *nzModalContent>
         <form nz-form [formGroup]="profileForm" class="mt-3" nzLayout="vertical">
             <div class="flex flex-col md:flex-row gap-6">
@@ -171,8 +171,7 @@
             @for(society of userProfile!.memberships; track $index) {
             <div class="flex flex-wrap sm:flex-nowrap items-center py-1 rounded-lg shadow">
                 <div class="w-16 p-2 shrink-0">
-                    <!-- <img [src]="society.logoId" class="w-12 h-12 sm:w-10 sm:h-10" alt="profile image"> -->
-                    <nz-avatar [nzSrc]="society.societyLogoId"
+                    <nz-avatar [nzSrc]="baseSocietyImage+society.societyLogoId"
                         class="object-contain w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
                         [nzIcon]="'product'" nzShape="square" nzSize="large" />
                 </div>
