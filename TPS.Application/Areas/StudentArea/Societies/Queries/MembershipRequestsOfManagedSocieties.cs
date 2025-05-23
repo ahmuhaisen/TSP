@@ -10,6 +10,7 @@ using TPS.Application.Areas.AdminArea.Students.Contracts;
 using TPS.Application.Areas.StudentArea.Societies.Contracts;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
+using TSP.Domain.Enums;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.StudentArea.Societies.Queries
@@ -20,27 +21,37 @@ namespace TPS.Application.Areas.StudentArea.Societies.Queries
         {
             public Guid SocietyId { get; set; }
             public Guid LoggedInUser { get; set; }
-            public Query(Guid SocietyId, Guid LoggedInUser)
+            public UserType UserType { get; set; }
+            public Query(Guid SocietyId, Guid LoggedInUser, UserType UserType)
             {
                 this.SocietyId = SocietyId;
                 this.LoggedInUser = LoggedInUser;
+                this.UserType = UserType;
             }
-            public static Query Create(Guid SocietyId, Guid LoggedInUser) => new Query(SocietyId,LoggedInUser);
+            public static Query Create(Guid SocietyId, Guid LoggedInUser, UserType UserType)
+                => new Query(SocietyId, LoggedInUser, UserType);
         }
         public sealed class Handler(ApplicationDbContext context) : IQueryHandler<Query, Result<List<MembershipRequestDTO>>>
         {
             public async Task<Result<List<MembershipRequestDTO>>> Handle(Query request, CancellationToken cancellation)
             {
-                if (!(await context.Societies
-                    .Include(x=>x.SocietiesMembers)
-                    .AnyAsync(s => s.SocietiesMembers
-                            .Any(x => x.StudentId == request.LoggedInUser && x.SocietyId == request.SocietyId))))
-                    return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
+                var society = await context.Societies
+                    .Include(x => x.MembershipRequests)
+                        .ThenInclude(x=>x.Student)
+                    .FirstOrDefaultAsync(x => x.Id == request.SocietyId);
 
-                var data = await context.MembershipsRequests
-                    .Include(x=>x.Society)
-                    .Include(x=>x.Student)
-                    .Where(x => x.SocietyId == request.SocietyId)
+                if (request.UserType == UserType.Student)
+                {
+                    if (!(society!.MembershipRequests.Any(x => x.StudentId == request.LoggedInUser)))
+                        return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
+                }
+                if (request.UserType == UserType.FacultyMember)
+                {
+                    if (!(society!.AdvisorId == request.LoggedInUser))
+                        return Result.Failure<List<MembershipRequestDTO>>(Error.AccessDenied("Society"));
+                }
+
+                var data = society!.MembershipRequests
                     .Select(x => new MembershipRequestDTO
                     {
                         Id = x.Id,
@@ -48,7 +59,7 @@ namespace TPS.Application.Areas.StudentArea.Societies.Queries
                         ReasonForJoining = x.Motivation,
                         Status = x.Status,
                         RequestedOn = x.RequestedOn,
-                        SocietyLogo = x.Society.LogoId,
+                        SocietyLogo = society!.LogoId,
                         StudentBasicDTO = new StudentBasicDTO
                         {
                             Id = x.Id,
@@ -56,7 +67,7 @@ namespace TPS.Application.Areas.StudentArea.Societies.Queries
                             LogoId = x.Student.ProfileImageId
                         }
                     })
-                    .ToListAsync(cancellationToken: cancellation);
+                    .ToList();
                 return Result.Success(data);
             }
         }
