@@ -108,7 +108,7 @@
 </div>
 
 
-<app-members-table [isLoading]="isMembersLoading" [isViewOnly]="pageMode() === 'VIEW_ONLY'" [allMembers]="members()"
+<app-members-table [isLoading]="isMembersLoading" [pageMode]="pageMode()" [allMembers]="members()"
     [societyId]="societyId()" (membersChange)="members.set($event)" />
 
 

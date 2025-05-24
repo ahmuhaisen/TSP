@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, output } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -15,11 +15,11 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { EditMemberFormComponent } from "./edit-member-form/edit-member-form.component";
 import { Member, SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 import { environment } from '../../../../environments/environment';
+import { PageMode } from '../../../common/types/presentaion.types';
 
 interface ColumnItem {
   name: string;
@@ -55,11 +55,14 @@ interface ColumnItem {
 })
 export class MembersTableComponent implements OnInit {
   
-  isViewOnly = input<boolean>(false);
+  pageMode = input<PageMode>('VIEW_ONLY');
   isLoading = input<boolean>(false);
   allMembers = input.required<SocietyMember[]>();
   societyId = input.required<string>();
   membersChange = output<SocietyMember[]>();
+
+  isViewOnly = computed(() => this.pageMode() === 'VIEW_ONLY');
+  isStudentManage = computed(() => this.pageMode() === 'STUDENT_MANAGE');
 
   listOfDisplayData: SocietyMember[] = [];
   searchValue = '';
@@ -205,6 +208,7 @@ export class MembersTableComponent implements OnInit {
         this.handleCancelEditMember();
       },
       error: (error: unknown) => {
+        this.isEditMemberLoading = false;
         this.messageService.error('Failed to update member position');
         console.error('Error updating member position:', error);
       },

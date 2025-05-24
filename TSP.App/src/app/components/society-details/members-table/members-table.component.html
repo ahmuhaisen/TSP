@@ -20,7 +20,7 @@
             </th>
             }
             }
-            @if(!isViewOnly()){
+            @if(!isViewOnly() && isStudentManage()){
             <th>Actions</th>
             }
         </tr>
@@ -35,7 +35,7 @@
             <td>{{ data.firstName }} {{ data.lastName }}</td>
             <td>{{ data.position }}</td>
             <td>{{ data.joinDate | date: 'mediumDate' }}</td>
-            @if(!isViewOnly()){
+            @if(!isViewOnly() && isStudentManage()){
                 <td>
                     <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
                         <nz-icon nzType="edit" />
