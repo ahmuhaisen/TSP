@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /TPS.Presentation/Controllers/TestsController.cs
 /TPS.Infrastructure/DataGenerators/Fakers.cs
 /TSP.WebAPI/Controllers/TestsController.cs
+/TSP.WebAPI/appsettings.json
