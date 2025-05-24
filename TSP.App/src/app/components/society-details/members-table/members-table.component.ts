@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, output } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -15,12 +15,13 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { EditMemberFormComponent } from "./edit-member-form/edit-member-form.component";
 import { Member, SocietyMember } from '../../../areas/system-admin-area/api-interfaces/society.types';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 import { environment } from '../../../../environments/environment';
-
+import { PageMode } from '../../../common/types/presentaion.types';
+import { RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 interface ColumnItem {
   name: string;
   sortOrder: NzTableSortOrder | null;
@@ -48,18 +49,24 @@ interface ColumnItem {
     NzToolTipModule,
     NzModalModule,
     NzAvatarModule,
-    NzFormModule
+    NzFormModule,
+    RouterLink,
+
+
   ],
   templateUrl: './members-table.component.html',
   styleUrl: './members-table.component.css'
 })
 export class MembersTableComponent implements OnInit {
-  
-  isViewOnly = input<boolean>(false);
+
+  pageMode = input<PageMode>('VIEW_ONLY');
   isLoading = input<boolean>(false);
   allMembers = input.required<SocietyMember[]>();
   societyId = input.required<string>();
   membersChange = output<SocietyMember[]>();
+
+  isViewOnly = computed(() => this.pageMode() === 'VIEW_ONLY');
+  isStudentManage = computed(() => this.pageMode() === 'STUDENT_MANAGE');
 
   listOfDisplayData: SocietyMember[] = [];
   searchValue = '';
@@ -68,14 +75,16 @@ export class MembersTableComponent implements OnInit {
 
   messageService = inject(NzMessageService);
   societiesService = inject(SocietiesService);
-  baseUserUmage:string = environment.gitHubUsersPicturesURL
+  baseUserUmage: string = environment.gitHubUsersPicturesURL
   isEditMemberPopupVisible = false;
   isEditMemberLoading = false;
   memberToEdit: SocietyMember | null = null;
   editPosition = '';
-
+  activateRoute = inject(ActivatedRoute)
+  routeFirstSegment: string = ""
   ngOnInit() {
     this.listOfDisplayData = [...this.allMembers()];
+    this.routeFirstSegment = this.activateRoute.snapshot.pathFromRoot[1]?.url[0]?.path;
   }
 
   ngOnChanges() {
@@ -195,8 +204,8 @@ export class MembersTableComponent implements OnInit {
       next: () => {
         this.messageService.success('Member position updated successfully');
         // Update the local list
-        const updatedMembers = this.allMembers().map(member => 
-          member.id === this.memberToEdit!.id 
+        const updatedMembers = this.allMembers().map(member =>
+          member.id === this.memberToEdit!.id
             ? { ...member, position: this.editPosition }
             : member
         );
@@ -205,6 +214,7 @@ export class MembersTableComponent implements OnInit {
         this.handleCancelEditMember();
       },
       error: (error: unknown) => {
+        this.isEditMemberLoading = false;
         this.messageService.error('Failed to update member position');
         console.error('Error updating member position:', error);
       },

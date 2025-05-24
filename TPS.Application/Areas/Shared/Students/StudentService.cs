@@ -68,16 +68,17 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
 
         var userData = await context.Societies.FirstOrDefaultAsync(x => x.Id == data.SocietyId);
 
+        if (changes <= 0)
+        {
+            return Result.Failure(Error.InternalServerError("Something wrong happend in the process"));
+        }
+
         userData.RaiseDomainEvent(new MemberLeftSocietyDomainEvent(
             Guid.NewGuid(),
             userData.Id,
             userData.Name,
             data.Student.FirstName + " " + data.Student.LastName
             ));
-        if (changes <= 0)
-        {
-            return Result.Failure(Error.InternalServerError("Something wrong happend in the process"));
-        }
 
         return Result.Success();
     }
@@ -97,6 +98,11 @@ public class StudentService(ApplicationDbContext context) : IStudentsService
         if (data is null)
         {
             return Result.Failure<Guid>(Error.ValueInvalid(nameof(Society), StudentId.ToString()));
+        }
+
+        if (data.Position == Position)
+        {
+            return Result.Success(data.StudentId);
         }
 
         data.Position = Position;

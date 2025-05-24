@@ -27,7 +27,7 @@ export class ProfilesService {
         return this.db.getRequest<UserProfile>(`${this.model}/${id}?userType=${userType}`);
     }
 
-    hasProfileImage(){
+    hasProfileImage() {
         return this.db.getRequest<boolean>(`${this.model}/has-profile-image`);
     }
 
@@ -38,8 +38,7 @@ export class ProfilesService {
 
 }
 
-export interface UserProfile
-{
+export interface UserProfile {
     id: string;
     userType: 'Student' | 'Faculty';
     number: string;
@@ -49,9 +48,14 @@ export interface UserProfile
     department?: string;
     school?: string;
     memberships?: MembershipBasicDetails[];
+    firstName: string;
+    lastName: string;
+
+
 }
 
-export interface MembershipBasicDetails{
+
+export interface MembershipBasicDetails {
     section: string;
     societyName: string;
     societyLogoId: string;

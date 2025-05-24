@@ -28,7 +28,7 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
     }
 
     [HttpPost("emails/send")]
-    public async Task<IActionResult> SendFakeEmail(string? subject)
+    public async Task<IActionResult> SendFakeEmail()
     {
         try
         {
@@ -55,7 +55,7 @@ public class TestsController(ApplicationDbContext _context, IEmailService emailS
             //await emailService.SendSocietyJoinRequestDecisionMade("yasmeenalmohtaseb@gmail.com", "Yasmin Almohtaseb", UserType.Student, "ACM JU",true);
 
 
-            await emailService.SendWelcomingEmail("suhibsaleh@outlook.com", "Suhib Saleh", UserType.FacultyMember);
+            await emailService.SendWelcomingEmail("ahmuhaisen03@gmail.com", "Ahmad Muhaisen", UserType.FacultyMember);
         }
         catch (Exception ex)
         {

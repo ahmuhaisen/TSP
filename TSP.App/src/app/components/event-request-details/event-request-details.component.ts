@@ -95,7 +95,7 @@ export class EventRequestDetailsComponent {
           window.open(fullUrl, '_blank');
         }
         else {
-          this.nzMessageService.info('The feedback form is not available yet');
+          this.nzMessageService.info('The feedback form is not available.');
         }
       }
     })

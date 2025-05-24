@@ -9,5 +9,10 @@ export const routes: Routes = [
         path: ':id',
         loadComponent: () => import('./gen-event-request-details/gen-event-request-details.component').then(m => m.GenEventRequestDetailsComponent),
         data: { breadcrumb: { alias: 'eventName' } }
-    }
+    },
+    {
+        path: ':id/feedback-summary',
+        loadComponent: () => import('../../../system-admin-area/pages/events/event-details/event-feedback-summary/event-feedback-summary.component').then(m => m.EventFeedbackSummaryComponent),
+        data: { breadcrumb: 'Feedback Summary' }
+    },
 ] ;

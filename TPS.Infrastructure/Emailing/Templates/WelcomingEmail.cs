@@ -23,7 +23,7 @@ internal class WelcomingEmail
 </a>
 
 <p style=""font-size: 14px; color: #a0aec0; margin-top: 30px;"">
-  If you have any questions or need help, just reply to this email or visit our <a href=""https://the-societies-portal.web.app/help"" style=""color: #3182ce;"">Help Center</a>.
+  If you have any questions or need help, just reply to this email or visit our <a href=""href=""href=""https://the-societies-portal.web.app/help-center"" style=""color: #3182ce;"">Help Center</a>.
 </p>
 ";
 
@@ -49,7 +49,7 @@ internal class WelcomingEmail
 </a>
 
 <p style=""font-size: 14px; color: #a0aec0; margin-top: 30px;"">
-  If you have any questions or need help, just reply to this email or visit our <a href=""https://the-societies-portal.web.app/help"" style=""color: #3182ce;"">Help Center</a>.
+  If you have any questions or need help, just reply to this email or visit our <a href=""href=""href=""https://the-societies-portal.web.app/help-center"" style=""color: #3182ce;"">Help Center</a>.
 </p>
 ";
 }

@@ -65,7 +65,7 @@
           <p class="mt-2 text-gray-600">{{ event.description }}</p>
 
           @if (event.isAttendeesFormEnabled) {
-          <a [href]="'../../public-forms/attendance/'+event.id" target="_blank">
+          <a [href]="'../../public-forms/event-registration/'+event.id" target="_blank">
             <button nz-button nzType="default" class="mt-4 w-full">
               <nz-icon nzType="form"></nz-icon>
               Register
@@ -128,7 +128,9 @@
           <div class="flex-grow">
             <div class="flex items-start gap-4">
               <div class="flex-grow">
-                <h3 class="text-md font-semibold text-gray-800">{{ request.title }}</h3>
+                <a routerLink="./{{ request.eventId }}">
+                  <h3 class="text-md font-semibold text-gray-800">{{ request.title }}</h3>
+                </a>
                 <!-- <p class="text-xs text-gray-600">{{ request.society }}</p> -->
               </div>
               <div class="flex items-center gap-2">

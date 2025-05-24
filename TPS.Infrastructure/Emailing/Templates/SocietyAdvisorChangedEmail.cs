@@ -28,7 +28,7 @@ namespace TPS.Infrastructure.Emailing.Templates
             </a>
 
             <p style=""font-size: 14px; color: #a0aec0; margin-top: 30px;"">
-              For assistance or questions, reply to this email or visit the <a href=""https://the-societies-portal.web.app/help"" style=""color: #3182ce;"">Help Center</a>.
+              For assistance or questions, reply to this email or visit the <a href=""href=""href=""https://the-societies-portal.web.app/help-center"" style=""color: #3182ce;"">Help Center</a>.
             </p>
         ";
 
@@ -52,7 +52,7 @@ namespace TPS.Infrastructure.Emailing.Templates
             </a>
 
             <p style=""font-size: 14px; color: #a0aec0; margin-top: 30px;"">
-              For assistance or questions, reply to this email or visit the <a href=""https://the-societies-portal.web.app/help"" style=""color: #3182ce;"">Help Center</a>.
+              For assistance or questions, reply to this email or visit the <a href=""href=""href=""https://the-societies-portal.web.app/help-center"" style=""color: #3182ce;"">Help Center</a>.
             </p>
         ";
 
@@ -76,7 +76,7 @@ namespace TPS.Infrastructure.Emailing.Templates
             </a>
 
             <p style=""font-size: 14px; color: #a0aec0; margin-top: 30px;"">
-              For assistance or questions, reply to this email or visit the <a href=""https://the-societies-portal.web.app/help"" style=""color: #3182ce;"">Help Center</a>.
+              For assistance or questions, reply to this email or visit the <a href=""href=""href=""https://the-societies-portal.web.app/help-center"" style=""color: #3182ce;"">Help Center</a>.
             </p>
         ";
     }

@@ -29,7 +29,8 @@
             </td>
             <td>
                 <p class="text-xs">
-                    {{ data.firstName }} {{ data.lastName }} {{data.profileImageId||"sdfgsdfg"}}
+                    <a [routerLink]="['/',routeFirstSegment ,'users',data.id]">
+                        {{ data.firstName }} {{ data.lastName }}</a>
                 </p>
             </td>
             <td>

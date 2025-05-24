@@ -20,7 +20,8 @@ import { SocietyMember } from '../../../areas/system-admin-area/api-interfaces/s
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 import { environment } from '../../../../environments/environment';
-
+import { ActivatedRoute } from '@angular/router';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-committee-table',
   imports: [
@@ -40,6 +41,7 @@ import { environment } from '../../../../environments/environment';
     NzAlertModule,
     NzAvatarModule,
     ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './committee-table.component.html',
 })
@@ -49,8 +51,8 @@ export class CommitteeTableComponent implements OnInit {
   societyId = input.required<string>();
   committee = input.required<SocietyMember[]>();
   committeeChange = output<SocietyMember[]>();
-  
-  baseUserUmage:string = environment.gitHubUsersPicturesURL
+
+  baseUserUmage: string = environment.gitHubUsersPicturesURL
 
   isEditCommitteePopupVisible = false;
   isEditCommitteePopupLoading = false;
@@ -68,6 +70,9 @@ export class CommitteeTableComponent implements OnInit {
 
   displayedPositions = [...this.positions];
 
+  activateRoute = inject(ActivatedRoute);
+  routeFirstSegment: string = "";
+
   ngOnInit() {
     this.editCommitteeMemberForm = this.formBuilder.group({
       name: ['', [Validators.required]],
@@ -78,6 +83,8 @@ export class CommitteeTableComponent implements OnInit {
     // Initialize and update displayed committee when input changes
     this.displayedCommittee = [...this.committee()];
     this.positions = committeePositions.filter(p => !this.isTakenPosition(p.name));
+    this.routeFirstSegment = this.activateRoute.snapshot.pathFromRoot[1]?.url[0]?.path;
+
   }
 
   ngOnChanges() {
@@ -114,8 +121,8 @@ export class CommitteeTableComponent implements OnInit {
       next: () => {
         this.messageService.success('Committee member position updated successfully');
         // Update the local list
-        const updatedCommittee = this.committee().map(member => 
-          member.id === this.memberToEdit!.id 
+        const updatedCommittee = this.committee().map(member =>
+          member.id === this.memberToEdit!.id
             ? { ...member, position: position }
             : member
         );
@@ -134,7 +141,7 @@ export class CommitteeTableComponent implements OnInit {
 
   setEditMemberFormValues() {
     if (!this.memberToEdit) return;
-    
+
     this.editCommitteeMemberForm!.patchValue({
       name: this.memberToEdit.firstName + ' ' + this.memberToEdit.lastName,
       position: this.memberToEdit.position,

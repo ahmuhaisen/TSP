@@ -53,8 +53,7 @@ internal class EmailLayout
           <td style=""padding: 25px 30px; text-align: center;"">
             <!-- Logos stacked and centered -->
             <div style=""margin-bottom: 16px;"">
-              <img src=""https://i.ibb.co/6JDYc523/image.png"" alt=""The University of Jordan Logo"" style=""height: 40px; margin: 0 10px;"">
-              <img src=""https://i.ibb.co/N6RcYQB/tsp-logo.png"" alt=""The Societies Portal Logo"" style=""height: 40px; margin: 0 10px;"">
+              <img src=""https://s14.gifyu.com/images/bsObr.png"" alt=""The Societies Portal Logo"" style=""height: 40px; margin: 0 10px;"">
             </div>
 
             <!-- Portal Title & Subtitle -->
@@ -64,8 +63,8 @@ internal class EmailLayout
             <!-- Legal Footer -->
             <p style=""font-size: 12px; color: #a0aec0; margin: 0;"">© 2025 The Societies Portal. All rights reserved.</p>
             <p style=""font-size: 12px; color: #a0aec0; margin: 4px 0 0;"">
-              <a href=""#"" style=""color: #718096; text-decoration: underline;"">Terms of use</a> |
-              <a href=""#"" style=""color: #718096; text-decoration: underline;"">Privacy Policy</a>
+              <a href=""https://the-societies-portal.web.app/terms-of-use"" style=""color: #718096; text-decoration: underline;"">Terms of use</a> |
+              <a href=""https://the-societies-portal.web.app/privacy-policy"" style=""color: #718096; text-decoration: underline;"">Privacy Policy</a>
             </p>
           </td>
         </tr>

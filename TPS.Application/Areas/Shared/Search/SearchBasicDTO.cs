@@ -8,4 +8,5 @@ public class SearchBasicDTO
 
     public string ?Description { get; set; }
     public string ?LogoId { get; set; }
+    public bool IsFacultyMember { get; set; }
 }
