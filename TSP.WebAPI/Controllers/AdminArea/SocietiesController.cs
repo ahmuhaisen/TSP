@@ -5,7 +5,11 @@ using TPS.Application.Areas.AdminArea.Societies.Contracts;
 using TPS.Application.Areas.AdminArea.Societies.Contracts.Requests;
 using TPS.Application.Areas.AdminArea.Students.Commands;
 using TPS.Application.Areas.AdminArea.Students.Contracts;
+using TPS.Application.Areas.StudentArea.Societies.Commands;
+using TPS.Application.Areas.StudentArea.Societies.Contracts;
+using TPS.Application.Areas.StudentArea.Societies.Queries;
 using TPS.Application.Areas.StudentArea.Students.Contracts.Requests;
+using TSP.Domain.Enums;
 using TSP.Domain.Shared;
 
 namespace TSP.WebAPI.Controllers.AdminArea;
@@ -77,6 +81,34 @@ public class SocietiesController : ApiController
 
         return await FromResult(task);
     }
+    //Membership Requests
+    [HttpGet("{SocietyId}/Members/Requests")]
+    [ProducesResponseType(typeof(List<MembershipRequestDTO>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetMembershipRequestsOfManagedSociety([FromRoute] Guid SocietyId,
+                                                                           UserType UserType)
+    {
+        var query = MembershipRequestsOfManagedSocieties.Query.Create(SocietyId, base.GetCurrentUserId()!.Value,UserType);
+        var task = _sender.Send(query);
+        return await FromResult(task);
+    }
+    [HttpPut("{SocietyId}/Members/Requests/{MembershipRequestId}/{isAccepted}")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateMembershipRequestStatus([FromRoute] Guid SocietyId,
+                                                                   [FromRoute] Guid MembershipRequestId,
+                                                                   [FromRoute] bool isAccepted,
+                                                                   UserType UserType)
+    {
 
 
+        var query = MembershipRequestStatusUpdate.Command.Create(
+            MembershipRequestId,
+            SocietyId,
+            isAccepted,
+            base.GetCurrentUserId()!.Value,
+            UserType);
+        var task = _sender.Send(query);
+        return await FromResult(task);
+    }
 }
