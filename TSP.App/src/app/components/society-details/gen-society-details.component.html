@@ -30,7 +30,10 @@
                 <nz-icon nzType="user" class="mr-1" />
                 Advisor
             </p>
-            <p class="text-sm font-semibold text-gray-700">{{ society!.advisor.fullName }}</p>
+
+            <p class="text-sm font-semibold text-gray-700"><a
+                    [routerLink]="['/',routeFirstSegment,'users',society!.advisor.id]"
+                    [queryParams]="{ userType: 'FacultyMember' }">{{ society!.advisor.fullName }}</a></p>
         </div>
 
         <div class="grid gap-y-1.5">

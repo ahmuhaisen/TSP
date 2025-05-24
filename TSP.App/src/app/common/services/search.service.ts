@@ -9,6 +9,7 @@ export interface SearchBasicDTO {
     name: string,
     description: string,
     logoId: string,
+    isFacultyMember: boolean
 
 }
 

@@ -7,7 +7,7 @@ using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.Shared.Students;
 
-public class SearchMembers
+public class SearchStudents
 {
     public sealed class Query : IQuery<Result<List<SearchBasicDTO>>>
     {
@@ -24,7 +24,7 @@ public class SearchMembers
     {
         public async Task<Result<List<SearchBasicDTO>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var data = await _context.Users
+            var data = await _context.Students
                 .AsNoTracking()
                 .Where(s => (s.FirstName+" "+s.LastName+" "+s.Email).Contains(request.SearchTerm??""))
                 .Select(s => new SearchBasicDTO

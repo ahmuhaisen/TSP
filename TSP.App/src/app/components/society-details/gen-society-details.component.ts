@@ -23,7 +23,8 @@ import { AuthService } from '../../common/services/auth.service';
 import { MembershipRequestsComponent } from "./membership-requests/membership-requests.component";
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { environment } from '../../../environments/environment';
-
+import { RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-gen-society-details',
   imports: [
@@ -40,7 +41,8 @@ import { environment } from '../../../environments/environment';
     NzModalModule,
     NzSkeletonModule,
     AddCommitteeMemberFormComponent,
-    MembershipRequestsComponent
+    MembershipRequestsComponent,
+    RouterLink
   ],
   templateUrl: './gen-society-details.component.html',
   styleUrl: './gen-society-details.component.css'
@@ -74,6 +76,9 @@ export class GenSocietyDetailsComponent {
   isAddMemberPopupVisible = false;
   isAddMemberLoading = false;
 
+  activateRoute = inject(ActivatedRoute);
+  routeFirstSegment: string = "";
+
   @ViewChild(EditSocietyInfoFormComponent) editSocietyInfoFormComponent?: EditSocietyInfoFormComponent;
   @ViewChild(AddCommitteeMemberFormComponent) addCommitteeMemberForm?: AddCommitteeMemberFormComponent;
   @ViewChild(AddMemberFormComponent) addMemberForm: AddMemberFormComponent | undefined;
@@ -82,6 +87,7 @@ export class GenSocietyDetailsComponent {
     this.isSocietyLoading = true;
     this.isCommitteeLoading = true;
     this.isMembersLoading = true;
+    this.routeFirstSegment = this.activateRoute.snapshot.pathFromRoot[1]?.url[0]?.path;
 
     this.societyService.find(this.societyId()).subscribe({
       next: society => {
