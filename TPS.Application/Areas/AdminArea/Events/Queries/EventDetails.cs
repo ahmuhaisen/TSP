@@ -89,7 +89,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                     {
                         AdvisorId = tempEvent.Society.AdvisorId,
                         AdvisorName = $"{tempEvent.Society.Advisor.FirstName} {tempEvent.Society.Advisor.LastName}",
-                        AdvisorLogoId = tempEvent.Society.LogoId,
+                        AdvisorLogoId = tempEvent.Society.Advisor.ProfileImageId??"",
                     },
 
                     EventManager = new MemberDto

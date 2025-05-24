@@ -41,6 +41,7 @@ export class SocietiesListComponent implements OnInit {
   loading = true;
   societies: SocietyWithAdvisor[] = [];
   societiesPicturesBaseUrl = environment.gitHubSocietiesPicturesURL;
+  profilePictureBaseUrl = environment.gitHubUsersPicturesURL;
 
   societiesService = inject(SocietiesService);
   messageService = inject(NzMessageService);
@@ -94,16 +95,16 @@ export class SocietiesListComponent implements OnInit {
       this.messageService.warning('No data to export');
       return;
     }
-    
+
     // Define the columns and headers for CSV
     const headers = ['Name', 'Creation Date', 'Advisor', 'Number of Members'];
-    
+
     // Create CSV content
     const csvRows = [];
-    
+
     // Add headers
     csvRows.push(headers.join(','));
-    
+
     // Add data rows
     for (const society of this.societies) {
       const values = [
@@ -114,14 +115,14 @@ export class SocietiesListComponent implements OnInit {
       ];
       csvRows.push(values.join(','));
     }
-    
+
     // Combine all rows into a single string with line breaks
     const csvString = csvRows.join('\n');
-    
+
     // Create a download link
     const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    
+
     // Create and trigger download
     const link = document.createElement('a');
     link.setAttribute('href', url);
@@ -130,7 +131,7 @@ export class SocietiesListComponent implements OnInit {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     this.messageService.success('Societies exported successfully');
   }
 } 

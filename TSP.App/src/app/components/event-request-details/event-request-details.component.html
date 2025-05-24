@@ -108,7 +108,7 @@
                     <div class="flex items-center gap-4 mt-3">
                         <nz-avatar class="bg-blue-300"
                         [nzSize]="'large'"
-                            [nzSrc]="eventDetailsDTO.eventSociety.societyLogoId"
+                            [nzSrc]="societyPictureBase+eventDetailsDTO.eventSociety.societyLogoId"
                             [nzText]="eventDetailsDTO.eventSociety.societyName.substring(0, 2).toUpperCase()">
                         </nz-avatar>
                         <div class="">
@@ -121,7 +121,7 @@
                                 <span class="font-medium mr-1">Advisor:</span>
                                 <span class="flex items-center">
                                     <nz-avatar class="mr-1" nzSize="small"
-                                        [nzSrc]="eventDetailsDTO.advisor.advisorLogoId"
+                                        [nzSrc]="profilePictureBase+eventDetailsDTO.advisor.advisorLogoId"
                                         [nzText]="eventDetailsDTO.advisor.advisorName.substring(0, 2).toUpperCase()" />
                                     <span>{{eventDetailsDTO.advisor.advisorName}}</span>
                                 </span>
@@ -136,7 +136,7 @@
                         <div class="flex gap-3 items-center">
                             <nz-avatar class="bg-green-300"
                             [nzSize]="'large'"
-                                [nzSrc]="eventDetailsDTO.eventManager.studentLogoId"
+                                [nzSrc]="profilePictureBase+eventDetailsDTO.eventManager.studentLogoId"
                                 [nzText]="eventDetailsDTO.eventManager.studentName.substring(0, 2).toUpperCase()">
                             </nz-avatar>
                             <div>
