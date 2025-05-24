@@ -16,6 +16,10 @@ export const routes: Routes = [
         loadComponent: () => import('./areas/public/terms-of-use/terms-of-use.component').then(m => m.TermsOfUseComponent),
     },
     {
+        path: 'help-center',
+        loadComponent: () => import('./areas/public/help-center/help-center.component').then(m => m.HelpCenterComponent),
+    },
+    {
         path: 'admin-area',
         loadComponent: () => import('./areas/system-admin-area/system-admin-area.component').then(m => m.SystemAdminAreaComponent),
         loadChildren: () => import('./areas/system-admin-area/system-admin-area.routes').then(m => m.routes),

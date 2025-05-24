@@ -21,8 +21,7 @@ import { RouterLink } from '@angular/router';
             <h3 class="font-semibold text-lg mb-4 text-white">Quick Links</h3>
             <ul class="space-y-2">
               <li><a routerLink="/" class="text-gray-400 hover:text-white transition-colors duration-300">Home</a></li>
-              <li><a routerLink="/" [fragment]="'features'" class="text-gray-400 hover:text-white transition-colors duration-300">Features</a></li>
-              <li><a routerLink="/" [fragment]="'portals'" class="text-gray-400 hover:text-white transition-colors duration-300">Areas</a></li>
+              <li><a routerLink="/help-center" class="text-gray-400 hover:text-white transition-colors duration-300">Help Center</a></li>
             </ul>
           </div>
           
@@ -50,4 +49,4 @@ import { RouterLink } from '@angular/router';
 })
 export class SharedFooterComponent {
   currentYear = new Date().getFullYear();
-} 
+}

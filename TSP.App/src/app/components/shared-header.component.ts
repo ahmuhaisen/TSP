@@ -7,7 +7,7 @@ import { NgClass, NgIf } from '@angular/common';
   standalone: true,
   imports: [RouterLink, NgClass, NgIf],
   template: `
-    <header class="fixed w-full bg-white bg-opacity-90 backdrop-blur-sm z-50 shadow-md" [class.scrolled]="isScrolled">
+    <header class="fixed w-full bg-white bg-opacity-95 backdrop-blur-sm z-50 shadow-md" [class.scrolled]="isScrolled">
       <div class="container mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
           <!-- Logo and Brand -->
@@ -36,10 +36,10 @@ import { NgClass, NgIf } from '@angular/common';
               </a>
             </nav>
             <div class="flex space-x-4">
-              <a routerLink="/authentication" class="bg-indigo-600 hover:bg-indigo-700 hover:text-white text-white px-6 py-2 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:-translate-y-0.5">
+              <a routerLink="/authentication/login" class="bg-indigo-600 hover:bg-indigo-700 hover:text-white text-white px-6 py-2 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:-translate-y-0.5">
                 Sign In
               </a>
-              <a routerLink="/authentication" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:text-white hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:-translate-y-0.5">
+              <a routerLink="/authentication/register" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:text-white hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:-translate-y-0.5">
                 Sign Up
               </a>
             </div>
