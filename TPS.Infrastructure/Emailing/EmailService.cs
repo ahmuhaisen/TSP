@@ -45,7 +45,7 @@ public class EmailService : IEmailService
             IsBodyHtml = true
         };
 
-        await client.SendMailAsync(message);
+        //await client.SendMailAsync(message);
     }
     public async Task SendWelcomingEmail(string to, string userName, UserType userType)
     {

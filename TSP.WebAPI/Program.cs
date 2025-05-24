@@ -20,20 +20,20 @@ builder.Services.AddApiControllers()
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI();
+//}
 
-var allowedOrigin = "http://localhost:4200"; // your Angular dev URL
+var allowedOrigins = new string[] { "http://localhost:4200", "http://the-societies-portal.web.app", "https://the-societies-portal.web.app" };
 
 app.UseCors(policy =>
 {
-    policy.WithOrigins(allowedOrigin)
+    policy.WithOrigins(allowedOrigins)
           .AllowAnyMethod()
           .AllowAnyHeader()
-          .AllowCredentials(); // this is important!
+          .AllowCredentials();
 });
 
 
