@@ -48,12 +48,13 @@ public class KickMember
 
             var userData = await context.Societies.FirstOrDefaultAsync(x => x.Id == memberRecord.SocietyId);
 
-            userData.RaiseDomainEvent(new MemberLeftSocietyDomainEvent(
-                Guid.NewGuid(),
-                userData.Id,
-                userData.Name,
-                memberRecord.Student.FirstName + " " + memberRecord.Student.LastName
-                ));
+            //userData.RaiseDomainEvent(new MemberLeftSocietyDomainEvent(
+            //    Guid.NewGuid(),
+            //    userData.Id,
+            //    userData.Name,
+            //    memberRecord.Student.FirstName + " " + memberRecord.Student.LastName
+            //    ));
+
             if (result <= 0)
             {
                 return Result.Failure(Error.CustomError("Something wrong in kicking proccess"));
