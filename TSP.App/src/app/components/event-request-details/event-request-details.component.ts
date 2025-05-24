@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -10,7 +10,7 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EventsService } from '../../areas/system-admin-area/services/events.service';
 import { EventDetailsDTO } from '../../areas/system-admin-area/api-interfaces/event.types';
@@ -18,12 +18,14 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { EventFeedbackService } from '../../areas/public-forms/event-feedback/event-feedback.service';
 import { environment } from '../../../environments/environment';
+import { AttendanceLine, AttendanceService } from '../../areas/public-forms/attendence/attendance.service';
 
 type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
 
 @Component({
   selector: 'app-event-request-details',
   imports: [
+    RouterLink,
     NzIconModule,
     NzBreadCrumbModule,
     NzButtonModule,
@@ -45,8 +47,10 @@ export class EventRequestDetailsComponent {
   eventService = inject(EventsService);
   activatedRoute = inject(ActivatedRoute);
   eventDetailsDTO!: EventDetailsDTO;
+  attendanceLines = signal<AttendanceLine[]>([]);
   nzMessageService = inject(NzMessageService);
   feedbackService = inject(EventFeedbackService);
+  attendanceService = inject(AttendanceService);
   router = inject(Router);
 
   tabs = [];
@@ -62,6 +66,8 @@ export class EventRequestDetailsComponent {
       next: data => {
         this.eventDetailsDTO = data;
         this.breadcrumbService.set('@eventName', data.eventName);
+
+        this.fetchEventAttendance();
       }
     });
   }
@@ -78,9 +84,15 @@ export class EventRequestDetailsComponent {
     this.isEventRequestModalVisible = false;
   }
 
-   redirectToFeedbackQrLinkView() {
-    const isFeedbackFormOpen = false;
+  fetchEventAttendance() {
+    this.attendanceService.getAttendance(this.eventDetailsDTO.id).subscribe({
+      next: data => {
+        this.attendanceLines.set(data);
+      }
+    });
+  }
 
+   redirectToFeedbackQrLinkView() {
     this.feedbackService.isFeedbackOpen(this.eventDetailsDTO.id).subscribe({
       next: res => {
         if (res) {
@@ -93,9 +105,9 @@ export class EventRequestDetailsComponent {
             isInternal: String(isInternal),
             description: description
           });
-  
+
           const fullUrl = `${window.location.origin}/qr-viewer?${queryParams.toString()}`;
-  
+
           window.open(fullUrl, '_blank');
         }
         else {
