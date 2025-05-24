@@ -30,23 +30,28 @@
         <tr>
             <td class="flex items-center justify-center">
                 <!-- <img class="w-7 h-7 rounded-full ring-1 ring-gray-200" [src]="data.profileImageId" alt="organizers" /> -->
-                <nz-avatar class="w-7 h-7 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center" [nzSrc]="baseUserUmage+data.profileImageId" [nzText]="data ? (data.firstName[0] + data.lastName[0]).toUpperCase() : ''" />
+                <nz-avatar class="w-7 h-7 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center"
+                    [nzSrc]="baseUserUmage+data.profileImageId"
+                    [nzText]="data ? (data.firstName[0] + data.lastName[0]).toUpperCase() : ''" />
             </td>
-            <td>{{ data.firstName }} {{ data.lastName }}</td>
+            <td> <a [routerLink]="['/',routeFirstSegment ,'users',data.id]">
+                    {{ data.firstName }} {{ data.lastName }}</a></td>
+
             <td>{{ data.position }}</td>
             <td>{{ data.joinDate | date: 'mediumDate' }}</td>
             @if(!isViewOnly() && isStudentManage()){
-                <td>
-                    <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" (click)="openEditMemberPopup(data.id)">
-                        <nz-icon nzType="edit" />
-                    </button>
-                    <nz-divider nzType="vertical" />
-                    <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
-                        [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.firstName + ' ' + data.lastName + ') from this society?'"
-                        nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeMember(data.id)">
-                        <nz-icon nzType="api" />
-                    </button>
-                </td>
+            <td>
+                <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round"
+                    (click)="openEditMemberPopup(data.id)">
+                    <nz-icon nzType="edit" />
+                </button>
+                <nz-divider nzType="vertical" />
+                <button nz-button nzSize="small" nzShape="round" nzDanger nz-tooltip nz-popconfirm
+                    [nzPopconfirmTitle]="'Are you sure you want to remove (' +  data.firstName + ' ' + data.lastName + ') from this society?'"
+                    nzPopconfirmPlacement="top" nzOkText="Yes" nzCancelText="No" (nzOnConfirm)="removeMember(data.id)">
+                    <nz-icon nzType="api" />
+                </button>
+            </td>
             }
         </tr>
         }
@@ -64,18 +69,16 @@
 </nz-dropdown-menu>
 
 @if(!isViewOnly()){
-    <!-- Edit Member Popup -->
-    <nz-modal [(nzVisible)]="isEditMemberPopupVisible"
-    nzTitle="Edit Member" nzCentered [nzClosable]="false" [nzMaskClosable]="false"
-    [nzOkLoading]="isEditMemberLoading" nzOkText="Save"
-    (nzOnCancel)="handleCancelEditMember()" (nzOnOk)="handleOkEditMember()"
-    >
+<!-- Edit Member Popup -->
+<nz-modal [(nzVisible)]="isEditMemberPopupVisible" nzTitle="Edit Member" nzCentered [nzClosable]="false"
+    [nzMaskClosable]="false" [nzOkLoading]="isEditMemberLoading" nzOkText="Save" (nzOnCancel)="handleCancelEditMember()"
+    (nzOnOk)="handleOkEditMember()">
     <ng-container *nzModalContent>
         <form nz-form class="grid grid-cols-1 gap-y-4">
             <!-- Member Info -->
             <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                <nz-avatar [nzSize]="48" [nzSrc]="memberToEdit?.profileImageId" 
-                          [nzText]="memberToEdit ? (memberToEdit.firstName[0] + memberToEdit.lastName[0]).toUpperCase() : ''">
+                <nz-avatar [nzSize]="48" [nzSrc]="memberToEdit?.profileImageId"
+                    [nzText]="memberToEdit ? (memberToEdit.firstName[0] + memberToEdit.lastName[0]).toUpperCase() : ''">
                 </nz-avatar>
                 <div>
                     <h3 class="text-lg font-semibold text-gray-800">
@@ -91,8 +94,8 @@
             <nz-form-item class="flex items-start">
                 <nz-form-label class="w-1/4 text-left" nzRequired>Position</nz-form-label>
                 <nz-form-control [nzSpan]="12" class="w-3/4" nzHasFeedback [nzErrorTip]="positionErrorTpl">
-                    <input nz-input [(ngModel)]="editPosition" [ngModelOptions]="{standalone: true}" 
-                           placeholder="Enter member position" />
+                    <input nz-input [(ngModel)]="editPosition" [ngModelOptions]="{standalone: true}"
+                        placeholder="Enter member position" />
                     <ng-template #positionErrorTpl>
                         Please enter a valid position!
                     </ng-template>
@@ -100,5 +103,5 @@
             </nz-form-item>
         </form>
     </ng-container>
-    </nz-modal>
+</nz-modal>
 }

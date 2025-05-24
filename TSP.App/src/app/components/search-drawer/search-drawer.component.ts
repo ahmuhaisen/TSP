@@ -13,6 +13,7 @@ import { inject } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '../../../environments/environment';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-search-drawer',
@@ -26,7 +27,8 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
     NzEmptyComponent,
     FormsModule,
     CommonModule,
-    NzAvatarModule
+    NzAvatarModule,
+    RouterModule
   ],
   templateUrl: './search-drawer.component.html',
   styleUrl: './search-drawer.component.css'
@@ -50,21 +52,39 @@ export class SearchDrawerComponent {
   searchResults: SearchBasicDTO[] = [];
   messageService = inject(NzMessageService);
   baseUrl: string = "";
+  routingDirection: string = "";
+  searchType: string = "";
+  flag: string = "";
   doSearch() {
-
-
-    let searchType = ""
+    this.flag = "";
     switch (this.selectedSearchType) {
-      case "1": searchType = "Societies"; this.baseUrl = environment.gitHubSocietiesPicturesURL; break;
-      case "2": searchType = "Members"; this.baseUrl = environment.gitHubUsersPicturesURL; break;
-      case "3": searchType = "Events"; break;
+      case "1":
+        this.searchType = "Societies";
+        this.baseUrl = environment.gitHubSocietiesPicturesURL;
+        break;
+      case "2":
+        this.searchType = "Students";
+        this.baseUrl = environment.gitHubUsersPicturesURL;
+        break;
+      case "3":
+        this.searchType = "FacultyMembers";
+        this.baseUrl = environment.gitHubUsersPicturesURL;
+        break;
+      case "4":
+        this.searchType = "Events";
+        break;
       default: this.messageService.error("please select the search category"); return;
     }
     if (this.searchTerm.length < 1) {
       return;
     }
-    this.searchService.getSearchResults(searchType, this.searchTerm).subscribe(data => {
-      this.searchResults = data
+    this.searchService.getSearchResults(this.searchType, this.searchTerm).subscribe(data => {
+      this.searchResults = data;
+      if (this.selectedSearchType === "2" || this.selectedSearchType === "3") {
+        this.searchType = "users"
+        if (this.selectedSearchType === "3")
+          this.flag = "?userType=FacultyMember";
+      }
 
     });
     console.log(this.searchResults)

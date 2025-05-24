@@ -20,7 +20,8 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { SocietiesService } from '../../../areas/system-admin-area/services/societies.service';
 import { environment } from '../../../../environments/environment';
 import { PageMode } from '../../../common/types/presentaion.types';
-
+import { RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 interface ColumnItem {
   name: string;
   sortOrder: NzTableSortOrder | null;
@@ -48,13 +49,16 @@ interface ColumnItem {
     NzToolTipModule,
     NzModalModule,
     NzAvatarModule,
-    NzFormModule
+    NzFormModule,
+    RouterLink,
+
+
   ],
   templateUrl: './members-table.component.html',
   styleUrl: './members-table.component.css'
 })
 export class MembersTableComponent implements OnInit {
-  
+
   pageMode = input<PageMode>('VIEW_ONLY');
   isLoading = input<boolean>(false);
   allMembers = input.required<SocietyMember[]>();
@@ -71,14 +75,16 @@ export class MembersTableComponent implements OnInit {
 
   messageService = inject(NzMessageService);
   societiesService = inject(SocietiesService);
-  baseUserUmage:string = environment.gitHubUsersPicturesURL
+  baseUserUmage: string = environment.gitHubUsersPicturesURL
   isEditMemberPopupVisible = false;
   isEditMemberLoading = false;
   memberToEdit: SocietyMember | null = null;
   editPosition = '';
-
+  activateRoute = inject(ActivatedRoute)
+  routeFirstSegment: string = ""
   ngOnInit() {
     this.listOfDisplayData = [...this.allMembers()];
+    this.routeFirstSegment = this.activateRoute.snapshot.pathFromRoot[1]?.url[0]?.path;
   }
 
   ngOnChanges() {
@@ -198,8 +204,8 @@ export class MembersTableComponent implements OnInit {
       next: () => {
         this.messageService.success('Member position updated successfully');
         // Update the local list
-        const updatedMembers = this.allMembers().map(member => 
-          member.id === this.memberToEdit!.id 
+        const updatedMembers = this.allMembers().map(member =>
+          member.id === this.memberToEdit!.id
             ? { ...member, position: this.editPosition }
             : member
         );
