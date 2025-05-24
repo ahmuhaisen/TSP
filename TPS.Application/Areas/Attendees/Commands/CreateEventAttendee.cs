@@ -1,4 +1,5 @@
-﻿using TPS.Application.Abstractions.Messaging;
+﻿using Microsoft.EntityFrameworkCore;
+using TPS.Application.Abstractions.Messaging;
 using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
@@ -26,6 +27,8 @@ public class CreateEventAttendee
             if (canHandleResult.IsFailure)
                 return Task.FromResult(canHandleResult);
 
+            var eventId = GetEventId(request.EventId);
+
             var attendee = Attendee.Factory.Create(
                 request.FullName,
                 request.Email,
@@ -33,7 +36,7 @@ public class CreateEventAttendee
                 request.PhoneNumber,
                 request.Notes,
                 request.DepartmentId,
-                request.EventId
+                eventId
             );
 
             _context.Add(attendee);
@@ -43,6 +46,25 @@ public class CreateEventAttendee
                 return Task.FromResult(Result.Failure(Error.InternalServerError("Error: error while creating the entity")));
 
             return Task.FromResult(Result.Success());
+        }
+
+        private Guid GetEventId(Guid eventId)
+        {
+            var id = _context.Events
+                .Where(e => e.Id == eventId)
+                .Select(e => e.Id)
+                .FirstOrDefault();
+
+            if (id != Guid.Empty)
+                return id;
+
+            id = _context.EventsApproval
+                .Include(e => e.Event)
+                .Where(e => e.Id == eventId)
+                .Select(e => e.Event.Id)
+                .FirstOrDefault();
+
+            return id;
         }
 
         private Result canHandle(Command command)
@@ -73,7 +95,15 @@ public class CreateEventAttendee
 
         private bool isValidEventId(Guid eventId)
         {
-            return _context.Events.Any(e => e.Id == eventId && e.IsAttendeesFormEnabled);
+            var isExist = _context.Events.Any(e => e.Id == eventId && e.IsAttendeesFormEnabled);
+
+            if (!isExist)
+            {
+                isExist = _context.EventsApproval.Include(e => e.Event)
+                    .Any(e => e.Id == eventId && e.Event.IsAttendeesFormEnabled);
+            }
+            
+            return isExist;
         }
 
         private bool isExistedAttendee(string email, string universityNumber, Guid eventId)

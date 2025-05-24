@@ -45,8 +45,9 @@
                     <td>{{ society.creationDate | date:'mediumDate' }}</td>
                     <td>
                         <div class="flex items-center gap-2">
-                            <nz-avatar *ngIf="society.advisor?.logoId" [nzSrc]="society.advisor.logoId"
-                                class="bg-gray-100" nzSize="small">
+                            <nz-avatar *ngIf="society.advisor?.logoId"
+                                [nzSrc]="profilePictureBaseUrl+society.advisor.logoId" class="bg-gray-100"
+                                nzSize="small">
                             </nz-avatar>
                             <nz-avatar *ngIf="!society.advisor?.logoId" nzIcon="user" class="bg-gray-300"
                                 nzSize="small">

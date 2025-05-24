@@ -3,7 +3,9 @@ import { DbService } from "../../../common/services/db.service";
 import { PostAttendance } from "./attendance.types";
 import { EventDetailsDTO } from "../../system-admin-area/api-interfaces/event.types";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AttendanceService {
     model = 'attendees';
     eventModel = 'events';
@@ -12,6 +14,11 @@ export class AttendanceService {
 
     getEventDetails(eventRequestId: string) {
         return this.db.getRequest<EventDetailsDTO>(`${this.model}/events/${eventRequestId}`);
+    }
+
+
+    getAttendance(eventRequestId: string) {
+        return this.db.getRequest<AttendanceLine[]>(`${this.model}?eventId=${eventRequestId}`);
     }
 
     post(attendance: PostAttendance) {
@@ -29,3 +36,10 @@ export class AttendanceService {
     }
 }
 
+export interface AttendanceLine{
+    fullName: string;
+    email: string;
+    universityNumber: string;
+    departmentName: string;
+    notes: string;
+}
