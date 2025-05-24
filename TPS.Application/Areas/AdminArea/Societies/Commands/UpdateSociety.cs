@@ -47,13 +47,17 @@ public sealed class UpdateSociety
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
 
+
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(request));
+
+
             var data = context.Societies.FirstOrDefault(s => s.Id == request.Id);
             if (data is null)
                 return Result.Failure<Guid>(Error.ValueAlreadyExist(nameof(Society.Name), request.Name));
-
-            if (!request.Logo.IsNullOrEmpty())
+            var oldLogo = data.LogoId;
+            if (!string.IsNullOrEmpty(request.Logo))
             {
-                var result = await _FileManager.updateFile($"{nameof(Society)}/{data.LogoId}", request.Logo);
+                var result = await _FileManager.uploadFile($"{nameof(Society)}", request.Logo);
 
                 if (result.IsFailure)
                 {
@@ -61,14 +65,16 @@ public sealed class UpdateSociety
                 }
                 string LogoId = ResponseEnvelope.Success(result.Data!).ResponseData.ToString() ?? "";
                 
-                //LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
                 if (string.IsNullOrEmpty(LogoId))
                 {
                     return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
                 }
                 data.LogoId = LogoId;
             }
-            
+            if (!string.IsNullOrEmpty(oldLogo))
+            {
+                await _FileManager.deleteFile(nameof(Society) + "/" + oldLogo);
+            }
             data.Name = request.Name;
             data.Description = request.Description;
             data.ThemeColor = request.ThemeColor;
@@ -80,7 +86,7 @@ public sealed class UpdateSociety
                     data.AdvisorId,
                     data.Name
                     ));
-                data.AdvisorId=request.AdvisorId;
+                data.AdvisorId = request.AdvisorId;
             }
 
 

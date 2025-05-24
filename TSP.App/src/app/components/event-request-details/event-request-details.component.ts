@@ -17,6 +17,7 @@ import { EventDetailsDTO } from '../../areas/system-admin-area/api-interfaces/ev
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { EventFeedbackService } from '../../areas/public-forms/event-feedback/event-feedback.service';
+import { environment } from '../../../environments/environment';
 
 type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
 
@@ -49,6 +50,9 @@ export class EventRequestDetailsComponent {
   router = inject(Router);
 
   tabs = [];
+
+  societyPictureBase = environment.gitHubSocietiesPicturesURL;
+  profilePictureBase = environment.gitHubUsersPicturesURL;
 
   isEventRequestModalVisible = false;
   constructor(private route: ActivatedRoute) {
