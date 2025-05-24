@@ -36,8 +36,9 @@ public class KickMember
             {
                 return Result.Failure(Error.AccessDenied("You are not a committee member"));
             }
-            var memberRecord =  await context.SocietiesMembers.FirstOrDefaultAsync(
-                s=>s.SocietyId==request.SocietyId&&s.StudentId==request.MemberId);
+            var memberRecord =  await context.SocietiesMembers
+                .Include(x=>x.Student)
+                .FirstOrDefaultAsync(s=>s.SocietyId==request.SocietyId&&s.StudentId==request.MemberId);
             if (memberRecord == null)
             {
                 return Result.Failure(Error.NotFound("The member does not exist"));
@@ -46,14 +47,15 @@ public class KickMember
             context.SocietiesMembers.Remove(memberRecord);
             var result = await context.SaveChangesAsync();
 
-            var userData = await context.Societies.FirstOrDefaultAsync(x => x.Id == memberRecord.SocietyId);
+            var society = await context.Societies.FirstOrDefaultAsync(x => x.Id == memberRecord.SocietyId);
 
-            userData.RaiseDomainEvent(new MemberLeftSocietyDomainEvent(
+            society!.RaiseDomainEvent(new MemberLeftSocietyDomainEvent(
                 Guid.NewGuid(),
-                userData.Id,
-                userData.Name,
+                society.Id,
+                society.Name,
                 memberRecord.Student.FirstName + " " + memberRecord.Student.LastName
                 ));
+
             if (result <= 0)
             {
                 return Result.Failure(Error.CustomError("Something wrong in kicking proccess"));
