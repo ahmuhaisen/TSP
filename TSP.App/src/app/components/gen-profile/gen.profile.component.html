@@ -82,8 +82,9 @@
                         <div class="relative">
                             <nz-avatar
                                 class="w-24 h-24 bg-secondary text-lg rounded-xl flex items-center justify-center"
-                                [nzSrc]="fileList[0].url" [nzText]="userProfile!.fullName.substring(0, 2).toUpperCase()"
-                                nz-popover [nzPopoverVisible]="showRemovePhotoPopover"
+                                [nzSrc]="baseProfileImageUrl+fileList[0].url"
+                                [nzText]="userProfile!.fullName.substring(0, 2).toUpperCase()" nz-popover
+                                [nzPopoverVisible]="showRemovePhotoPopover"
                                 (nzPopoverVisibleChange)="showRemovePhotoPopover = $event" nzPopoverTrigger="click"
                                 [nzPopoverContent]="removePhotoTemplate"></nz-avatar>
                             <div

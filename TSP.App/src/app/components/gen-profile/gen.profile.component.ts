@@ -150,6 +150,7 @@ export class GenProfileComponent {
           number: this.profileForm.value.number
         };
 
+
         // If a new profile image was uploaded, include it in the update
         if (this.uploadedImageUrl) {
           updatedProfile.profileImageId = this.uploadedImageUrl;
@@ -170,6 +171,16 @@ export class GenProfileComponent {
 
         // In a real application, you would first upload the image to a server
         // and get back a URL to store in the profile
+        const fullName = updatedProfile.fullName;
+        if (fullName?.split(' ').length != 2) {
+          this.messageService.error("you should follow first name and last name format");
+          this.isEditProfileLoading = false;
+
+          return
+        }
+        updatedProfile.firstName = updatedProfile.fullName?.split(' ')[0];
+        updatedProfile.lastName = updatedProfile.fullName?.split(' ')[1];
+
 
         this.profilesService.update(this.userProfile.id, (this.activatedRoute.snapshot.queryParamMap.get('userType') ?? 'Student') as 'Faculty' | 'Student', updatedProfile)
           .subscribe({
@@ -200,6 +211,7 @@ export class GenProfileComponent {
             error: (error) => {
               console.error('Error updating profile:', error);
               this.isEditProfileLoading = false;
+
               this.messageService.error('Failed to update profile. Please try again.');
             }
           });
