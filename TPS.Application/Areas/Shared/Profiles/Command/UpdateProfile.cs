@@ -1,5 +1,6 @@
 ﻿using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
             public string? Email { get; set; }
             public string? Number { get; set; }
             public required string UserType { get; set; }
+
             public static Command Create(Guid id,
                                         string firstName,
                                         string lastName,
@@ -124,9 +126,21 @@ namespace TPS.Application.Areas.Shared.Profiles.Command
                 }
                 else
                 {
+                    if (!string.IsNullOrEmpty(student.ProfileImageId))
+                    {
+
+                        await _FileManager.deleteFile(nameof(ApplicationUser)+"/"+student.ProfileImageId);
+                    }
                     student.ProfileImageId= null;
                 }
-                    _context.Students.Update(student);
+
+                student.FirstName = request.FirstName;
+                student.LastName = request.LastName;
+                student.Email = request.Email;
+                student.UniversityNumber = request.Number;
+                    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(request));
+
+                _context.Students.Update(student);
                 await _context.SaveChangesAsync();
                 return Result.Success(student.Id);
             }
