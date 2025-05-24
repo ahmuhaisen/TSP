@@ -54,9 +54,6 @@ public sealed class CreateSociety
           {
               return Result.Failure<Guid>(Error.ValueInvalid("Null image id"));
           }
-
-
-          LogoId = $"https://raw.githubusercontent.com/{_options.Value.UserName}/{_options.Value.Repo}/refs/heads/main/Society/{LogoId}";
           var society = new Society
           {
               Id = Guid.NewGuid(),
