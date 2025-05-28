@@ -142,7 +142,6 @@ export class EditSocietyInfoFormComponent implements OnChanges {
     this.createSocietyForm.get('creationDate')?.setValue(societyData.creationDate);
     this.createSocietyForm.get('themeColor')?.setValue(societyData.themeColor);
     this.createSocietyForm.get('logo')?.setValue(societyData.logoId);
-    console.log()
 
     if (societyData.advisor && societyData.advisor.id) {
       console.log('Setting advisor ID to:', societyData.advisor.id);
