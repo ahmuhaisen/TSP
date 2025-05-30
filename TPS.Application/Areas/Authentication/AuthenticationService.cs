@@ -6,12 +6,14 @@ using TPS.Application.Abstractions;
 using TPS.Application.Areas.Authentication.Contracts;
 using TPS.Application.Areas.Shared.Profiles.Contracts.Requests;
 using TPS.Infrastructure.Data;
+using TPS.Infrastructure.Emailing;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
 
 namespace TPS.Application.Areas.Authentication;
 
 public class AuthenticationService(UserManager<ApplicationUser> _userManager,
+                                    IEmailService _emailService,
                                    IJwtTokenService _tokenService)
     : IAuthenticationService
 {
@@ -128,19 +130,22 @@ public class AuthenticationService(UserManager<ApplicationUser> _userManager,
 
         return Result.Success(response);
     }
-    public async Task<Result<ResetPasswordResponse>> resetPassword(string Email)
+    public async Task<Result<bool>> resetPassword(string Email)
     {
         var user = await _userManager.FindByEmailAsync(Email);
         if (user is null)
-            return Result.Failure<ResetPasswordResponse>(Error.InvalidCredentials());
+            return Result.Failure<bool>(Error.InvalidCredentials());
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        
         var response = new ResetPasswordResponse
         {
             Id = user.Id,
             Token = token
         };
-        return Result.Success(response);
+
+        await _emailService.SendResetLink(user.Email,user.Id,token,user.UserName);
+        return Result.Success(true);
     }
  
 

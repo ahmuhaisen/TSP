@@ -60,7 +60,11 @@ export interface FacultyRegisterRequest extends BaseRegisterRequest {
 export interface StudentRegisterRequest extends BaseRegisterRequest {
     universityNumber: string;
 }
+export interface ResetPasswordResponse {
+    id: string;
+    token: string;
 
+}
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
@@ -255,5 +259,8 @@ export class AuthService {
 
     private navigateToLogin() {
         this.router.navigate(['authentication/login']);
+    }
+    public getResetTokenAndId(email: string) {
+        return this.db.getRequest<boolean>(`${this.model}/reset?email=${email}`)
     }
 }

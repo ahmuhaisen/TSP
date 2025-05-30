@@ -7,6 +7,8 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { AuthService } from '../../../common/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
@@ -29,7 +31,9 @@ export class ForgotPasswordComponent {
 
   constructor(
     private fb: FormBuilder,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private authService: AuthService,
+    private router: Router
   ) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
@@ -48,12 +52,17 @@ export class ForgotPasswordComponent {
     }
 
     this.isLoading = true;
-    
+
     // TODO: Call your auth service to request password reset
     // For now, we'll simulate the API call
-    setTimeout(() => {
-      this.message.success('Password reset instructions have been sent to your email.');
-      this.isLoading = false;
-    }, 1500);
+    const email = this.forgotPasswordForm.get('email')?.value || "";
+    console.log(email);
+    this.authService.getResetTokenAndId(email)
+      .subscribe(data => {
+        console.log(data)
+        this.isLoading = false;
+        this.message.success('Password reset instructions have been sent to your email.');
+      }
+      )
   }
 } 

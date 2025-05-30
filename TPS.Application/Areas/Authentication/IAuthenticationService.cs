@@ -11,5 +11,5 @@ public interface IAuthenticationService
     Task<Result> RegisterFacultyMember(FacultyRegisterRequest request);
     Task<Result> RegisterStudent(StudentRegisterRequest request);
     Task<Result<LoginResponse>> LoginSuperAdmin(LoginRequest request);
-    Task<Result<ResetPasswordResponse>> resetPassword(string Email);
+    Task<Result<bool>> resetPassword(string Email);
 }

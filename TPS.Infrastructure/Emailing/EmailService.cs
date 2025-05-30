@@ -5,6 +5,8 @@ using TSP.Domain.Shared.Options;
 using TPS.Infrastructure.Emailing.Templates;
 using System.Reflection;
 using TSP.Domain.Enums;
+using Microsoft.Identity.Client;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace TPS.Infrastructure.Emailing;
 
@@ -308,6 +310,19 @@ public class EmailService : IEmailService
             throw new ArgumentException("Invalid user type");
         }
         var subject = "Update On Your Request To Join "+societyName;
+        await Send(to, subject, body);
+    }
+
+    public async Task SendResetLink(string to,Guid userId, string token, string username)
+    {
+        var subject = "Reset password";
+        string baseLink = "";
+        string resetLink = baseLink + "authentication/reset-password/" + userId + "?token=" + token;
+        var body = ResetPasswordEmail.ResetMessage
+            .Replace("{{resetLink}}", "")
+            .Replace("{{userName}}",username);
+
+
         await Send(to, subject, body);
     }
 }

@@ -7,7 +7,8 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
+import { ProfilesService } from '../../../common/services/profiles.service';
+import { SecureLocalStorageService } from '../../../common/services/secure-local-storage.service';
 @Component({
   selector: 'app-reset-password',
   standalone: true,
@@ -30,12 +31,14 @@ export class ResetPasswordComponent implements OnInit {
   isLoading = false;
   token: string | null = null;
   resetPasswordForm;
-
+  currentUserId: string = "";
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private profileService: ProfilesService,
+    private localStorageService: SecureLocalStorageService
   ) {
     this.resetPasswordForm = this.fb.group({
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -47,10 +50,16 @@ export class ResetPasswordComponent implements OnInit {
 
   ngOnInit() {
     this.token = this.route.snapshot.queryParamMap.get('token');
-    
+    this.currentUserId = this.route.snapshot.paramMap.get("userId") || "";
+    console.log(this.token);
+    console.log(this.currentUserId);
     if (!this.token) {
       this.message.error('Invalid or expired reset link.');
       //this.router.navigate(['authentication/login']);
+    }
+    else {
+
+      this.localStorageService.setItem("token", (this.token))
     }
   }
 
@@ -78,14 +87,18 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     this.isLoading = true;
-    
+    this.profileService.updatePassword(this.currentUserId, this.password || "")
+      .subscribe(data => {
+        console.log(data)
+      })
     // TODO: Call your auth service to reset the password using the token
     // The request should include:
     // - token (from URL)
     // - new password
-    setTimeout(() => {
-      this.message.success('Your password has been reset successfully.');
-      this.router.navigate(['../login']);
-    }, 1500);
+    //   setTimeout(() => {
+    //     this.message.success('Your password has been reset successfully.');
+    //     this.router.navigate(['../login']);
+    //   }, 1500);
+    // 
   }
 } 

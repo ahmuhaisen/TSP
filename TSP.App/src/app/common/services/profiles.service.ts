@@ -35,6 +35,9 @@ export class ProfilesService {
         console.log('Updating profile', id, userType, profile);
         return this.db.putRequest<UserProfile, Partial<UserProfile>>(`${this.model}?userType=${userType}`, profile);
     }
+    updatePassword(userId: string, password: string) {
+        return this.db.putRequest<boolean, any>(`${this.model}/reset/${userId}?password=${password}`, "")
+    }
 
 }
 

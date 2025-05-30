@@ -36,15 +36,14 @@ public class UpdatePassword
             {
                 return Result.Failure<bool>(Error.NotFound(nameof(Guid),request.Id.ToString()));
             }
-
             var result = await _userManager.ResetPasswordAsync(user,request.Token,request.Password);
-
 
             if (!result.Succeeded)
             {
                 var errorMessage = string.Join("; ", result.Errors.Select(e => e.Description));
                 return Result.Failure<bool>(Error.ValueInvalid(errorMessage));
             }
+
             return Result.Success(true);
         }
     }

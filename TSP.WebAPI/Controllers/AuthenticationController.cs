@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.Authentication;
 using TPS.Application.Areas.Authentication.Contracts;
+using TPS.Infrastructure.Emailing;
 
 namespace TSP.WebAPI.Controllers;
 
@@ -12,7 +13,8 @@ public class AuthenticationController : ApiController
 {
     private readonly IAuthenticationService _authService;
 
-    public AuthenticationController(ISender sender, IAuthenticationService authService) : base(sender)
+    public AuthenticationController(ISender sender, 
+        IAuthenticationService authService) : base(sender)
     {
         _authService = authService;
     }
@@ -66,6 +68,8 @@ public class AuthenticationController : ApiController
     public async Task<IActionResult> ResetUser([FromQuery] string Email)
     {
         var task = _authService.resetPassword(Email);
+       
+       
         return await FromResult(task);
     }
 
