@@ -121,7 +121,7 @@
     @if (eventRequests.length === 0) {
     <nz-empty nzDescription="No event requests found"></nz-empty>
     } @else {
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       @for (request of eventRequests; track request.eventId) {
       <nz-card class="w-full shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
         <div class="flex flex-col md:flex-row md:items-center justify-between">
@@ -129,7 +129,9 @@
             <div class="flex items-start gap-4">
               <div class="flex-grow">
                 <a routerLink="./{{ request.eventId }}">
-                  <h3 class="text-md font-semibold text-gray-800">{{ request.title }}</h3>
+                  <h3 class="text-md font-semibold text-gray-800">{{
+                    request.title
+                    }}</h3>
                 </a>
                 <!-- <p class="text-xs text-gray-600">{{ request.society }}</p> -->
               </div>

@@ -162,7 +162,7 @@ export class EventsListComponent {
     this.eventRequestForm = this.fb.group({
       societyId: [null, Validators.required],
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(250)]],
       location: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       eventType: ['', Validators.required],
       dateRange: [null, Validators.required],

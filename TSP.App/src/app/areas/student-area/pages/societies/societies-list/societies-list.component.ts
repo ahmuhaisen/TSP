@@ -20,6 +20,7 @@ import { TruncatePipe } from "../../../../../common/pipes/truncate.pipe";
 import { StudentsService } from '../../../services/students.service';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../../../../environments/environment';
+import { forkJoin } from 'rxjs';
 @Component({
     selector: 'app-societies-list',
     standalone: true,
@@ -65,7 +66,7 @@ export class SocietiesListComponent implements OnInit {
     ) {
         this.joinSocietyForm = this.fb.group({
             societyId: ['', Validators.required],
-            section: ['', Validators.required],
+            section: ['', [Validators.required, Validators.maxLength(50)]],
             motivation: ['', [Validators.required, Validators.minLength(50)]]
         });
     }
@@ -76,23 +77,14 @@ export class SocietiesListComponent implements OnInit {
     }
 
     private loadSocieties(): void {
-        this.studentsService.getBelongingSocieties().subscribe({
-            next: (societies: MemberAssociatedSociety[]) => {
-                this.belongingSocieties = societies;
-                console.log(this.belongingSocieties)
-            },
-            error: (error: Error) => {
-                this.message.error('Failed to load societies');
-                console.error('Error loading societies:', error);
-            }
-        });
-
-        this.studentsService.getCommitteeSocieties().subscribe({
-            next: (societies: MemberAssociatedSociety[]) => {
-
-                societies.forEach(e => e.isCommittee = true)
-                this.belongingSocieties.push(...societies);
-                console.log(this.belongingSocieties)
+        forkJoin({
+            belonging: this.studentsService.getBelongingSocieties(),
+            committee: this.studentsService.getCommitteeSocieties()
+        }).subscribe({
+            next: ({ belonging, committee }) => {
+                committee.forEach(society => society.isCommittee = true);
+                this.belongingSocieties = [...belonging, ...committee];
+                console.log(this.belongingSocieties);
             },
             error: (error: Error) => {
                 this.message.error('Failed to load societies');
