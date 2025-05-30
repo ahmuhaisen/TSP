@@ -71,4 +71,26 @@ public class ProfilesController : ApiController
 
         return await FromResult(task);
     }
+
+    [HttpPut("reset/{userId}")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseEnvelope), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> updatePassword([FromRoute]Guid userId,[FromQuery] string password)
+    {
+       var authHeader=  Request.Headers["Authorization"].FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer "))
+        {
+            return Unauthorized("Missing or invalid Authorization header.");
+        }
+        var token = authHeader.Substring("Bearer ".Length).Trim();
+
+        var command = UpdatePassword.Command.Create(
+            userId,
+            password, 
+            token);
+
+        var task = _sender.Send(command);
+        return await FromResult(task);
+    }
+
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TPS.Application.Areas.Authentication;
 using TPS.Application.Areas.Authentication.Contracts;
@@ -58,4 +59,15 @@ public class AuthenticationController : ApiController
         var task = _authService.LoginSuperAdmin(request);
         return await FromResult(task);
     }
+
+    // reset password for all users
+
+    [HttpGet("reset")]
+    public async Task<IActionResult> ResetUser([FromQuery] string Email)
+    {
+        var task = _authService.resetPassword(Email);
+        return await FromResult(task);
+    }
+
+ 
 }

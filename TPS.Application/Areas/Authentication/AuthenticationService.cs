@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Azure.Core;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TPS.Application.Abstractions;
 using TPS.Application.Areas.Authentication.Contracts;
+using TPS.Application.Areas.Shared.Profiles.Contracts.Requests;
+using TPS.Infrastructure.Data;
 using TSP.Domain.Entities;
 using TSP.Domain.Shared;
 
@@ -123,4 +128,20 @@ public class AuthenticationService(UserManager<ApplicationUser> _userManager,
 
         return Result.Success(response);
     }
+    public async Task<Result<ResetPasswordResponse>> resetPassword(string Email)
+    {
+        var user = await _userManager.FindByEmailAsync(Email);
+        if (user is null)
+            return Result.Failure<ResetPasswordResponse>(Error.InvalidCredentials());
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var response = new ResetPasswordResponse
+        {
+            Id = user.Id,
+            Token = token
+        };
+        return Result.Success(response);
+    }
+ 
+
 }

@@ -129,6 +129,10 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromMinutes(30); 
+        });
 
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
 

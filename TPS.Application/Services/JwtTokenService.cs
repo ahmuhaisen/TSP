@@ -23,7 +23,7 @@ public class JwtTokenService : IJwtTokenService
         _userManager = userManager;
     }
 
-    public async Task<string> GenerateAsync(ApplicationUser user, string? userRole = null)
+    private async Task<List<Claim>> generateClaims(ApplicationUser user, string? userRole = null)
     {
         var claims = new List<Claim>
         {
@@ -34,16 +34,25 @@ public class JwtTokenService : IJwtTokenService
             new Claim("pid", user.ProfileImageId ?? string.Empty),
             new Claim("pic", user.ProfileImageId ?? string.Empty),
         };
-
         if (userRole != null)
             claims.Add(new Claim("role", userRole));
-
         var roles = await _userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim("rle", role)));
+        return claims;
 
+    }
+    private async Task<SigningCredentials> GenerateCreds()
+    {
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_jwtOptions.Value.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        return creds;
+    }
+
+    public async Task<string> GenerateAsync(ApplicationUser user, string? userRole = null)
+    {
+        var claims = generateClaims(user,userRole).Result;
+        var creds = GenerateCreds().Result;
 
         var token = new JwtSecurityToken(
             issuer: _jwtOptions.Value.Issuer,
@@ -51,6 +60,21 @@ public class JwtTokenService : IJwtTokenService
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(
                 Convert.ToDouble(_jwtOptions.Value.ExpiryMinutes)),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<string> GenerateResetAsync(ApplicationUser user, string? userRole = null)
+    {
+        var claims = generateClaims(user, userRole).Result;
+        var creds = GenerateCreds().Result;
+        var token = new JwtSecurityToken(
+            issuer: _jwtOptions.Value.Issuer,
+            audience: _jwtOptions.Value.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(10),
             signingCredentials: creds
         );
 
