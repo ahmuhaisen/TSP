@@ -22,8 +22,8 @@
                     class="relative h-20 w-20 mx-4 -mt-6 overflow-hidden bg-white bg-clip-border rounded-2xl shadow-md">
                     <nz-avatar [nzSrc]="baseSocietiesUrl+society.logoId"
                         class="object-contain  w-full h-full flex items-center justify-center"
-                        [ngClass]="society.isCommittee ? 'bg-secondary' : 'bg-primary-light'"
-                        [nzIcon]="'product'" nzShape="square" nzSize="large" />
+                        [ngClass]="society.isCommittee ? 'bg-secondary' : 'bg-primary-light'" [nzIcon]="'product'"
+                        nzShape="square" nzSize="large" />
                 </div>
                 <div class="p-6 flex-grow">
                     <h5
@@ -101,7 +101,7 @@
         </nz-table>
     </nz-tab>
 
-    <nz-tab nzTitle="Other Societies">
+    <nz-tab nzTitle="Other Societies" (nzClick)="loadOtherSocieties()">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
             @for(society of otherSocieties; track society.id) {
             <div class="w-full ">

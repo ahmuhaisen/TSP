@@ -21,8 +21,11 @@ export class EventsService {
         return this.db.getRequest<MemberEventDetailsDTO[]>(`${this.model}/Requests`);
     }
     getEventsByMonth() {
-        const date = new Date().toISOString().split('T')[0];
-        return this.db.getRequest<EventSimpleDTO[]>(`${this.model}?date=${date}`);
+        const date = new Date();
+        const _date = date.getFullYear() +
+            '-' + String(date.getMonth() + 1).padStart(2, '0') +
+            '-' + String(date.getDate()).padStart(2, '0');
+        return this.db.getRequest<EventSimpleDTO[]>(`${this.model}?date=${_date}`);
     }
 
 }

@@ -15,6 +15,7 @@ import { HomeStatistics } from '../../api-interfaces/statistics.types';
 import { environment } from '../../../../../environments/environment';
 import { SearchDrawerComponent } from '../../../../components/search-drawer/search-drawer.component';
 import { CookieService } from 'ngx-cookie-service';
+import { LoaderService } from '../../../../common/services/loader.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -39,20 +40,29 @@ export class HomeComponent {
   profileImageId = this.cookieService.get("profile_image");
   private authService = inject(AuthService);
   private homeService = inject(HomeService);
-
+  private loaderService = inject(LoaderService);
   userInfo = signal<User | null>(null);
   events: StudentEvent[] = [];
   statistics: HomeStatistics | null = null;
 
   ngOnInit() {
+    this.loaderService.loading.set(true)
+    let recentEventsLoader: boolean = true;
+    let homeStatisticsLoader: boolean = true;
     this.userInfo.set(this.authService.currentUser());
     console.log(this.authService.currentUser())
     this.homeService.getRecentEvents().subscribe(res => {
       this.events = res
       console.log(this.events)
+      recentEventsLoader = false;
+      this.loaderService.loading.set(recentEventsLoader || homeStatisticsLoader)
 
     });
-    this.homeService.getHomeStatistics().subscribe(res => this.statistics = res);
+    this.homeService.getHomeStatistics().subscribe(res => {
+      homeStatisticsLoader = false;
+      this.loaderService.loading.set(recentEventsLoader || homeStatisticsLoader)
+      this.statistics = res
+    });
 
     console.log('Statistics:', this.statistics, 'Events:', this.events);
   }

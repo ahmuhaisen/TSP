@@ -47,8 +47,7 @@
     <div *ngIf="viewType === 'cards'">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         @for(event of upcomingEvents; track $index){
-          <nz-card
-          class="shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
+        <nz-card class="shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
           <div class="flex items-center mb-2">
 
             <div>
@@ -76,7 +75,8 @@
         </nz-card>
         }
         @empty {
-          <nz-empty nzNotFoundContent="No events found for this month" class="col-span-3 w-full justify-center items-center"/>
+        <nz-empty nzNotFoundContent="No events found for this month"
+          class="col-span-3 w-full justify-center items-center" />
         }
       </div>
     </div>
@@ -122,7 +122,8 @@
     </nz-drawer>
   </nz-tab>
 
-  <nz-tab nzTitle="My Event Requests" *ngIf="isCurrentStudentACommitteeMemberOfASociety()">
+  <nz-tab nzTitle="My Event Requests" *ngIf="isCurrentStudentACommitteeMemberOfASociety()"
+    (nzClick)="loadCommitteeEventsRequests()">
     @if (eventRequests.length === 0) {
     <nz-empty nzDescription="No event requests found"></nz-empty>
     } @else {
