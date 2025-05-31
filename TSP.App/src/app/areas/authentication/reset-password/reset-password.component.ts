@@ -90,7 +90,13 @@ export class ResetPasswordComponent implements OnInit {
     this.profileService.updatePassword(this.currentUserId, this.password || "")
       .subscribe(data => {
         console.log(data)
-      })
+        this.isLoading = false;
+        this.message.success("password has been updated")
+      },
+        error => {
+          this.isLoading = false;
+        }
+      )
     // TODO: Call your auth service to reset the password using the token
     // The request should include:
     // - token (from URL)

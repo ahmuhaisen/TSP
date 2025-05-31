@@ -65,9 +65,9 @@ public class AuthenticationController : ApiController
     // reset password for all users
 
     [HttpGet("reset")]
-    public async Task<IActionResult> ResetUser([FromQuery] string Email)
+    public async Task<IActionResult> ResetUser([FromQuery] string Email, [FromQuery] string url)
     {
-        var task = _authService.resetPassword(Email);
+        var task = _authService.resetPassword(Email,url);
        
        
         return await FromResult(task);

@@ -56,13 +56,16 @@ export class ForgotPasswordComponent {
     // TODO: Call your auth service to request password reset
     // For now, we'll simulate the API call
     const email = this.forgotPasswordForm.get('email')?.value || "";
-    console.log(email);
-    this.authService.getResetTokenAndId(email)
+    const url = `${window.location.origin}/authentication/reset-password/`;
+    this.authService.getResetTokenAndId(email, url)
       .subscribe(data => {
         console.log(data)
         this.isLoading = false;
         this.message.success('Password reset instructions have been sent to your email.');
-      }
+      },
+        error => {
+          this.isLoading = false;
+        }
       )
   }
 } 

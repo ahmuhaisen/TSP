@@ -21,6 +21,6 @@ public interface IEmailService
     Task SendCommitteeChangesAlert(string to, string userName, UserType userType, string societyName, string committeeName,bool isSameUser);
 
     Task SendSocietyJoinRequestDecisionMade(string to, string userName, UserType userType, string societyName, bool decision);
-    Task SendResetLink(string to, Guid userId, string token, string username);
+    Task SendResetLink(string to, Guid userId, string token, string username,string url);
 
 }

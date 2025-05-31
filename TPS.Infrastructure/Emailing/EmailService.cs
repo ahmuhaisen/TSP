@@ -313,17 +313,20 @@ public class EmailService : IEmailService
         await Send(to, subject, body);
     }
 
-    public async Task SendResetLink(string to,Guid userId, string token, string username)
+    public async Task SendResetLink(string to,Guid userId, string token, string username,string url)
     {
+
         var subject = "Reset password";
-        string baseLink = "";
-        string resetLink = baseLink + "authentication/reset-password/" + userId + "?token=" + token;
+        var encodedToken = Uri.EscapeDataString(token);
+        var resetLink = $"{url}{userId}?token={encodedToken}";
+
+        Console.WriteLine(resetLink);
         var body = ResetPasswordEmail.ResetMessage
             .Replace("{{resetLink}}", "")
             .Replace("{{userName}}",username);
-
-
+        Console.WriteLine(body);
         await Send(to, subject, body);
+
     }
 }
 

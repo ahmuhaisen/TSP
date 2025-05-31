@@ -130,7 +130,7 @@ public class AuthenticationService(UserManager<ApplicationUser> _userManager,
 
         return Result.Success(response);
     }
-    public async Task<Result<bool>> resetPassword(string Email)
+    public async Task<Result<bool>> resetPassword(string Email,string url)
     {
         var user = await _userManager.FindByEmailAsync(Email);
         if (user is null)
@@ -144,7 +144,7 @@ public class AuthenticationService(UserManager<ApplicationUser> _userManager,
             Token = token
         };
 
-        await _emailService.SendResetLink(user.Email,user.Id,token,user.UserName);
+        await _emailService.SendResetLink(user.Email,user.Id,token,user.UserName,url);
         return Result.Success(true);
     }
  

@@ -260,7 +260,7 @@ export class AuthService {
     private navigateToLogin() {
         this.router.navigate(['authentication/login']);
     }
-    public getResetTokenAndId(email: string) {
-        return this.db.getRequest<boolean>(`${this.model}/reset?email=${email}`)
+    public getResetTokenAndId(email: string, url: string) {
+        return this.db.getRequest<boolean>(`${this.model}/reset?email=${email}&url=${url}`)
     }
 }
