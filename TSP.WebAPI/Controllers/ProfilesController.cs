@@ -80,7 +80,6 @@ public class ProfilesController : ApiController
 
 
        var authHeader=  Request.Headers["Authorization"].FirstOrDefault();
-        Console.WriteLine(authHeader);
         if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer "))
         {
             return Unauthorized("Missing or invalid Authorization header.");

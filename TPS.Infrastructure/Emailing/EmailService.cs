@@ -320,11 +320,9 @@ public class EmailService : IEmailService
         var encodedToken = Uri.EscapeDataString(token);
         var resetLink = $"{url}{userId}?token={encodedToken}";
 
-        Console.WriteLine(resetLink);
         var body = ResetPasswordEmail.ResetMessage
             .Replace("{{resetLink}}", "")
             .Replace("{{userName}}",username);
-        Console.WriteLine(body);
         await Send(to, subject, body);
 
     }

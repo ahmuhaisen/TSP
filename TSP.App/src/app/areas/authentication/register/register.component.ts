@@ -71,9 +71,10 @@ export class RegisterComponent {
     lastName: this.fb.control('', [Validators.required]),
     gender: this.fb.control('', [Validators.required]),
     departmentId: this.fb.control('', [Validators.required]),
-    employeeNumber: this.fb.control('', []),
+    employeeNumber: this.fb.control('', [Validators.pattern('^[a-zA-Z0-9]+$')]),
     rankId: this.fb.control('', []),
-    universityNumber: this.fb.control('', []),
+    universityNumber: this.fb.control('', [Validators.pattern('^[a-zA-Z0-9]+$')
+    ]),
   });
 
   ngOnInit() {
@@ -94,8 +95,8 @@ export class RegisterComponent {
     if (this.selectedUserType == 'FacultyMember') {
       // check if employeeNumber and rankId are valid
       if (this.registerForm.get('employeeNumber')?.invalid || this.registerForm.get('rankId')?.invalid
-          || this.registerForm.get('employeeNumber')?.value == '' || this.registerForm.get('rankId')?.value == ''
-          ) {
+        || this.registerForm.get('employeeNumber')?.value == '' || this.registerForm.get('rankId')?.value == ''
+      ) {
         this.messageService.warning('Please enter a valid employee number and rank!');
         return;
       }

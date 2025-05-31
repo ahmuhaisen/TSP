@@ -95,16 +95,9 @@ export class ResetPasswordComponent implements OnInit {
       },
         error => {
           this.isLoading = false;
+          this.message.error("something went wrong, try against please.")
         }
       )
-    // TODO: Call your auth service to reset the password using the token
-    // The request should include:
-    // - token (from URL)
-    // - new password
-    //   setTimeout(() => {
-    //     this.message.success('Your password has been reset successfully.');
-    //     this.router.navigate(['../login']);
-    //   }, 1500);
-    // 
+
   }
 } 

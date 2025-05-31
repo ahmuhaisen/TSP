@@ -65,6 +65,7 @@ export class ForgotPasswordComponent {
       },
         error => {
           this.isLoading = false;
+          this.message.error("something went wrong, try against please.")
         }
       )
   }

@@ -66,7 +66,6 @@ export class EventRequestDetailsComponent {
       next: data => {
         this.eventDetailsDTO = data;
         this.breadcrumbService.set('@eventName', data.eventName);
-
         this.fetchEventAttendance();
       }
     });
@@ -92,7 +91,7 @@ export class EventRequestDetailsComponent {
     });
   }
 
-   redirectToFeedbackQrLinkView() {
+  redirectToFeedbackQrLinkView() {
     this.feedbackService.isFeedbackOpen(this.eventDetailsDTO.id).subscribe({
       next: res => {
         if (res) {

@@ -90,7 +90,9 @@
                 class="flex flex-wrap sm:flex-nowrap border items-center rounded-md cursor-pointer shadow-sm hover:bg-slate-50">
                 <div class="w-16 p-2 shrink-0">
                     <!-- <img [src]="event.logoId" class="w-12 h-12 sm:w-10 sm:h-10 rounded-md" alt="profile image"> -->
-                    <nz-avatar class="w-12 h-12 sm:w-10 sm:h-10 bg-indigo-200 text-indigo-500 rounded-full flex items-center justify-center" [nzSrc]="event.logoId" [nzText]="event.societyName.substring(0, 2).toUpperCase()" />
+                    <nz-avatar
+                        class="w-12 h-12 sm:w-10 sm:h-10 bg-indigo-200 text-indigo-500 rounded-full flex items-center justify-center"
+                        [nzSrc]="event.logoId" [nzText]="event.societyName.substring(0, 2).toUpperCase()" />
                 </div>
                 <div class="p-2 w-full">
                     <div class="w-full flex items-center justify-between flex-wrap sm:flex-nowrap">
@@ -147,7 +149,7 @@
                 <div class="w-16 p-2 shrink-0">
                     <!-- <img [src]="user.profileImageId" class="w-12 h-12" alt="profile image"> -->
                     <nz-avatar class="w-12 h-12 sm:w-10 sm:h-10 rounded-md flex items-center justify-center"
-                        [nzSrc]="user.profileImageId"
+                        [nzSrc]="baseProfileImageUrl+user.profileImageId"
                         [nzText]="user.firstName.substring(0, 2).toUpperCase()"></nz-avatar>
                 </div>
                 <div class="p-2 w-full sm:w-auto">
