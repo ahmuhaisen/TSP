@@ -15,12 +15,16 @@ import { UserType } from '../../common/services/auth.service';
 export class AuthenticationComponent {
   year = new Date().getFullYear();
   userType: UserType = 'FacultyMember';
+  constructor(
+    private route: ActivatedRoute
+  ) {
 
+  }
   onOutletActivated(component: any) {
     // Listen for userType changes from child components
     if (component.selectedUserType !== undefined) {
       this.userType = component.selectedUserType;
-      
+
       // Subscribe to future changes
       if (component.handleUserTypeChange && component.handleUserTypeChange.subscribe) {
         component.handleUserTypeChange.subscribe((type: UserType) => {

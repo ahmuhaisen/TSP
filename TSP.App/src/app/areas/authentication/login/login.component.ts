@@ -10,35 +10,46 @@ import { AuthService, LoginRequest, UserType } from '../../../common/services/au
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import { ActivatedRoute } from '@angular/router';
+import { signal } from '@angular/core';
+import { NgModel } from '@angular/forms';
 @Component({
   selector: 'app-login',
   imports: [
     RouterLink,
     CommonModule,
-    ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule,NzSegmentedModule, NzIconModule
+    ReactiveFormsModule, NzButtonModule, NzCheckboxModule, NzFormModule, NzInputModule, NzSegmentedModule, NzIconModule
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
+  providers: [
+    NgModel
+  ]
 })
 export class LoginComponent {
   passwordVisible = false;
   password?: string;
 
-  selectedUserType: UserType = 'Student';
+  selectedUserType = signal<UserType>('FacultyMember');
   userTypes = ['Student', 'FacultyMember'];
   @Output() handleUserTypeChange = new EventEmitter<UserType>();
 
   fb = new FormBuilder();
   authService = inject(AuthService);
-
+  constructor(
+    private route: ActivatedRoute
+  ) {
+  }
   loginForm = this.fb.group({
     email: this.fb.control('', [Validators.required, Validators.email]),
     password: this.fb.control('', [Validators.required]),
   });
+  ngOnInit() {
+    this.selectedUserType.set(this.route.snapshot.queryParamMap.get('userType') as UserType);
 
+  }
   submitForm(): void {
-    if(this.loginForm.invalid) {
+    if (this.loginForm.invalid) {
       Object.values(this.loginForm.controls).forEach(control => {
         if (control.invalid) {
           control.markAsDirty();
@@ -49,11 +60,11 @@ export class LoginComponent {
 
     const request = this.loginForm.value as LoginRequest;
 
-    this.authService.login(request, this.selectedUserType);
+    this.authService.login(request, this.selectedUserType());
   }
 
   onUserTypeChange(e: string | number): void {
-    this.selectedUserType = e === 'FacultyMember' ? 'FacultyMember' : 'Student';
-    this.handleUserTypeChange.emit(this.selectedUserType);
+    this.selectedUserType.set(e === 'FacultyMember' ? 'FacultyMember' : 'Student');
+    this.handleUserTypeChange.emit(this.selectedUserType());
   }
 }
