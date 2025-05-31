@@ -28,7 +28,7 @@ import { EventsService } from '../../../services/events.service';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../../../common/services/auth.service';
 import { environment } from '../../../../../../environments/environment';
-
+import { LoaderService } from '../../../../../common/services/loader.service';
 @Component({
   selector: 'app-events-list',
   standalone: true,
@@ -82,6 +82,7 @@ export class EventsListComponent {
   studentsService = inject(StudentsService);
   messageService = inject(NzMessageService);
   eventsService = inject(EventsService);
+  loaderService = inject(LoaderService);
   isCurrentStudentACommitteeMemberOfASociety = signal(false);
   baseSocietyImage: string = environment.gitHubSocietiesPicturesURL;
   committeeSocieties: MemberAssociatedSociety[] = [];
@@ -149,16 +150,28 @@ export class EventsListComponent {
       this.isCurrentStudentACommitteeMemberOfASociety.set(data);
     })
 
-    this.eventsService.getCommitteeEventsRequests().subscribe(data => {
-      this.eventRequests = data
-    })
+    // this.eventsService.getCommitteeEventsRequests().subscribe(data => {
+    //   this.eventRequests = data
+    // })
 
     this.eventsService.getEventsByMonth().subscribe(data => {
       this.upcomingEvents = data;
     })
 
   }
+  loadCommitteeEventsRequests() {
+    this.loaderService.loading.set(true)
+    this.eventsService.getCommitteeEventsRequests().subscribe(data => {
+      this.eventRequests = data
+      this.loaderService.loading.set(false)
 
+    },
+      error => {
+        this.loaderService.loading.set(false)
+      }
+
+    )
+  }
   private initForm(): void {
     this.eventRequestForm = this.fb.group({
       societyId: [null, Validators.required],

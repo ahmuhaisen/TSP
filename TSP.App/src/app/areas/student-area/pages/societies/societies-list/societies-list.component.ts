@@ -21,6 +21,7 @@ import { StudentsService } from '../../../services/students.service';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../../../../environments/environment';
 import { forkJoin } from 'rxjs';
+import { LoaderService } from '../../../../../common/services/loader.service';
 @Component({
     selector: 'app-societies-list',
     standalone: true,
@@ -62,7 +63,8 @@ export class SocietiesListComponent implements OnInit {
         private societiesService: SocietiesService,
         private studentsService: StudentsService,
         private fb: FormBuilder,
-        private message: NzMessageService
+        private message: NzMessageService,
+        private loaderService: LoaderService
     ) {
         this.joinSocietyForm = this.fb.group({
             societyId: ['', Validators.required],
@@ -77,6 +79,7 @@ export class SocietiesListComponent implements OnInit {
     }
 
     private loadSocieties(): void {
+        this.loaderService.loading.set(true);
         forkJoin({
             belonging: this.studentsService.getBelongingSocieties(),
             committee: this.studentsService.getCommitteeSocieties()
@@ -85,20 +88,33 @@ export class SocietiesListComponent implements OnInit {
                 committee.forEach(society => society.isCommittee = true);
                 this.belongingSocieties = [...belonging, ...committee];
                 console.log(this.belongingSocieties);
+                this.loaderService.loading.set(false);
+
             },
             error: (error: Error) => {
                 this.message.error('Failed to load societies');
                 console.error('Error loading societies:', error);
+                this.loaderService.loading.set(false);
+
             }
         });
+
+
+    }
+    public loadOtherSocieties() {
+        this.loaderService.loading.set(true);
 
         this.studentsService.getOtherSocieties().subscribe({
             next: (societies: Society[]) => {
                 this.otherSocieties = societies;
+                this.loaderService.loading.set(false);
+
             },
             error: (error: Error) => {
                 this.message.error('Failed to load other societies');
                 console.error('Error loading other societies:', error);
+                this.loaderService.loading.set(false);
+
             }
         });
     }
