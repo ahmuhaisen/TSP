@@ -44,7 +44,7 @@ public class GetUserProfile
                                         .ThenInclude(s => s.Society)
                                       .FirstOrDefault(s => s.Id == request.UserId);
 
-                if (student is null)
+                if (student is null || !student.IsActive)
                     return Task.FromResult(Result.Failure<UserProfileDto>(Error.NotFound(nameof(Student), request.UserId.ToString())));
 
                 var result = GetStudentProfileDto(student);
@@ -61,7 +61,7 @@ public class GetUserProfile
                                       .Include(s => s.SocietiesAdvised)
                                       .FirstOrDefault(s => s.Id == request.UserId);
 
-                if (facultyMember is null)
+                if (facultyMember is null || !facultyMember.IsActive)
                     return Task.FromResult(Result.Failure<UserProfileDto>(Error.NotFound(nameof(FacultyMember), request.UserId.ToString())));
 
                 var result = GetFacultyMemberProfileDto(facultyMember);
