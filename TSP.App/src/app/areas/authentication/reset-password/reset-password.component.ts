@@ -75,7 +75,7 @@ export class ResetPasswordComponent implements OnInit {
     return null;
   }
 
-  submitForm(): void {
+submitForm(): void {
     if (this.resetPasswordForm.invalid) {
       Object.values(this.resetPasswordForm.controls).forEach(control => {
         if (control.invalid) {

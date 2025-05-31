@@ -60,8 +60,7 @@ export class EventRequestDetailsComponent {
 
   isEventRequestModalVisible = false;
   isEventFormsVisible = signal(false);
-
-  constructor(private route: ActivatedRoute) {
+constructor(private route: ActivatedRoute) {
     var eventRequestId = this.route.snapshot.paramMap.get('id')!;
 
     this.eventService.getEventDetails(eventRequestId).subscribe({
@@ -97,7 +96,7 @@ export class EventRequestDetailsComponent {
     });
   }
 
-   redirectToFeedbackQrLinkView() {
+  redirectToFeedbackQrLinkView() {
     this.feedbackService.isFeedbackOpen(this.eventDetailsDTO.id).subscribe({
       next: res => {
         if (res) {

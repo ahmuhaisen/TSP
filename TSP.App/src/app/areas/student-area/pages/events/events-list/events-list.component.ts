@@ -89,10 +89,10 @@ export class EventsListComponent {
   currentDate = new Date();
 
   disabledDate = (current: Date): boolean => {
-    const currentMonth = this.currentDate.getMonth();
-    const currentYear = this.currentDate.getFullYear();
-    return current.getMonth() !== currentMonth || current.getFullYear() !== currentYear;
-
+    const now = new Date().getTime();
+    const lowerBound = now;
+    const upperBound = now + 30 * 24 * 60 * 60 * 1000;
+    return current.getTime() < lowerBound || current.getTime() > upperBound;
   };
 
   disabledRangeTime: DisabledTimeFn = (_value, type?: DisabledTimePartial) => {
@@ -162,7 +162,7 @@ export class EventsListComponent {
     this.eventRequestForm = this.fb.group({
       societyId: [null, Validators.required],
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(250)]],
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
       location: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       eventType: ['', Validators.required],
       dateRange: [null, Validators.required],
