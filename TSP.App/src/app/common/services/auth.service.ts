@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { LoaderService } from './loader.service';
 import { Observable, catchError, of, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import { NotificationHubService } from './notification-hub.service';
 export interface User {
     id: string;
     name: string;
@@ -67,6 +68,9 @@ export interface ResetPasswordResponse {
 }
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+
+    notificationHubService = inject(NotificationHubService);
+    
 
     private _currentUser = signal<User | null>(null);
     private cookieSerivce = inject(CookieService);
@@ -215,6 +219,8 @@ export class AuthService {
 
         this._currentUser.set(null);
         this.router.navigate(['authentication']);
+
+        this.notificationHubService.stopConnection();
     }
 
     setCurrentUser(userInfo: { id: string, fullName: string, email: string, profileImageId?: string }) {

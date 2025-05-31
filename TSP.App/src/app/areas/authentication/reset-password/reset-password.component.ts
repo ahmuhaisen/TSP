@@ -41,7 +41,7 @@ export class ResetPasswordComponent implements OnInit {
     private localStorageService: SecureLocalStorageService
   ) {
     this.resetPasswordForm = this.fb.group({
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
@@ -55,7 +55,7 @@ export class ResetPasswordComponent implements OnInit {
     console.log(this.currentUserId);
     if (!this.token) {
       this.message.error('Invalid or expired reset link.');
-      //this.router.navigate(['authentication/login']);
+      this.router.navigate(['authentication/login']);
     }
     else {
 
@@ -75,7 +75,7 @@ export class ResetPasswordComponent implements OnInit {
     return null;
   }
 
-  submitForm(): void {
+submitForm(): void {
     if (this.resetPasswordForm.invalid) {
       Object.values(this.resetPasswordForm.controls).forEach(control => {
         if (control.invalid) {
@@ -88,16 +88,16 @@ export class ResetPasswordComponent implements OnInit {
 
     this.isLoading = true;
     this.profileService.updatePassword(this.currentUserId, this.password || "")
-      .subscribe(data => {
-        console.log(data)
-        this.isLoading = false;
-        this.message.success("password has been updated")
-      },
-        error => {
+      .subscribe({
+        next: data => {
           this.isLoading = false;
-          this.message.error("something went wrong, try against please.")
+          this.message.success("password has been updated")
+          this.router.navigate(['authentication/login']);
+        },
+        error: error => {
+          this.isLoading = false;
+          this.message.error("Failed to update password. Please try again.");
         }
-      )
-
+      })
   }
 } 
