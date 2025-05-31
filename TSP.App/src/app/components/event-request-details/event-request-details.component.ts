@@ -60,6 +60,7 @@ export class EventRequestDetailsComponent {
 
   isEventRequestModalVisible = false;
   isEventFormsVisible = signal(false);
+
   constructor(private route: ActivatedRoute) {
     var eventRequestId = this.route.snapshot.paramMap.get('id')!;
 

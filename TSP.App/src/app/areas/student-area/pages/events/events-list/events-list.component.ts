@@ -37,6 +37,7 @@ import { environment } from '../../../../../../environments/environment';
     NzInputModule,
     NzSelectModule,
     NzSwitchModule,
+    NzEmptyModule,
     NzDatePickerModule,
     NzIconModule,
     NzButtonModule,
