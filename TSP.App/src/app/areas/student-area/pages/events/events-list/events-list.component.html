@@ -46,7 +46,8 @@
 
     <div *ngIf="viewType === 'cards'">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <nz-card *ngFor="let event of upcomingEvents"
+        @for(event of upcomingEvents; track $index){
+          <nz-card
           class="shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
           <div class="flex items-center mb-2">
 
@@ -73,6 +74,10 @@
           </a>
           }
         </nz-card>
+        }
+        @empty {
+          <nz-empty nzNotFoundContent="No events found for this month" class="col-span-3 w-full justify-center items-center"/>
+        }
       </div>
     </div>
 
