@@ -59,6 +59,8 @@ export class EventRequestDetailsComponent {
   profilePictureBase = environment.gitHubUsersPicturesURL;
 
   isEventRequestModalVisible = false;
+  isEventFormsVisible = signal(false);
+
   constructor(private route: ActivatedRoute) {
     var eventRequestId = this.route.snapshot.paramMap.get('id')!;
 
@@ -67,7 +69,10 @@ export class EventRequestDetailsComponent {
         this.eventDetailsDTO = data;
         this.breadcrumbService.set('@eventName', data.eventName);
 
-        this.fetchEventAttendance();
+        this.isEventFormsVisible.set(this.isEventFullyApproved());
+
+        if(this.isEventFullyApproved())
+          this.fetchEventAttendance();
       }
     });
   }

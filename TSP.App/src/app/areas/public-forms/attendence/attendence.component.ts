@@ -690,6 +690,13 @@ export class AttendenceComponent implements OnInit, AfterViewInit, OnDestroy {
           return;
         }
 
+        // check if the event completed his approval process
+        if(!eventDetails.isAdvisorApproved || !eventDetails.isDeanAssistantApproved) {
+          this.isEventAvailable.set(false);
+          this.notAvailableMessage.set('Event is not available for registration.');
+          return;
+        }
+
         // Map the API response to our EventDetails model
         this.eventDetails = {
           name: eventDetails.eventName || 'Event',
