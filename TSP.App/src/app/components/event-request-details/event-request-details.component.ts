@@ -60,17 +60,16 @@ export class EventRequestDetailsComponent {
 
   isEventRequestModalVisible = false;
   isEventFormsVisible = signal(false);
-constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute) {
     var eventRequestId = this.route.snapshot.paramMap.get('id')!;
 
     this.eventService.getEventDetails(eventRequestId).subscribe({
       next: data => {
         this.eventDetailsDTO = data;
         this.breadcrumbService.set('@eventName', data.eventName);
-
         this.isEventFormsVisible.set(this.isEventFullyApproved());
 
-        if(this.isEventFullyApproved())
+        if (this.isEventFullyApproved())
           this.fetchEventAttendance();
       }
     });
