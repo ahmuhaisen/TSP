@@ -65,7 +65,6 @@ export class GenProfileComponent {
   activatedRoute = inject(ActivatedRoute);
   fb = inject(FormBuilder);
   messageService = inject(NzMessageService);
-
   userProfile: UserProfile | null = null;
   isLoading = false;
   isEditProfileModalVisible = false;

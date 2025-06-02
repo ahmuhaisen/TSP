@@ -31,6 +31,17 @@ namespace TPS.Application.Areas.StudentArea.Home.Queries
             }
             public async Task<Result<StudentHomeStatisticsDTO>>Handle(Query request, CancellationToken cancellationToken)
             {
+                var student = await _context.Students
+                    .FirstOrDefaultAsync(
+                    s => s.Id == request.LoggedInStudent
+                    );
+                if (student == null)
+                {
+                    return Result.Failure<StudentHomeStatisticsDTO>(
+                        Error.NotFound(nameof(Guid),
+                        request.LoggedInStudent.ToString()));
+                }
+
                 var totalSocieties = await _context.Societies
                     .AsNoTracking()
                     .Where(x => x.SocietiesMembers
@@ -39,8 +50,10 @@ namespace TPS.Application.Areas.StudentArea.Home.Queries
 
                 var totalAttendedEvents = await _context.Events
                     .Where(x => x.Attendees
-                        .Any(xm => xm.Id == request.LoggedInStudent))
+                        .Any(xm => xm.Email == student.Email))
                     .CountAsync(cancellationToken);
+                Console.WriteLine(totalAttendedEvents);
+                Console.WriteLine(totalSocieties);
 
                 var studentStatistics = new StudentHomeStatisticsDTO
                 {
