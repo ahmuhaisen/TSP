@@ -4,51 +4,100 @@
     [nzStyle]="window.innerWidth <= 768 ? { top: '0', margin: '0', padding: '0', maxWidth: '100vw' } : {}"
     nzCentered="true">
     <ng-container *nzModalContent>
-        <nz-table #membershipTable [nzData]="membershipRequests" [nzFrontPagination]="false" [nzShowPagination]="false"
-            [nzScroll]="{ x: '800px', y: '400px' }">
-            <thead>
-                <tr>
-                    <th [nzWidth]="'200px'">Student</th>
-                    <th [nzWidth]="'150px'">Section</th>
-                    <th [nzWidth]="'180px'">Requested On</th>
-                    <th [nzWidth]="'100px'">Status</th>
-                    <th [nzWidth]="'200px'">Actions</th>
-                </tr>
-            </thead>
-            <tbody *ngIf="membershipRequests.length !== 0">
-                @for(request of membershipRequests; track request.id){
-                <tr>
-                    <td>{{request.studentBasicDTO.fullName || 'N/A'}}</td>
-                    <td>{{request.section}}</td>
+        <!-- Pending Requests Section -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-4">Pending Requests</h3>
+            <ng-container *ngIf="getPendingRequests().length > 0; else noPendingRequests">
+                <nz-table #pendingTable [nzData]="getPendingRequests()" [nzFrontPagination]="false" [nzShowPagination]="false"
+                    [nzScroll]="{ x: '800px', y: '300px' }">
+                    <thead>
+                        <tr>
+                            <th [nzWidth]="'200px'">Student</th>
+                            <th [nzWidth]="'150px'">Section</th>
+                            <th [nzWidth]="'180px'">Requested On</th>
+                            <th [nzWidth]="'100px'">Status</th>
+                            <th [nzWidth]="'200px'">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(request of getPendingRequests(); track request.id){
+                        <tr>
+                            <td>{{request.studentBasicDTO.fullName || 'N/A'}}</td>
+                            <td>{{request.section}}</td>
+                            <td>{{request.requestedOn|date:'medium'}}</td>
+                            <td>
+                                <nz-tag [nzColor]="getStatusColor(request.status)">
+                                    {{request.status}}
+                                </nz-tag>
+                            </td>
+                            <td>
+                                <div class="flex items-center space-x-2 whitespace-nowrap">
+                                    <button nz-button nzType="link" (click)="showRequestDetails(request)">
+                                        <nz-icon nzType="eye" />
+                                    </button>
+                                    <button nz-button nzType="primary" nzSize="small" (click)="acceptRequest(request.id)">
+                                        <nz-icon nzType="check" />
+                                        Accept
+                                    </button>
+                                    <button nz-button nzType="default" nzDanger nzSize="small"
+                                        (click)="rejectRequest(request.id)">
+                                        <nz-icon nzType="close" />
+                                        Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </nz-table>
+            </ng-container>
+            <ng-template #noPendingRequests>
+                <nz-empty [nzNotFoundContent]="'No pending requests found.'" class="my-8"></nz-empty>
+            </ng-template>
+        </div>
 
-                    <td>{{request.requestedOn|date:'medium'}}</td>
-                    <td>
-                        <nz-tag [nzColor]="getStatusColor(request.status)">
-                            {{request.status}}
-                        </nz-tag>
-                    </td>
-                    <td>
-                        <div class="flex items-center space-x-2 whitespace-nowrap">
-                            <button nz-button nzType="link" (click)="showRequestDetails(request)">
-                                <nz-icon nzType="eye" />
-                            </button>
-                            <button nz-button nzType="primary" nzSize="small" (click)="acceptRequest(request.id)"
-                                [disabled]="request.status !== 'Pending'">
-                                <nz-icon nzType="check" />
-                                Accept
-                            </button>
-                            <button nz-button nzType="default" nzDanger nzSize="small"
-                                (click)="rejectRequest(request.id)" [disabled]="request.status !== 'Pending'">
-                                <nz-icon nzType="close" />
-                                Reject
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </nz-table>
+        <!-- Divider between sections -->
+        <nz-divider *ngIf="getProcessedRequests().length > 0"></nz-divider>
 
+        <!-- Processed Requests Section (Approved + Rejected) -->
+        <div class="mb-6" *ngIf="getProcessedRequests().length > 0">
+            <h3 class="text-lg font-semibold mb-4">Processed Requests</h3>
+            <nz-table #processedTable [nzData]="getProcessedRequests()" [nzFrontPagination]="false" [nzShowPagination]="false"
+                [nzScroll]="{ x: '800px', y: '300px' }">
+                <thead>
+                    <tr>
+                        <th [nzWidth]="'200px'">Student</th>
+                        <th [nzWidth]="'150px'">Section</th>
+                        <th [nzWidth]="'180px'">Requested On</th>
+                        <th [nzWidth]="'100px'">Status</th>
+                        <th [nzWidth]="'200px'">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(request of getProcessedRequests(); track request.id){
+                    <tr>
+                        <td>{{request.studentBasicDTO.fullName || 'N/A'}}</td>
+                        <td>{{request.section}}</td>
+                        <td>{{request.requestedOn|date:'medium'}}</td>
+                        <td>
+                            <nz-tag [nzColor]="getStatusColor(request.status)">
+                                {{request.status}}
+                            </nz-tag>
+                        </td>
+                        <td>
+                            <div class="flex items-center space-x-2 whitespace-nowrap">
+                                <button nz-button nzType="link" (click)="showRequestDetails(request)">
+                                    <nz-icon nzType="eye" />
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </nz-table>
+        </div>
+
+        <!-- Show this only if no requests at all -->
         <nz-empty class="my-10" *ngIf="membershipRequests.length === 0" [nzNotFoundContent]="'No membership requests found.'">
         </nz-empty>
     </ng-container>
@@ -63,16 +112,17 @@
     <ng-container *nzModalContent>
         <div class="space-y-4">
             <div class="flex items-center space-x-4">
-                <nz-avatar [nzSize]="64" [nzSrc]="selectedRequest?.studentBasicDTO?.logoId" class="flex-shrink-0" />
+                <nz-avatar [nzSize]="64" [nzSrc]="selectedRequest?.studentBasicDTO?.logoId" class="flex-shrink-0"
+                [nzText]="selectedRequest?.studentBasicDTO?.fullName?.substring(0, 2)?.toUpperCase()"/>
                 <div class="flex-grow">
                     <label class="text-gray-600 font-medium">Student</label>
                     <div class="flex items-center justify-between">
                         <p>{{selectedRequest?.studentBasicDTO?.fullName}}
                             ({{selectedRequest?.studentBasicDTO?.fullName}})</p>
-                        <a [routerLink]="['/student', selectedRequest?.studentBasicDTO?.fullName]" target="_blank"
+                        <!-- <a [routerLink]="['/student', selectedRequest?.studentBasicDTO?.fullName]" target="_blank"
                             nz-button nzType="link" class="flex items-center">
                             <nz-icon nzType="user" />
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </div>

@@ -123,4 +123,22 @@ export class MembershipRequestsComponent {
     }
   }
 
+  getPendingRequests(): MembershipRequestDTO[] {
+    return this.membershipRequests.filter(request => request.status === 'Pending');
+  }
+
+  getApprovedRequests(): MembershipRequestDTO[] {
+    return this.membershipRequests.filter(request => request.status === 'Accepted');
+  }
+
+  getRejectedRequests(): MembershipRequestDTO[] {
+    return this.membershipRequests.filter(request => request.status === 'Reject');
+  }
+
+  getProcessedRequests(): MembershipRequestDTO[] {
+    return this.membershipRequests.filter(request => 
+      request.status === 'Accepted' || request.status === 'Reject'
+    );
+  }
+
 }
