@@ -94,7 +94,7 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                         EventName = x.Event.Name,
                         StartDateTime = x.Event.StartTime,
                         LocationString = x.Event.LocationString,
-                        ApprovalStatus = x.AdvisorApproval == false ? "Rejected" : "Pending",
+                        ApprovalStatus = getEventStatus(x),
                         EventDescription = x.Event.Description,
                         EventSociety = new EventSocietyBasicDto
                         {

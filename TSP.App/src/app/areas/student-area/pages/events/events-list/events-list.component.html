@@ -211,14 +211,13 @@
     </nz-steps>
 
     @if(currentStep === 0) {
-    <div *ngFor="let society of committeeSocieties">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div (click)="selectSociety(society.id)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
-                hover:cursor-pointer hover:shadow-md transition-all"
-          [ngClass]="{'selected': selectedSocietyId === society.id}">
-          <img [src]="baseSocietyImage+society.logoId" class="w-16 h-16 rounded-lg" alt="profile image">
-          <p class="text-sm text-center font-semibold text-gray-700 mt-3">{{society.name}}</p>
-        </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div *ngFor="let society of committeeSocieties" (click)="selectSociety(society.id)" class="p-4 bg-white border border-gray-300 rounded-lg flex flex-col items-center justify-center
+             hover:cursor-pointer hover:shadow-md transition-all"
+        [ngClass]="{'selected': selectedSocietyId === society.id}">
+        <nz-avatar [nzSrc]="baseSocietyImage + society.logoId" class="w-16 h-16 rounded-lg"
+          [nzText]="society.name.substring(0,2)" />
+        <p class="text-sm text-center font-semibold text-gray-700 mt-3">{{ society.name }}</p>
       </div>
     </div>
     }

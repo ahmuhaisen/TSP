@@ -72,7 +72,7 @@ export class NotificationsComponent {
     });
   }
 
-  markAllAsRead(){
+  markAllAsRead() {
 
     if (this.notificationCount() === 0) {
       return;
@@ -92,7 +92,7 @@ export class NotificationsComponent {
     this.notificationCount.set(0);
   }
 
-  markAsRead(notification: IGenericNotification){
+  markAsRead(notification: IGenericNotification) {
 
     if (notification.isSeen) {
       return;
