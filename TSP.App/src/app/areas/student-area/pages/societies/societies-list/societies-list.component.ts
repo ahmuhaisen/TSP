@@ -76,6 +76,7 @@ export class SocietiesListComponent implements OnInit {
     ngOnInit(): void {
         this.loadSocieties();
         this.loadJoinRequests();
+        this.loadOtherSocieties();
     }
 
     private loadSocieties(): void {
