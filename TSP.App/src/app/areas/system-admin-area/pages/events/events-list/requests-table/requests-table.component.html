@@ -35,7 +35,7 @@
             <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
             <td>{{ data.eventName }}</td>
             <td>{{ data.eventSociety.societyName}}</td>
-            <td>{{ data.startDateTime |date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td>{{ data.startDateTime |date: 'medium' }}</td>
             <td>{{ data.locationString }}</td>
             <td>
                 <nz-tag [nzColor]="getStatusColor(data.approvalStatus)">{{ data.approvalStatus }}</nz-tag>
@@ -48,14 +48,14 @@
                 <nz-divider nzType="vertical" />
                 <button nz-button nzType="primary" nzGhost nzSize="small" nzShape="round" nz-tooltip
                     [nzTooltipTitle]="data.approvalStatus == 'Pending' ? 'Accept' : ''"
-                    [disabled]="data.approvalStatus != 'Pending'" nz-popconfirm
+                    [disabled]="data.approvalStatus != 'Pending' || (data.isAdvisorDesignated && !data.isAdvisorInDeanOffice)" nz-popconfirm
                     nzPopconfirmTitle="Are you sure accept the request for: {{ data.eventName }}?"
                     nzPopconfirmPlacement="top" nzOkText="Yes" (nzOnConfirm)="confirmAcceptRequest(data)"
                     (nzOnCancel)="cancelAcceptRequest()">
                     <nz-icon nzType="check" />
                 </button>
                 <nz-divider nzType="vertical" />
-                <button nz-button nzSize="small" nzShape="round" nzDanger [disabled]="data.approvalStatus != 'Pending'"
+                <button nz-button nzSize="small" nzShape="round" nzDanger [disabled]="data.approvalStatus != 'Pending' || (data.isAdvisorDesignated && !data.isAdvisorInDeanOffice)"
                     nz-tooltip [nzTooltipTitle]="data.approvalStatus == 'Pending' ? 'Reject' : ''"
                     (click)="openRejectPopup(data)">
                     <nz-icon nzType="close" />

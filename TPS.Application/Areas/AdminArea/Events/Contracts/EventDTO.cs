@@ -10,6 +10,8 @@ public class EventDTO
     public string? LocationString { get; set; }
     public required string ApprovalStatus { get; set; }
     public required string EventDescription { get; set; }
+    public bool IsAdvisorDesignated { get; set; }
+    public bool IsAdvisorInDeanOffice { get; set; }
     public required EventSocietyBasicDto EventSociety { get; set; }
 }
 public class EventSocietyBasicDto

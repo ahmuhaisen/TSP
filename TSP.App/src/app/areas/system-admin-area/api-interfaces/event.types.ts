@@ -6,6 +6,8 @@ export interface EventSimpleRequest {
     approvalStatus: string;
     eventDescription: string;
     eventSociety: EventSocietyBasicDto;
+    isAdvisorDesignated: boolean;
+    isAdvisorInDeanOffice: boolean;
 }
 export interface EventSocietyBasicDto {
     societyName: string;

@@ -67,6 +67,8 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                             LocationString = x.Event.LocationString,
                             ApprovalStatus = getEventStatus(x),
                             EventDescription = x.Event.Description,
+                            IsAdvisorDesignated = x.AdvisorApproval != null,
+                            IsAdvisorInDeanOffice = true,
                             EventSociety = new EventSocietyBasicDto
                             {
                                 SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown",
@@ -96,6 +98,8 @@ namespace TPS.Application.Areas.AdminArea.Events.Queries
                         LocationString = x.Event.LocationString,
                         ApprovalStatus = getEventStatus(x),
                         EventDescription = x.Event.Description,
+                        IsAdvisorDesignated = x.AdvisorApproval != null,
+                        IsAdvisorInDeanOffice = false,
                         EventSociety = new EventSocietyBasicDto
                         {
                             SocietyName = x.Event.Society != null ? x.Event.Society.Name : "Unknown",
