@@ -99,6 +99,8 @@ public abstract class ApiController : ControllerBase
         if (Enum.TryParse<UserType>(userTypeClaim, ignoreCase: true, out var userType))
             return userType;
 
+        if (userTypeClaim == "Faculty")
+            return UserType.FacultyMember;
         throw new UnauthorizedAccessException("Invalid or missing user type.");
     }
 }

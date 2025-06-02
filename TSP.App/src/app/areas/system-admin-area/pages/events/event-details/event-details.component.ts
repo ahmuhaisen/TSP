@@ -19,6 +19,7 @@ import { CommonModule } from '@angular/common';
 import { EventFeedbackService } from '../../../../public-forms/event-feedback/event-feedback.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { EventRequestDetailsComponent } from "../../../../../components/event-request-details/event-request-details.component";
+import { LoaderService } from '../../../../../common/services/loader.service';
 
 // NzStatusType is used in nzStatus
 type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
@@ -52,21 +53,29 @@ export class EventDetailsComponent implements OnInit {
   eventDetailsDTO!: EventDetailsDTO;
   feedbackService = inject(EventFeedbackService);
   nzMessageService = inject(NzMessageService);
+  loaderService = inject(LoaderService);
   router = inject(Router);
+  route = inject(ActivatedRoute);
 
   tabs = [];
 
   isEventRequestModalVisible = false;
-  constructor(private route: ActivatedRoute) {
+  ngOnInit() {
     var eventRequestId = this.route.snapshot.paramMap.get('id')!;
     console.log(eventRequestId)
-    this.eventService.getEventDetails(eventRequestId).subscribe(
-      data => this.eventDetailsDTO = data
-    );
-  }
-  ngOnInit() {
 
-    this.breadcrumbService.set('@eventName', 'Junior to Solver 6.0');
+    this.loaderService.show();
+    this.eventService.getEventDetails(eventRequestId).subscribe({
+      next: data =>{
+        this.eventDetailsDTO = data;
+        this.loaderService.hide();
+        this.breadcrumbService.set('@eventName', 'Junior to Solver 6.0');
+      },
+      error: _ => {
+        this.loaderService.hide();
+        this.nzMessageService.error('Failed to load event details');
+      }
+    });
   }
 
   showEventRequestModal(): void {

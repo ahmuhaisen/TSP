@@ -20,6 +20,7 @@ import { AuthService, User } from '../../../../common/services/auth.service';
 import { SearchDrawerComponent } from "../../../../components/search-drawer/search-drawer.component";
 import { environment } from '../../../../../environments/environment';
 import { CookieService } from 'ngx-cookie-service';
+import { LoaderService } from '../../../../common/services/loader.service';
 
 @Component({
   selector: 'app-home',
@@ -62,13 +63,22 @@ export class HomeComponent {
 
   homeService = inject(HomeService);
   authService = inject(AuthService);
+  loaderService = inject(LoaderService);
 
   ngOnInit() {
     this.isLoading = true;
+    this.loaderService.show();
 
-    this.homeService.recentEvents().subscribe(res => this.recentEvents = res);
-    this.homeService.recentlyJoinedMembers().subscribe(res => this.recentlyJoinedMembers = res);
-    this.homeService.homeStatistics().subscribe(res => this.homeStatistics = res);
+    this.homeService.recentEvents().subscribe(res => {
+      this.recentEvents = res;
+    });
+    this.homeService.recentlyJoinedMembers().subscribe(res => {
+      this.recentlyJoinedMembers = res;
+    });
+    this.homeService.homeStatistics().subscribe(res => {
+      this.homeStatistics = res;
+      this.loaderService.hide();
+    });
 
     this.userInfo.set(this.authService.currentUser());
 
