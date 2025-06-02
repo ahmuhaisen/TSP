@@ -14,7 +14,8 @@
             <p class="text-xs text-gray-400 font-normal">Requests from societies you advise are listed here</p>
         </div>
     </div>
-    <button nz-button nzType="default" nz-dropdown [nzDropdownMenu]="exportMenu" nz-tooltip nzTooltipTitle="Export Options">
+    <button nz-button nzType="default" nz-dropdown [nzDropdownMenu]="exportMenu" nz-tooltip
+        nzTooltipTitle="Export Options">
         <nz-icon nzType="download" nzTheme="outline" />
     </button>
     <nz-dropdown-menu #exportMenu="nzDropdownMenu">
@@ -36,3 +37,107 @@
 </div>
 
 <app-requests-table />
+<nz-tabset>
+    <nz-tab nzTitle="Events this month">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-lg font-semibold text-gray-700">
+                {{ currentDate | date:'MMMM yyyy' }}
+            </div>
+            <div class="flex items-center gap-2">
+                <button nzType="default" nzShape="circle" nz-button class="flex items-center justify-center"
+                    (click)="setViewType('calendar')">
+                    <nz-icon nzType="calendar" />
+                </button>
+
+                <button nzType="default" nzShape="circle" nz-button (click)="setViewType('cards')">
+                    <nz-icon nzType="appstore" />
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="viewType === 'calendar'">
+            <nz-calendar [nzFullscreen]="false" [nzDisabledDate]="disabledDate" [(ngModel)]="currentDate"
+                class="w-full">
+                <ng-container *nzDateCell="let date">
+                    <div class="events" (click)="openEventModal(date)">
+                        <ng-container *ngFor="let event of getDayEvents(date)">
+                            <nz-badge [nzStatus]="getEventBadgeStatus(event.startDate)" [nzText]="event.name"
+                                class="event-badge cursor-pointer hover:text-primary-dark" />
+                        </ng-container>
+
+                    </div>
+                </ng-container>
+            </nz-calendar>
+        </div>
+
+        <div *ngIf="viewType === 'cards'">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                @for(event of upcomingEvents; track $index){
+                <nz-card class="shadow hover:translate-y-[-3px] transition-all duration-300 ease-in-out">
+                    <div class="flex items-center mb-2">
+
+                        <div>
+                            <h3 class="text-md font-semibold text-gray-800">{{ event.name }}</h3>
+                            <p class="text-xs text-gray-600">{{ event.societyName }}</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500">
+                        <nz-badge [nzStatus]="getEventBadgeStatus(event.startTime)"
+                            class="cursor-pointer hover:text-primary-dark" />
+                        {{ event.startTime | date:'MMM d, y, h:mm a' }} - {{ event.endTime |
+                        date:'MMM d, y, h:mm a' }}
+                    </p>
+                    <p class="text-xs text-gray-600">{{ event.location }}</p>
+                    <p class="mt-2 text-gray-600">{{ event.description }}</p>
+
+
+                </nz-card>
+                }
+                @empty {
+                <nz-empty nzNotFoundContent="No events found for this month"
+                    class="col-span-3 w-full justify-center items-center" />
+                }
+            </div>
+        </div>
+
+        <nz-drawer [nzVisible]="isEventDetailsVisible" [nzWidth]="400" nzPlacement="right" nzTitle="Event Details"
+            (nzOnClose)="closeEventDetails()">
+            <ng-container *nzDrawerContent>
+                @if (selectedEvent) {
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-4">{{ selectedEvent?.title }}</h3>
+
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600">{{ selectedEvent?.society }}</p>
+                        <nz-tag [nzColor]="'blue'" class="mt-2">{{ selectedEvent?.type }}</nz-tag>
+                    </div>
+
+                    <div class="text-sm space-y-2">
+                        <p class="flex items-center text-gray-600">
+                            <nz-icon nzType="calendar" class="mr-2"></nz-icon>
+                            {{ selectedEvent?.startDate | date:'MMM d, y, h:mm a' }}
+                        </p>
+                        <p class="flex items-center text-gray-600">
+                            <nz-icon nzType="environment" class="mr-2"></nz-icon>
+                            {{ selectedEvent?.location }}
+                        </p>
+                    </div>
+
+                    <p class="mt-4 text-gray-600">{{ selectedEvent?.description }}</p>
+
+                    <div class="mt-6">
+                        @if (selectedEvent?.hasAttendanceForm) {
+                        <button nz-button nzType="primary" class="w-full">
+                            <nz-icon nzType="form"></nz-icon>
+                            Register for Event
+                        </button>
+                        }
+                    </div>
+                </div>
+                } @else {
+                <div class="p-4">No event selected</div>
+                }
+            </ng-container>
+        </nz-drawer>
+    </nz-tab>
+</nz-tabset>

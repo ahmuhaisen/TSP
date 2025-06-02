@@ -29,6 +29,7 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../../../common/services/auth.service';
 import { environment } from '../../../../../../environments/environment';
 import { LoaderService } from '../../../../../common/services/loader.service';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 @Component({
   selector: 'app-events-list',
   standalone: true,
@@ -55,7 +56,8 @@ import { LoaderService } from '../../../../../common/services/loader.service';
     NzBadgeModule,
     NzDrawerModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    NzAvatarModule
   ],
   providers: [EventsService],
   templateUrl: './events-list.component.html',
